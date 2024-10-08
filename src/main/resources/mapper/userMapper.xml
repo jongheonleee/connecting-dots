@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.UserMapper">
+  <select id="count" resultType="int">
+    SELECT COUNT(*)
+    FROM user
+  </select>
+
+  <insert id="insert" parameterType="com.example.demo.dto.UserFormDto">
+    INSERT INTO user
+    VALUES(
+        #{id}, #{name}, #{pwd},
+        #{email}, #{birth}, #{sns},
+        now(), #{id}, now(), #{id}
+    );
+  </insert>
+
+  <select id="selectById" parameterType="String" resultType="com.example.demo.dto.UserDto">
+    SELECT
+        id, name, pwd,
+        email, birth, sns,
+        reg_date, reg_id, up_date, up_id
+    FROM user
+    WHERE id = #{id}
+  </select>
+
+  <select id="selectAll" resultType="com.example.demo.dto.UserDto">
+    SELECT
+        id, name, pwd,
+        email, birth, sns,
+        reg_date, reg_id, up_date, up_id
+    FROM user
+  </select>
+
+  <update id="update" parameterType="com.example.demo.dto.UserUpdatedFormDto">
+    UPDATE user
+    SET
+        id = #{id}, name = #{name}, pwd = #{pwd},
+        email = #{email}, birth = #{birth},
+        sns = #{sns}, up_date = now(), up_id = #{id}
+    WHERE id = #{originId}
+  </update>
+
+  <delete id="deleteById" parameterType="String">
+    DELETE FROM user
+    WHERE id = #{id}
+  </delete>
+
+  <delete id="deleteAll">
+    DELETE FROM user
+  </delete>
+</mapper>

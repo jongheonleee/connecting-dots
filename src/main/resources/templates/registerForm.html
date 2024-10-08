@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Sign Up</title>
+</head>
+<body>
+<h2>Sign Up</h2>
+<form action="/register" th:action="@{/signup}"  method="post">
+  <div>
+    <label for="username">Username:</label>
+    <input type="text" id="username" placeholder="Enter username" />
+  </div>
+  <div>
+    <label for="email">Email:</label>
+    <input type="email" id="email" placeholder="Enter email" />
+  </div>
+  <div>
+    <label for="password">Password:</label>
+    <input type="password" id="password" placeholder="Enter password" />
+  </div>
+  <div>
+    <label for="confirmPassword">Confirm Password:</label>
+    <input type="password" id="confirmPassword" placeholder="Confirm password" />
+  </div>
+  <label for="">생일</label>
+  <input class="input-field" type="text" name="birth" placeholder="2020/12/31">
+  <div class="sns-chk">
+    <label><input type="checkbox" name="sns" value="facebook"/>페이스북</label>
+    <label><input type="checkbox" name="sns" value="kakaotalk"/>카카오톡</label>
+    <label><input type="checkbox" name="sns" value="instagram"/>인스타그램</label>
+  </div>
+  <div>
+    <button type="submit" onclick="test()">Sign Up</button>
+  </div>
+</form>
+<script>
+  function test() {
+    alert('test');
+  }
+</script>
+</body>
+</html>
