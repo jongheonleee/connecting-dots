@@ -46,6 +46,8 @@ class UserDaoImplTest {
             // 1-1. 필수값 누락
             // 1-2. 중복된 아이디 등록
             // 1-3. 제약 조건 위배(데이터 길이 제한 초과)
+            // 1-4. 회원 데이터 폼이 null인 경우
+
         // 2. 회원 등록 실패 - x
         // 3. 회원 등록 처리
             // 3-1. 회원 등록 여러번 시도해보기
@@ -73,6 +75,14 @@ class UserDaoImplTest {
         dto.setName("Over fifty characters are required to store this data without truncation issues.");
         assertThrows(DataIntegrityViolationException.class,
                 () -> target.insert(dto)
+        );
+    }
+
+    @DisplayName("1-4. 회원 데이터 폼이 null인 경우")
+    @Test
+    public void test14() {
+        assertThrows(DataIntegrityViolationException.class,
+                () -> target.insert(null)
         );
     }
 
