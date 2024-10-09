@@ -16,5 +16,6 @@ public class UserFormDto {
     private String pwd;
     private String birth;
     private String sns;
+    private String[] parsedSns;
 
 }

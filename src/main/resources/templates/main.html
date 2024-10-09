@@ -2,9 +2,73 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Title</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>커뮤니티 메인 페이지</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: #f7f8fa;
+    }
+    .main-container {
+      width: 100%;
+      height: 100vh;
+      background-image: url('https://source.unsplash.com/random'); /* 예쁜 이미지 URL */
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+    }
+    .content {
+      position: relative;
+      z-index: 1;
+      color: white;
+      text-align: center;
+    }
+    h1 {
+      font-size: 3em;
+      margin: 0;
+    }
+    p {
+      font-size: 1.5em;
+      margin: 10px 0;
+    }
+    .btn {
+      background-color: #007bff;
+      color: white;
+      padding: 15px 30px;
+      border-radius: 5px;
+      font-size: 1em;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
+    .btn:hover {
+      background-color: #0056b3;
+    }
+  </style>
 </head>
 <body>
-
+<div class="main-container">
+  <div class="overlay"></div>
+  <div class="content">
+    <h1>Welcome to Our Community</h1>
+    <p>참여하고 의견을 나눌 수 있는 공간입니다</p>
+    <a href="/board" class="btn">게시판 보기</a>
+  </div>
+</div>
 </body>
 </html>

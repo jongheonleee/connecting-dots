@@ -1,10 +1,182 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Title</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>로그인</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f5f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 400px;
+      background-color: #fff;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 1.5em;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+      text-align: left;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #e1e1e1;
+      border-radius: 5px;
+      font-size: 0.9em;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .form-group input::placeholder {
+      color: #b5b5b5;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+      font-size: 0.9em;
+      color: #333;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      margin-right: 10px;
+    }
+
+    .login-button {
+      width: 100%;
+      padding: 12px;
+      font-size: 1em;
+      color: #fff;
+      background-color: #007bff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .link-group {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9em;
+      margin-top: 10px;
+    }
+
+    .social-buttons {
+      margin: 20px 0;
+    }
+
+    .social-buttons button {
+      width: 100%;
+      padding: 10px;
+      font-size: 1em;
+      border: none;
+      border-radius: 5px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+
+    .facebook-btn {
+      background-color: #3b5998;
+      color: #fff;
+    }
+
+    .google-btn {
+      background-color: #db4437;
+      color: #fff;
+    }
+
+    .naver-btn {
+      background-color: #1ec800;
+      color: #fff;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .divider:not(:empty)::before {
+      margin-right: .5em;
+    }
+
+    .divider:not(:empty)::after {
+      margin-left: .5em;
+    }
+
+    /* 링크 스타일 수정 */
+    .link-group a,
+    .container a {
+      text-decoration: none;
+      color: #333; /* 기본 링크 색상 */
+    }
+
+    .link-group a:hover,
+    .container a:hover {
+      color: #007bff; /* 호버 시 색상 */
+    }
+  </style>
 </head>
 <body>
+<div class="container">
+  <h2>Login</h2>
+  <form action="/user/login" th:action="@{/user/login}" th:object="${userLoginFormDto}" method="post">
+    <div class="form-group">
+      <input type="text" name="id" th:field="*{id}" placeholder="아이디" required />
+    </div>
+    <div class="form-group">
+      <input type="password" name="pwd" th:field="*{pwd}" placeholder="비밀번호" required />
+    </div>
+    <div class="form-group">
+      <input type="text" name="toUrl" th:field="*{toUrl}" th:value="${toUrl}" placeholder="이전 페이지 주소" hidden />
+    </div>
+    <div class="checkbox-group">
+      <input type="checkbox" id="rememberMe" th:field="*{rememberMe}" name="rememberMe">
+      <label for="rememberMe">로그인상태유지</label>
+    </div>
+    <button type="submit" class="login-button">로그인</button>
+    <div class="link-group">
+      <a href="/user/register">회원가입</a>
+      <a href="#">아이디 · 비밀번호 찾기</a>
+    </div>
+  </form>
 
+  <div class="divider">또는</div>
+
+  <div class="social-buttons">
+    <button class="facebook-btn">Facebook으로 시작하기</button>
+    <button class="google-btn">Google로 시작하기</button>
+    <button class="naver-btn">Naver로 시작하기</button>
+  </div>
+</div>
 </body>
 </html>

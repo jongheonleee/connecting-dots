@@ -1,0 +1,133 @@
+package com.example.demo.validator;
+
+import com.example.demo.dto.UserFormDto;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.regex.Pattern;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
+import org.springframework.validation.ValidationUtils;
+import org.springframework.validation.Validator;
+
+@Component
+public class UserValidator implements Validator {
+
+    // 각 필드별 정규표현식
+    private static final Pattern REG_FOR_SPECIAL_CHAR = Pattern.compile("[\\{\\}\\[\\]\\/?.;,|)*~`!^\\-_+<>@#$%&\\\\=\\('\"\"]");
+    private static final Pattern REG_FOR_BLANK = Pattern.compile("\\s");
+    private static final Pattern REG_FOR_EMAIL = Pattern.compile("^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\\.[a-zA-Z]{2,3}$");
+    private static final Pattern REG_FOR_ID = Pattern.compile("^[a-z0-9_]{6,20}$");
+    private static final Pattern REG_FOR_PWD = Pattern.compile("^[a-z0-9@!#$%&*]{6,20}$");
+    private static final Pattern REG_FOR_BIRTH = Pattern.compile("^(19|20)\\d{2}/(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])$");
+
+    // 날짜 유혀성 검증에 사용되는 형식
+    private static final String DATE_FORMAT = "yyyy/MM/dd";
+
+
+
+    // UserFormDto 클래스를 지원하는지 확인
+    @Override
+    public boolean supports(Class<?> clazz) {
+        return UserFormDto.class.isAssignableFrom(clazz);
+    }
+
+    // 각 필드 별로 유효성 검증
+    @Override
+    public void validate(Object target, Errors errors) {
+        // UserFormDto 클래스로 형변환
+            // id, name, email, pwd, birth, sns
+        // 각 필드마다 비어있는지 확인
+        // 각 필드마다 유효성 검증 처리
+        // sns의 경우 문자열 배열로 파싱 처리
+        // 유효성 검증에 실패하면 errors 객체에 에러코드 추가
+        UserFormDto userFormDto = (UserFormDto) target;
+        checkBlank(errors);
+        checkFields(userFormDto, errors);
+        String[] parsedSns = parseSns(userFormDto.getSns());
+        userFormDto.setParsedSns(parsedSns);
+
+    }
+
+    private void checkBlank(Errors errors) {
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "id", "required");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "required");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "required");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "pwd", "required");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "birth", "required");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "sns", "required");
+    }
+
+    private void checkFields(UserFormDto userFormDto, Errors errors) {
+        if (!isValidId(userFormDto.getId())) {
+            errors.rejectValue("id", "invalidId");
+        }
+
+        if (!isValidName(userFormDto.getName())) {
+            errors.rejectValue("name", "invalid");
+        }
+
+        if (!isValidEmail(userFormDto.getEmail())) {
+            errors.rejectValue("email", "invalidEmail");
+        }
+
+        if (!isValidPwd(userFormDto.getPwd())) {
+            errors.rejectValue("pwd", "invalidPwd");
+        }
+
+        if (!isValidBirth(userFormDto.getBirth())) {
+            errors.rejectValue("birth", "invalidBirth");
+        }
+    }
+
+    // 이름 -> 특수문자나 공백이 포함 되어 있는지 확인, 2글자 이상
+    private boolean isValidName(String name) {
+        return name.length() >= 2
+                && !REG_FOR_SPECIAL_CHAR.matcher(name).find()
+                && !REG_FOR_BLANK.matcher(name).find();
+    }
+
+    // 이메일 -> 이메일 형식인지 확인
+    private boolean isValidEmail(String email) {
+        return REG_FOR_EMAIL.matcher(email).find();
+    }
+
+    // 아이디 -> 영문자, 숫자, 특수문자 조합, 6글자 이상 20글자 이하
+    private boolean isValidId(String id) {
+        return 6 <= id.length() && id.length() <= 20
+                && !REG_FOR_SPECIAL_CHAR.matcher(id).find()
+                && !REG_FOR_BLANK.matcher(id).find()
+                && REG_FOR_ID.matcher(id).find();
+    }
+
+    // 비밀번호 -> 영문자, 숫자, 특수문자 조합, 8글자 이상 20글자 이하
+    private boolean isValidPwd(String pwd) {
+        return 8 <= pwd.length() && pwd.length() <= 20
+                && !REG_FOR_SPECIAL_CHAR.matcher(pwd).find()
+                && !REG_FOR_BLANK.matcher(pwd).find()
+                && REG_FOR_PWD.matcher(pwd).find();
+    }
+
+    // 생일 -> 날짜 형식인지 확인(yyyy/MM/dd)
+    private boolean isValidBirth(String birth) {
+        if (!REG_FOR_BIRTH.matcher(birth).find()) {
+            return false;
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+        sdf.setLenient(false);
+
+        try {
+            sdf.parse(birth);
+            return true;
+        } catch (ParseException e) {
+            return false;
+        }
+    }
+
+    // sns 파싱 처리해서 문자열 배열로 주기
+        // kakaotalk,facebook,instagram -> [kakaotalk, facebook, instagram]
+    private String[] parseSns(String sns) {
+        String[] parsedSns = sns.split(",");
+        return parsedSns;
+    }
+}
