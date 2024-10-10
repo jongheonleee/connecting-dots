@@ -1,6 +1,6 @@
 package com.example.demo.dao;
 
-import com.example.demo.dto.UserDto;
+import com.example.demo.dto.User;
 import com.example.demo.dto.UserFormDto;
 import com.example.demo.dto.UserUpdatedFormDto;
 import java.util.List;
@@ -25,11 +25,11 @@ public class UserDaoImpl {
     }
 
 
-    public UserDto selectById(String id) {
+    public User selectById(String id) {
         return session.selectOne(namespace + "selectById", id);
     }
 
-    public List<UserDto> selectAll() {
+    public List<User> selectAll() {
         return session.selectList(namespace + "selectAll");
     }
 

@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UserDto {
+public class User {
 
     // 이름, 아아디, 비번, 이메일, 생일, sns
     private String id;
@@ -14,4 +14,8 @@ public class UserDto {
     private String pwd;
     private String birth;
     private String sns;
+
+    public boolean checkPwd(String otherPwd) {
+        return pwd.equals(otherPwd);
+    }
 }

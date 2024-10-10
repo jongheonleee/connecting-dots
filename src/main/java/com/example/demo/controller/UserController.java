@@ -1,9 +1,8 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.UserDto;
+import com.example.demo.dto.User;
 import com.example.demo.dto.UserFormDto;
 import com.example.demo.dto.UserLoginFormDto;
-import com.example.demo.exception.InternalServerError;
 import com.example.demo.exception.UserAlreadyExistsException;
 import com.example.demo.exception.UserFormInvalidException;
 import com.example.demo.exception.UserNotFoundException;
@@ -93,8 +92,8 @@ public class UserController {
     }
 
     private boolean checkValidUser(UserLoginFormDto userLoginFormDto) {
-        UserDto foundUser = userService.findById(userLoginFormDto.getId());
-        return !foundUser.getId().equals(userLoginFormDto.getId());
+        User foundUser = userService.findById(userLoginFormDto.getId());
+        return foundUser.checkPwd(userLoginFormDto.getPwd());
     }
 
     private void checkCookie(UserLoginFormDto userLoginFormDto, HttpServletResponse response) {

@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 import com.example.demo.dao.UserDaoImpl;
-import com.example.demo.dto.UserDto;
+import com.example.demo.dto.User;
 import com.example.demo.dto.UserFormDto;
 import com.example.demo.dto.UserUpdatedFormDto;
 import com.example.demo.exception.UserAlreadyExistsException;
@@ -45,7 +45,7 @@ class UserServiceImplTest {
     @InjectMocks
     private UserServiceImpl target;
 
-    private List<UserDto> userDtoFixture = new ArrayList<>();
+    private List<User> userDtoFixture = new ArrayList<>();
     private List<UserFormDto> userFormDtoFixture = new ArrayList<>();
 
 
@@ -330,7 +330,7 @@ class UserServiceImplTest {
 
     private void createFixture(int cnt) {
         for (int i=0; i<cnt; i++) {
-            var dto = new UserDto();
+            var dto = new User();
             dto.setId("id" + cnt);
             dto.setName("name" + cnt);
             dto.setEmail("email" + cnt);
@@ -374,7 +374,7 @@ class UserServiceImplTest {
         return dto;
     }
 
-    private boolean isSameUserDto(UserDto a, UserDto b) {
+    private boolean isSameUserDto(User a, User b) {
         return a.getId().equals(b.getId()) &&
                 a.getName().equals(b.getName()) &&
                 a.getEmail().equals(b.getEmail()) &&

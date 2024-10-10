@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.dao.UserDaoImpl;
-import com.example.demo.dto.UserDto;
+import com.example.demo.dto.User;
 import com.example.demo.dto.UserFormDto;
 import com.example.demo.dto.UserUpdatedFormDto;
 import com.example.demo.exception.InternalServerError;
@@ -45,7 +45,7 @@ public class UserServiceImpl {
         return rowCnt;
     }
 
-    public UserDto findById(String id) {
+    public User findById(String id) {
         var foundUser = userDao.selectById(id);
         if (foundUser == null) {
             throw new UserNotFoundException("해당 " + id + "를 가진 사용자를 찾을 수 없습니다.");
@@ -53,7 +53,7 @@ public class UserServiceImpl {
         return foundUser;
     }
 
-    public List<UserDto> findAll() {
+    public List<User> findAll() {
         return userDao.selectAll();
     }
 
