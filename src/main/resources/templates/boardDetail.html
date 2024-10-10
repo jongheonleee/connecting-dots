@@ -2,9 +2,239 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Title</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>게시글 보기</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background-color: #f7f8fa;
+    }
+    .main-container {
+      width: 100vw;
+      padding: 20px;
+      background-color: white;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      border-radius: 5px;
+    }
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1em;
+      background-color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 20px;
+    }
+    .navbar .logo {
+      font-size: 1.5em;
+      color: #007bff;
+      font-weight: bold;
+      cursor: pointer;
+      flex-grow: 1;
+    }
+    .navbar .categories-menu {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-right: 20px;
+    }
+    .navbar .categories a {
+      color: #333;
+      text-decoration: none;
+      font-size: 20px;
+    }
+    .post-container {
+      margin-bottom: 20px;
+    }
+    .post-title {
+      font-size: 2em;
+      color: #007bff;
+      margin-bottom: 10px;
+    }
+    .post-meta {
+      font-size: 0.9em;
+      color: #666;
+      margin-bottom: 15px;
+    }
+    .post-image {
+      max-width: 100%;
+      height: auto;
+      margin-bottom: 15px;
+    }
+    .post-actions {
+      margin-bottom: 15px;
+    }
+    .comment-section {
+      margin-top: 30px;
+      border-top: 1px solid #ddd;
+      padding-top: 20px;
+    }
+    .comment {
+      margin-bottom: 15px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .comment-meta {
+      font-size: 0.9em;
+      color: #666;
+    }
+    .reply-section {
+      margin-left: 20px;
+      border-left: 2px dashed #007bff;
+      padding-left: 10px;
+      margin-top: 10px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #007bff;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+    .submit-button {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .submit-button:hover {
+      background-color: #0056b3;
+    }
+    .like-button, .dislike-button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-right: 5px;
+    }
+    .like-button:hover, .dislike-button:hover {
+      background-color: #0056b3;
+    }
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .pagination button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 5px 10px;
+      cursor: pointer;
+      margin: 0 5px;
+    }
+    .pagination button:hover {
+      background-color: #0056b3;
+    }
+  </style>
 </head>
 <body>
+<div class="main-container">
+  <div class="navbar">
+    <div class="logo" onclick="location.href='/'">Connecting Moment</div>
+    <div class="categories-menu">
+      <div class="categories">
+        <a href="/">HOME</a>
+        <a href="/board/list">BOARD</a>
+        <a href="/user/">MY PAGE</a>
+        <a href="/user/login">LOGIN/LOGOUT</a>
+      </div>
+    </div>
+  </div>
 
+  <div class="post-container">
+    <h1 class="post-title">게시글 제목</h1>
+    <div class="post-meta">
+      카테고리: <span>일상</span> | 작성자: <span>작성자 이름</span> | 조회수: <span>100</span>
+    </div>
+    <img src="https://source.unsplash.com/random/800x400" alt="게시글 이미지" class="post-image">
+    <p>여기에 게시글 내용이 들어갑니다. 내용은 길어질 수 있으며, 여기서 여러 가지 정보를 공유할 수 있습니다.</p>
+
+    <div class="post-actions">
+      <button class="like-button">게시글 추천 👍</button>
+      <button class="dislike-button">게시글 비추천 👎</button>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="comment">댓글 작성</label>
+    <input type="text" id="comment" name="comment" placeholder="댓글을 입력하세요..." required>
+    <button type="submit" class="submit-button">댓글 작성</button>
+  </div>
+
+  <div class="comment-section">
+    <h2>댓글</h2>
+
+    <div class="comment">
+      <div class="comment-meta">
+        아이디: <span>댓글 아이디</span> | 작성자: <span>작성자 이름</span> | 좋아요: <span>5</span> | 싫어요: <span>1</span>
+        <button class="like-button">👍</button>
+        <button class="dislike-button">👎</button>
+      </div>
+      <p>여기에 댓글 내용이 들어갑니다.</p>
+
+      <div class="reply-section">
+        <h4>대댓글</h4>
+        <div class="comment">
+          <div class="comment-meta">
+            아이디: <span>대댓글 아이디</span> | 작성자: <span>대댓글 작성자</span> | 좋아요: <span>2</span> | 싫어요: <span>0</span>
+            <button class="like-button">👍</button>
+            <button class="dislike-button">👎</button>
+          </div>
+          <p>여기에 대댓글 내용이 들어갑니다.</p>
+        </div>
+        <div class="form-group">
+          <label for="reply1">대댓글 작성</label>
+          <input type="text" id="reply1" name="reply1" placeholder="대댓글을 입력하세요..." required>
+          <button type="submit" class="submit-button">대댓글 작성</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="comment">
+      <div class="comment-meta">
+        아이디: <span>댓글 아이디</span> | 작성자: <span>작성자 이름</span> | 좋아요: <span>3</span> | 싫어요: <span>0</span>
+        <button class="like-button">👍</button>
+        <button class="dislike-button">👎</button>
+      </div>
+      <p>여기에 또 다른 댓글 내용이 들어갑니다.</p>
+      <div class="form-group">
+        <label for="reply2">대댓글 작성</label>
+        <input type="text" id="reply2" name="reply2" placeholder="대댓글을 입력하세요..." required>
+        <button type="submit" class="submit-button">대댓글 작성</button>
+      </div>
+    </div>
+
+    <!-- 댓글 페이징 처리 -->
+    <div class="pagination">
+      <button>◀ 이전</button>
+      <button>1</button>
+      <button>2</button>
+      <button>3</button>
+      <button>다음 ▶</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

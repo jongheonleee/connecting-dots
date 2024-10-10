@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Page</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background-color: #f7f8fa;
+    }
+    .main-container {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1em;
+      background-color: rgba(255, 255, 255, 0.8);
+    }
+    .navbar .logo {
+      font-size: 1.5em;
+      color: #007bff;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .navbar .categories-menu {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .navbar .categories a {
+      color: #333;
+      text-decoration: none;
+      font-size: 20px;
+    }
+    .navbar {
+      font-size: 1.5em;
+    }
+    .content {
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      font-size: 1.8em;
+      margin: 0;
+      max-width: 90vw;
+      word-wrap: break-word;
+    }
+    .profile {
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .profile-info {
+      font-size: 0.9em;
+      color: #333;
+    }
+    .post {
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 15px;
+      margin: 10px 0;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .post h2 {
+      font-size: 1.3em;
+      margin: 0;
+    }
+    .post-info {
+      font-size: 0.8em;
+      color: #777;
+    }
+    .pagination {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      border-top: 1px solid #ddd; /* Optional for visual separation */
+      padding-top: 20px; /* Optional for spacing */
+    }
+    .pagination button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 0 5px;
+    }
+    .pagination button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+<div class="main-container">
+  <div class="navbar">
+    <div class="logo" onclick="location.href='/'">Connecting Moment</div>
+    <div class="categories-menu">
+      <div class="categories">
+        <a href="/">HOME</a>
+        <a href="/board/list">BOARD</a>
+        <a href="/user/">MY PAGE</a>
+        <a href="/user/login">LOGIN/LOGOUT</a>
+      </div>
+    </div>
+  </div>
+  <div class="content">
+    <h1>내 프로필</h1>
+    <div class="profile">
+      <p class="profile-info"><strong>아이디:</strong> 홍길동123</p>
+      <p class="profile-info"><strong>이름:</strong> 홍길동</p>
+      <p class="profile-info"><strong>이메일:</strong> honggildong@example.com</p>
+      <p class="profile-info"><strong>생년월일:</strong> 1990-01-01</p>
+    </div>
+    <h1>내 작성 글 목록</h1>
+    <div class="post">
+      <h2>제목: 첫 번째 게시글</h2>
+      <p class="post-info">작성자: 홍길동 | 조회수: 100 | 작성일: 2024-10-10</p>
+      <p>여기에 게시글 내용이 들어갑니다. 이곳에서 내용을 확인할 수 있습니다.</p>
+    </div>
+    <div class="post">
+      <h2>제목: 두 번째 게시글</h2>
+      <p class="post-info">작성자: 홍길동 | 조회수: 150 | 작성일: 2024-10-09</p>
+      <p>여기에 게시글 내용이 들어갑니다. 이곳에서 내용을 확인할 수 있습니다.</p>
+    </div>
+    <!-- 더 많은 게시글을 이곳에 추가할 수 있습니다. -->
+
+    <!-- 댓글 페이징 처리 -->
+    <div class="pagination">
+      <button>◀ 이전</button>
+      <button>1</button>
+      <button>2</button>
+      <button>3</button>
+      <button>다음 ▶</button>
+    </div>
+  </div>
+</div>
+<script>
+  function previousPage() {
+    // 이전 페이지로 이동하는 로직
+    alert("이전 페이지로 이동합니다.");
+  }
+
+  function nextPage() {
+    // 다음 페이지로 이동하는 로직
+    alert("다음 페이지로 이동합니다.");
+  }
+</script>
+</body>
+</html>

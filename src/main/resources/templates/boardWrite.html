@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>게시물 작성</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background-color: #f7f8fa;
+    }
+    .main-container {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      padding: 20px;
+    }
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1em;
+      background-color: rgba(255, 255, 255, 0.8);
+    }
+    .navbar .logo {
+      font-size: 1.5em;
+      color: #007bff;
+      font-weight: bold;
+      cursor: pointer;
+      flex-grow: 1;
+    }
+    .navbar .categories-menu {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-right: 20px;
+    }
+    .navbar .categories a {
+      color: #333;
+      text-decoration: none;
+      font-size: 20px;
+    }
+    .form-container {
+      margin-top: 20px;
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input[type="text"],
+    select,
+    input[type="file"],
+    textarea {
+      width: 100%; /* 가로 폭을 100%로 설정하여 동일하게 만듦 */
+      max-width: 100%; /* 최대 너비 설정 */
+      padding: 10px;
+      border: 1px solid #007bff;
+      border-radius: 5px;
+      box-sizing: border-box; /* 패딩 포함된 박스 크기 조정 */
+    }
+    textarea {
+      height: 150px;
+    }
+    .submit-button {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .submit-button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+<div class="main-container">
+  <div class="navbar">
+    <div class="logo" onclick="location.href='/'">Connecting Moment</div>
+    <div class="categories-menu">
+      <div class="categories">
+        <a href="/">HOME</a>
+        <a href="/board/list">BOARD</a>
+        <a href="/user/">MY PAGE</a>
+        <a href="/user/login">LOGIN/LOGOUT</a>
+      </div>
+    </div>
+  </div>
+  <div class="form-container">
+    <h2 style="text-align: center; color: #007bff;">게시물 작성</h2>
+    <form action="#" method="post" enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="category">카테고리</label>
+        <select id="category" name="category" required>
+          <option value="일상">일상</option>
+          <option value="꿀 팁">꿀 팁</option>
+          <option value="IT 커리어">IT 커리어</option>
+          <option value="공부">공부</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="title">제목</label>
+        <input type="text" id="title" name="title" required />
+      </div>
+      <div class="form-group">
+        <label for="author">작성자</label>
+        <input type="text" id="author" name="author" required />
+      </div>
+      <div class="form-group">
+        <label for="image">이미지 파일</label>
+        <input type="file" id="image" name="image" accept="image/*" />
+      </div>
+      <div class="form-group">
+        <label for="content">내용</label>
+        <textarea id="content" name="content" required></textarea>
+      </div>
+      <button type="submit" class="submit-button">작성 완료</button>
+    </form>
+  </div>
+</div>
+</body>
+</html>

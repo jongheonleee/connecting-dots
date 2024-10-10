@@ -2,9 +2,155 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Title</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>게시판 리스트</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background-color: #f7f8fa;
+    }
+    .main-container {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1em;
+      background-color: rgba(255, 255, 255, 0.8);
+    }
+    .navbar .logo {
+      font-size: 1.5em;
+      color: #007bff;
+      font-weight: bold;
+      cursor: pointer; /* 클릭 가능하도록 설정 */
+      flex-grow: 1; /* 로고가 왼쪽에 위치하도록 설정 */
+    }
+    .navbar .categories-menu {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-right: 20px; /* 오른쪽 여백 추가 */
+    }
+    .navbar .categories a {
+      color: #333;
+      text-decoration: none;
+      font-size: 20px;
+    }
+    .navbar .search-bar {
+      display: flex;
+      align-items: center;
+    }
+    .navbar input[type="text"] {
+      padding: 10px;
+      border: 1px solid #007bff;
+      border-radius: 5px;
+    }
+    .navbar input[type="submit"] {
+      padding: 10px 15px;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+    .table-container {
+      padding: 20px;
+      overflow-y: auto; /* 세로 스크롤 추가 */
+      flex-grow: 1; /* 남은 공간을 차지하도록 설정 */
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 10px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #007bff;
+      color: white;
+    }
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+    a {
+      text-decoration: none;
+      color: #007bff;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
-
+<div class="main-container">
+  <div class="navbar">
+    <div class="logo" onclick="location.href='/'">Connecting Moment</div>
+    <div class="categories-menu">
+      <div class="categories">
+        <a href="/">HOME</a>
+        <a href="/board/list">BOARD</a>
+        <a href="/user/">MY PAGE</a>
+        <a href="/user/login">LOGIN/LOGOUT</a>
+      </div>
+    </div>
+    <div class="search-bar">
+      <form action="#" method="get">
+        <input type="text" name="search" placeholder="게시물 검색"/>
+        <input type="submit" value="검색"/>
+      </form>
+    </div>
+  </div>
+  <div class="table-container">
+    <h2 style="text-align: center; color: #007bff;">게시판 리스트</h2>
+    <table>
+      <thead>
+      <tr>
+        <th>번호</th>
+        <th>제목</th>
+        <th>작성자</th>
+        <th>작성일</th>
+        <th>조회수</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>1</td>
+        <td><a href="#">첫 번째 게시물</a></td>
+        <td>홍길동</td>
+        <td>2024-10-10</td>
+        <td>100</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><a href="#">두 번째 게시물</a></td>
+        <td>김영희</td>
+        <td>2024-10-09</td>
+        <td>250</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><a href="#">세 번째 게시물</a></td>
+        <td>이철수</td>
+        <td>2024-10-08</td>
+        <td>75</td>
+      </tr>
+      <!-- 추가 게시물 -->
+      </tbody>
+    </table>
+  </div>
+</div>
 </body>
 </html>

@@ -52,6 +52,10 @@ public class UserController {
         return "error";
     }
 
+    @GetMapping("/me")
+    public String getProfilePage() {
+        return "profilePage";
+    }
 
 
     @GetMapping("/register")

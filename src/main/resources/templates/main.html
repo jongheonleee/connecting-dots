@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>커뮤니티 메인 페이지</title>
+  <title>Connection Dot</title>
   <style>
     body {
       margin: 0;
@@ -11,64 +11,95 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+      min-height: 100vh;
       background-color: #f7f8fa;
     }
     .main-container {
-      width: 100%;
+      width: 100vw;
       height: 100vh;
-      background-image: url('https://source.unsplash.com/random'); /* 예쁜 이미지 URL */
-      background-size: cover;
-      background-position: center;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .navbar {
       display: flex;
       align-items: center;
-      justify-content: center;
-      position: relative;
+      justify-content: space-between;
+      padding: 1em;
+      background-color: rgba(255, 255, 255, 0.8);
+    }
+    .navbar .logo {
+      font-size: 1.5em;
+      color: #007bff;
+      font-weight: bold;
+    }
+    .navbar .categories-menu {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .navbar .categories a {
+      color: #333;
+      text-decoration: none;
+      font-size: 20px;
+    }
+    .navbar {
+      font-size: 1.5em;
+      cursor: pointer;
     }
     .overlay {
       position: absolute;
-      top: 0;
+      top: 80px; /* 헤더 높이만큼 내려서 카테고리와 겹치지 않게 설정 */
       left: 0;
       width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-    }
-    .content {
-      position: relative;
-      z-index: 1;
-      color: white;
+      height: calc(100% - 80px); /* 헤더 높이만큼 줄임 */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: #333;
       text-align: center;
     }
     h1 {
-      font-size: 3em;
+      font-size: 2.5em;
       margin: 0;
+      max-width: 90vw;
+      word-wrap: break-word;
     }
     p {
-      font-size: 1.5em;
+      font-size: 1.2em;
       margin: 10px 0;
+      max-width: 80vw;
+      word-wrap: break-word;
     }
-    .btn {
-      background-color: #007bff;
-      color: white;
-      padding: 15px 30px;
-      border-radius: 5px;
-      font-size: 1em;
+
+    .side-menu a {
+      margin: 10px 0;
+      color: #333;
+      font-size: 1.2em;
       text-decoration: none;
-      transition: background-color 0.3s;
-    }
-    .btn:hover {
-      background-color: #0056b3;
     }
   </style>
 </head>
 <body>
 <div class="main-container">
-  <div class="overlay"></div>
-  <div class="content">
+  <div class="navbar">
+    <div class="logo">Connecting Moment</div>
+    <div class="categories-menu">
+      <div class="categories">
+        <a href="/">HOME</a>
+        <a href="/board/list">BOARD</a>
+        <a href="/user/">MY PAGE</a>
+        <a href="/user/login">LOGIN/LOGOUT</a>
+      </div>
+    </div>
+  </div>
+  <div class="overlay">
     <h1>Welcome to Our Community</h1>
     <p>참여하고 의견을 나눌 수 있는 공간입니다</p>
-    <a href="/board" class="btn">게시판 보기</a>
   </div>
 </div>
+<script>
+</script>
 </body>
 </html>
