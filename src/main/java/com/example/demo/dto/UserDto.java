@@ -7,17 +7,15 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class User {
+public class UserDto {
 
-    // 이름, 아아디, 비번, 이메일, 생일, sns
     private String id;
-    private String name;
-    private String email;
     private String pwd;
+    private String email;
     private String birth;
     private String sns;
-
-    public boolean checkPwd(String otherPwd) {
-        return pwd.equals(otherPwd);
-    }
+    private String reg_date;
+    private String reg_id;
+    private String up_date;
+    private String up_id;
 }
