@@ -4,6 +4,7 @@ import com.example.demo.dao.CategoryDaoImpl;
 import com.example.demo.dto.CategoryDto;
 import com.example.demo.exception.CategoryAlreadyExistsException;
 import com.example.demo.exception.CategoryFormInvalidException;
+import com.example.demo.exception.CategoryNotFoundException;
 import com.example.demo.exception.InternalServerError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -39,6 +40,16 @@ public class CategoryServiceImpl {
         } catch (DataIntegrityViolationException e) {
             throw new CategoryFormInvalidException("카테고리 데이터 입력 형식이 잘못되었습니다.");
         }
+    }
+
+    public CategoryDto findByCode(String code) {
+        var found = categoryDao.selectByCode(code);
+
+        if (found == null) {
+            throw new CategoryNotFoundException("해당 " + code + "를 가진 카테고리를 찾을 수 없습니다.");
+        }
+
+        return found;
     }
 
 

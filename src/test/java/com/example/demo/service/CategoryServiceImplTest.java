@@ -7,6 +7,7 @@ import com.example.demo.dao.CategoryDaoImpl;
 import com.example.demo.dto.CategoryDto;
 import com.example.demo.exception.CategoryAlreadyExistsException;
 import com.example.demo.exception.CategoryFormInvalidException;
+import com.example.demo.exception.CategoryNotFoundException;
 import com.example.demo.exception.InternalServerError;
 import java.util.ArrayList;
 import java.util.List;
@@ -141,7 +142,9 @@ class CategoryServiceImplTest {
     @Test
     public void test7() {
         // dao에서 예외 발생시키기
-        // service에서 해당 에러를 InternalServerError로 변환해서 던지기
+        // service에서 해당 에러를 RuntimeException 변환해서 던지기
+        when(categoryDao.selectByCode("cate_code")).thenThrow(new RuntimeException("예기치 못한 에러"));
+        assertThrows(RuntimeException.class, () -> target.findByCode("cate_code"));
     }
 
     @DisplayName("2-1. 없는 코드로 카테고리를 조회하는 경우 null 반환")
@@ -149,6 +152,8 @@ class CategoryServiceImplTest {
     public void test8() {
         // dao에서 null 반환하도록 설정
         // service에서 해당 에러를 CategoryNotFoundException로 변환해서 던지기
+        when(categoryDao.selectByCode("cate_code")).thenReturn(null);
+        assertThrows(CategoryNotFoundException.class, () -> target.findByCode("cate_code"));
     }
 
     @DisplayName("3-1. 여러개의 카테고리 등록하고 각각 조회해서 비교해보기")
@@ -158,6 +163,12 @@ class CategoryServiceImplTest {
         // cnt 만큼 fixture에 카테고리 추가
         // dao에서 select 호출시 항상 특정 dto 반환하게 가정
         // service 호출시 각각의 카테고리를 조회해서 비교
+        createFixture(cnt);
+        fixture.forEach(dto -> {
+            when(categoryDao.selectByCode(dto.getCate_code())).thenReturn(dto);
+            var foundDto = target.findByCode(dto.getCate_code());
+            assertTrue(isSameCategoryDto(dto, foundDto));
+        });
     }
 
     @DisplayName("3-2. 여러개의 카테고리 등록하고 그중에 랜덤으로 하나 뽑아서 조회해서 비교해보기")
@@ -168,6 +179,11 @@ class CategoryServiceImplTest {
         // 랜덤 인덱스 설정
         // dao에서 select 호출시 항상 특정 dto 반환하게 가정
         // service 호출시 랜덤으로 하나의 카테고리를 조회해서 비교
+        createFixture(cnt);
+        var randomIdx = chooseRandomIdx(cnt);
+        when(categoryDao.selectByCode(fixture.get(randomIdx).getCate_code())).thenReturn(fixture.get(randomIdx));
+        var foundDto = target.findByCode(fixture.get(randomIdx).getCate_code());
+        assertTrue(isSameCategoryDto(fixture.get(randomIdx), foundDto));
     }
 
     // C-2. 카테고리 전체 조회
@@ -333,7 +349,7 @@ class CategoryServiceImplTest {
         return dto;
     }
 
-    private int chooseRandomIndex(int cnt) {
+    private int chooseRandomIdx(int cnt) {
         return (int) (Math.random() * cnt);
     }
 
@@ -341,6 +357,15 @@ class CategoryServiceImplTest {
         for (int i = 0; i < cnt; i++) {
             fixture.add(createCategoryDto(i));
         }
+    }
+
+    private boolean isSameCategoryDto(CategoryDto dto1, CategoryDto dto2) {
+        return dto1.getCate_code().equals(dto2.getCate_code())
+                && dto1.getTop_cate().equals(dto2.getTop_cate())
+                && dto1.getName().equals(dto2.getName())
+                && dto1.getComt().equals(dto2.getComt())
+                && dto1.getReg_id().equals(dto2.getReg_id())
+                && dto1.getUp_id().equals(dto2.getUp_id());
     }
 
 }
