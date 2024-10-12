@@ -6,6 +6,7 @@ import com.example.demo.exception.CategoryAlreadyExistsException;
 import com.example.demo.exception.CategoryFormInvalidException;
 import com.example.demo.exception.CategoryNotFoundException;
 import com.example.demo.exception.InternalServerError;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
@@ -50,6 +51,23 @@ public class CategoryServiceImpl {
         }
 
         return found;
+    }
+
+    public List<CategoryDto> findAll() {
+        return categoryDao.selectAll();
+    }
+
+    public void modify(CategoryDto dto) {
+        try {
+            int rowCnt = categoryDao.update(dto);
+            if (rowCnt != 1) {
+                throw new InternalServerError("DB에 정상적으로 반영되지 못했습니다. 현재 적용된 로우수는 " + rowCnt + "입니다.");
+            }
+        } catch (DuplicateKeyException e) {
+            throw new CategoryAlreadyExistsException("이미 존재하는 카테고리입니다.");
+        } catch (DataIntegrityViolationException e) {
+            throw new CategoryFormInvalidException("카테고리 데이터 입력 형식이 잘못되었습니다.");
+        }
     }
 
 

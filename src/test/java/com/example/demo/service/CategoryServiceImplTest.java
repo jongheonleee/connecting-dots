@@ -197,6 +197,8 @@ class CategoryServiceImplTest {
     public void test11() {
         // dao에서 예외 발생시키기
         // service에서 해당 에러를 InternalServerError로 변환해서 던지기
+        when(categoryDao.selectAll()).thenThrow(new RuntimeException("예기치 못한 에러"));
+        assertThrows(RuntimeException.class, () -> target.findAll());
     }
 
     @DisplayName("3-1. 여러개의 카테고리 등록하고 각각 조회해서 비교해보기")
@@ -206,6 +208,13 @@ class CategoryServiceImplTest {
         // cnt 만큼 fixture에 카테고리 추가
         // dao에서 selectAll 호출시 항상 특정 dto 리스트 반환하게 가정
         // service 호출시 각각의 카테고리를 조회해서 비교
+        createFixture(cnt);
+        when(categoryDao.selectAll()).thenReturn(fixture);
+        var foundList = target.findAll();
+        assertEquals(cnt, foundList.size());
+        for (int i = 0; i < cnt; i++) {
+            assertTrue(isSameCategoryDto(fixture.get(i), foundList.get(i)));
+        }
     }
 
 
@@ -225,6 +234,8 @@ class CategoryServiceImplTest {
     public void test14() {
         // dao에서 예외 발생시키기
         // service에서 해당 에러를 InternalServerError로 변환해서 던지기
+        when(categoryDao.update(createCategoryDto(1))).thenThrow(new RuntimeException("예기치 못한 에러"));
+        assertThrows(RuntimeException.class, () -> target.modify(createCategoryDto(1)));
     }
 
     @DisplayName("1-2. dao에서 DataIntegrityViolationException 발생")
@@ -232,6 +243,9 @@ class CategoryServiceImplTest {
     public void test15() {
         // dao에서 DataIntegrityViolationException 발생시키기
         // service에서 해당 에러를 CategoryFormInvalidException 변환해서 던지기
+        var dto = createCategoryDto(1);
+        when(categoryDao.update(dto)).thenThrow(new DataIntegrityViolationException("예기치 못한 에러"));
+        assertThrows(CategoryFormInvalidException.class, () -> target.modify(dto));
     }
 
     @DisplayName("1-3. dao에서 DuplicateKeyException 발생")
@@ -239,13 +253,19 @@ class CategoryServiceImplTest {
     public void test16() {
         // dao에서 DuplicateKeyException 발생시키기
         // service에서 해당 에러를 CategoryAlreadyExistsException 변환해서 던지기
+        var dto = createCategoryDto(1);
+        when(categoryDao.update(dto)).thenThrow(new DuplicateKeyException("예기치 못한 에러"));
+        assertThrows(CategoryAlreadyExistsException.class, () -> target.modify(dto));
     }
 
-    @DisplayName("2-1. 없는 코드로 카테고리를 수정하는 경우")
+    @DisplayName("2-1. dao에서 카테고리 수정이 정상적으로 처리되지 않은 경우")
     @Test
     public void test17() {
-        // dao에서 null 반환하도록 설정
-        // service에서 해당 에러를 CategoryNotFoundException로 변환해서 던지기
+        // dao에서 적용된 로우수 0 반환하도록 설정
+        // service에서 해당 에러를 InternalServerError 변환해서 던지기
+        var dto = createCategoryDto(1);
+        when(categoryDao.update(dto)).thenReturn(0);
+        assertThrows(InternalServerError.class, () -> target.modify(dto));
     }
 
     @DisplayName("3-1. 여러개의 카테고리 등록하고 각각 수정해서 비교해보기")
@@ -255,6 +275,11 @@ class CategoryServiceImplTest {
         // cnt 만큼 fixture에 카테고리 추가
         // dao에서 update 호출시 항상 성공이라고 가정
         // service 호출시 각각의 카테고리를 수정해서 비교
+        createFixture(cnt);
+        fixture.forEach(dto -> {
+            when(categoryDao.update(dto)).thenReturn(1);
+            assertDoesNotThrow(() -> target.modify(dto));
+        });
     }
 
     @DisplayName("3-2. 여러개의 카테고리 등록하고 그중에 랜덤으로 하나 뽑아서 수정해서 비교해보기")
@@ -265,6 +290,10 @@ class CategoryServiceImplTest {
         // 랜덤 인덱스 설정
         // dao에서 update 호출시 항상 성공이라고 가정
         // service 호출시 랜덤으로 하나의 카테고리를 수정해서 비교
+        createFixture(cnt);
+        var randomIdx = chooseRandomIdx(cnt);
+        when(categoryDao.update(fixture.get(randomIdx))).thenReturn(1);
+        assertDoesNotThrow(() -> target.modify(fixture.get(randomIdx)));
     }
 
 
