@@ -1,5 +1,7 @@
 package com.example.demo.dao;
 
+import com.example.demo.dto.CategoryDto;
+import java.util.List;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -15,6 +17,30 @@ public class CategoryDaoImpl {
 
     public int count() {
         return session.selectOne(namespace + "count");
+    }
+
+    public int insert(CategoryDto dto) {
+        return session.insert(namespace + "insert", dto);
+    }
+
+    public List<CategoryDto> selectAll() {
+        return session.selectList(namespace + "selectAll");
+    }
+
+    public CategoryDto selectByCode(String cate_code) {
+        return session.selectOne(namespace + "selectByCode", cate_code);
+    }
+
+    public int deleteAll() {
+        return session.delete(namespace + "deleteAll");
+    }
+
+    public int deleteByCode(String cate_code) {
+        return session.delete(namespace + "deleteByCode", cate_code);
+    }
+
+    public int update(CategoryDto dto) {
+        return session.update(namespace + "update", dto);
     }
 
 }

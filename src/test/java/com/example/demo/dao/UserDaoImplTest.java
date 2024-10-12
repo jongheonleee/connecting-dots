@@ -23,8 +23,12 @@ import org.springframework.dao.DuplicateKeyException;
  * - A. 회원 수 카운트 ✅
  * - B. 회원 등록 ✅
  * - C. 회원 조회 ✅
+ *  - C-1. 단건 조회 ✅
+ *  - C-2. 전체 조회 ✅
  * - D. 회원 수정 ✅
  * - E. 회원 삭제 ✅
+ *  - E-1. 단건 삭제 ✅
+ *  - E-2. 전체 삭제 ✅
  *
  */
 

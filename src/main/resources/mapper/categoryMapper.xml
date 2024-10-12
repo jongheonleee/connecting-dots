@@ -6,4 +6,49 @@
     SELECT COUNT(*)
     FROM category
   </select>
+
+  <insert id="insert" parameterType="com.example.demo.dto.CategoryDto">
+    INSERT INTO category
+        (cate_code, top_cate, name,
+        comt, reg_date, reg_id,
+        up_date, up_id)
+    VALUES
+        (#{cate_code}, #{top_cate}, #{name},
+         #{comt}, now(), #{reg_id},
+         now(), #{up_id});
+  </insert>
+
+  <select id="selectAll" resultType="com.example.demo.dto.CategoryDto">
+    SELECT
+        cate_code, top_cate, name,
+        comt, reg_date, reg_id,
+        up_date, up_id
+    FROM category
+  </select>
+
+  <select id="selectByCode" parameterType="String" resultType="com.example.demo.dto.CategoryDto">
+    SELECT
+      cate_code, top_cate, name,
+      comt, reg_date, reg_id,
+      up_date, up_id
+    FROM category
+    WHERE cate_code = #{cate_code}
+  </select>
+
+  <update id="update" parameterType="com.example.demo.dto.CategoryDto">
+    UPDATE category
+    SET
+        top_cate = #{top_cate}, name = #{name},
+        comt = #{comt}, up_date = now(), up_id = #{up_id}
+    WHERE cate_code = #{cate_code}
+  </update>
+
+  <delete id="deleteByCode" parameterType="String">
+    DELETE FROM category
+    WHERE cate_code = #{cate_code}
+  </delete>
+
+  <delete id="deleteAll">
+    DELETE FROM category
+  </delete>
 </mapper>
