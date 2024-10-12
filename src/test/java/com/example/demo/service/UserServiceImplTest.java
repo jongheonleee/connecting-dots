@@ -274,7 +274,7 @@ class UserServiceImplTest {
 
         when(userDao.update(updatedFormDto)).thenReturn(1);
 
-        assertTrue(1 == target.modify(updatedFormDto));
+        assertDoesNotThrow(() -> target.modify(updatedFormDto));
 
     }
 
@@ -310,7 +310,7 @@ class UserServiceImplTest {
         when(userDao.selectById(userDto.getId())).thenReturn(userDto);
         when(userDao.deleteById(userDto.getId())).thenReturn(1);
 
-        assertTrue(1 == target.remove(userDto.getId()));
+        assertDoesNotThrow(() -> target.remove(userDto.getId()));
     }
 
     // E. 회원 전체 삭제
@@ -325,7 +325,7 @@ class UserServiceImplTest {
     public void test18(int cnt) {
         createFixture(cnt);
         when(userDao.deleteAll()).thenReturn(cnt);
-        assertTrue(cnt == target.removeAll());
+        assertDoesNotThrow(() -> target.removeAll());
     }
 
     private void createFixture(int cnt) {

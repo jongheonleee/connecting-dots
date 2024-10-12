@@ -29,7 +29,7 @@ public class UserServiceImpl {
         return userDao.count();
     }
 
-    public int create(UserFormDto dto) {
+    public void create(UserFormDto dto) {
         int rowCnt = 0;
         try {
             rowCnt = userDao.insert(dto);
@@ -41,8 +41,6 @@ public class UserServiceImpl {
         } catch (DataIntegrityViolationException e) {
             throw new UserFormInvalidException("입력하신 데이터가 올바르지 않습니다. " + e.getMessage());
         }
-
-        return rowCnt;
     }
 
     public User findById(String id) {
@@ -57,7 +55,7 @@ public class UserServiceImpl {
         return userDao.selectAll();
     }
 
-    public int modify(UserUpdatedFormDto dto) {
+    public void modify(UserUpdatedFormDto dto) {
         int rowCnt = 0;
 
         try {
@@ -70,11 +68,9 @@ public class UserServiceImpl {
         } catch (DataIntegrityViolationException e) {
             throw new UserFormInvalidException("입력하신 데이터가 올바르지 않습니다. " + e.getMessage());
         }
-
-        return rowCnt;
     }
 
-    public int remove(String id) {
+    public void remove(String id) {
         if (findById(id) == null) {
             throw new UserNotFoundException("해당 " + id + "를 가진 사용자를 찾을 수 없습니다.");
         }
@@ -84,13 +80,10 @@ public class UserServiceImpl {
         if (rowCnt != 1) {
             throw new InternalServerError("DB에 정상적으로 반영도지 못했습니다. 현재 적용된 로우수는 " + rowCnt + "입니다.");
         }
-
-
-        return rowCnt;
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public int removeAll() {
+    public void removeAll() {
         int totalCnt = count();
         int rowCnt = 0;
 
@@ -98,8 +91,6 @@ public class UserServiceImpl {
         if (rowCnt == totalCnt) {
             throw new InternalServerError("DB에 정상적으로 반영도지 못했습니다. 현재 적용된 로우수는 " + rowCnt + "입니다.");
         }
-
-        return rowCnt;
     }
 
 }
