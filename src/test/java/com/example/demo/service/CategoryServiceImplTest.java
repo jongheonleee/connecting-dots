@@ -1,9 +1,11 @@
 package com.example.demo.service;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 import com.example.demo.dao.CategoryDaoImpl;
 import com.example.demo.dto.CategoryDto;
+import com.example.demo.exception.InternalServerError;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,7 +47,9 @@ class CategoryServiceImplTest {
     @Test
     public void test1() {
         // dao에서 예외 발생시키기
-        // service에서 해당 에러를 InternalServerError로 변환해서 던지기
+        // service에서 해당 에러를 RuntimeException로 변환해서 던지기
+        when(categoryDao.count()).thenThrow(new RuntimeException("예기치 못한 에러"));
+        assertThrows(RuntimeException.class, () -> target.count());
     }
 
     @DisplayName("3-1. 카테고리 여러개 등록해 놓고 카테고리 수 카운트 해보기 ")
@@ -54,6 +58,8 @@ class CategoryServiceImplTest {
     public void test2(int cnt) {
         // dao에서 cnt 만큼 카테고리 카운팅하게 설정
         // service에서 카운팅한 결과를 반환
+        when(categoryDao.count()).thenReturn(cnt);
+        assertEquals(cnt, target.count());
     }
 
     // B. 카테고리 등록
