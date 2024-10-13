@@ -1,5 +1,6 @@
 package com.example.demo.dto;
 
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -16,4 +17,5 @@ public class CategoryDto {
     private String reg_id;
     private String up_date;
     private String up_id;
+    private List<CategoryDto> subCategories;
 }

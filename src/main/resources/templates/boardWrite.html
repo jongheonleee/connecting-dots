@@ -44,8 +44,10 @@
     }
     .navbar .categories a {
       color: #333;
-      text-decoration: none;
-      font-size: 20px;
+      text-decoration: none; /* 밑줄 제거 */
+    }
+    .navbar .categories a:hover {
+      color: #333; /* 글자 색이 바뀌지 않도록 설정 */
     }
     .form-container {
       margin-top: 20px;
@@ -66,12 +68,11 @@
     select,
     input[type="file"],
     textarea {
-      width: 100%; /* 가로 폭을 100%로 설정하여 동일하게 만듦 */
-      max-width: 100%; /* 최대 너비 설정 */
+      width: 100%;
       padding: 10px;
       border: 1px solid #007bff;
       border-radius: 5px;
-      box-sizing: border-box; /* 패딩 포함된 박스 크기 조정 */
+      box-sizing: border-box;
     }
     textarea {
       height: 150px;
@@ -107,12 +108,15 @@
     <h2 style="text-align: center; color: #007bff;">게시물 작성</h2>
     <form action="#" method="post" enctype="multipart/form-data">
       <div class="form-group">
-        <label for="category">카테고리</label>
-        <select id="category" name="category" required>
-          <option value="일상">일상</option>
-          <option value="꿀 팁">꿀 팁</option>
-          <option value="IT 커리어">IT 커리어</option>
-          <option value="공부">공부</option>
+        <label for="mainCategory">대분류 카테고리</label>
+        <select id="mainCategory" name="mainCategory" onchange="showSubCategory()" required>
+          <!-- 상위 카테고리가 JavaScript를 통해 동적으로 추가됨 -->
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="subCategory">중분류 카테고리</label>
+        <select id="subCategory" name="subCategory" required>
+          <!-- 하위 카테고리가 JavaScript를 통해 동적으로 추가됨 -->
         </select>
       </div>
       <div class="form-group">
@@ -135,5 +139,50 @@
     </form>
   </div>
 </div>
+<script th:inline="javascript">
+  const TOP_CATEGORY_CODE = '0';
+  const CATEGORIES = JSON.parse(/*[[${categoriesJson}]]*/ '[]'); // 카테고리 JSON 문자열 객체를 배열로 변환
+  const TOP_CATEGORY_ID = 'mainCategory';
+  const SUB_CATEGORY_ID = 'subCategory';
+
+  window.onload = function () {
+    showTopCategory();
+  }
+
+  const showTopCategory = () => {
+    const topCategories = findTopCategories();
+    generateSomePartDynamically(topCategories, TOP_CATEGORY_ID);
+  }
+
+  const showSubCategory = () => {
+    const selectedTopCategoryCode = document.getElementById(TOP_CATEGORY_ID).value;
+    const relatedSubCategories = findSubCategories(selectedTopCategoryCode);
+    generateSomePartDynamically(relatedSubCategories, SUB_CATEGORY_ID);
+  }
+
+  const generateSomePartDynamically = (categories, id) => {
+    document.getElementById(id).innerHTML = '';
+    categories.sort();
+
+    for (const category of categories) {
+      document.getElementById(id).innerHTML += createOptionTag(category);
+    }
+  }
+
+  const findTopCategories = () => {
+    return CATEGORIES.filter(category => category.top_cate === TOP_CATEGORY_CODE);
+  }
+
+  const findSubCategories = (topCategoryCode) => {
+    const selectedTopCategory = CATEGORIES.filter(category =>
+            category.cate_code === topCategoryCode)[0];
+    return selectedTopCategory.subCategories;
+  }
+
+  const createOptionTag = (category) => {
+    return `<option value=${category.cate_code}>${category.name}</option>`;
+  }
+
+</script>
 </body>
 </html>

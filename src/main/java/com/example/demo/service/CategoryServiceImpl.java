@@ -101,6 +101,21 @@ public class CategoryServiceImpl {
         return categoryDao.selectAllByTopCate(top_cate);
     }
 
+    public List<CategoryDto> findTopAndSubCategory() {
+        // 대분류의 카테고리를 조회한다
+        // 대분류 카테고리와 연관덴 중분류 카테고리를 조회한다
+        // dto에 담아서 리턴한다
+        List<CategoryDto> categories = categoryDao.selectAllTopCategory();
+        for (var topCategory : categories) {
+            String topCate = topCategory.getCate_code();
+            List<CategoryDto> subCategories = categoryDao.selectAllByTopCate(topCate);
+            topCategory.setSubCategories(subCategories);
+        }
+
+        return categories;
+
+    }
+
 
 
 }

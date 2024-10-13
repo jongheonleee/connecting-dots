@@ -35,7 +35,7 @@
     WHERE top_cate = '0'
   </select>
 
-  <select id="selectAllByTopCateCode" parameterType="top_cate" resultType="com.example.demo.dto.CategoryDto">
+  <select id="selectAllByTopCateCode" parameterType="String" resultType="com.example.demo.dto.CategoryDto">
     SELECT
       cate_code, top_cate, name,
       comt, reg_date, reg_id,
