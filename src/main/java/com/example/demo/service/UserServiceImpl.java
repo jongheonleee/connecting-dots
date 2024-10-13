@@ -85,9 +85,8 @@ public class UserServiceImpl {
     @Transactional(rollbackFor = Exception.class)
     public void removeAll() {
         int totalCnt = count();
-        int rowCnt = 0;
+        int rowCnt = userDao.deleteAll();
 
-        rowCnt = userDao.deleteAll();
         if (rowCnt == totalCnt) {
             throw new InternalServerError("DB에 정상적으로 반영도지 못했습니다. 현재 적용된 로우수는 " + rowCnt + "입니다.");
         }

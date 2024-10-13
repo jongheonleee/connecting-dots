@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CategoryServiceImpl {
@@ -70,6 +71,35 @@ public class CategoryServiceImpl {
         }
     }
 
+    public void remove(String code) {
+        if (findByCode(code) == null) {
+            throw new CategoryNotFoundException("해당 " + code + "를 가진 카테고리를 찾을 수 없습니다.");
+        }
+
+        int rowCnt = categoryDao.deleteByCode(code);
+
+        if (rowCnt != 1) {
+            throw new InternalServerError("DB에 정상적으로 반영되지 못했습니다. 현재 적용된 로우수는 " + rowCnt + "입니다.");
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void removeAll() {
+        int totalCnt = count();
+        int rowCnt = categoryDao.deleteAll();
+
+        if (totalCnt != rowCnt) {
+            throw new InternalServerError("DB에 정상적으로 반영되지 못했습니다. 현재 적용된 로우수는 " + rowCnt + "입니다.");
+        }
+    }
+
+    public List<CategoryDto> findAllTopCategory() {
+        return categoryDao.selectAllTopCategory();
+    }
+
+    public List<CategoryDto> findAllByTopCate(String top_cate) {
+        return categoryDao.selectAllByTopCate(top_cate);
+    }
 
 
 

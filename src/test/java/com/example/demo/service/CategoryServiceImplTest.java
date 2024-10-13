@@ -310,13 +310,20 @@ class CategoryServiceImplTest {
     public void test20() {
         // dao에서 예외 발생시키기
         // service에서 해당 에러를 InternalServerError로 변환해서 던지기
+        String code = "cate_code";
+        when(categoryDao.selectByCode(code)).thenReturn(createCategoryDto(1));
+        when(categoryDao.deleteByCode(code)).thenThrow(new RuntimeException("예기치 못한 에러"));
+        assertThrows(RuntimeException.class, () -> target.remove(code));
     }
 
     @DisplayName("2-1. 없는 코드로 삭제를 하는 경우")
     @Test
     public void test21() {
-        // dao에서 null 반환하도록 설정
+        // dao에서 적용돤 로우수 0 반환하도록 설정
         // service에서 해당 에러를 CategoryNotFoundException로 변환해서 던지기
+        String code = "cate_code";
+        when(categoryDao.selectByCode(code)).thenReturn(null);
+        assertThrows(CategoryNotFoundException.class, () -> target.remove(code));
     }
 
     @DisplayName("3-1. 여러개의 카테고리 등록하고 각각 삭제해서 비교해보기")
@@ -326,6 +333,13 @@ class CategoryServiceImplTest {
         // cnt 만큼 fixture에 카테고리 추가
         // dao에서 delete 호출시 항상 성공이라고 가정
         // service 호출시 각각의 카테고리를 삭제해서 비교
+        createFixture(cnt);
+        fixture.forEach(dto -> {
+            String code = dto.getCate_code();
+            when(categoryDao.selectByCode(code)).thenReturn(dto);
+            when(categoryDao.deleteByCode(code)).thenReturn(1);
+            assertDoesNotThrow(() -> target.remove(code));
+        });
     }
 
     @DisplayName("3-2. 여러개의 카테고리 등록하고 그중에 랜덤으로 하나 뽑아서 삭제해서 비교해보기")
@@ -336,6 +350,12 @@ class CategoryServiceImplTest {
         // 랜덤 인덱스 설정
         // dao에서 delete 호출시 항상 성공이라고 가정
         // service 호출시 랜덤으로 하나의 카테고리를 삭제해서 비교
+        createFixture(cnt);
+        var randomIdx = chooseRandomIdx(cnt);
+        String code = fixture.get(randomIdx).getCate_code();
+        when(categoryDao.selectByCode(code)).thenReturn(fixture.get(randomIdx));
+        when(categoryDao.deleteByCode(code)).thenReturn(1);
+        assertDoesNotThrow(() -> target.remove(code));
     }
 
 
@@ -352,6 +372,8 @@ class CategoryServiceImplTest {
         // dao에서 예외 발생시키기
         // service에서 해당 에러를 InternalServerError로 변환해서 던지기
         // 롤백 처리 잘 됐는지 확인
+        when(categoryDao.deleteAll()).thenThrow(new RuntimeException("예기치 못한 에러"));
+        assertThrows(RuntimeException.class, () -> target.removeAll());
     }
 
     @DisplayName("3-1. 여러개의 카테고리 등록하고 전체 삭제해서 비교해보기")
@@ -361,6 +383,10 @@ class CategoryServiceImplTest {
         // cnt 만큼 fixture에 카테고리 추가
         // dao에서 deleteAll 호출시 항상 성공이라고 가정
         // service 호출시 전체 카테고리를 삭제해서 비교
+        createFixture(cnt);
+        when(categoryDao.count()).thenReturn(cnt);
+        when(categoryDao.deleteAll()).thenReturn(cnt);
+        assertDoesNotThrow(() -> target.removeAll());
     }
 
     private CategoryDto createCategoryDto(int i) {

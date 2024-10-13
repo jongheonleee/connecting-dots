@@ -27,6 +27,14 @@ public class CategoryDaoImpl {
         return session.selectList(namespace + "selectAll");
     }
 
+    public List<CategoryDto> selectAllTopCategory() {
+        return session.selectList(namespace + "selectAllTopCategory");
+    }
+
+    public List<CategoryDto> selectAllByTopCate(String top_cate) {
+        return session.selectList(namespace + "selectAllByTopCateCode", top_cate);
+    }
+
     public CategoryDto selectByCode(String cate_code) {
         return session.selectOne(namespace + "selectByCode", cate_code);
     }
