@@ -99,8 +99,13 @@
       <div class="categories">
         <a href="/">HOME</a>
         <a href="/board/list">BOARD</a>
-        <a href="/user/">MY PAGE</a>
-        <a href="/user/login">LOGIN/LOGOUT</a>
+        <a href="/user/myPage">MY PAGE</a>
+        <div th:if="${session.id != null}">
+          <a th:href="@{/user/logout}">LOGOUT</a>
+        </div>
+        <div th:if="${session.id == null}">
+          <a th:href="@{/user/login}">LOGIN</a>
+        </div>
       </div>
     </div>
   </div>

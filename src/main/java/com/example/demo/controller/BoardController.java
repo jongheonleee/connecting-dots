@@ -4,6 +4,8 @@ import com.example.demo.dto.CategoryDto;
 import com.example.demo.service.CategoryServiceImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,22 +27,50 @@ public class BoardController {
     }
 
     @GetMapping("/list")
-    public String getListPage(Model model) {
-        getCategories();
+    public String getListPage(HttpServletRequest request) {
+        // 로그인 안되있으면 로그인 요청하기
+        // 이때, 이전의 url 정보 저장해서 리다이렉션으로 보냄
+        if (!isLogin(request)) {
+            String toUrl = request.getRequestURI() != null ? request.getRequestURI() : "/";
+            return "redirect:/user/login?toUrl=" + toUrl;
+        }
 
+
+
+        getCategories();
         return "boardList";
     }
 
     @GetMapping("/detail")
-    public String getDetailPage() {
+    public String getDetailPage(HttpServletRequest request) {
+        // 로그인 안되있으면 로그인 요청하기
+        // 이때, 이전의 url 정보 저장해서 리다이렉션으로 보냄
+        if (!isLogin(request)) {
+            String toUrl = request.getRequestURI() != null ? request.getRequestURI() : "/";
+            return "redirect:/user/login?toUrl=" + toUrl;
+        }
+
+
 
         return "boardDetail";
     }
 
     @GetMapping("/write")
-    public String getWritePage(Model model) throws JsonProcessingException {
+    public String getWritePage(HttpServletRequest request) throws JsonProcessingException {
+        // 로그인 안되있으면 로그인 요청하기
+        // 이때, 이전의 url 정보 저장해서 리다이렉션으로 보냄
+        if (!isLogin(request)) {
+            String toUrl = request.getRequestURI() != null ? request.getRequestURI() : "/";
+            return "redirect:/user/login?toUrl=" + toUrl;
+        }
+
         getCategoriesJson();
         return "boardWrite";
+    }
+
+    private boolean isLogin(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        return session != null && session.getAttribute("id") != null;
     }
 
     private @ModelAttribute("categories") List<CategoryDto> getCategories() {

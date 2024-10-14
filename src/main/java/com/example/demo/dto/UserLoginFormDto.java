@@ -13,4 +13,13 @@ public class UserLoginFormDto {
     private String pwd;
     private String toUrl;
     private boolean rememberMe;
+
+    public void setToUrl(String toUrl) {
+        if (toUrl == null || toUrl.equals("")) {
+            this.toUrl = "/";
+            return;
+        }
+
+        this.toUrl = toUrl;
+    }
 }
