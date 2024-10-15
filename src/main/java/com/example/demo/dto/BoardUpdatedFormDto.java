@@ -9,7 +9,7 @@ import lombok.ToString;
 @ToString
 public class BoardUpdatedFormDto {
 
-    private Long bno;
+    private Integer bno;
     private String title;
     private String content;
     private String comt;

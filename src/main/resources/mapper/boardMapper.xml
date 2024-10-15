@@ -23,7 +23,7 @@
   <!-- 게시글 조회 -->
   <select id="select" parameterType="int" resultType="com.example.demo.dto.BoardFormDto">
     SELECT
-        cate_code, id, title,
+        bno, cate_code, id, title,
         writer, view_cnt, reco_cnt,
         not_reco_cnt, content, comt,
         reg_date, reg_id, up_date, up_id
@@ -33,7 +33,7 @@
 
   <select id="selectAll" resultType="com.example.demo.dto.BoardFormDto">
     SELECT
-      cate_code, id, title,
+      bno, cate_code, id, title,
       writer, view_cnt, reco_cnt,
       not_reco_cnt, content, comt,
       reg_date, reg_id, up_date, up_id

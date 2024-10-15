@@ -8,13 +8,14 @@ import lombok.ToString;
 @Setter
 @ToString
 public class BoardFormDto {
+    private Integer bno;
     private String cate_code;
     private String id;
     private String title;
     private String writer;
-    private Long view_cnt;
-    private Long reco_cnt;
-    private Long not_reco_cnt;
+    private Integer view_cnt;
+    private Integer reco_cnt;
+    private Integer not_reco_cnt;
     private String content;
     private String comt;
     private String reg_date;

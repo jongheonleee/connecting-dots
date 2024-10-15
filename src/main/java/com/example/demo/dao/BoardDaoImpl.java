@@ -24,7 +24,7 @@ public class BoardDaoImpl {
         return session.insert(namespace + "insert", dto);
     }
 
-    public BoardFormDto select(Long bno) {
+    public BoardFormDto select(Integer bno) {
         return session.selectOne(namespace + "select", bno);
     }
 
@@ -36,19 +36,19 @@ public class BoardDaoImpl {
         return session.update(namespace + "update", dto);
     }
 
-    public int increaseViewCnt(Long bno) {
+    public int increaseViewCnt(Integer bno) {
         return session.update(namespace + "increaseViewCnt", bno);
     }
 
-    public int increaseRecoCnt(Long bno) {
+    public int increaseRecoCnt(Integer bno) {
         return session.update(namespace + "increaseRecoCnt", bno);
     }
 
-    public int increaseNotRecoCnt(Long bno) {
+    public int increaseNotRecoCnt(Integer bno) {
         return session.update(namespace + "increaseNotRecoCnt", bno);
     }
 
-    public int delete(Long bno) {
+    public int delete(Integer bno) {
         return session.delete(namespace + "delete", bno);
     }
 
