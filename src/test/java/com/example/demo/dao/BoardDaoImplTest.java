@@ -18,6 +18,7 @@ class BoardDaoImplTest {
     @BeforeEach
     public void setUp() {
         assertNotNull(target);
+        target.deleteAll();
     }
 
     @DisplayName("게시글 카운팅")

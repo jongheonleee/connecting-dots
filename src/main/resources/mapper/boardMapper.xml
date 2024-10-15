@@ -6,4 +6,79 @@
     SELECT COUNT(*)
     FROM board
   </select>
+
+  <!-- 게시글 등록 -->
+  <insert id="insert" parameterType="com.example.demo.dto.BoardFormDto">
+    INSERT INTO board
+        (cate_code, id, title,
+         writer, view_cnt, reco_cnt,
+         not_reco_cnt, content, comt,
+         reg_date, reg_id, up_date, up_id)
+    values (#{cate_code}, #{id}, #{title},
+            #{writer}, #{view_cnt}, #{reco_cnt},
+            #{not_reco_cnt}, #{content}, #{comt},
+            now(), #{reg_id}, now(), #{up_id});
+  </insert>
+
+  <!-- 게시글 조회 -->
+  <select id="select" parameterType="int" resultType="com.example.demo.dto.BoardFormDto">
+    SELECT
+        cate_code, id, title,
+        writer, view_cnt, reco_cnt,
+        not_reco_cnt, content, comt,
+        reg_date, reg_id, up_date, up_id
+    FROM board
+    WHERE bno = #{bno}
+  </select>
+
+  <select id="selectAll" resultType="com.example.demo.dto.BoardFormDto">
+    SELECT
+      cate_code, id, title,
+      writer, view_cnt, reco_cnt,
+      not_reco_cnt, content, comt,
+      reg_date, reg_id, up_date, up_id
+    FROM board
+  </select>
+
+  <!-- 게시글 수정 -->
+  <update id="update" parameterType="com.example.demo.dto.BoardFormDto">
+    UPDATE board
+    SET
+        title = #{title}, content = #{content}, comt = #{comt},
+        up_date = now(), up_id = #{up_id}
+    WHERE bno = #{bno}
+  </update>
+
+  <update id="increaseViewCnt" parameterType="int">
+    UPDATE board
+    SET
+        view_cnt = view_cnt + 1
+    WHERE bno = #{bno};
+  </update>
+
+  <update id="increaseRecoCnt" parameterType="int">
+    UPDATE board
+    SET
+      reco_cnt = reco_cnt + 1
+    WHERE bno = #{bno};
+  </update>
+
+  <update id="increaseNotRecoCnt" parameterType="int">
+    UPDATE board
+    SET
+      not_reco_cnt = not_reco_cnt + 1
+    WHERE bno = #{bno};
+  </update>
+
+  <!-- 게시글 삭제 -->
+  <delete id="delete" parameterType="int">
+    DELETE
+    FROM board
+    WHERE bno = #{bno}
+  </delete>
+
+  <delete id="deleteAll">
+    DELETE
+    FROM board
+  </delete>
 </mapper>

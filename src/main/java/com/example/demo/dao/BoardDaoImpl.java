@@ -1,5 +1,8 @@
 package com.example.demo.dao;
 
+import com.example.demo.dto.BoardFormDto;
+import com.example.demo.dto.BoardUpdatedFormDto;
+import java.util.List;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -16,5 +19,43 @@ public class BoardDaoImpl {
     public int count() {
         return session.selectOne(namespace + "count");
     }
+
+    public int insert(BoardFormDto dto) {
+        return session.insert(namespace + "insert", dto);
+    }
+
+    public BoardFormDto select(Long bno) {
+        return session.selectOne(namespace + "select", bno);
+    }
+
+    public List<BoardFormDto> selectAll() {
+        return session.selectList(namespace + "selectAll");
+    }
+
+    public int update(BoardUpdatedFormDto dto) {
+        return session.update(namespace + "update", dto);
+    }
+
+    public int increaseViewCnt(Long bno) {
+        return session.update(namespace + "increaseViewCnt", bno);
+    }
+
+    public int increaseRecoCnt(Long bno) {
+        return session.update(namespace + "increaseRecoCnt", bno);
+    }
+
+    public int increaseNotRecoCnt(Long bno) {
+        return session.update(namespace + "increaseNotRecoCnt", bno);
+    }
+
+    public int delete(Long bno) {
+        return session.delete(namespace + "delete", bno);
+    }
+
+    public int deleteAll() {
+        return session.delete(namespace + "deleteAll");
+    }
+
+
 
 }
