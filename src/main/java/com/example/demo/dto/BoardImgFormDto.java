@@ -1,5 +1,5 @@
 package com.example.demo.dto;
 
-public class ImgDto {
+public class BoardImgFormDto {
 
 }

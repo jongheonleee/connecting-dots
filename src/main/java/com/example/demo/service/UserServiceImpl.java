@@ -48,6 +48,7 @@ public class UserServiceImpl {
         if (foundUser == null) {
             throw new UserNotFoundException("해당 " + id + "를 가진 사용자를 찾을 수 없습니다.");
         }
+
         return foundUser;
     }
 
@@ -71,7 +72,8 @@ public class UserServiceImpl {
     }
 
     public void remove(String id) {
-        if (findById(id) == null) {
+        var foundUser = userDao.selectById(id);
+        if (foundUser == null) {
             throw new UserNotFoundException("해당 " + id + "를 가진 사용자를 찾을 수 없습니다.");
         }
 
@@ -84,7 +86,7 @@ public class UserServiceImpl {
 
     @Transactional(rollbackFor = Exception.class)
     public void removeAll() {
-        int totalCnt = count();
+        int totalCnt = userDao.count();
         int rowCnt = userDao.deleteAll();
 
         if (rowCnt == totalCnt) {
