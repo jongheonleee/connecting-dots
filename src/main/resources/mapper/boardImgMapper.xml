@@ -45,7 +45,7 @@
   </select>
 
   <!-- 이미지 수정 -->
-  <update id="update" parameterType="com.example.demo.dto.BoardImgFormDto">
+  <update id="update" parameterType="com.example.demo.dto.BoardImgUpdatedFormDto">
     UPDATE image
     SET
         img = #{img}, comt = #{comt},up_date = now(),

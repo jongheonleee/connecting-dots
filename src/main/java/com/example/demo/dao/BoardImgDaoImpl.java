@@ -1,6 +1,7 @@
 package com.example.demo.dao;
 
 import com.example.demo.dto.BoardImgFormDto;
+import com.example.demo.dto.BoardImgUpdatedFormDto;
 import java.util.List;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;

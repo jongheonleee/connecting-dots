@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class BoardServiceImpl {
 
     private static final int MAX_RETRY = 10;
-    private static final int RETRY_DELAY = 1_000;
+    private static final int RETRY_DELAY = 5_000;
 
     private BoardDaoImpl boardDao;
     private BoardImgServiceImpl boardImgService; // 추후에 개발
