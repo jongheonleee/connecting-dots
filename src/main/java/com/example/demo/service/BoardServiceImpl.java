@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dao.BoardDaoImpl;
 import com.example.demo.dto.BoardFormDto;
+import com.example.demo.dto.BoardImgFormDto;
 import com.example.demo.dto.BoardUpdatedFormDto;
 import com.example.demo.exception.BoardFormInvalidException;
 import com.example.demo.exception.BoardNotFoundException;
@@ -17,6 +18,7 @@ import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class BoardServiceImpl {
@@ -43,23 +45,36 @@ public class BoardServiceImpl {
             maxAttempts = MAX_RETRY,
             backoff = @Backoff(delay = RETRY_DELAY)
     )
-    public void create(BoardFormDto dto) {
+    public void create(BoardFormDto dto, List<MultipartFile> boardImgFiles) {
         int rowCnt = 0;
         try {
+            // 게시글 등록
             rowCnt = boardDao.insert(dto);
             if (rowCnt != 1) {
                 throw new InternalServerError("DB에 정상적으로 반영되지 못했습니다. 현재 적용된 로우수는 " + rowCnt + "입니다.");
             }
+
+            System.out.println("1단계 통과");
+
+            // 이미지 등록
+            for (int i=0; i<boardImgFiles.size(); i++) {
+                var boardImgDto = new BoardImgFormDto();
+                boardImgDto.setBno(dto.getBno());
+                boardImgService.createBoardImg(boardImgDto, boardImgFiles.get(i));
+            }
+
+
+            System.out.println("2단계 통과");
         } catch (DataIntegrityViolationException e) {
             throw new BoardFormInvalidException("입력하신 데이터가 올바르지 않습니다. " + e.getMessage());
         }
     }
 
-    // 재시도 실패시 예외 발생
-    @Recover
-    public void recover(RuntimeException e) {
-        throw new RetryFailedException("게시글 작성에 실패했습니다. 재시도 횟수를 초과했습니다.");
-    }
+//    // 재시도 실패시 예외 발생
+//    @Recover
+//    public void recover(RuntimeException e) {
+//        throw new RetryFailedException("게시글 작성에 실패했습니다. 재시도 횟수를 초과했습니다.");
+//    }
 
 
     public BoardFormDto findByBno(Integer bno) {

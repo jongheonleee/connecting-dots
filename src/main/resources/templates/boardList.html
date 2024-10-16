@@ -196,26 +196,14 @@
       </tr>
       </thead>
       <tbody>
-      <tr>
-        <td>1</td>
-        <td><a href="#">첫 번째 게시물</a></td>
-        <td>홍길동</td>
-        <td>2024-10-10</td>
-        <td>100</td>
-      </tr>
-      <tr>
-        <td>2</td>
-        <td><a href="#">두 번째 게시물</a></td>
-        <td>김영희</td>
-        <td>2024-10-09</td>
-        <td>250</td>
-      </tr>
-      <tr>
-        <td>3</td>
-        <td><a href="#">세 번째 게시물</a></td>
-        <td>이철수</td>
-        <td>2024-10-08</td>
-        <td>75</td>
+      <tr th:each="board : ${boards}">
+        <td th:text="${board.bno}">번호</td>
+        <td>
+          <a th:href="@{/board/detail/${board.bno}}" th:text="${board.title}">제목</a>
+        </td>
+        <td th:text="${board.writer}">작성자</td>
+        <td th:text="${board.reg_date}">작성일</td>
+        <td th:text="${board.view_cnt}">조회수</td>
       </tr>
       </tbody>
     </table>

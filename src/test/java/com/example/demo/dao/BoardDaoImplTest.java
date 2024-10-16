@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.example.demo.dto.BoardFormDto;
 import com.example.demo.dto.BoardUpdatedFormDto;
+import com.example.demo.service.BoardImgServiceImpl;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +23,9 @@ class BoardDaoImplTest {
     @Autowired
     private BoardDaoImpl target;
 
+    @Autowired
+    private BoardImgDaoImpl BoardImgDaoImpl;
+
     private List<BoardFormDto> fixture = new ArrayList<>();
     private List<BoardUpdatedFormDto> updatedFixture = new ArrayList<>();
 
@@ -30,6 +34,7 @@ class BoardDaoImplTest {
         fixture.clear();
         updatedFixture.clear();
         assertNotNull(target);
+        BoardImgDaoImpl.deleteAll();
         target.deleteAll();
     }
 
@@ -129,6 +134,7 @@ class BoardDaoImplTest {
         createFixture(cnt);
         for (var boardFormDto : fixture) {
             assertTrue(1 == target.insert(boardFormDto));
+            System.out.println("boardFormDto = " + boardFormDto);
         }
 
         assertEquals(cnt, target.count());

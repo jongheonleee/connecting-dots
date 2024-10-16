@@ -111,7 +111,7 @@
   </div>
   <div class="form-container">
     <h2 style="text-align: center; color: #007bff;">게시물 작성</h2>
-    <form action="#" method="post" enctype="multipart/form-data">
+    <form action="/board/write" th:action="@{/board/write}" method="post" th:object="${boardFormDto}" enctype="multipart/form-data">
       <div class="form-group">
         <label for="mainCategory">대분류 카테고리</label>
         <select id="mainCategory" name="mainCategory" onchange="showSubCategory()" required>
@@ -124,22 +124,42 @@
           <!-- 하위 카테고리가 JavaScript를 통해 동적으로 추가됨 -->
         </select>
       </div>
+
+      <input id="cate_code" type="text" name="cate_code" th:field="*{cate_code}" hidden />
+
+
       <div class="form-group">
         <label for="title">제목</label>
-        <input type="text" id="title" name="title" required />
+        <input type="text" id="title" name="title" th:field="*{title}" required />
+        <div th:if="${#fields.hasErrors('title')}" class="error-message">
+          <span th:errors="*{title}">제목 오류</span>
+        </div>
       </div>
+
       <div class="form-group">
-        <label for="author">작성자</label>
-        <input type="text" id="author" name="author" required />
+        <label for="writer">작성자</label>
+        <input type="text" id="writer" name="writer" th:field="*{writer}" required />
+        <div th:if="${#fields.hasErrors('writer')}" class="error-message">
+          <span th:errors="*{writer}">작성자 이름 오류</span>
+        </div>
       </div>
+
       <div class="form-group">
-        <label for="image">이미지 파일</label>
-        <input type="file" id="image" name="image" accept="image/*" />
+        <label for="boardImgFile">이미지 파일</label>
+        <input type="file" id="boardImgFile" name="boardImgFile" accept="image/*" />
+<!--        <div th:if="${#fields.hasErrors('boardImgFile')}" class="error-message">-->
+<!--          <span th:errors="*{boardImgFile}">게시글 이미지 오류</span>-->
+<!--        </div>-->
       </div>
+
       <div class="form-group">
         <label for="content">내용</label>
-        <textarea id="content" name="content" required></textarea>
+        <textarea id="content" name="content" th:field="*{content}" required></textarea>
+        <div th:if="${#fields.hasErrors('content')}" class="error-message">
+          <span th:errors="*{content}">게시글 오류</span>
+        </div>
       </div>
+
       <button type="submit" class="submit-button">작성 완료</button>
     </form>
   </div>
@@ -187,6 +207,16 @@
   const createOptionTag = (category) => {
     return `<option value=${category.cate_code}>${category.name}</option>`;
   }
+
+  document.querySelector('form').addEventListener('submit', function(event) {
+    const writerInput = document.getElementById('writer');
+    const writerValue = writerInput.value.trim(); // 공백 제거
+
+    if (!writerValue) {
+      event.preventDefault(); // 폼 제출 방지
+      alert('작성자 이름을 입력하세요.'); // 경고 메시지
+    }
+  });
 
 </script>
 </body>

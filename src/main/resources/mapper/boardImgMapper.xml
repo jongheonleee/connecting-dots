@@ -10,17 +10,17 @@
   <!-- 이미지 등록 -->
   <insert id="insert" parameterType="com.example.demo.dto.BoardImgFormDto">
     INSERT INTO image
-    (bno, img, comt, reg_date, reg_id, up_date, up_id)
+    (bno, name, img, comt, reg_date, reg_id, up_date, up_id)
     VALUES
-    (#{bno}, #{img}, #{comt}, now(), #{reg_id}, now(), #{up_id});
+    (#{bno}, #{name}, #{img}, #{comt}, now(), #{reg_id}, now(), #{up_id});
   </insert>
 
   <!-- 특정 게시글의 이미지 조회 -->
   <select id="selectAllByBno" parameterType="int" resultType="com.example.demo.dto.BoardImgFormDto">
     SELECT
-        bno, ino, img,
-        comt, reg_date, reg_id,
-        up_date, up_id
+        bno, ino, name,
+        img, comt, reg_date,
+        reg_id, up_date, up_id
     FROM image
     WHERE bno = #{bno}
   </select>
@@ -28,8 +28,8 @@
   <!-- 특정 이미지 조회 -->
   <select id="selectByIno" parameterType="int" resultType="com.example.demo.dto.BoardImgFormDto">
     SELECT
-      bno, ino, img,
-      comt, reg_date, reg_id,
+      bno, ino, name,
+      img, comt, reg_date, reg_id,
       up_date, up_id
     FROM image
     WHERE ino = #{ino}
@@ -38,18 +38,18 @@
   <!-- 이미지 전체 조회 -->
   <select id="selectAll" resultType="com.example.demo.dto.BoardImgFormDto">
     SELECT
-        bno, ino, img,
-        comt, reg_date, reg_id,
+        bno, ino, name,
+        img, comt, reg_date, reg_id,
         up_date, up_id
     FROM image
   </select>
 
   <!-- 이미지 수정 -->
-  <update id="update" parameterType="com.example.demo.dto.BoardImgUpdatedFormDto">
+  <update id="update" parameterType="com.example.demo.dto.BoardImgFormDto">
     UPDATE image
     SET
-        img = #{img}, comt = #{comt},up_date = now(),
-        up_id = #{up_id}
+        img = #{img}, name = #{name}, comt = #{comt},
+        up_date = now(), up_id = #{up_id}
     WHERE ino = #{ino}
   </update>
 

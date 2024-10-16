@@ -9,6 +9,11 @@
 
   <!-- 게시글 등록 -->
   <insert id="insert" parameterType="com.example.demo.dto.BoardFormDto">
+
+    <selectKey keyProperty="bno" resultType="int" order="AFTER">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+
     INSERT INTO board
         (cate_code, id, title,
          writer, view_cnt, reco_cnt,
