@@ -1,7 +1,9 @@
-package com.example.demo.dao;
+package com.example.demo.dao.unit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.example.demo.dao.BoardDaoImpl;
+import com.example.demo.dao.BoardImgDaoImpl;
 import com.example.demo.dto.BoardFormDto;
 import com.example.demo.dto.BoardImgFormDto;
 import java.util.ArrayList;

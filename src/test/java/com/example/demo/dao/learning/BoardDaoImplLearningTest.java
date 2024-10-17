@@ -1,7 +1,8 @@
-package com.example.demo.dao;
+package com.example.demo.dao.learning;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import com.example.demo.dao.BoardDaoImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

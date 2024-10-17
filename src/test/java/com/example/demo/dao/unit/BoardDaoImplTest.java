@@ -1,11 +1,12 @@
-package com.example.demo.dao;
+package com.example.demo.dao.unit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 
+import com.example.demo.dao.BoardDaoImpl;
 import com.example.demo.dto.BoardFormDto;
 import com.example.demo.dto.BoardUpdatedFormDto;
-import com.example.demo.service.BoardImgServiceImpl;
+import com.example.demo.dto.CategoryDto;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +25,7 @@ class BoardDaoImplTest {
     private BoardDaoImpl target;
 
     @Autowired
-    private BoardImgDaoImpl BoardImgDaoImpl;
+    private com.example.demo.dao.BoardImgDaoImpl BoardImgDaoImpl;
 
     private List<BoardFormDto> fixture = new ArrayList<>();
     private List<BoardUpdatedFormDto> updatedFixture = new ArrayList<>();
@@ -519,6 +520,7 @@ class BoardDaoImplTest {
         assertTrue(0 == target.count());
     }
 
+
     private void createFixture(int cnt) {
         fixture.clear();
         for (int i = 0; i < cnt; i++) {
@@ -527,13 +529,6 @@ class BoardDaoImplTest {
         }
     }
 
-    private void createUpdatedFixture(int cnt) {
-        updatedFixture.clear();
-        for (int i = 0; i < cnt; i++) {
-            var dto = createBoardUpdatedFormDto(i);
-            updatedFixture.add(dto);
-        }
-    }
 
 
 
@@ -608,6 +603,17 @@ class BoardDaoImplTest {
     private void sortDummy(List<BoardFormDto> list1, List<BoardFormDto> list2) {
         list1.sort((o1, o2) -> o1.getId().compareTo(o2.getId()));
         list2.sort((o1, o2) -> o1.getId().compareTo(o2.getId()));
+    }
+
+    private CategoryDto createCategoryDto(String cate_code) {
+        var dto = new CategoryDto();
+        dto.setCate_code(cate_code);
+        dto.setName("cate_name");
+        dto.setReg_date("2021-01-01");
+        dto.setReg_id("reg_id");
+        dto.setUp_date("2021-01-01");
+        dto.setUp_id("up_id");
+        return dto;
     }
 
 }

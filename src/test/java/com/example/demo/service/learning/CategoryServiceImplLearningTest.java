@@ -1,12 +1,12 @@
-package com.example.demo.service;
+package com.example.demo.service.learning;
 
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.example.demo.dao.CategoryDaoImpl;
+import com.example.demo.service.CategoryServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;

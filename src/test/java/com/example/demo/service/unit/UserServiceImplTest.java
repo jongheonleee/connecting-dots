@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.example.demo.service.unit;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -10,6 +10,7 @@ import com.example.demo.dto.UserUpdatedFormDto;
 import com.example.demo.exception.UserAlreadyExistsException;
 import com.example.demo.exception.UserFormInvalidException;
 import com.example.demo.exception.UserNotFoundException;
+import com.example.demo.service.UserServiceImpl;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;

@@ -36,6 +36,57 @@
     WHERE bno = #{bno}
   </select>
 
+  <!-- 게시글 조회 - 카테고리 -->
+  <select id="selectByCategory" parameterType="String" resultType="com.example.demo.dto.BoardFormDto">
+    SELECT
+      bno, cate_code, id, title,
+      writer, view_cnt, reco_cnt,
+      not_reco_cnt, content, comt,
+      reg_date, reg_id, up_date, up_id
+    FROM board
+    WHERE cate_code
+    LIKE CONCAT('%', #{cate_code}, '%')
+  </select>
+
+  <!-- 게시글 상세 조회 - bno -->
+  <select id="selectByBno" parameterType="int" resultMap="BoardDetailResultMap">
+    SELECT
+      b.bno as bno, b.cate_code as cate_code, b.id as id,
+      b.title as title, b.writer as writer, b.view_cnt as view_cnt,
+      b.reco_cnt as reco_cnt, b.not_reco_cnt as not_reco_cnt, b.content as content,
+      b.comt as comt, b.reg_date as reg_date, b.reg_id as reg_id,
+      b.up_date as up_date, b.up_id as up_id,
+      i.ino as ino, i.img as img, i.comt as comt, i.name as name
+    FROM board b
+    INNER JOIN image i
+    ON b.bno = i.bno
+    WHERE b.bno = #{bno};
+  </select>
+
+  <!-- 게시글 상세 조회 - bno 매핑 정보 -->
+  <resultMap id="BoardDetailResultMap" type="com.example.demo.dto.BoardDetailDto">
+    <id property="bno" column="bno" />
+    <result property="cate_code" column="cate_code" />
+    <result property="id" column="id" />
+    <result property="title" column="title" />
+    <result property="writer" column="writer" />
+    <result property="view_cnt" column="view_cnt" />
+    <result property="reco_cnt" column="reco_cnt" />
+    <result property="not_reco_cnt" column="not_reco_cnt" />
+    <result property="content" column="content" />
+    <result property="comt" column="comt" />
+    <result property="reg_date" column="reg_date" />
+    <result property="reg_id" column="reg_id" />
+    <result property="up_date" column="up_date" />
+    <result property="up_id" column="up_id" />
+    <collection property="boardImgs" ofType="com.example.demo.dto.BoardImgDto">
+      <id property="ino" column="ino" />
+      <result property="img" column="img" />
+      <result property="comt" column="img_comt" />
+      <result property="name" column="name" />
+    </collection>
+  </resultMap>
+
   <select id="selectAll" resultType="com.example.demo.dto.BoardFormDto">
     SELECT
       bno, cate_code, id, title,

@@ -1,8 +1,9 @@
-package com.example.demo.service;
+package com.example.demo.service.learning;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.example.demo.dao.UserDaoImpl;
+import com.example.demo.service.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

@@ -1,4 +1,4 @@
-package com.example.demo.dao;
+package com.example.demo.dao.learning;
 
 import org.springframework.boot.test.context.SpringBootTest;
 

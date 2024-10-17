@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.example.demo.service.unit;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -9,6 +9,7 @@ import com.example.demo.exception.CategoryAlreadyExistsException;
 import com.example.demo.exception.CategoryFormInvalidException;
 import com.example.demo.exception.CategoryNotFoundException;
 import com.example.demo.exception.InternalServerError;
+import com.example.demo.service.CategoryServiceImpl;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;

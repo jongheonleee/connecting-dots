@@ -1,7 +1,9 @@
 package com.example.demo.dao;
 
+import com.example.demo.dto.BoardDetailDto;
 import com.example.demo.dto.BoardFormDto;
 import com.example.demo.dto.BoardUpdatedFormDto;
+import com.example.demo.dto.CategoryDto;
 import java.util.List;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,14 @@ public class BoardDaoImpl {
 
     public List<BoardFormDto> selectAll() {
         return session.selectList(namespace + "selectAll");
+    }
+
+    public List<BoardFormDto> selectAllByCategory(String cate_code) {
+        return session.selectList(namespace + "selectByCategory", cate_code);
+    }
+
+    public BoardDetailDto selectByBno(Integer bno) {
+        return session.selectOne(namespace + "selectByBno", bno);
     }
 
     public int update(BoardUpdatedFormDto dto) {

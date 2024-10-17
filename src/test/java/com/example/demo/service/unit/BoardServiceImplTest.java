@@ -1,9 +1,7 @@
-package com.example.demo.service;
-
-import static org.junit.jupiter.api.Assertions.*;
+package com.example.demo.service.unit;
 
 import com.example.demo.dao.BoardDaoImpl;
-import com.example.demo.dao.CategoryDaoImpl;
+import com.example.demo.service.BoardServiceImpl;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

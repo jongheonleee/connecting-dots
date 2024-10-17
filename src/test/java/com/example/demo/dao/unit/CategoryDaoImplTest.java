@@ -1,18 +1,17 @@
-package com.example.demo.dao;
+package com.example.demo.dao.unit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.example.demo.dao.CategoryDaoImpl;
 import com.example.demo.dto.CategoryDto;
 import java.util.ArrayList;
 import java.util.List;
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;

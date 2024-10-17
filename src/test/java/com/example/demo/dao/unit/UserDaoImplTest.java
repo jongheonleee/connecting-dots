@@ -1,7 +1,8 @@
-package com.example.demo.dao;
+package com.example.demo.dao.unit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.example.demo.dao.UserDaoImpl;
 import com.example.demo.dto.User;
 import com.example.demo.dto.UserFormDto;
 import com.example.demo.dto.UserUpdatedFormDto;

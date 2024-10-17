@@ -1,11 +1,11 @@
-package com.example.demo.dao;
+package com.example.demo.dao.learning;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.example.demo.dao.UserDaoImpl;
 import com.example.demo.dto.UserFormDto;
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

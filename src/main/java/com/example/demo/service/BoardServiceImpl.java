@@ -54,8 +54,6 @@ public class BoardServiceImpl {
                 throw new InternalServerError("DB에 정상적으로 반영되지 못했습니다. 현재 적용된 로우수는 " + rowCnt + "입니다.");
             }
 
-            System.out.println("1단계 통과");
-
             // 이미지 등록
             for (int i=0; i<boardImgFiles.size(); i++) {
                 var boardImgDto = new BoardImgFormDto();
@@ -63,18 +61,16 @@ public class BoardServiceImpl {
                 boardImgService.createBoardImg(boardImgDto, boardImgFiles.get(i));
             }
 
-
-            System.out.println("2단계 통과");
         } catch (DataIntegrityViolationException e) {
             throw new BoardFormInvalidException("입력하신 데이터가 올바르지 않습니다. " + e.getMessage());
         }
     }
 
-//    // 재시도 실패시 예외 발생
-//    @Recover
-//    public void recover(RuntimeException e) {
-//        throw new RetryFailedException("게시글 작성에 실패했습니다. 재시도 횟수를 초과했습니다.");
-//    }
+    // 재시도 실패시 예외 발생
+    @Recover
+    public void recover(RuntimeException e) {
+        throw new RetryFailedException("게시글 작성에 실패했습니다. 재시도 횟수를 초과했습니다.");
+    }
 
 
     public BoardFormDto findByBno(Integer bno) {
