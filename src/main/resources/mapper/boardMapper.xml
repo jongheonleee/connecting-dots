@@ -48,7 +48,7 @@
     ORDER BY reg_date DESC, bno DESC
   </select>
 
-  <!-- 게시글 검색 조회 - 검색 기능 활용 -->
+  <!-- 게시글 검색 & 정렬 조건 기반 조회 -->
   <select id="selectBySearchCondition" parameterType="com.example.demo.dto.SearchCondition" resultType="com.example.demo.dto.board.BoardFormDto">
     SELECT
       bno, cate_code, id, title,
@@ -57,32 +57,37 @@
       reg_date, reg_id, up_date, up_id
     FROM board
     WHERE TRUE
+
+      <!-- 검색 조건 -->
+      <choose>
+        <when test='searchOption=="T"'>
+          AND title LIKE CONCAT('%', #{searchKeyword}, '%')
+        </when>
+        <when test='searchOption=="W"'>
+          AND writer LIKE CONCAT('%', #{searchKeyword}, '%')
+        </when>
+        <otherwise>
+          AND title LIKE CONCAT('%', #{searchKeyword}, '%')
+          OR writer LIKE CONCAT('%', #{searchKeyword}, '%')
+        </otherwise>
+      </choose>
+
+     <!-- 정렬 조건 -->
     <choose>
-      <when test='searchOption="T"'>
-        AND title LIKE CONCAT('%', #{searchKeyword}, '%')
+      <when test='sortOption == "1"'> <!-- 최신순 -->
+        ORDER BY reg_date DESC, bno DESC
       </when>
-      <when test='searchOption="W"'>
-        AND writer LIKE CONCAT('%', #{searchKeyword}, '%')
+      <when test='sortOption == "2"'> <!-- 조회수 -->
+        ORDER BY view_cnt DESC, bno DESC
       </when>
-      <otherwise>
-        AND title LIKE CONCAT('%', #{searchKeyword}, '%')
-        AND writer LIKE CONCAT('%', #{searchKeyword}, '%')
+      <when test='sortOption == "3"'> <!-- 추천순 -->
+        ORDER BY reco_cnt DESC, bno DESC
+      </when>
+      <otherwise> <!-- 기본값, 최신순 -->
+        ORDER BY reg_date DESC, bno DESC
       </otherwise>
     </choose>
-    <choose>
-      <when test='sortOption="1"'>
-        ORDER BY view_cnt DESC,
-        bno DESC
-      </when>
-      <when test='sortOption="2"'>
-        ORDER BY reco_cnt DESC,
-        bno DESC
-      </when>
-      <otherwise>
-        ORDER BY reg_date DESC,
-        bno DESC
-      </otherwise>
-    </choose>
+
     LIMIT #{offset}, #{pageSize};
   </select>
 

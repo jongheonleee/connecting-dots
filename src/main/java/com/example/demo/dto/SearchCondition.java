@@ -10,8 +10,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.web.util.UriComponentsBuilder;
 
-// 검색 쿼리 처리
-// ?page=10&pageSize=10&option=A&keyword=title
+
 @Getter
 @Setter
 @ToString

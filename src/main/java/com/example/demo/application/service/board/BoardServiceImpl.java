@@ -93,6 +93,8 @@ public class BoardServiceImpl {
             throw new BoardNotFoundException("해당 " + bno + "를 가진 게시글을 찾을 수 없습니다.");
         }
 
+        boardDao.increaseViewCnt(bno);
+
         return foundDetailBoard;
     }
 

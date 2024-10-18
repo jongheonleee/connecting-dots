@@ -54,6 +54,7 @@ public class BoardController {
             String toUrl = request.getRequestURI() != null ? request.getRequestURI() : "/";
             return "redirect:/user/login?toUrl=" + toUrl;
         }
+        System.out.println("sc = " + sc);
 
         findCategories();
         findBoardsBySearchCondition(model, sc);
