@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.dao.BoardDaoImpl;
+import com.example.demo.dto.BoardDetailDto;
 import com.example.demo.dto.BoardFormDto;
 import com.example.demo.dto.BoardImgFormDto;
 import com.example.demo.dto.BoardUpdatedFormDto;
@@ -8,6 +9,7 @@ import com.example.demo.exception.BoardFormInvalidException;
 import com.example.demo.exception.BoardNotFoundException;
 import com.example.demo.exception.InternalServerError;
 import com.example.demo.exception.RetryFailedException;
+import jakarta.persistence.criteria.CriteriaBuilder.In;
 import java.sql.SQLSyntaxErrorException;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,11 +68,11 @@ public class BoardServiceImpl {
         }
     }
 
-    // 재시도 실패시 예외 발생
-    @Recover
-    public void recover(RuntimeException e) {
-        throw new RetryFailedException("게시글 작성에 실패했습니다. 재시도 횟수를 초과했습니다.");
-    }
+//    // 재시도 실패시 예외 발생
+//    @Recover
+//    public void recover(RuntimeException e) {
+//        throw new RetryFailedException("게시글 작성에 실패했습니다. 재시도 횟수를 초과했습니다.");
+//    }
 
 
     public BoardFormDto findByBno(Integer bno) {
@@ -80,6 +82,20 @@ public class BoardServiceImpl {
         }
 
         return foundBoard;
+    }
+
+    public List<BoardFormDto> findByCategory(String cate_code) {
+        List<BoardFormDto> boardFormDtos = boardDao.selectAllByCategory(cate_code);
+        return boardFormDtos;
+    }
+
+    public BoardDetailDto findDetailByBno(Integer bno) {
+        var foundDetailBoard = boardDao.selectDetailByBno(bno);
+        if (foundDetailBoard == null) {
+            throw new BoardNotFoundException("해당 " + bno + "를 가진 게시글을 찾을 수 없습니다.");
+        }
+
+        return foundDetailBoard;
     }
 
     public List<BoardFormDto> findAll() {

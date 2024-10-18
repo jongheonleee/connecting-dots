@@ -81,7 +81,7 @@ class BoardDaoIntegrationTest {
         assertTrue(1 == boardImgDao.insert(boardImgFormDto));
 
         // 게시글 상세 조회
-        BoardDetailDto foundBoardDetial = boardDao.selectByBno(boardFormDto.getBno());
+        BoardDetailDto foundBoardDetial = boardDao.selectDetailByBno(boardFormDto.getBno());
         System.out.println("foundBoardDetial = " + foundBoardDetial);
     }
 

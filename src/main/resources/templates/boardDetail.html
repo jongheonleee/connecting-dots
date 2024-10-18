@@ -8,14 +8,10 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
       background-color: #f7f8fa;
     }
     .main-container {
-      width: 100vw;
+      width: 98%;
       padding: 20px;
       background-color: white;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -40,12 +36,11 @@
       display: flex;
       align-items: center;
       gap: 15px;
-      margin-right: 20px;
     }
     .navbar .categories a {
       color: #333;
       text-decoration: none;
-      font-size: 20px;
+      font-size: 18px;
     }
     .post-container {
       margin-bottom: 20px;
@@ -166,14 +161,26 @@
         </div>
       </div>
     </div>
+  </div>
 
   <div class="post-container">
-    <h1 class="post-title">게시글 제목</h1>
+    <h1 class="post-title" th:text="${boardDetail.title}">게시글 제목</h1>
     <div class="post-meta">
-      카테고리: <span>일상</span> | 작성자: <span>작성자 이름</span> | 조회수: <span>100</span>
+      카테고리: <span th:text="${boardDetail.category.name}">카테고리</span> |
+      작성자: <span th:text="${boardDetail.writer}">작성자 이름</span> |
+      조회수: <span th:text="${boardDetail.view_cnt}">0</span> |
+      추천수 : <span th:text="${boardDetail.reco_cnt}">0</span> |
+      비추천수 : <span th:text="${boardDetail.not_reco_cnt}">0</span>
     </div>
-    <img src="https://source.unsplash.com/random/800x400" alt="게시글 이미지" class="post-image">
-    <p>여기에 게시글 내용이 들어갑니다. 내용은 길어질 수 있으며, 여기서 여러 가지 정보를 공유할 수 있습니다.</p>
+
+    <!-- 이미지 반복문 -->
+    <div class="post-images">
+      <div th:each="img : ${boardDetail.boardImgs}">
+        <img th:src="${img.img}" style="width: 400px; height: 400px" alt="게시글 이미지" class="post-image">
+      </div>
+    </div>
+
+    <p th:text="${boardDetail.content}">여기에 게시글 내용이 들어갑니다.</p>
 
     <div class="post-actions">
       <button class="like-button">게시글 추천 👍</button>

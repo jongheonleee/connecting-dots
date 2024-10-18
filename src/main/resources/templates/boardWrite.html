@@ -44,10 +44,10 @@
     }
     .navbar .categories a {
       color: #333;
-      text-decoration: none; /* 밑줄 제거 */
+      text-decoration: none;
     }
     .navbar .categories a:hover {
-      color: #333; /* 글자 색이 바뀌지 않도록 설정 */
+      color: #333;
     }
     .form-container {
       margin-top: 20px;
@@ -55,13 +55,18 @@
       padding: 20px;
       border-radius: 5px;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      display: flex; /* Flexbox 추가 */
+      flex-direction: column; /* 세로 방향으로 배치 */
+      gap: 20px; /* 각 요소 간의 간격 */
     }
     .form-group {
-      margin-bottom: 15px;
+      display: flex; /* Flexbox 추가 */
+      flex-direction: column; /* 세로 방향으로 배치 */
+      gap: 5px; /* 라벨과 입력 필드 간의 간격 */
+      margin-bottom: 7px;
+      margin-top: 7px;
     }
     label {
-      display: block;
-      margin-bottom: 5px;
       font-weight: bold;
     }
     input[type="text"],
@@ -73,6 +78,7 @@
       border: 1px solid #007bff;
       border-radius: 5px;
       box-sizing: border-box;
+      margin: 5px;
     }
     textarea {
       height: 150px;
@@ -88,6 +94,76 @@
     }
     .submit-button:hover {
       background-color: #0056b3;
+    }
+    .category-container {
+      position: relative;
+      display: flex; /* 가로로 나열하기 위한 flex 설정 */
+      align-items: center; /* 세로 중앙 정렬 */
+      gap: 10px; /* 카테고리 간의 간격 */
+    }
+    .main-category-list {
+      list-style-type: none;
+      padding: 0;
+      display: flex; /* 가로로 나열하기 위해 flex 설정 */
+      gap: 10px; /* 카테고리 간의 간격 */
+    }
+    .main-category-item {
+      position: relative;
+      cursor: pointer;
+      padding: 10px 15px;
+      border: 1px solid #007bff; /* 카테고리 경계선 */
+      border-radius: 5px;
+      background-color: white; /* 카테고리 배경색 */
+      transition: background-color 0.3s;
+    }
+    .main-category-item:hover {
+      background-color: #007bff; /* 호버 시 배경색 변경 */
+      color: white; /* 호버 시 글자색 변경 */
+    }
+    .sub-category-list {
+      display: none;
+      position: absolute;
+      background-color: white;
+      border: 1px solid #007bff;
+      z-index: 1000;
+      list-style-type: none;
+      padding: 0;
+      width: 200px;
+    }
+    .main-category-item:hover .sub-category-list {
+      display: block;
+    }
+    .sub-category-item {
+      padding: 10px;
+      border-bottom: 1px solid #f0f0f0;
+      background-color: white;
+      cursor: pointer;
+      color: black; /* 중분류 카테고리 글씨 색상을 검은색으로 변경 */
+    }
+    .sub-category-item:hover {
+      background-color: #007bff;
+      color: white;
+    }
+    #selectedSubCategory {
+      padding: 10px;
+      margin: 5px;
+      font-weight: bold;
+    }
+    .preview-images {
+      display: flex;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .preview-images img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+    .error-message {
+      color: red; /* 에러 메시지를 빨간색으로 표시 */
+      font-weight: bold; /* 굵게 표시 */
     }
   </style>
 </head>
@@ -109,23 +185,34 @@
       </div>
     </div>
   </div>
+
   <div class="form-container">
     <h2 style="text-align: center; color: #007bff;">게시물 작성</h2>
     <form action="/board/write" th:action="@{/board/write}" method="post" th:object="${boardFormDto}" enctype="multipart/form-data">
+
       <div class="form-group">
-        <label for="mainCategory">대분류 카테고리</label>
-        <select id="mainCategory" name="mainCategory" onchange="showSubCategory()" required>
-          <!-- 상위 카테고리가 JavaScript를 통해 동적으로 추가됨 -->
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="subCategory">중분류 카테고리</label>
-        <select id="subCategory" name="subCategory" required>
-          <!-- 하위 카테고리가 JavaScript를 통해 동적으로 추가됨 -->
-        </select>
+        <label for="mainCategory">카테고리</label>
+        <div id="mainCategory" class="category-container">
+          <ul class="main-category-list">
+            <th:block th:each="category : ${categories}">
+              <li class="main-category-item">
+                <span th:text="${category.name}"></span>
+                <ul class="sub-category-list">
+                  <th:block th:each="subCategory : ${category.subCategories}">
+                    <li class="sub-category-item"
+                        th:text="${subCategory.name}"
+                        th:data-code="${subCategory.cate_code}"
+                        onclick="selectSubCategory(this)"></li>
+                  </th:block>
+                </ul>
+              </li>
+            </th:block>
+          </ul>
+        </div>
       </div>
 
       <input id="cate_code" type="text" name="cate_code" th:field="*{cate_code}" hidden />
+      <input id="selectedSubCategory" type="text" name="selectedSubCategory" readonly />
 
 
       <div class="form-group">
@@ -137,19 +224,14 @@
       </div>
 
       <div class="form-group">
-        <label for="writer">작성자</label>
-        <input type="text" id="writer" name="writer" th:field="*{writer}" required />
-        <div th:if="${#fields.hasErrors('writer')}" class="error-message">
-          <span th:errors="*{writer}">작성자 이름 오류</span>
-        </div>
-      </div>
-
-      <div class="form-group">
         <label for="boardImgFile">이미지 파일</label>
-        <input type="file" id="boardImgFile" name="boardImgFile" accept="image/*" />
-<!--        <div th:if="${#fields.hasErrors('boardImgFile')}" class="error-message">-->
-<!--          <span th:errors="*{boardImgFile}">게시글 이미지 오류</span>-->
-<!--        </div>-->
+        <input type="file" class="boardImgFile" name="boardImgFile" accept="image/*" multiple onchange="previewImages(event)" />
+        <br>
+        <input type="file" class="boardImgFile" name="boardImgFile" accept="image/*" multiple onchange="previewImages(event)" />
+        <br>
+        <input type="file" class="boardImgFile" name="boardImgFile" accept="image/*" multiple onchange="previewImages(event)" />
+        <br>
+        <div class="preview-images" id="preview-images"></div> <!-- 미리보기 이미지들 표시 -->
       </div>
 
       <div class="form-group">
@@ -160,63 +242,117 @@
         </div>
       </div>
 
-      <button type="submit" class="submit-button">작성 완료</button>
+      <button type="submit" class="submit-button" onclick="formCheck(this.form)">작성 완료</button>
     </form>
   </div>
 </div>
+
 <script th:inline="javascript">
-  const TOP_CATEGORY_CODE = '0';
-  const CATEGORIES = JSON.parse(/*[[${categoriesJson}]]*/ '[]'); // 카테고리 JSON 문자열 객체를 배열로 변환
-  const TOP_CATEGORY_ID = 'mainCategory';
-  const SUB_CATEGORY_ID = 'subCategory';
+  const VALID_IMG_EXT = ['jpeg', 'jpg', 'png', 'webq', 'gif', 'bmp'];
+  const REG_NUMERIC_CHAR = '^\d+$';
 
-  window.onload = function () {
-    showTopCategory();
+  // 카테고리 히든 인풋 태그에 추가
+  function selectSubCategory(element) {
+    const subCategoryName = element.textContent;
+    const cateCode = element.getAttribute('data-code');
+
+    document.getElementById('cate_code').value = cateCode; // 히든 인풋에 카테고리 코드 저장
+    document.getElementById('selectedSubCategory').value = subCategoryName; // 선택된 카테고리 이름 저장
   }
 
-  const showTopCategory = () => {
-    const topCategories = findTopCategories();
-    generateSomePartDynamically(topCategories, TOP_CATEGORY_ID);
-  }
+  // 사용자가 첨부한 이미지 미리보기
+  function previewImages(event) {
+    const files = event.target.files;
 
-  const showSubCategory = () => {
-    const selectedTopCategoryCode = document.getElementById(TOP_CATEGORY_ID).value;
-    const relatedSubCategories = findSubCategories(selectedTopCategoryCode);
-    generateSomePartDynamically(relatedSubCategories, SUB_CATEGORY_ID);
-  }
+    // 사용자가 첨부한 이미지 확장자 검증
+    for (const file of files) {
+      // 등록된 이미지 파일 풀 네임 조회
+      const fileImgFullName = file.name; // 이미지1.jpeg, ...
 
-  const generateSomePartDynamically = (categories, id) => {
-    document.getElementById(id).innerHTML = '';
-    categories.sort();
+      // '.' 기준으로 이미지 이름과 확장자 파싱
+      const fileExt = fileImgFullName.substring(fileImgFullName.lastIndexOf('.')+1);
 
-    for (const category of categories) {
-      document.getElementById(id).innerHTML += createOptionTag(category);
+      // 확장자 부분 검증
+      let isValidFileExt = false;
+      for (const validExt of VALID_IMG_EXT) {
+        if (fileExt == validExt) {
+          isValidFileExt = true;
+        }
+      }
+
+      // 유효성 검증 실패하면 경고문과 함께 이미지 등록 차단하기
+      if (!isValidFileExt) {
+        alert('이미지 파일만 등록 가능합니다. 해당 파일의 확장자를 확인해주세요');
+        return;
+      }
     }
+
+    // 허용 가능한 이미지 파일의 경우, 어떤 이미지를 등록했는지 미리보기 콘테이너에 보여주기
+    const previewContainer = document.getElementById('preview-images');
+
+    // 파일을 각각 순회하기
+    Array.from(files).forEach(file => {
+      // 파일 리더기 생성
+      const reader = new FileReader();
+
+      // 이미지 태그 생성 및 파일 등록
+      reader.onload = function(e) {
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        previewContainer.appendChild(img);
+      }
+
+      reader.readAsDataURL(file);
+    });
   }
 
-  const findTopCategories = () => {
-    return CATEGORIES.filter(category => category.top_cate === TOP_CATEGORY_CODE);
-  }
+  // 사용자가 작성한 글 내용 검증
+  function formCheck(form) {
+    // 검증 대상 필드 조회
+    const cate_code = form.cate_code.value;
+    const title = form.title.value;
+    const content = form.content.value;
 
-  const findSubCategories = (topCategoryCode) => {
-    const selectedTopCategory = CATEGORIES.filter(category =>
-            category.cate_code === topCategoryCode)[0];
-    return selectedTopCategory.subCategories;
-  }
-
-  const createOptionTag = (category) => {
-    return `<option value=${category.cate_code}>${category.name}</option>`;
-  }
-
-  document.querySelector('form').addEventListener('submit', function(event) {
-    const writerInput = document.getElementById('writer');
-    const writerValue = writerInput.value.trim(); // 공백 제거
-
-    if (!writerValue) {
-      event.preventDefault(); // 폼 제출 방지
-      alert('작성자 이름을 입력하세요.'); // 경고 메시지
+    // 게시글 카테고리 코드 검증
+    if (!isValidCategory(cate_code)) {
+      alert('유효하지 않은 카테고리 코드입니다.');
+      return;
     }
-  });
+
+    // 게시글 제목 검증
+    if (!isValidTitle(title)) {
+      alert('유효하지 않은 게시글 제목입니다.');
+      return;
+    }
+
+    // 게시글 내용 검증
+    if (!isValidContent(content)) {
+      alert('유효하지 않은 게시글 내용입니다.');
+      return;
+    }
+
+    form.submit();
+  }
+
+  // 게시글 코드는 4글자 숫자로 구성됨
+  function isValidCategory(cate_code) {
+    return cate_code != null &&
+           cate_code.length == 4 &&
+           REG_NUMERIC_CHAR.test(cate_code);
+  }
+
+  // 게시글 제목은 길이가 1이상이며 varchar(50)을 넘으면 안됨
+  function isValidTitle(title) {
+    return title != null &&
+           1 <= title.length && title.length <= 50;
+  }
+
+  // 게시글 내용은 길이가 1이상이며 varchar(2000)을 넘으면 안됨
+  function isValidContent(content) {
+    return content != null &&
+           1 <= content.length && content.length <= 2000;
+  }
+
 
 </script>
 </body>

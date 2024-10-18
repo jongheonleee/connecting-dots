@@ -38,7 +38,7 @@ public class BoardDaoImpl {
         return session.selectList(namespace + "selectByCategory", cate_code);
     }
 
-    public BoardDetailDto selectByBno(Integer bno) {
+    public BoardDetailDto selectDetailByBno(Integer bno) {
         return session.selectOne(namespace + "selectByBno", bno);
     }
 

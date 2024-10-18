@@ -24,4 +24,5 @@ public class BoardDetailDto {
     private String up_date;
     private String up_id;
     private List<BoardImgDto> boardImgs;
+    private BoardCategoryDto category;
 }

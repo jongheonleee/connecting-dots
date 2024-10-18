@@ -66,7 +66,7 @@ public class BoardImgServiceImpl {
                 String oriBoardImgName = boardImgFile.getOriginalFilename();
                 String imgName = fileService.uploadFile(boardImgLocation, oriBoardImgName,
                         boardImgFile.getBytes());
-                String imgUrl = "/images/board/" + imgName;
+                String imgUrl = "/images/board/"  + imgName;
                 foundBoardImg.updateBoardImg(imgName, imgUrl);
 
                 int rowCnt = boardImgDao.update(foundBoardImg);
