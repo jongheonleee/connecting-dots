@@ -3,8 +3,8 @@ package com.example.demo.service.learning;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import com.example.demo.dao.CategoryDaoImpl;
-import com.example.demo.service.CategoryServiceImpl;
+import com.example.demo.repository.mybatis.category.CategoryDaoImpl;
+import com.example.demo.application.service.category.CategoryServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;

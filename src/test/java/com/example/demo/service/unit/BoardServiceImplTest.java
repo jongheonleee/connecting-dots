@@ -1,7 +1,7 @@
 package com.example.demo.service.unit;
 
-import com.example.demo.dao.BoardDaoImpl;
-import com.example.demo.service.BoardServiceImpl;
+import com.example.demo.repository.mybatis.board.BoardDaoImpl;
+import com.example.demo.application.service.board.BoardServiceImpl;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

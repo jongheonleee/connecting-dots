@@ -8,7 +8,7 @@
   </select>
 
   <!-- 게시글 등록 -->
-  <insert id="insert" parameterType="com.example.demo.dto.BoardFormDto">
+  <insert id="insert" parameterType="com.example.demo.dto.board.BoardFormDto">
     <!-- 등록된 이후에 dto에 bno 저장 -->
     <selectKey keyProperty="bno" resultType="int" order="AFTER">
       SELECT LAST_INSERT_ID()
@@ -24,7 +24,7 @@
   </insert>
 
   <!-- 게시글 조회 -->
-  <select id="select" parameterType="int" resultType="com.example.demo.dto.BoardFormDto">
+  <select id="select" parameterType="int" resultType="com.example.demo.dto.board.BoardFormDto">
     SELECT
         bno, cate_code, id, title,
         writer, view_cnt, reco_cnt,
@@ -35,7 +35,7 @@
   </select>
 
   <!-- 게시글 조회 - 카테고리 -->
-  <select id="selectByCategory" parameterType="String" resultType="com.example.demo.dto.BoardFormDto">
+  <select id="selectByCategory" parameterType="String" resultType="com.example.demo.dto.board.BoardFormDto">
     SELECT
       bno, cate_code, id, title,
       writer, view_cnt, reco_cnt,
@@ -65,7 +65,7 @@
   </select>
 
   <!-- 게시글 상세 조회 - bno 매핑 정보 -->
-  <resultMap id="BoardDetailResultMap" type="com.example.demo.dto.BoardDetailDto">
+  <resultMap id="BoardDetailResultMap" type="com.example.demo.dto.board.BoardDetailDto">
     <id property="bno" column="bno" />
     <result property="cate_code" column="cate_code" />
     <result property="id" column="id" />
@@ -82,13 +82,13 @@
     <result property="up_id" column="up_id" />
 
     <!-- 카테고리 매핑 -->
-    <association property="category" javaType="com.example.demo.dto.BoardCategoryDto">
+    <association property="category" javaType="com.example.demo.dto.board.BoardCategoryDto">
       <result property="cate_code" column="cate_code" />
       <result property="name" column="cate_name" />
     </association>
 
     <!-- 이미지 여러개 매핑 -->
-    <collection property="boardImgs" ofType="com.example.demo.dto.BoardImgDto">
+    <collection property="boardImgs" ofType="com.example.demo.dto.board.BoardImgDto">
       <id property="ino" column="ino" />
       <result property="img" column="img" />
       <result property="comt" column="img_comt" />
@@ -96,7 +96,7 @@
     </collection>
   </resultMap>
 
-  <select id="selectAll" resultType="com.example.demo.dto.BoardFormDto">
+  <select id="selectAll" resultType="com.example.demo.dto.board.BoardFormDto">
     SELECT
       bno, cate_code, id, title,
       writer, view_cnt, reco_cnt,
@@ -106,7 +106,7 @@
   </select>
 
   <!-- 게시글 수정 -->
-  <update id="update" parameterType="com.example.demo.dto.BoardFormDto">
+  <update id="update" parameterType="com.example.demo.dto.board.BoardFormDto">
     UPDATE board
     SET
         title = #{title}, content = #{content}, comt = #{comt},
