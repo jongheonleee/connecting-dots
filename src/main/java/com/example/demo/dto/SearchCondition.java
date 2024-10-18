@@ -24,26 +24,30 @@ public class SearchCondition {
 
     private Integer page;
     private Integer pageSize;
-    private String option;
-    private String keyword;
+    private String searchOption;
+    private String searchKeyword;
+    private String sortOption;
+
 
     public SearchCondition() {
-        this(DEFAULT_PAGE, DEFAULT_PAGE_SIZE, "", "");
+        this(DEFAULT_PAGE, DEFAULT_PAGE_SIZE, "", "", "");
     }
 
-    public SearchCondition(Integer page, Integer pageSize, String option, String keyword) {
+    public SearchCondition(Integer page, Integer pageSize, String searchOption, String searchKeyword, String sortOption) {
         this.page = page;
         this.pageSize = pageSize;
-        this.option = option;
-        this.keyword = keyword;
+        this.searchOption = searchOption;
+        this.searchKeyword = searchKeyword;
+        this.sortOption = sortOption;
     }
 
     public String getQueryString() {
         return UriComponentsBuilder.newInstance()
                 .queryParam("page", page)
                 .queryParam("pageSize", pageSize)
-                .queryParam("option", option)
-                .queryParam("keyword", keyword)
+                .queryParam("searchOption", searchOption)
+                .queryParam("searchKeyword", searchKeyword)
+                .queryParam("sortOption", sortOption)
                 .build()
                 .toString();
     }

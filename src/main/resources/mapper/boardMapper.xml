@@ -32,6 +32,7 @@
         reg_date, reg_id, up_date, up_id
     FROM board
     WHERE bno = #{bno}
+
   </select>
 
   <!-- 게시글 조회 - 카테고리 -->
@@ -44,6 +45,45 @@
     FROM board
     WHERE cate_code
     LIKE CONCAT(#{cate_code}, '%')
+    ORDER BY reg_date DESC, bno DESC
+  </select>
+
+  <!-- 게시글 검색 조회 - 검색 기능 활용 -->
+  <select id="selectBySearchCondition" parameterType="com.example.demo.dto.SearchCondition" resultType="com.example.demo.dto.board.BoardFormDto">
+    SELECT
+      bno, cate_code, id, title,
+      writer, view_cnt, reco_cnt,
+      not_reco_cnt, content, comt,
+      reg_date, reg_id, up_date, up_id
+    FROM board
+    WHERE TRUE
+    <choose>
+      <when test='searchOption="T"'>
+        AND title LIKE CONCAT('%', #{searchKeyword}, '%')
+      </when>
+      <when test='searchOption="W"'>
+        AND writer LIKE CONCAT('%', #{searchKeyword}, '%')
+      </when>
+      <otherwise>
+        AND title LIKE CONCAT('%', #{searchKeyword}, '%')
+        AND writer LIKE CONCAT('%', #{searchKeyword}, '%')
+      </otherwise>
+    </choose>
+    <choose>
+      <when test='sortOption="1"'>
+        ORDER BY view_cnt DESC,
+        bno DESC
+      </when>
+      <when test='sortOption="2"'>
+        ORDER BY reco_cnt DESC,
+        bno DESC
+      </when>
+      <otherwise>
+        ORDER BY reg_date DESC,
+        bno DESC
+      </otherwise>
+    </choose>
+    LIMIT #{offset}, #{pageSize};
   </select>
 
   <!-- 게시글 상세 조회 - bno -->
@@ -103,6 +143,7 @@
       not_reco_cnt, content, comt,
       reg_date, reg_id, up_date, up_id
     FROM board
+    ORDER BY reg_date DESC, bno DESC
   </select>
 
   <!-- 게시글 수정 -->

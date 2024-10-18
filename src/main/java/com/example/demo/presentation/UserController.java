@@ -52,24 +52,17 @@ public class UserController {
         return "error";
     }
 
-    // 이 부분 추가로 제대로 만들기
     @GetMapping("/myPage")
     public String getProfilePage(Model model, HttpServletRequest request) {
-        // 세선에서 유저 아이디 조회하기
+        // 세선에서 유저 아이디 조회하기 - 이 부분 스프링 시큐리티로 빼버리기
         if (!isLogin(request)) {
             String toUrl = request.getRequestURI();
             return "redirect:/user/login?toUrl=" + toUrl;
         }
 
         // 유저 정보 조회하기
-        String id = getUserId(request);
-        var foundUser = userService.findById(id);
-
-        // 유저가 작성한 글 모두 조회하기
-//        List<BoardDto> foundArticles = boardService.findAllByUserId(id);
-        // 페이징 처리
-
-        model.addAttribute("user", foundUser);
+        String userId = findUserIdOnSession(request);
+        findUserById(model, userId);
 
         return "profilePage";
     }
@@ -82,7 +75,9 @@ public class UserController {
 
     @PostMapping("/register")
     public String registerUser(@Valid @ModelAttribute("userFormDto") UserFormDto userFormDto, BindingResult result) {
-        if (result.hasErrors()) return "registerForm";
+        if (result.hasErrors())
+            return "registerForm";
+
         userService.create(userFormDto);
         return "redirect:/";
     }
@@ -97,10 +92,11 @@ public class UserController {
     @PostMapping("/login")
     public String login(@ModelAttribute("userLoginFormDto") UserLoginFormDto userLoginFormDto,
             HttpServletResponse response, HttpSession session) {
-        if (!checkValidUser(userLoginFormDto)) return "loginForm";
+        if (!checkValidUser(userLoginFormDto))
+            return "loginForm";
+
         checkCookie(userLoginFormDto, response);
         session.setAttribute("id", userLoginFormDto.getId());
-        System.out.println("userLoginFormDto = " + userLoginFormDto);
         return "redirect:" + userLoginFormDto.getToUrl();
     }
 
@@ -109,6 +105,11 @@ public class UserController {
     public String logout(HttpSession session) {
         session.invalidate();
         return "redirect:/";
+    }
+
+    private void findUserById(Model model, String id) {
+        User foundUser = userService.findById(id);
+        model.addAttribute("user", foundUser);
     }
 
     private boolean checkValidUser(UserLoginFormDto userLoginFormDto) {
@@ -134,7 +135,7 @@ public class UserController {
         return session != null && session.getAttribute("id") != null;
     }
 
-    private String getUserId(HttpServletRequest request) {
+    private String findUserIdOnSession(HttpServletRequest request) {
         HttpSession session = request.getSession();
         return (String) session.getAttribute("id");
     }

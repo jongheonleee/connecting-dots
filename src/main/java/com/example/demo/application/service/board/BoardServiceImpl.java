@@ -1,5 +1,6 @@
 package com.example.demo.application.service.board;
 
+import com.example.demo.dto.SearchCondition;
 import com.example.demo.repository.mybatis.board.BoardDaoImpl;
 import com.example.demo.dto.board.BoardDetailDto;
 import com.example.demo.dto.board.BoardFormDto;
@@ -93,6 +94,10 @@ public class BoardServiceImpl {
         }
 
         return foundDetailBoard;
+    }
+
+    public List<BoardFormDto> findBySearchCondition(SearchCondition sc) {
+        return boardDao.selectBySearchCondition(sc);
     }
 
     public List<BoardFormDto> findAll() {

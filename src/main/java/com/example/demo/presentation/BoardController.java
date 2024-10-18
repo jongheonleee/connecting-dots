@@ -1,5 +1,7 @@
 package com.example.demo.presentation;
 
+import com.example.demo.dto.SearchCondition;
+import com.example.demo.dto.board.BoardDetailDto;
 import com.example.demo.dto.board.BoardFormDto;
 import com.example.demo.dto.category.CategoryDto;
 import com.example.demo.application.service.board.BoardServiceImpl;
@@ -46,52 +48,45 @@ public class BoardController {
     }
 
     @GetMapping("/list")
-    public String getListPage(HttpServletRequest request, Model model) {
-        // 로그인 안되있으면 로그인 요청하기
-        // 이때, 이전의 url 정보 저장해서 리다이렉션으로 보냄
+    public String getListPage(HttpServletRequest request, SearchCondition sc, Model model) {
+        // 로그인 여부 확인 - 스프링 시큐리티로 빼기
         if (!isLogin(request)) {
             String toUrl = request.getRequestURI() != null ? request.getRequestURI() : "/";
             return "redirect:/user/login?toUrl=" + toUrl;
         }
-        getCategories();
-        List<BoardFormDto> foundBoard = boardService.findAll();
-        model.addAttribute("boards", foundBoard);
 
+        findCategories();
+        findBoardsBySearchCondition(model, sc);
         return "boardList";
     }
 
     @GetMapping("/detail/{bno}")
     public String getDetailPage(HttpServletRequest request, @PathVariable("bno") Integer bno, Model model) {
-        // 로그인 안되있으면 로그인 요청하기
-        // 이때, 이전의 url 정보 저장해서 리다이렉션으로 보냄
+        // 로그인 여부 확인 - 스프링 시큐리티로 빼기
         if (!isLogin(request)) {
             String toUrl = request.getRequestURI() != null ? request.getRequestURI() : "/";
             return "redirect:/user/login?toUrl=" + toUrl;
         }
 
-        var foundDetailBoard = boardService.findDetailByBno(bno);
-        model.addAttribute("boardDetail", foundDetailBoard);
-
+        findBoardDetailByBno(model, bno);
         return "boardDetail";
     }
 
     @GetMapping("/list/{cate_code}")
     public String getListPageByCateCode(@PathVariable("cate_code") String cate_code, Model model) {
-        List<BoardFormDto> foundBoard = boardService.findByCategory(cate_code);
-        model.addAttribute("boards", foundBoard);
+        findBoardsByCateCode(model, cate_code);
         return "boardList";
     }
 
     @GetMapping("/write")
     public String getWritePage(HttpServletRequest request, @ModelAttribute("boardFormDto") BoardFormDto boardFormDto) {
-        // 로그인 안되있으면 로그인 요청하기
-        // 이때, 이전의 url 정보 저장해서 리다이렉션으로 보냄
+        // 로그인 여부 확인 - 스프링 시큐리티로 빼기
         if (!isLogin(request)) {
             String toUrl = request.getRequestURI() != null ? request.getRequestURI() : "/";
             return "redirect:/user/login?toUrl=" + toUrl;
         }
 
-        getCategories();
+        findCategories();
         return "boardWrite";
     }
 
@@ -99,7 +94,7 @@ public class BoardController {
     @PostMapping("/write")
     public String write(HttpServletRequest request, @Valid @ModelAttribute("boardFormDto") BoardFormDto boardFormDto, BindingResult result,
             @RequestParam("boardImgFile") List<MultipartFile> boardImgFiles) {
-        // 로그인 여부 확인
+        // 로그인 여부 확인 - 스프링 시큐리티로 빼기
         if (!isLogin(request)) {
             String toUrl = request.getRequestURI() != null ? request.getRequestURI() : "/";
             return "redirect:/user/login?toUrl=" + toUrl;
@@ -107,7 +102,6 @@ public class BoardController {
 
         // 데이터 유효성 검증
         if (result.hasErrors()) {
-            System.out.println("유효성 검증 실패함");
             return "boardWrite";
         }
 
@@ -128,13 +122,24 @@ public class BoardController {
         return session != null && session.getAttribute("id") != null;
     }
 
-    private @ModelAttribute("categories") List<CategoryDto> getCategories() {
+    private @ModelAttribute("categories") List<CategoryDto> findCategories() {
         return categoryService.findTopAndSubCategory();
     }
 
-    private @ModelAttribute("categoriesJson") String getCategoriesJson() throws JsonProcessingException {
-        List<CategoryDto> categories = categoryService.findTopAndSubCategory();
-        return new ObjectMapper().writeValueAsString(categories);
+
+    private void findBoardsBySearchCondition(Model model, SearchCondition sc) {
+        List<BoardFormDto> foundBoards = boardService.findBySearchCondition(sc);
+        model.addAttribute("boards", foundBoards);
+    }
+
+    private void findBoardDetailByBno(Model model, Integer bno) {
+        BoardDetailDto foundDetailBoard = boardService.findDetailByBno(bno);
+        model.addAttribute("boardDetail", foundDetailBoard);
+    }
+
+    private void findBoardsByCateCode(Model model, String cateCode) {
+        List<BoardFormDto> foundBoards = boardService.findByCategory(cateCode);
+        model.addAttribute("boards", foundBoards);
     }
 
 }

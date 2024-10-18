@@ -17,16 +17,16 @@ class SearchConditionTest {
     @Test
     public void test1() {
         target = new SearchCondition();
-        String expectedQuery = "?page=1&pageSize=10&option=&keyword=";
+        String expectedQuery = "?page=1&pageSize=10&searchOption=&searchKeyword=&sortOption=";
         assertEquals(expectedQuery, target.getQueryString());
     }
 
-    @DisplayName("생성자에 page 값 넣어준 경우 -  ?page=[page]&pageSize=10&option=&keyword=")
+    @DisplayName("생성자에 page 값 넣어준 경우 -  ?page=[page]&pageSize=10&searchOption=&searchKeyword=")
     @ParameterizedTest
     @ValueSource(ints = {1, 2, 3, 4, 5})
     public void test2(int page) {
-        target = new SearchCondition(page, 10, "", "");
-        String expectedQuery = String.format("?page=%d&pageSize=10&option=&keyword=", page);
+        target = new SearchCondition(page, 10, "", "", "");
+        String expectedQuery = String.format("?page=%d&pageSize=10&searchOption=&searchKeyword=&sortOption=", page);
         assertEquals(expectedQuery, target.getQueryString());
 
         Integer expectedOffset = (page - 1) * 10;

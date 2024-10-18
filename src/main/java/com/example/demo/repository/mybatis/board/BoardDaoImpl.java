@@ -1,5 +1,6 @@
 package com.example.demo.repository.mybatis.board;
 
+import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.board.BoardDetailDto;
 import com.example.demo.dto.board.BoardFormDto;
 import com.example.demo.dto.board.BoardUpdatedFormDto;
@@ -34,6 +35,10 @@ public class BoardDaoImpl {
 
     public List<BoardFormDto> selectAllByCategory(String cate_code) {
         return session.selectList(namespace + "selectByCategory", cate_code);
+    }
+
+    public List<BoardFormDto> selectBySearchCondition(SearchCondition sc) {
+        return session.selectList(namespace + "selectBySearchCondition", sc);
     }
 
     public BoardDetailDto selectDetailByBno(Integer bno) {
