@@ -32,6 +32,10 @@ public class SearchCondition {
         this(DEFAULT_PAGE, DEFAULT_PAGE_SIZE, "", "", "");
     }
 
+    public SearchCondition(Integer page, Integer pageSize) {
+        this(page, pageSize, "", "", "");
+    }
+
     public SearchCondition(Integer page, Integer pageSize, String searchOption, String searchKeyword, String sortOption) {
         this.page = page;
         this.pageSize = pageSize;
