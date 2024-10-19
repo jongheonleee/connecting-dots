@@ -51,6 +51,7 @@ public class BoardImgServiceImpl {
         }
     }
 
+
     public void modifyBoardImg(Integer ino, MultipartFile boardImgFile) {
         try {
             if (!boardImgFile.isEmpty()) {

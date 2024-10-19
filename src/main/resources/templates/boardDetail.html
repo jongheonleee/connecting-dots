@@ -143,6 +143,7 @@
       background-color: #0056b3;
     }
   </style>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 <div class="main-container">
@@ -183,8 +184,8 @@
     <p th:text="${boardDetail.content}">여기에 게시글 내용이 들어갑니다.</p>
 
     <div class="post-actions">
-      <button class="like-button">게시글 추천 👍</button>
-      <button class="dislike-button">게시글 비추천 👎</button>
+      <button id="like-button" class="like-button" type="button">게시글 추천 👍</button>
+      <button id="dislike-button" class="dislike-button" type="button">게시글 비추천 👎</button>
     </div>
   </div>
 
@@ -247,5 +248,46 @@
     </div>
   </div>
 </div>
+<script>
+  $(document).ready(function () {
+    let bno = [[${boardDetail.bno}]]; // boardDetail의 bno를 바로 사용
+
+    // 좋아요 버튼 누르면 ajax로 통신
+    $('#like-button').click(function () {
+      alert('추천을 눌렀습니다.');
+
+      $.ajax({
+        url: '/board/like',
+        method: 'POST',
+        headers: { "content-type": "application/json" }, // 요청 헤더
+        data: JSON.stringify(bno), // bno를 JSON으로 직렬화하여 전송
+        success: function (response) {
+          alert(response);
+        },
+        error: function () {
+          alert('추천에 실패했습니다.');
+        }
+      });
+    });
+
+    // 싫어요 버튼 누르면 ajax로 통신
+    $('#dislike-button').click(function () {
+      alert('비추천을 눌렀습니다.');
+
+      $.ajax({
+        url: '/board/dislike',
+        method: 'POST',
+        headers: { "content-type": "application/json" }, // 요청 헤더
+        data: JSON.stringify(bno), // bno를 JSON으로 직렬화하여 전송
+        success: function (response) {
+          alert(response);
+        },
+        error: function () {
+          alert('비추천에 실패했습니다.');
+        }
+      });
+    });
+  });
+</script>
 </body>
 </html>

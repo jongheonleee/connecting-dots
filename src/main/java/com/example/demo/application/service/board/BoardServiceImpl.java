@@ -29,13 +29,15 @@ public class BoardServiceImpl {
 
     private final BoardImgDaoImpl boardImgDaoImpl;
     private final BoardDaoImpl boardDao;
-    private final BoardImgServiceImpl boardImgService; // 추후에 개발
+    private final BoardImgServiceImpl boardImgService;
+    private final FileServiceImpl fileService;
 
     public BoardServiceImpl(BoardDaoImpl boardDao, BoardImgServiceImpl boardImgService,
-            BoardImgDaoImpl boardImgDaoImpl) {
+            BoardImgDaoImpl boardImgDaoImpl, FileServiceImpl fileService) {
         this.boardDao = boardDao;
         this.boardImgService = boardImgService;
         this.boardImgDaoImpl = boardImgDaoImpl;
+        this.fileService = fileService;
     }
 
     public int count() {
@@ -77,6 +79,8 @@ public class BoardServiceImpl {
             throw new BoardFormInvalidException();
         }
     }
+
+
 
 
     public BoardFormDto findByBno(Integer bno) {
@@ -127,8 +131,12 @@ public class BoardServiceImpl {
                 throw new InternalServerError();
             }
 
-            // 기존에 저장된 이미지 전체 삭제
+            // 기존에 저장된 이미지 전체 삭제 - DB, 파일시스템
             boardImgDaoImpl.deleteByBno(dto.getBno());
+            List<BoardImgFormDto> foundBoardImgs = boardImgDaoImpl.selectAllByBno(dto.getBno());
+            for (var foundBoardImg : foundBoardImgs) {
+                fileService.deleteFile(foundBoardImg.getImg());
+            }
 
             // 이미지 재등록
             for (int i=0; i<boardImgFiles.size(); i++) {
@@ -137,7 +145,7 @@ public class BoardServiceImpl {
                 boardImgService.createBoardImg(boardImgDto, boardImgFiles.get(i));
             }
 
-        } catch (DataIntegrityViolationException e) {
+        } catch (Exception e) {
             throw new BoardFormInvalidException();
         }
     }

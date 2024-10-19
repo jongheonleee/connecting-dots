@@ -21,6 +21,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -31,8 +32,10 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.multipart.MultipartFile;
@@ -127,6 +130,23 @@ public class BoardController {
         boardService.remove(bno);
         return "redirect:/board/list";
     }
+
+    @ResponseBody
+    @PostMapping("/like")
+    public ResponseEntity<String> like(@RequestBody Integer bno) {
+        boardService.increaseRecoCnt(bno);
+        return new ResponseEntity<>("추천이 완료되었습니다.", HttpStatus.OK);
+    }
+
+
+
+    @ResponseBody
+    @PostMapping("/dislike")
+    public ResponseEntity<String> dislike(@RequestBody Integer bno) {
+        boardService.increaseNotRecoCnt(bno);
+        return new ResponseEntity<>("비추천이 완료되었습니다.", HttpStatus.OK);
+    }
+
 
 
     private void findCategories(Model model) {
