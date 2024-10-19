@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.CommentMapper">
+  <select id="count">
+    SELECT COUNT(*)
+    FROM comment
+  </select>
+
+  <select id="countByBno" parameterType="int">
+    SELECT COUNT(*)
+    FROM comment
+    WHERE bno = #{bno}
+  </select>
+
+  <!-- 댓글 등록 -->
+  <insert id="insert" parameterType="com.example.demo.dto.comment.CommentDto">
+    INSERT INTO comment
+    (bno, writer, content,
+     reg_date, reg_id, up_date,
+     up_id)
+    VALUES
+    (#{bno}, #{writer}, #{content},
+     now(), #{reg_id}, now(),
+     #{up_id})
+  </insert>
+
+  <!-- 댓글 조회 -->
+  <!-- 특정 게시글과 과련된 댓글 조회 -->
+  <select id="selectByBno" parameterType="int" resultType="com.example.demo.dto.comment.CommentDto">
+    SELECT
+        cno, bno, writer,
+        content, like_cnt, dislike_cnt
+    FROM comment
+    WHERE bno = #{bno}
+  </select>
+
+  <select id="selectByCno" parameterType="int" resultType="com.example.demo.dto.comment.CommentDto">
+    SELECT
+      cno, bno, writer,
+      content, like_cnt, dislike_cnt,
+      reg_date, reg_id, up_date,
+      up_id
+    FROM comment
+    WHERE cno = #{cno}
+  </select>
+
+  <select id="selectAll" resultType="com.example.demo.dto.comment.CommentDto">
+    SELECT
+      cno, bno, writer,
+      content, like_cnt, dislike_cnt,
+      reg_date, reg_id, up_date,
+      up_id
+    FROM comment
+  </select>
+
+  <!-- 댓글 수정 -->
+  <update id="update" parameterType="com.example.demo.dto.comment.CommentDto">
+    UPDATE comment
+    SET
+        content = #{content},
+        up_date = now(), up_id = #{up_id}
+    WHERE cno = #{cno}
+  </update>
+
+  <update id="increaseLikeCnt" parameterType="int">
+    UPDATE comment
+    SET
+        like_cnt = like_cnt + 1
+    WHERE cno = #{cno}
+  </update>
+
+  <update id="increaseDislikeCnt" parameterType="int">
+    UPDATE comment
+    SET
+        dislike_cnt = dislike_cnt + 1
+    WHERE cno = #{cno}
+  </update>
+
+  <!-- 게시글 삭제 -->
+  <delete id="deleteByBno" parameterType="int">
+    DELETE
+    FROM comment
+    WHERE bno = #{bno}
+  </delete>
+
+  <delete id="deleteByCno" parameterType="int">
+    DELETE
+    FROM comment
+    WHERE cno = #{cno}
+  </delete>
+
+
+  <delete id="deleteAll">
+    DELETE
+    FROM comment
+  </delete>
+</mapper>
