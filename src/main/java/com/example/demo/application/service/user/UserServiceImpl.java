@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserDetailsService {
         var foundUser = userDao.selectByName(username);
 
         if (foundUser == null) {
-            throw new UsernameNotFoundException("사용자를 찾지 못했습니다.");
+            throw new UsernameNotFoundException("해당 이름(아이디)의 유저를 찾지 못했습니다.");
         }
 
         return User.withUsername(foundUser.getId())
@@ -56,19 +56,19 @@ public class UserServiceImpl implements UserDetailsService {
             dto.setPwd(passwordEncoder.encode(dto.getPwd()));
             rowCnt = userDao.insert(dto);
             if (rowCnt != 1) {
-                throw new InternalServerError("DB에 정상적으로 반영도지 못했습니다. 현재 적용된 로우수는 " + rowCnt + "입니다.");
+                throw new InternalServerError();
             }
         } catch (DuplicateKeyException e) {
-            throw new UserAlreadyExistsException("이미 존재하는 아이디입니다. " + e.getMessage());
+            throw new UserAlreadyExistsException();
         } catch (DataIntegrityViolationException e) {
-            throw new UserFormInvalidException("입력하신 데이터가 올바르지 않습니다. " + e.getMessage());
+            throw new UserFormInvalidException();
         }
     }
 
     public UserDto findById(String id) {
         var foundUser = userDao.selectById(id);
         if (foundUser == null) {
-            throw new UserNotFoundException("해당 " + id + "를 가진 사용자를 찾을 수 없습니다.");
+            throw new UserNotFoundException();
         }
 
         return foundUser;
@@ -84,25 +84,25 @@ public class UserServiceImpl implements UserDetailsService {
         try {
             rowCnt = userDao.update(dto);
             if (rowCnt != 1) {
-                throw new InternalServerError("DB에 정상적으로 반영도지 못했습니다. 현재 적용된 로우수는 " + rowCnt + "입니다.");
+                throw new InternalServerError();
             }
         } catch (DuplicateKeyException e) {
-            throw new UserAlreadyExistsException("이미 존재하는 아이디입니다. " + e.getMessage());
+            throw new UserAlreadyExistsException();
         } catch (DataIntegrityViolationException e) {
-            throw new UserFormInvalidException("입력하신 데이터가 올바르지 않습니다. " + e.getMessage());
+            throw new UserFormInvalidException();
         }
     }
 
     public void remove(String id) {
         var foundUser = userDao.selectById(id);
         if (foundUser == null) {
-            throw new UserNotFoundException("해당 " + id + "를 가진 사용자를 찾을 수 없습니다.");
+            throw new UserNotFoundException();
         }
 
         int rowCnt = 0;
         rowCnt = userDao.deleteById(id);
         if (rowCnt != 1) {
-            throw new InternalServerError("DB에 정상적으로 반영도지 못했습니다. 현재 적용된 로우수는 " + rowCnt + "입니다.");
+            throw new InternalServerError();
         }
     }
 
@@ -112,7 +112,7 @@ public class UserServiceImpl implements UserDetailsService {
         int rowCnt = userDao.deleteAll();
 
         if (rowCnt == totalCnt) {
-            throw new InternalServerError("DB에 정상적으로 반영도지 못했습니다. 현재 적용된 로우수는 " + rowCnt + "입니다.");
+            throw new InternalServerError();
         }
     }
 

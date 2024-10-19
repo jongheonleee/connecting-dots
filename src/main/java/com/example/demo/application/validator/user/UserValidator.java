@@ -20,26 +20,17 @@ public class UserValidator implements Validator {
     private static final Pattern REG_FOR_PWD = Pattern.compile("^[a-z0-9@!#$%&*]{6,20}$");
     private static final Pattern REG_FOR_BIRTH = Pattern.compile("^(19|20)\\d{2}/(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])$");
 
-    // 날짜 유혀성 검증에 사용되는 형식
     private static final String DATE_FORMAT = "yyyy/MM/dd";
 
 
 
-    // UserFormDto 클래스를 지원하는지 확인
     @Override
     public boolean supports(Class<?> clazz) {
         return UserFormDto.class.isAssignableFrom(clazz);
     }
 
-    // 각 필드 별로 유효성 검증
     @Override
     public void validate(Object target, Errors errors) {
-        // UserFormDto 클래스로 형변환
-            // id, name, email, pwd, birth, sns
-        // 각 필드마다 비어있는지 확인
-        // 각 필드마다 유효성 검증 처리
-        // sns의 경우 문자열 배열로 파싱 처리
-        // 유효성 검증에 실패하면 errors 객체에 에러코드 추가
         UserFormDto userFormDto = (UserFormDto) target;
         checkBlank(errors);
         checkFields(userFormDto, errors);

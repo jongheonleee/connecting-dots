@@ -27,7 +27,7 @@ public class CategoryServiceImpl {
         try {
             return categoryDao.count();
         } catch (Exception e) {
-            throw new InternalServerError("예기치 못한 에러");
+            throw new InternalServerError();
         }
     }
 
@@ -35,12 +35,12 @@ public class CategoryServiceImpl {
         try {
             int rowCnt = categoryDao.insert(dto);
             if (rowCnt != 1) {
-                throw new InternalServerError("DB에 정상적으로 반영되지 못했습니다. 현재 적용된 로우수는 " + rowCnt + "입니다.");
+                throw new InternalServerError();
             }
         } catch (DuplicateKeyException e) {
-            throw new CategoryAlreadyExistsException("이미 존재하는 카테고리입니다.");
+            throw new CategoryAlreadyExistsException();
         } catch (DataIntegrityViolationException e) {
-            throw new CategoryFormInvalidException("카테고리 데이터 입력 형식이 잘못되었습니다.");
+            throw new CategoryFormInvalidException();
         }
     }
 
@@ -48,7 +48,7 @@ public class CategoryServiceImpl {
         var found = categoryDao.selectByCode(code);
 
         if (found == null) {
-            throw new CategoryNotFoundException("해당 " + code + "를 가진 카테고리를 찾을 수 없습니다.");
+            throw new CategoryNotFoundException();
         }
 
         return found;
@@ -62,24 +62,24 @@ public class CategoryServiceImpl {
         try {
             int rowCnt = categoryDao.update(dto);
             if (rowCnt != 1) {
-                throw new InternalServerError("DB에 정상적으로 반영되지 못했습니다. 현재 적용된 로우수는 " + rowCnt + "입니다.");
+                throw new InternalServerError();
             }
         } catch (DuplicateKeyException e) {
-            throw new CategoryAlreadyExistsException("이미 존재하는 카테고리입니다.");
+            throw new CategoryAlreadyExistsException();
         } catch (DataIntegrityViolationException e) {
-            throw new CategoryFormInvalidException("카테고리 데이터 입력 형식이 잘못되었습니다.");
+            throw new CategoryFormInvalidException();
         }
     }
 
     public void remove(String code) {
         if (findByCode(code) == null) {
-            throw new CategoryNotFoundException("해당 " + code + "를 가진 카테고리를 찾을 수 없습니다.");
+            throw new CategoryNotFoundException();
         }
 
         int rowCnt = categoryDao.deleteByCode(code);
 
         if (rowCnt != 1) {
-            throw new InternalServerError("DB에 정상적으로 반영되지 못했습니다. 현재 적용된 로우수는 " + rowCnt + "입니다.");
+            throw new InternalServerError();
         }
     }
 
@@ -89,7 +89,7 @@ public class CategoryServiceImpl {
         int rowCnt = categoryDao.deleteAll();
 
         if (totalCnt != rowCnt) {
-            throw new InternalServerError("DB에 정상적으로 반영되지 못했습니다. 현재 적용된 로우수는 " + rowCnt + "입니다.");
+            throw new InternalServerError();
         }
     }
 
@@ -102,9 +102,6 @@ public class CategoryServiceImpl {
     }
 
     public List<CategoryDto> findTopAndSubCategory() {
-        // 대분류의 카테고리를 조회한다
-        // 대분류 카테고리와 연관덴 중분류 카테고리를 조회한다
-        // dto에 담아서 리턴한다
         List<CategoryDto> categories = categoryDao.selectAllTopCategory();
         for (var topCategory : categories) {
             String topCate = topCategory.getCate_code();

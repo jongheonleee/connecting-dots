@@ -42,12 +42,12 @@ public class BoardImgServiceImpl {
             dto.updateBoardImg(imgName, imgUrl);
             int rowCnt = boardImgDao.insert(dto);
             if (rowCnt != 1) {
-                throw new InternalServerError("DB에 정상적으로 반영되지 못했습니다. 현재 적용된 로우수는 " + rowCnt + "입니다.");
+                throw new InternalServerError();
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new InternalServerError("게시글 이미지를 생성하는 도중 오류가 발생했습니다.");
+            throw new InternalServerError();
         }
     }
 
@@ -56,7 +56,7 @@ public class BoardImgServiceImpl {
             if (!boardImgFile.isEmpty()) {
                 var foundBoardImg = boardImgDao.selectByIno(ino);
                 if (foundBoardImg == null) {
-                    throw new BoardImgNotFoundException("게시글 이미지를 찾을 수 없습니다.");
+                    throw new BoardImgNotFoundException();
                 }
 
                 if (!StringUtils.isEmpty(foundBoardImg.getName())) {
@@ -64,21 +64,18 @@ public class BoardImgServiceImpl {
                 }
 
                 String oriBoardImgName = boardImgFile.getOriginalFilename();
-                String imgName = fileService.uploadFile(boardImgLocation, oriBoardImgName,
-                        boardImgFile.getBytes());
+                String imgName = fileService.uploadFile(boardImgLocation, oriBoardImgName, boardImgFile.getBytes());
                 String imgUrl = "/images/board/"  + imgName;
                 foundBoardImg.updateBoardImg(imgName, imgUrl);
 
                 int rowCnt = boardImgDao.update(foundBoardImg);
                 if (rowCnt != 1) {
-                    throw new InternalServerError(
-                            "DB에 정상적으로 반영되지 못했습니다. 현재 적용된 로우수는 " + rowCnt + "입니다.");
+                    throw new InternalServerError();
                 }
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new InternalServerError("게시글 이미지를 수정하는 도중 오류가 발생했습니다.");
+            throw new InternalServerError();
         }
     }
 

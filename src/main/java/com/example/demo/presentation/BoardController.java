@@ -3,6 +3,7 @@ package com.example.demo.presentation;
 import com.example.demo.application.exception.board.BoardFormInvalidException;
 import com.example.demo.application.exception.board.BoardImgNotFoundException;
 import com.example.demo.application.exception.board.BoardNotFoundException;
+import com.example.demo.application.exception.global.InternalServerError;
 import com.example.demo.dto.PageHandler;
 import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.board.BoardDetailDto;

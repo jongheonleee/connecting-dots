@@ -1,5 +1,6 @@
 package com.example.demo.presentation;
 
+import com.example.demo.application.exception.global.InternalServerError;
 import com.example.demo.dto.user.UserFormDto;
 import com.example.demo.dto.user.UserLoginFormDto;
 import com.example.demo.application.exception.user.UserAlreadyExistsException;

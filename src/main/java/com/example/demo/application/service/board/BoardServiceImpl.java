@@ -63,7 +63,7 @@ public class BoardServiceImpl {
             // 게시글 등록
             rowCnt = boardDao.insert(dto);
             if (rowCnt != 1) {
-                throw new InternalServerError("DB에 정상적으로 반영되지 못했습니다. 현재 적용된 로우수는 " + rowCnt + "입니다.");
+                throw new InternalServerError();
             }
 
             // 이미지 등록
@@ -74,7 +74,7 @@ public class BoardServiceImpl {
             }
 
         } catch (DataIntegrityViolationException e) {
-            throw new BoardFormInvalidException("입력하신 데이터가 올바르지 않습니다. " + e.getMessage());
+            throw new BoardFormInvalidException();
         }
     }
 
@@ -82,7 +82,7 @@ public class BoardServiceImpl {
     public BoardFormDto findByBno(Integer bno) {
         var foundBoard = boardDao.select(bno);
         if (foundBoard == null) {
-            throw new BoardNotFoundException("해당 " + bno + "를 가진 게시글을 찾을 수 없습니다.");
+            throw new BoardNotFoundException();
         }
 
         return foundBoard;
@@ -96,7 +96,7 @@ public class BoardServiceImpl {
     public BoardDetailDto findDetailByBno(Integer bno) {
         var foundDetailBoard = boardDao.selectDetailByBno(bno);
         if (foundDetailBoard == null) {
-            throw new BoardNotFoundException("해당 " + bno + "를 가진 게시글을 찾을 수 없습니다.");
+            throw new BoardNotFoundException();
         }
 
         boardDao.increaseViewCnt(bno);
@@ -124,7 +124,7 @@ public class BoardServiceImpl {
         try {
             rowCnt = boardDao.update(dto);
             if (rowCnt != 1) {
-                throw new InternalServerError("DB에 정상적으로 반영되지 못했습니다. 현재 적용된 로우수는 " + rowCnt + "입니다.");
+                throw new InternalServerError();
             }
 
             // 기존에 저장된 이미지 전체 삭제
@@ -138,7 +138,7 @@ public class BoardServiceImpl {
             }
 
         } catch (DataIntegrityViolationException e) {
-            throw new BoardFormInvalidException("입력하신 데이터가 올바르지 않습니다. " + e.getMessage());
+            throw new BoardFormInvalidException();
         }
     }
 
@@ -163,7 +163,7 @@ public class BoardServiceImpl {
         int expectedRowCnt = 1 + foundBoardImgs.size();
 
         if (foundBoard == null) {
-            throw new BoardNotFoundException("해당 " + bno + "를 가진 게시글을 찾을 수 없습니다.");
+            throw new BoardNotFoundException();
         }
 
         // 관련 이미지 삭제
@@ -175,7 +175,7 @@ public class BoardServiceImpl {
         rowCnt += boardDao.delete(bno);
 
         if (rowCnt != expectedRowCnt) {
-            throw new InternalServerError("게시글 삭제에 실패했습니다.");
+            throw new InternalServerError();
         }
     }
 
@@ -188,7 +188,7 @@ public class BoardServiceImpl {
         rowCnt += boardDao.deleteAll();
 
         if (expectedRowCnt != rowCnt) {
-            throw new InternalServerError("게시글 전체 삭제에 실패했습니다.");
+            throw new InternalServerError();
         }
     }
 
