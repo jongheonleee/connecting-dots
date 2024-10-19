@@ -18,7 +18,7 @@ class SearchConditionTest {
     public void test1() {
         target = new SearchCondition();
         String expectedQuery = "?page=1&pageSize=10&searchOption=&searchKeyword=&sortOption=";
-        assertEquals(expectedQuery, target.getQueryString());
+        assertEquals(expectedQuery, target.getQueryString(1));
     }
 
     @DisplayName("생성자에 page 값 넣어준 경우 -  ?page=[page]&pageSize=10&searchOption=&searchKeyword=")
@@ -27,7 +27,7 @@ class SearchConditionTest {
     public void test2(int page) {
         target = new SearchCondition(page, 10, "", "", "");
         String expectedQuery = String.format("?page=%d&pageSize=10&searchOption=&searchKeyword=&sortOption=", page);
-        assertEquals(expectedQuery, target.getQueryString());
+        assertEquals(expectedQuery, target.getQueryString(page));
 
         Integer expectedOffset = (page - 1) * 10;
         assertEquals(expectedOffset, target.getOffset());

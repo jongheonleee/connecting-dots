@@ -225,10 +225,52 @@
     .search-button:hover {
       background-color: #0056b3;
     }
+
+    /* 페이징 스타일 */
+    .paging-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .paging {
+      display: flex;
+      gap: 5px;
+    }
+    .page {
+      padding: 8px 12px;
+      border: 1px solid #007bff;
+      border-radius: 5px;
+      color: #007bff;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 16px;
+    }
+    .page:hover {
+      background-color: #e9ecef;
+    }
+    .paging-active {
+      background-color: #007bff;
+      color: white;
+      font-weight: bold;
+    }
+    .page-nav {
+      padding: 8px 12px;
+      border: 1px solid #007bff;
+      border-radius: 5px;
+      color: #007bff;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .page-nav:hover {
+      background-color: #e9ecef;
+    }
+
+
   </style>
 </head>
 <body>
 <div class="main-container">
+  <!-- 네비게이션 -->
   <div class="navbar">
     <div class="logo" onclick="location.href='/'">Connecting Moment</div>
 
@@ -296,6 +338,30 @@
       </tr>
       </tbody>
     </table>
+
+    <!-- 페이징 부분 추가 -->
+    <!-- 페이징 부분 -->
+    <div class="paging-container">
+      <div class="paging">
+        <!-- 이전 페이지 -->
+        <div th:if="${ph.prev}">
+          <a class="page-nav" th:href="@{'/board/list' + ${ph.sc.getQueryString(ph.beginPage - 1)} }">&lt;</a>
+        </div>
+
+        <!-- 페이지 번호 -->
+        <span th:each="i : ${#numbers.sequence(ph.beginPage, ph.endPage)}">
+          <a class="page" th:href="@{'/board/list' + ${ph.sc.getQueryString(i)} }"
+             th:classappend="${i == ph.sc.page} ? 'paging-active' : ''" th:text="${i}"></a>
+        </span>
+
+        <!-- 다음 페이지 -->
+        <div th:if="${ph.next}">
+          <a class="page-nav" th:href="@{'/board/list' + ${ph.sc.getQueryString(ph.endPage + 1)} }">&gt;</a>
+        </div>
+      </div>
+    </div>
+
+
 
     <!-- 검색 부분 추가 -->
     <div class="search-bar">

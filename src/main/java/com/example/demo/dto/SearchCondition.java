@@ -44,7 +44,7 @@ public class SearchCondition {
         this.sortOption = sortOption;
     }
 
-    public String getQueryString() {
+    public String getQueryString(Integer page) {
         return UriComponentsBuilder.newInstance()
                 .queryParam("page", page)
                 .queryParam("pageSize", pageSize)

@@ -14,10 +14,10 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
 
-    INSERT INTO board
-        (cate_code, id, title,
-         writer, content, comt,
-         reg_date, reg_id, up_date, up_id)
+    INSERT INTO board(
+        cate_code, id, title,
+        writer, content, comt,
+        reg_date, reg_id, up_date, up_id)
     values (#{cate_code}, #{id}, #{title},
             #{writer}, #{content}, #{comt},
             now(), #{reg_id}, now(), #{up_id});
@@ -35,6 +35,16 @@
 
   </select>
 
+  <!-- 게시글 카테고리 기반 조회 카운팅 -->
+  <select id="countByCategory" parameterType="String" resultType="int">
+    SELECT
+      COUNT(*)
+    FROM board
+    WHERE cate_code
+    LIKE CONCAT(#{cate_code}, '%')
+  </select>
+
+
   <!-- 게시글 조회 - 카테고리 -->
   <select id="selectByCategory" parameterType="String" resultType="com.example.demo.dto.board.BoardFormDto">
     SELECT
@@ -46,6 +56,28 @@
     WHERE cate_code
     LIKE CONCAT(#{cate_code}, '%')
     ORDER BY reg_date DESC, bno DESC
+  </select>
+
+  <!-- 게시글 검색 & 정렬 조건 기반 카운팅 -->
+  <select id="countBySearchCondition" parameterType="com.example.demo.dto.SearchCondition" resultType="int">
+    SELECT
+      COUNT(*)
+    FROM board
+    WHERE TRUE
+
+    <!-- 검색 조건 -->
+    <choose>
+      <when test='searchOption=="T"'>
+        AND title LIKE CONCAT('%', #{searchKeyword}, '%')
+      </when>
+      <when test='searchOption=="W"'>
+        AND writer LIKE CONCAT('%', #{searchKeyword}, '%')
+      </when>
+      <otherwise>
+        AND title LIKE CONCAT('%', #{searchKeyword}, '%')
+        OR writer LIKE CONCAT('%', #{searchKeyword}, '%')
+      </otherwise>
+    </choose>
   </select>
 
   <!-- 게시글 검색 & 정렬 조건 기반 조회 -->

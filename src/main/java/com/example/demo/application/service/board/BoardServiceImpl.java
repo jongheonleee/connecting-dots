@@ -39,6 +39,14 @@ public class BoardServiceImpl {
         return boardDao.count();
     }
 
+    public int count(SearchCondition sc) {
+        return boardDao.count(sc);
+    }
+
+    public int count(String cateCode) {
+        return boardDao.count(cateCode);
+    }
+
     @Retryable(
             value = {RuntimeException.class},
             exclude = {BoardFormInvalidException.class, SQLSyntaxErrorException.class, DuplicateKeyException.class},

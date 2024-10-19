@@ -3,6 +3,7 @@ package com.example.demo.service.unit;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
+import com.example.demo.dto.user.UserDto;
 import com.example.demo.repository.mybatis.user.UserDaoImpl;
 import com.example.demo.dto.user.User;
 import com.example.demo.dto.user.UserFormDto;
@@ -46,7 +47,7 @@ class UserServiceImplTest {
     @InjectMocks
     private UserServiceImpl target;
 
-    private List<User> userDtoFixture = new ArrayList<>();
+    private List<UserDto> userDtoFixture = new ArrayList<>();
     private List<UserFormDto> userFormDtoFixture = new ArrayList<>();
 
 
@@ -331,7 +332,7 @@ class UserServiceImplTest {
 
     private void createFixture(int cnt) {
         for (int i=0; i<cnt; i++) {
-            var dto = new User();
+            var dto = new UserDto();
             dto.setId("id" + cnt);
             dto.setName("name" + cnt);
             dto.setEmail("email" + cnt);
@@ -375,7 +376,7 @@ class UserServiceImplTest {
         return dto;
     }
 
-    private boolean isSameUserDto(User a, User b) {
+    private boolean isSameUserDto(UserDto a, UserDto b) {
         return a.getId().equals(b.getId()) &&
                 a.getName().equals(b.getName()) &&
                 a.getEmail().equals(b.getEmail()) &&

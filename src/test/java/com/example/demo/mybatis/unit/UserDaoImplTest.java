@@ -2,6 +2,7 @@ package com.example.demo.mybatis.unit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.example.demo.dto.user.UserDto;
 import com.example.demo.repository.mybatis.user.UserDaoImpl;
 import com.example.demo.dto.user.User;
 import com.example.demo.dto.user.UserFormDto;
@@ -105,7 +106,7 @@ class UserDaoImplTest {
 
         // 내용 확인
         // 비교 대상인 리스트 둘을 같은 조건으로 정렬해주기
-        List<User> foundUsers = target.selectAll();
+        List<UserDto> foundUsers = target.selectAll();
         dummy.sort((a, b) -> a.getName().compareTo(b.getName()));
         foundUsers.sort((a, b) -> a.getName().compareTo(b.getName()));
 
@@ -160,7 +161,7 @@ class UserDaoImplTest {
             assertTrue(1 == target.insert(dto));
         }
 
-        List<User> foundUsers = target.selectAll();
+        List<UserDto> foundUsers = target.selectAll();
 
         // 순서 보장을 위한 같은 조건의 정렬 처리
         dummy.sort((a, b) -> a.getName().compareTo(b.getName()));
@@ -260,7 +261,7 @@ class UserDaoImplTest {
             assertTrue(1 == target.update(updateDto));
         }
 
-        List<User> foundUsers = target.selectAll();
+        List<UserDto> foundUsers = target.selectAll();
 
         // 순서 보장을 위한 같은 조건의 정렬 처리
         updatedDummy.sort((a, b) -> a.getName().compareTo(b.getName()));
@@ -378,7 +379,7 @@ class UserDaoImplTest {
         return dto;
     }
 
-    private boolean isSameUser(UserFormDto expected, User found) {
+    private boolean isSameUser(UserFormDto expected, UserDto found) {
         return expected.getName().equals(found.getName())
                 && expected.getEmail().equals(found.getEmail())
                 && expected.getId().equals(found.getId())
@@ -386,7 +387,7 @@ class UserDaoImplTest {
                 && expected.getSns().equals(found.getSns());
     }
 
-    private boolean isSameUser(UserUpdatedFormDto expected, User found) {
+    private boolean isSameUser(UserUpdatedFormDto expected, UserDto found) {
         return expected.getName().equals(found.getName())
                 && expected.getEmail().equals(found.getEmail())
                 && expected.getId().equals(found.getId())

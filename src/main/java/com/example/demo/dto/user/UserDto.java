@@ -10,6 +10,7 @@ import lombok.ToString;
 public class UserDto {
 
     private String id;
+    private String name;
     private String pwd;
     private String email;
     private String birth;
@@ -18,4 +19,8 @@ public class UserDto {
     private String reg_id;
     private String up_date;
     private String up_id;
+
+    public boolean checkPwd(String pwd) {
+        return this.pwd.equals(pwd);
+    }
 }

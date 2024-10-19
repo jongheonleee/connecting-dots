@@ -21,6 +21,14 @@ public class BoardDaoImpl {
         return session.selectOne(namespace + "count");
     }
 
+    public int count(SearchCondition sc) {
+        return session.selectOne(namespace + "countBySearchCondition", sc);
+    }
+
+    public int count(String cate_code) {
+        return session.selectOne(namespace + "countByCategory", cate_code);
+    }
+
     public int insert(BoardFormDto dto) {
         return session.insert(namespace + "insert", dto);
     }

@@ -1,6 +1,7 @@
 package com.example.demo.repository.mybatis.user;
 
 import com.example.demo.dto.user.User;
+import com.example.demo.dto.user.UserDto;
 import com.example.demo.dto.user.UserFormDto;
 import com.example.demo.dto.user.UserUpdatedFormDto;
 import java.util.List;
@@ -24,12 +25,16 @@ public class UserDaoImpl {
         return session.insert(namespace + "insert", dto);
     }
 
+    public UserDto selectByName(String username) {
+        return session.selectOne(namespace + "selectByName", username);
+    }
 
-    public User selectById(String id) {
+
+    public UserDto selectById(String id) {
         return session.selectOne(namespace + "selectById", id);
     }
 
-    public List<User> selectAll() {
+    public List<UserDto> selectAll() {
         return session.selectList(namespace + "selectAll");
     }
 

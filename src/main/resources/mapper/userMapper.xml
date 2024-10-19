@@ -16,7 +16,7 @@
     );
   </insert>
 
-  <select id="selectById" parameterType="String" resultType="com.example.demo.dto.user.User">
+  <select id="selectById" parameterType="String" resultType="com.example.demo.dto.user.UserDto">
     SELECT
         id, name, pwd,
         email, birth, sns,
@@ -25,7 +25,16 @@
     WHERE id = #{id}
   </select>
 
-  <select id="selectAll" resultType="com.example.demo.dto.user.User">
+  <select id="selectByName" parameterType="String" resultType="com.example.demo.dto.user.UserDto">
+    SELECT
+      id, name, pwd,
+      email, birth, sns,
+      reg_date, reg_id, up_date, up_id
+    FROM user
+    WHERE id = #{username}
+  </select>
+
+  <select id="selectAll" resultType="com.example.demo.dto.user.UserDto">
     SELECT
         id, name, pwd,
         email, birth, sns,
