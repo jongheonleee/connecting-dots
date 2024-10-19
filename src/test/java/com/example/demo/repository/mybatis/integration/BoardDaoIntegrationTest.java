@@ -1,4 +1,4 @@
-package com.example.demo.mybatis.integration;
+package com.example.demo.repository.mybatis.integration;
 
 import static org.junit.jupiter.api.Assertions.*;
 

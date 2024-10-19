@@ -1,17 +1,18 @@
-package com.example.demo.mybatis.learning;
+package com.example.demo.repository.mybatis.learning;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import com.example.demo.repository.mybatis.board.BoardImgDaoImpl;
+import com.example.demo.repository.mybatis.board.BoardDaoImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class BoardImgDaoImplLearningTest {
+class BoardDaoImplLearningTest {
+
     @Autowired
-    private BoardImgDaoImpl target;
+    private BoardDaoImpl target;
 
     @BeforeEach
     public void setUp() {
@@ -19,8 +20,11 @@ class BoardImgDaoImplLearningTest {
     }
 
     @Test
-    public void testCount() {
+    public void test1() {
         int count = target.count();
-        assertNotNull(count);
+        System.out.println(count);
     }
+
+
+
 }

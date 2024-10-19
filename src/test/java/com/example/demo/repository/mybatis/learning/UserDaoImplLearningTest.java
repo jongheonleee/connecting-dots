@@ -1,4 +1,4 @@
-package com.example.demo.mybatis.learning;
+package com.example.demo.repository.mybatis.learning;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;

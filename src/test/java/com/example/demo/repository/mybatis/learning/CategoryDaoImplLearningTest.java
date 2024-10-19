@@ -1,4 +1,4 @@
-package com.example.demo.mybatis.learning;
+package com.example.demo.repository.mybatis.learning;
 
 import org.springframework.boot.test.context.SpringBootTest;
 
