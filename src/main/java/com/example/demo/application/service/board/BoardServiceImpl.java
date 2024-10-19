@@ -143,25 +143,11 @@ public class BoardServiceImpl {
                 boardImgDto.setBno(dto.getBno());
                 boardImgService.createBoardImg(boardImgDto, boardImgFiles.get(i));
             }
-            
+
         } catch (DataIntegrityViolationException e) {
             throw new BoardFormInvalidException("입력하신 데이터가 올바르지 않습니다. " + e.getMessage());
         }
     }
-
-//
-//    public void modify(BoardUpdatedFormDto dto) {
-//        int rowCnt = 0;
-//
-//        try {
-//            rowCnt = boardDao.update(dto);
-//            if (rowCnt != 1) {
-//                throw new InternalServerError("DB에 정상적으로 반영되지 못했습니다. 현재 적용된 로우수는 " + rowCnt + "입니다.");
-//            }
-//        } catch (DataIntegrityViolationException e) {
-//            throw new BoardFormInvalidException("입력하신 데이터가 올바르지 않습니다. " + e.getMessage());
-//        }
-//    }
 
     public void increaseViewCnt(Integer bno) {
         int rowCnt = boardDao.increaseViewCnt(bno);
@@ -175,26 +161,40 @@ public class BoardServiceImpl {
         int rowCnt = boardDao.increaseNotRecoCnt(bno);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void remove(Integer bno) {
-        var foundBoard = boardDao.select(bno);
+        var foundBoard = boardDao.select(bno); // 1
+        var foundBoardImgs = boardImgDaoImpl.selectAllByBno(bno); // size
+
+        int rowCnt = 0;
+        int expectedRowCnt = 1 + foundBoardImgs.size();
+
         if (foundBoard == null) {
             throw new BoardNotFoundException("해당 " + bno + "를 가진 게시글을 찾을 수 없습니다.");
         }
 
-        int rowCnt = 0;
-        rowCnt = boardDao.delete(bno);
+        // 관련 이미지 삭제
+        for (var foundBoardImg : foundBoardImgs) {
+            rowCnt += boardImgDaoImpl.deleteByIno(foundBoardImg.getIno());
+        }
 
-        if (rowCnt != 1) {
+        // 게시글 삭제
+        rowCnt += boardDao.delete(bno);
+
+        if (rowCnt != expectedRowCnt) {
             throw new InternalServerError("게시글 삭제에 실패했습니다.");
         }
     }
 
     @Transactional(rollbackFor = Exception.class)
     public void deleteAll() {
-        int totalCnt = boardDao.count();
-        int rowCnt = boardDao.deleteAll();
+        int expectedRowCnt = boardDao.count() + boardImgDaoImpl.count();
+        int rowCnt = 0;
 
-        if (totalCnt != rowCnt) {
+        rowCnt += boardImgDaoImpl.deleteAll();
+        rowCnt += boardDao.deleteAll();
+
+        if (expectedRowCnt != rowCnt) {
             throw new InternalServerError("게시글 전체 삭제에 실패했습니다.");
         }
     }

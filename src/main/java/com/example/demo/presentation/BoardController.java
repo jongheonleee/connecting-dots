@@ -98,11 +98,11 @@ public class BoardController {
     }
 
     @PostMapping("/modify/{bno}")
-    public String modify(@PathVariable("bno") Integer bno, @Valid @ModelAttribute("updatedBoardFormDto") BoardFormDto updatedBoardFormDto, BindingResult result,
+    public String modify(@Valid @ModelAttribute("updatedBoardFormDto") BoardFormDto updatedBoardFormDto, BindingResult result,
             @RequestParam("boardImgFile") List<MultipartFile> boardImgFiles) {
-        if (result.hasErrors()) {
+        if (result.hasErrors())
             return "boardModify";
-        }
+
 
         boardService.modify(updatedBoardFormDto, boardImgFiles);
         return "redirect:/board/list";
