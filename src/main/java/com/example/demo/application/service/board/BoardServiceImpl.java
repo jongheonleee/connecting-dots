@@ -28,10 +28,9 @@ public class BoardServiceImpl {
     private static final int RETRY_DELAY = 5_000;
 
     private final BoardImgDaoImpl boardImgDaoImpl;
-    private BoardDaoImpl boardDao;
-    private BoardImgServiceImpl boardImgService; // 추후에 개발
+    private final BoardDaoImpl boardDao;
+    private final BoardImgServiceImpl boardImgService; // 추후에 개발
 
-    @Autowired
     public BoardServiceImpl(BoardDaoImpl boardDao, BoardImgServiceImpl boardImgService,
             BoardImgDaoImpl boardImgDaoImpl) {
         this.boardDao = boardDao;
@@ -78,12 +77,6 @@ public class BoardServiceImpl {
             throw new BoardFormInvalidException("입력하신 데이터가 올바르지 않습니다. " + e.getMessage());
         }
     }
-
-//    // 재시도 실패시 예외 발생
-//    @Recover
-//    public void recover(RuntimeException e) {
-//        throw new RetryFailedException("게시글 작성에 실패했습니다. 재시도 횟수를 초과했습니다.");
-//    }
 
 
     public BoardFormDto findByBno(Integer bno) {
