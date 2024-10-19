@@ -9,6 +9,7 @@ import com.example.demo.dto.board.BoardUpdatedFormDto;
 import com.example.demo.application.exception.board.BoardFormInvalidException;
 import com.example.demo.application.exception.board.BoardNotFoundException;
 import com.example.demo.application.exception.global.InternalServerError;
+import com.example.demo.repository.mybatis.board.BoardImgDaoImpl;
 import java.sql.SQLSyntaxErrorException;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +27,16 @@ public class BoardServiceImpl {
     private static final int MAX_RETRY = 10;
     private static final int RETRY_DELAY = 5_000;
 
+    private final BoardImgDaoImpl boardImgDaoImpl;
     private BoardDaoImpl boardDao;
     private BoardImgServiceImpl boardImgService; // 추후에 개발
 
     @Autowired
-    public BoardServiceImpl(BoardDaoImpl boardDao, BoardImgServiceImpl boardImgService) {
+    public BoardServiceImpl(BoardDaoImpl boardDao, BoardImgServiceImpl boardImgService,
+            BoardImgDaoImpl boardImgDaoImpl) {
         this.boardDao = boardDao;
         this.boardImgService = boardImgService;
+        this.boardImgDaoImpl = boardImgDaoImpl;
     }
 
     public int count() {
@@ -53,6 +57,7 @@ public class BoardServiceImpl {
             maxAttempts = MAX_RETRY,
             backoff = @Backoff(delay = RETRY_DELAY)
     )
+    @Transactional(rollbackFor = Exception.class)
     public void create(BoardFormDto dto, List<MultipartFile> boardImgFiles) {
         int rowCnt = 0;
         try {
@@ -102,7 +107,6 @@ public class BoardServiceImpl {
         }
 
         boardDao.increaseViewCnt(bno);
-
         return foundDetailBoard;
     }
 
@@ -114,7 +118,14 @@ public class BoardServiceImpl {
         return boardDao.selectAll();
     }
 
-    public void modify(BoardUpdatedFormDto dto) {
+    @Retryable(
+            value = {RuntimeException.class},
+            exclude = {BoardFormInvalidException.class, SQLSyntaxErrorException.class, DuplicateKeyException.class},
+            maxAttempts = MAX_RETRY,
+            backoff = @Backoff(delay = RETRY_DELAY)
+    )
+    @Transactional(rollbackFor = Exception.class)
+    public void modify(BoardFormDto dto, List<MultipartFile> boardImgFiles) {
         int rowCnt = 0;
 
         try {
@@ -122,10 +133,35 @@ public class BoardServiceImpl {
             if (rowCnt != 1) {
                 throw new InternalServerError("DB에 정상적으로 반영되지 못했습니다. 현재 적용된 로우수는 " + rowCnt + "입니다.");
             }
+
+            // 기존에 저장된 이미지 전체 삭제
+            boardImgDaoImpl.deleteByBno(dto.getBno());
+
+            // 이미지 재등록
+            for (int i=0; i<boardImgFiles.size(); i++) {
+                var boardImgDto = new BoardImgFormDto();
+                boardImgDto.setBno(dto.getBno());
+                boardImgService.createBoardImg(boardImgDto, boardImgFiles.get(i));
+            }
+            
         } catch (DataIntegrityViolationException e) {
             throw new BoardFormInvalidException("입력하신 데이터가 올바르지 않습니다. " + e.getMessage());
         }
     }
+
+//
+//    public void modify(BoardUpdatedFormDto dto) {
+//        int rowCnt = 0;
+//
+//        try {
+//            rowCnt = boardDao.update(dto);
+//            if (rowCnt != 1) {
+//                throw new InternalServerError("DB에 정상적으로 반영되지 못했습니다. 현재 적용된 로우수는 " + rowCnt + "입니다.");
+//            }
+//        } catch (DataIntegrityViolationException e) {
+//            throw new BoardFormInvalidException("입력하신 데이터가 올바르지 않습니다. " + e.getMessage());
+//        }
+//    }
 
     public void increaseViewCnt(Integer bno) {
         int rowCnt = boardDao.increaseViewCnt(bno);

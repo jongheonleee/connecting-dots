@@ -44,7 +44,7 @@ public class BoardController {
         this.boardValidator = boardValidator;
     }
 
-    @InitBinder("boardFormDto")
+    @InitBinder({"boardFormDto", "updatedBoardFormDto"})
     public void initBinder(WebDataBinder binder) {
         binder.addValidators(boardValidator);
     }
@@ -81,10 +81,36 @@ public class BoardController {
     @PostMapping("/write")
     public String write(@Valid @ModelAttribute("boardFormDto") BoardFormDto boardFormDto, BindingResult result,
             @RequestParam("boardImgFile") List<MultipartFile> boardImgFiles, @SessionAttribute String id) {
-        if (result.hasErrors()) return "boardWrite";
+        if (result.hasErrors())
+            return "boardWrite";
+
         boardFormDto.setId(id);
         boardFormDto.setWriter(id);
         boardService.create(boardFormDto, boardImgFiles);
+        return "redirect:/board/list";
+    }
+
+    @GetMapping("/modify/{bno}")
+    public String getModifyPage(@PathVariable("bno") Integer bno, Model model) {
+        findCategories(model);
+        findBoardByBnoForUpdate(model, bno);
+        return "boardModify";
+    }
+
+    @PostMapping("/modify/{bno}")
+    public String modify(@PathVariable("bno") Integer bno, @Valid @ModelAttribute("updatedBoardFormDto") BoardFormDto updatedBoardFormDto, BindingResult result,
+            @RequestParam("boardImgFile") List<MultipartFile> boardImgFiles) {
+        if (result.hasErrors()) {
+            return "boardModify";
+        }
+
+        boardService.modify(updatedBoardFormDto, boardImgFiles);
+        return "redirect:/board/list";
+    }
+
+    @GetMapping("/remove/{bno}")
+    public String remove(@PathVariable("bno") Integer bno) {
+        boardService.remove(bno);
         return "redirect:/board/list";
     }
 
@@ -101,8 +127,13 @@ public class BoardController {
     }
 
     private void findBoardDetailByBno(Model model, Integer bno) {
-        BoardDetailDto foundDetailBoard = boardService.findDetailByBno(bno);
+        var foundDetailBoard = boardService.findDetailByBno(bno);
         model.addAttribute("boardDetail", foundDetailBoard);
+    }
+
+    private void findBoardByBnoForUpdate(Model model, Integer bno) {
+        var foundDetailBoard = boardService.findByBno(bno);
+        model.addAttribute("updatedBoardFormDto", foundDetailBoard);
     }
 
     private void findBoardsByCateCode(Model model, String cateCode) {

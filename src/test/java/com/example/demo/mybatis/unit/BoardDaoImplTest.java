@@ -28,7 +28,7 @@ class BoardDaoImplTest {
     private com.example.demo.repository.mybatis.board.BoardImgDaoImpl BoardImgDaoImpl;
 
     private List<BoardFormDto> fixture = new ArrayList<>();
-    private List<BoardUpdatedFormDto> updatedFixture = new ArrayList<>();
+    private List<BoardFormDto> updatedFixture = new ArrayList<>();
 
     @BeforeEach
     public void setUp() {
@@ -552,8 +552,8 @@ class BoardDaoImplTest {
         return dto;
     }
 
-    private BoardUpdatedFormDto createBoardUpdatedFormDto(int i) {
-        var dto = new BoardUpdatedFormDto();
+    private BoardFormDto createBoardUpdatedFormDto(int i) {
+        var dto = new BoardFormDto();
 
         dto.setBno(i);
         dto.setTitle("title" + i);

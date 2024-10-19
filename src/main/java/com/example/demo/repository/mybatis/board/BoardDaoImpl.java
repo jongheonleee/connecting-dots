@@ -53,7 +53,8 @@ public class BoardDaoImpl {
         return session.selectOne(namespace + "selectByBno", bno);
     }
 
-    public int update(BoardUpdatedFormDto dto) {
+
+    public int update(BoardFormDto dto) {
         return session.update(namespace + "update", dto);
     }
 
