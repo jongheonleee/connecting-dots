@@ -90,33 +90,55 @@ class CommentDaoImplTest {
      *
      * 5. 댓글 수정
      * - 0. 예외
+     *  - 0-0. 댓글에 필수값이 누락된 경우 -> DataIntegrityViolationException
+     *  - 0-1. 댓글 필드 데이터 제약 조건을 위반한 경우 -> DataIntegrityViolationException
+     *
      * - 1. 실패
+     *  - 1-0. 댓글 번호가 없는 경우 -> 실패
+     *
      * - 2. 성공
+     *  - 2-0. 여러개의 댓글을 일일이 수정해보고 테스트
+     *  - 2-1. 여러개의 댓글 중에 특정 댓글만 수정해보고 테스트
      *
      * 6. 좋아요 증가
-     * - 0. 예외
+     * - 0. 예외 - x
      * - 1. 실패
+     *  - 1-0. 댓글 번호가 없는 경우
+     *
      * - 2. 성공
+     *  - 2-0. 특정 댓글에 좋아요를 여러번 눌러본 경우
+     *  - 2-1. 여러개의 댓글에 좋아요를 일일이 눌러본 경우
      *
      * 7. 싫어요 증가
-     * - 0. 예외
+     * - 0. 예외 - x
      * - 1. 실패
+     *  - 1-0. 댓글 번호가 없는 경우
+     *
      * - 2. 성공
+     *  - 2-0. 특정 댓글에 싫어요를 여러번 눌러본 경우
+     *  - 2-1. 여러개의 댓글에 싫어요를 일일이 눌러본 경우
      *
      * 8. 특정 게시글과 관련된 댓글 전체 삭제
-     * - 0. 예외
+     * - 0. 예외 - x
      * - 1. 실패
+     *  - 1-0. 게시글 번호가 없는 경우
+     *
      * - 2. 성공
+     *  - 2-0. 특정 게시글에 댓글 여러개 등록하고 전체 삭제
      *
      * 9. 특정 댓글 삭제
-     * - 0. 예외
+     * - 0. 예외 - x
      * - 1. 실패
+     *  - 1-0. 댓글 번호가 없는 경우
      * - 2. 성공
+     *  - 2-0. 여러개의 댓글을 일일이 삭제해보고 테스트
+     *  - 2-1. 여러개의 댓글 중에 특정 댓글만 삭제해보고 테스트
      *
      * 10. 전체 삭제
-     * - 0. 예외
-     * - 1. 실패
+     * - 0. 예외 - x
+     * - 1. 실패 - x
      * - 2. 성공
+     *  - 2-0. 여러개의 댓글을 전체 삭제해보고 테스트
      *
      */
 
@@ -279,6 +301,229 @@ class CommentDaoImplTest {
         for (int i=0; i<cnt; i++) {
             assertTrue(isSameCommentDto(fixture.get(i), foundComments.get(i)));
         }
+    }
+
+    @DisplayName("5-0-0. 댓글에 필수값이 누락된 경우 -> DataIntegrityViolationException")
+    @Test
+    public void test13() {
+        var commentDto = createCommentDto(boardFormDto.getBno(), 1);
+        assertTrue(1 == target.insert(commentDto));
+
+        commentDto.setContent(null);
+        assertThrows(DataIntegrityViolationException.class,
+                () -> target.update(commentDto)
+        );
+    }
+
+    @DisplayName("5-0-1. 댓글 필드 데이터 제약 조건을 위반한 경우 -> DataIntegrityViolationException")
+    @Test
+    public void test14() {
+        var commentDto = createCommentDto(boardFormDto.getBno(), 1);
+        assertTrue(1 == target.insert(commentDto));
+
+        commentDto.setContent("a".repeat(501));
+        assertThrows(DataIntegrityViolationException.class,
+                () -> target.update(commentDto)
+        );
+    }
+
+    @DisplayName("5-1-0. 댓글 번호가 없는 경우 -> 실패")
+    @Test
+    public void test15() {
+        var commentDto = createCommentDto(boardFormDto.getBno(), 1);
+        assertTrue(1 == target.insert(commentDto));
+
+        commentDto.setCno(-19);
+        assertTrue(0 == target.update(commentDto)
+        );
+    }
+
+    @DisplayName("5-2-0. 여러개의 댓글을 일일이 수정해보고 테스트")
+    @ParameterizedTest
+    @ValueSource(ints = {1, 5, 15, 20})
+    public void test16(int cnt) {
+        createFixture(boardFormDto.getBno(), cnt);
+        for (var commentDto : fixture) {
+            assertTrue(1 == target.insert(commentDto));
+        }
+
+        List<CommentDto> foundComments = target.selectAll();
+        for (var foundComment : foundComments) {
+            foundComment.setContent("new content");
+            assertTrue(1 == target.update(foundComment));
+        }
+    }
+
+    @DisplayName("5-2-1. 여러개의 댓글 중에 특정 댓글만 수정해보고 테스트")
+    @ParameterizedTest
+    @ValueSource(ints = {1, 5, 15, 20})
+    public void test17(int cnt) {
+        createFixture(boardFormDto.getBno(), cnt);
+        for (var commentDto : fixture) {
+            assertTrue(1 == target.insert(commentDto));
+        }
+
+        List<CommentDto> foundComments = target.selectAll();
+        int randomIdx = chooseRandom(cnt);
+        var selectedDto = foundComments.get(randomIdx);
+
+        selectedDto.setContent("new content");
+        assertTrue(1 == target.update(selectedDto));
+    }
+
+    @DisplayName("6-1-0. 댓글 번호가 없는 경우")
+    @Test
+    public void test18() {
+        var commentDto = createCommentDto(boardFormDto.getBno(), 1);
+        assertTrue(0 == target.increaseLikeCnt(commentDto.getCno()));
+    }
+
+    @DisplayName("6-2-0. 특정 댓글에 좋아요를 여러번 눌러본 경우")
+    @ParameterizedTest
+    @ValueSource(ints = {1, 5, 15, 20})
+    public void test19(int cnt) {
+        var commentDto = createCommentDto(boardFormDto.getBno(), 1);
+        assertTrue(1 == target.insert(commentDto));
+
+        for (int i=0; i<cnt; i++) {
+            assertTrue(1 == target.increaseLikeCnt(commentDto.getCno()));
+        }
+
+        var foundComment = target.selectByCno(commentDto.getCno());
+        assertTrue(cnt == foundComment.getLike_cnt());
+    }
+
+    @DisplayName("6-2-1. 여러개의 댓글에 좋아요를 일일이 눌러본 경우")
+    @ParameterizedTest
+    @ValueSource(ints = {1, 5, 15, 20})
+    public void test20(int cnt) {
+        createFixture(boardFormDto.getBno(), cnt);
+        for (var commentDto : fixture) {
+            assertTrue(1 == target.insert(commentDto));
+        }
+
+        List<CommentDto> foundCommentDtos = target.selectAll();
+        for (var commentDto : foundCommentDtos) {
+            assertTrue(1 == target.increaseLikeCnt(commentDto.getCno()));
+        }
+
+        foundCommentDtos = target.selectAll();
+        for (var foundCommentDto : foundCommentDtos) {
+            assertTrue(1 == foundCommentDto.getLike_cnt());
+        }
+
+    }
+
+    @DisplayName("7-1-0. 댓글 번호가 없는 경우")
+    @Test
+    public void test21() {
+        assertTrue(0 == target.increaseDislikeCnt(0));
+    }
+
+    @DisplayName("7-2-0. 특정 댓글에 싫어요를 여러번 눌러본 경우")
+    @ParameterizedTest
+    @ValueSource(ints = {1, 5, 15, 20})
+    public void test22(int cnt) {
+        var commentDto = createCommentDto(boardFormDto.getBno(), 1);
+        assertTrue(1 == target.insert(commentDto));
+
+        for (int i=0; i<cnt; i++) {
+            assertTrue(1 == target.increaseDislikeCnt(commentDto.getCno()));
+        }
+
+        var foundCommentDto = target.selectByCno(commentDto.getCno());
+        assertTrue(cnt == foundCommentDto.getDislike_cnt());
+    }
+
+    @DisplayName("7-2-1. 여러개의 댓글에 싫어요를 일일이 눌러본 경우")
+    @ParameterizedTest
+    @ValueSource(ints = {1, 5, 15, 20})
+    public void test23(int cnt) {
+        createFixture(boardFormDto.getBno(), cnt);
+        for (var commentDto : fixture) {
+            assertTrue(1 == target.insert(commentDto));
+        }
+
+        List<CommentDto> foundCommentDtos = target.selectAll();
+        for (var commentDto : foundCommentDtos) {
+            assertTrue(1 == target.increaseDislikeCnt(commentDto.getCno()));
+        }
+
+        foundCommentDtos = target.selectAll();
+        for (var foundCommentDto : foundCommentDtos) {
+            assertTrue(1 == foundCommentDto.getDislike_cnt());
+        }
+    }
+
+    @DisplayName("8-1-0. 게시글 번호가 없는 경우")
+    @Test
+    public void test24() {
+        assertTrue(0 == target.deleteByBno(-10));
+    }
+
+    @DisplayName("8-2-0. 특정 게시글에 댓글 여러개 등록하고 전체 삭제")
+    @ParameterizedTest
+    @ValueSource(ints = {1, 5, 15, 20})
+    public void test25(int cnt) {
+        createFixture(boardFormDto.getBno(), cnt);
+        for (var commentDto : fixture) {
+            assertTrue(1 == target.insert(commentDto));
+        }
+
+        assertTrue(cnt == target.deleteByBno(boardFormDto.getBno()));
+    }
+
+    @DisplayName("9-1-0. 댓글 번호가 없는 경우")
+    @Test
+    public void test26() {
+        assertTrue(0 == target.deleteByCno(-10));
+    }
+
+    @DisplayName("9-2-0. 여러개의 댓글을 일일이 삭제해보고 테스트")
+    @ParameterizedTest
+    @ValueSource(ints = {1, 5, 15, 20})
+    public void test27(int cnt) {
+        createFixture(boardFormDto.getBno(), cnt);
+        for (var commentDto : fixture) {
+            assertTrue(1 == target.insert(commentDto));
+        }
+
+        List<CommentDto> foundComments = target.selectAll();
+        for (var foundComment : foundComments) {
+            assertTrue(1 == target.deleteByCno(foundComment.getCno()));
+        }
+
+        assertTrue(0 == target.count());
+    }
+
+    @DisplayName("9-2-1. 여러개의 댓글 중에 특정 댓글만 삭제해보고 테스트")
+    @ParameterizedTest
+    @ValueSource(ints = {1, 5, 15, 20})
+    public void test28(int cnt) {
+        createFixture(boardFormDto.getBno(), cnt);
+        for (var commentDto : fixture) {
+            assertTrue(1 == target.insert(commentDto));
+        }
+
+        int randomIdx = chooseRandom(cnt);
+        var selectedDto = fixture.get(randomIdx);
+
+        assertTrue(1 == target.deleteByCno(selectedDto.getCno()));
+        assertTrue(cnt - 1 == target.count());
+        assertNull(target.selectByCno(selectedDto.getCno()));
+    }
+
+    @DisplayName("10-2-0. 여러개의 댓글을 전체 삭제해보고 테스트")
+    @ParameterizedTest
+    @ValueSource(ints = {1, 5, 15, 20})
+    public void test29(int cnt) {
+        createFixture(boardFormDto.getBno(), cnt);
+        for (var commentDto : fixture) {
+            assertTrue(1 == target.insert(commentDto));
+        }
+
+        assertTrue(cnt == target.deleteAll());
+
     }
 
 

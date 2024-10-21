@@ -14,7 +14,12 @@
   </select>
 
   <!-- 댓글 등록 -->
-  <insert id="insert" parameterType="com.example.demo.dto.comment.CommentDto">
+  <insert id="insert" parameterType="com.example.demo.dto.comment.CommentDto" >
+    <!-- 등록된 이후에 dto에 cno 저장 -->
+    <selectKey keyProperty="cno" resultType="int" order="AFTER">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+
     INSERT INTO comment
     (bno, writer, content,
      reg_date, reg_id, up_date,
