@@ -1,4 +1,4 @@
-package com.example.demo.service.unit;
+package com.example.demo.application.service.unit;
 
 import com.example.demo.repository.mybatis.board.BoardDaoImpl;
 import com.example.demo.application.service.board.BoardServiceImpl;

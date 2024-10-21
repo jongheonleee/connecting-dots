@@ -1,4 +1,4 @@
-package com.example.demo.service.unit;
+package com.example.demo.application.service.unit;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
