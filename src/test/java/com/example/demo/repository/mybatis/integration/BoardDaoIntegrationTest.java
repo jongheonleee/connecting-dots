@@ -34,7 +34,7 @@ class BoardDaoIntegrationTest {
         assertNotNull(boardImgDao);
         assertNotNull(categoryDao);
         boardImgDao.deleteAll();
-        categoryDao.deleteAll();
+//        categoryDao.deleteAll();
         boardDao.deleteAll();
     }
 
@@ -46,9 +46,8 @@ class BoardDaoIntegrationTest {
             // 카테고리 등록
             // 게시글 등록
             // 이미지 등록
-        var categoryDto = createCategoryDto("0101");
-        assertTrue(1 == categoryDao.insert(categoryDto));
 
+        var categoryDto = createCategoryDto("0101");
         var boardFormDto = createBoardFormDto(1, categoryDto.getCate_code());
         assertTrue(1 == boardDao.insert(boardFormDto));
 

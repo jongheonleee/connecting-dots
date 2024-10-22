@@ -4,6 +4,7 @@ import com.example.demo.application.exception.board.BoardFormInvalidException;
 import com.example.demo.application.exception.board.BoardImgNotFoundException;
 import com.example.demo.application.exception.board.BoardNotFoundException;
 import com.example.demo.application.exception.global.InternalServerError;
+import com.example.demo.application.service.comment.CommentServiceImpl;
 import com.example.demo.dto.PageHandler;
 import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.board.BoardDetailDto;
@@ -40,18 +41,21 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
-@RequestMapping("/board")
 @Controller
+@RequestMapping("/board")
 public class BoardController {
 
     private final CategoryServiceImpl categoryService;
     private final BoardServiceImpl boardService;
     private final BoardValidator boardValidator;
+    private final CommentServiceImpl commentService;
 
-    public BoardController(CategoryServiceImpl categoryService, BoardServiceImpl boardService, BoardValidator boardValidator) {
+    public BoardController(CategoryServiceImpl categoryService, BoardServiceImpl boardService,
+            BoardValidator boardValidator, CommentServiceImpl commentService) {
         this.categoryService = categoryService;
         this.boardService = boardService;
         this.boardValidator = boardValidator;
+        this.commentService = commentService;
     }
 
     @InitBinder({"boardFormDto", "updatedBoardFormDto"})
@@ -77,6 +81,7 @@ public class BoardController {
     @GetMapping("/detail/{bno}")
     public String getDetailPage(@PathVariable("bno") Integer bno, Model model) {
         findBoardDetailByBno(model, bno);
+        findCommentByBno(model, bno);
         return "boardDetail";
     }
 
@@ -147,6 +152,10 @@ public class BoardController {
         return new ResponseEntity<>("비추천이 완료되었습니다.", HttpStatus.OK);
     }
 
+    private void findCommentByBno(Model model, Integer bno) {
+        var comments = commentService.findByBno(bno);
+        model.addAttribute("comments", comments);
+    }
 
 
     private void findCategories(Model model) {

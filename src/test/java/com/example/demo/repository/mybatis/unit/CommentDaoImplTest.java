@@ -3,7 +3,7 @@ package com.example.demo.repository.mybatis.unit;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.example.demo.dto.board.BoardFormDto;
-import com.example.demo.dto.comment.CommentDto;
+import com.example.demo.dto.comment.CommentResponseDto;
 import com.example.demo.repository.mybatis.board.BoardDaoImpl;
 import com.example.demo.repository.mybatis.comment.CommentDaoImpl;
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ class CommentDaoImplTest {
 
     private BoardFormDto boardFormDto = new BoardFormDto();
 
-    private List<CommentDto> fixture = new ArrayList<>();
+    private List<CommentResponseDto> fixture = new ArrayList<>();
 
     @BeforeEach
     void setUp() {
@@ -207,7 +207,7 @@ class CommentDaoImplTest {
             assertTrue(1 == target.insert(commentDto));
         }
 
-        List<CommentDto> foundComments = target.selectByBno(boardFormDto.getBno());
+        List<CommentResponseDto> foundComments = target.selectByBno(boardFormDto.getBno());
         assertTrue(cnt == foundComments.size());
 
         sort(fixture, foundComments);
@@ -219,7 +219,7 @@ class CommentDaoImplTest {
     @DisplayName("2-1-0. 게시글 번호가 없는 경우 -> 조회 x")
     @Test
     public void test7() {
-        List<CommentDto> foundComments = target.selectByBno(0);
+        List<CommentResponseDto> foundComments = target.selectByBno(0);
         assertTrue(foundComments.isEmpty());
     }
 
@@ -232,7 +232,7 @@ class CommentDaoImplTest {
             assertTrue(1 == target.insert(commentDto));
         }
 
-        List<CommentDto> foundComments = target.selectByBno(boardFormDto.getBno());
+        List<CommentResponseDto> foundComments = target.selectByBno(boardFormDto.getBno());
         assertTrue(cnt == foundComments.size());
 
         sort(fixture, foundComments);
@@ -244,7 +244,7 @@ class CommentDaoImplTest {
     @DisplayName("3-1-0. 댓글 번호가 없는 경우 -> 조회 x")
     @Test
     public void test9() {
-        CommentDto foundComment = target.selectByCno(0);
+        CommentResponseDto foundComment = target.selectByCno(0);
         assertNull(foundComment);
     }
 
@@ -257,7 +257,7 @@ class CommentDaoImplTest {
             assertTrue(1 == target.insert(commentDto));
         }
 
-        List<CommentDto> foundComments = target.selectByBno(boardFormDto.getBno());
+        List<CommentResponseDto> foundComments = target.selectByBno(boardFormDto.getBno());
         assertTrue(cnt == foundComments.size());
 
         for (var foundComment : foundComments) {
@@ -277,7 +277,7 @@ class CommentDaoImplTest {
             assertTrue(1 == target.insert(commentDto));
         }
 
-        List<CommentDto> foundComments = target.selectByBno(boardFormDto.getBno());
+        List<CommentResponseDto> foundComments = target.selectByBno(boardFormDto.getBno());
         assertTrue(cnt == foundComments.size());
 
         sort(fixture, foundComments);
@@ -294,7 +294,7 @@ class CommentDaoImplTest {
             assertTrue(1 == target.insert(commentDto));
         }
 
-        List<CommentDto> foundComments = target.selectAll();
+        List<CommentResponseDto> foundComments = target.selectAll();
         assertTrue(cnt == foundComments.size());
 
         sort(fixture, foundComments);
@@ -347,7 +347,7 @@ class CommentDaoImplTest {
             assertTrue(1 == target.insert(commentDto));
         }
 
-        List<CommentDto> foundComments = target.selectAll();
+        List<CommentResponseDto> foundComments = target.selectAll();
         for (var foundComment : foundComments) {
             foundComment.setContent("new content");
             assertTrue(1 == target.update(foundComment));
@@ -363,7 +363,7 @@ class CommentDaoImplTest {
             assertTrue(1 == target.insert(commentDto));
         }
 
-        List<CommentDto> foundComments = target.selectAll();
+        List<CommentResponseDto> foundComments = target.selectAll();
         int randomIdx = chooseRandom(cnt);
         var selectedDto = foundComments.get(randomIdx);
 
@@ -402,13 +402,13 @@ class CommentDaoImplTest {
             assertTrue(1 == target.insert(commentDto));
         }
 
-        List<CommentDto> foundCommentDtos = target.selectAll();
-        for (var commentDto : foundCommentDtos) {
+        List<CommentResponseDto> foundCommentResponseDtos = target.selectAll();
+        for (var commentDto : foundCommentResponseDtos) {
             assertTrue(1 == target.increaseLikeCnt(commentDto.getCno()));
         }
 
-        foundCommentDtos = target.selectAll();
-        for (var foundCommentDto : foundCommentDtos) {
+        foundCommentResponseDtos = target.selectAll();
+        for (var foundCommentDto : foundCommentResponseDtos) {
             assertTrue(1 == foundCommentDto.getLike_cnt());
         }
 
@@ -444,13 +444,13 @@ class CommentDaoImplTest {
             assertTrue(1 == target.insert(commentDto));
         }
 
-        List<CommentDto> foundCommentDtos = target.selectAll();
-        for (var commentDto : foundCommentDtos) {
+        List<CommentResponseDto> foundCommentResponseDtos = target.selectAll();
+        for (var commentDto : foundCommentResponseDtos) {
             assertTrue(1 == target.increaseDislikeCnt(commentDto.getCno()));
         }
 
-        foundCommentDtos = target.selectAll();
-        for (var foundCommentDto : foundCommentDtos) {
+        foundCommentResponseDtos = target.selectAll();
+        for (var foundCommentDto : foundCommentResponseDtos) {
             assertTrue(1 == foundCommentDto.getDislike_cnt());
         }
     }
@@ -488,7 +488,7 @@ class CommentDaoImplTest {
             assertTrue(1 == target.insert(commentDto));
         }
 
-        List<CommentDto> foundComments = target.selectAll();
+        List<CommentResponseDto> foundComments = target.selectAll();
         for (var foundComment : foundComments) {
             assertTrue(1 == target.deleteByCno(foundComment.getCno()));
         }
@@ -529,14 +529,14 @@ class CommentDaoImplTest {
 
 
 
-    private CommentDto createCommentDto(int bno, int i) {
-        CommentDto commentDto = new CommentDto();
-        commentDto.setBno(bno);
-        commentDto.setWriter("writer" + i);
-        commentDto.setContent("content" + i);
-        commentDto.setReg_id("reg_id");
-        commentDto.setUp_id("up_id");
-        return commentDto;
+    private CommentResponseDto createCommentDto(int bno, int i) {
+        CommentResponseDto commentResponseDto = new CommentResponseDto();
+        commentResponseDto.setBno(bno);
+        commentResponseDto.setWriter("writer" + i);
+        commentResponseDto.setContent("content" + i);
+        commentResponseDto.setReg_id("reg_id");
+        commentResponseDto.setUp_id("up_id");
+        return commentResponseDto;
     }
 
     private void createFixture(int bno, int cnt) {
@@ -566,13 +566,13 @@ class CommentDaoImplTest {
 
     }
 
-    private boolean isSameCommentDto(CommentDto dto1, CommentDto dto2) {
+    private boolean isSameCommentDto(CommentResponseDto dto1, CommentResponseDto dto2) {
         return dto1.getBno().equals(dto2.getBno())
                 && dto1.getWriter().equals(dto2.getWriter())
                 && dto1.getContent().equals(dto2.getContent());
     }
 
-    private void sort(List<CommentDto> list1, List<CommentDto> list2) {
+    private void sort(List<CommentResponseDto> list1, List<CommentResponseDto> list2) {
         list1.sort((o1, o2) -> o1.getWriter().compareTo(o2.getWriter()));
         list2.sort((o1, o2) -> o1.getWriter().compareTo(o2.getWriter()));
     }

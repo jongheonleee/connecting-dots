@@ -14,7 +14,7 @@
   </select>
 
   <!-- 댓글 등록 -->
-  <insert id="insert" parameterType="com.example.demo.dto.comment.CommentDto" >
+  <insert id="insert" parameterType="com.example.demo.dto.comment.CommentResponseDto" >
     <!-- 등록된 이후에 dto에 cno 저장 -->
     <selectKey keyProperty="cno" resultType="int" order="AFTER">
       SELECT LAST_INSERT_ID()
@@ -32,7 +32,7 @@
 
   <!-- 댓글 조회 -->
   <!-- 특정 게시글과 과련된 댓글 조회 -->
-  <select id="selectByBno" parameterType="int" resultType="com.example.demo.dto.comment.CommentDto">
+  <select id="selectByBno" parameterType="int" resultType="com.example.demo.dto.comment.CommentResponseDto">
     SELECT
         cno, bno, writer,
         content, like_cnt, dislike_cnt
@@ -40,7 +40,7 @@
     WHERE bno = #{bno}
   </select>
 
-  <select id="selectByCno" parameterType="int" resultType="com.example.demo.dto.comment.CommentDto">
+  <select id="selectByCno" parameterType="int" resultType="com.example.demo.dto.comment.CommentResponseDto">
     SELECT
       cno, bno, writer,
       content, like_cnt, dislike_cnt,
@@ -50,7 +50,7 @@
     WHERE cno = #{cno}
   </select>
 
-  <select id="selectAll" resultType="com.example.demo.dto.comment.CommentDto">
+  <select id="selectAll" resultType="com.example.demo.dto.comment.CommentResponseDto">
     SELECT
       cno, bno, writer,
       content, like_cnt, dislike_cnt,
@@ -60,7 +60,7 @@
   </select>
 
   <!-- 댓글 수정 -->
-  <update id="update" parameterType="com.example.demo.dto.comment.CommentDto">
+  <update id="update" parameterType="com.example.demo.dto.comment.CommentResponseDto">
     UPDATE comment
     SET
         content = #{content},

@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.example.demo.dto.board.BoardFormDto;
-import com.example.demo.dto.comment.CommentDto;
+import com.example.demo.dto.comment.CommentResponseDto;
 import com.example.demo.repository.mybatis.board.BoardDaoImpl;
 import com.example.demo.repository.mybatis.comment.CommentDaoImpl;
 import java.util.ArrayList;
@@ -13,8 +13,6 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -30,7 +28,7 @@ class CommentDaoImplLearningTest {
 
     private BoardFormDto boardFormDto = new BoardFormDto();
 
-    private List<CommentDto> fixture = new ArrayList<>();
+    private List<CommentResponseDto> fixture = new ArrayList<>();
 
     @BeforeEach
     void setUp() {
@@ -136,14 +134,14 @@ class CommentDaoImplLearningTest {
     }
 
 
-    private CommentDto createCommentDto(int bno) {
-        CommentDto commentDto = new CommentDto();
-        commentDto.setBno(bno);
-        commentDto.setWriter("writer");
-        commentDto.setContent("content");
-        commentDto.setReg_id("reg_id");
-        commentDto.setUp_id("up_id");
-        return commentDto;
+    private CommentResponseDto createCommentDto(int bno) {
+        CommentResponseDto commentResponseDto = new CommentResponseDto();
+        commentResponseDto.setBno(bno);
+        commentResponseDto.setWriter("writer");
+        commentResponseDto.setContent("content");
+        commentResponseDto.setReg_id("reg_id");
+        commentResponseDto.setUp_id("up_id");
+        return commentResponseDto;
     }
 
     private void createFixture(int bno, int cnt) {

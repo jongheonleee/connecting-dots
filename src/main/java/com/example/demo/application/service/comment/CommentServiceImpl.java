@@ -4,7 +4,8 @@ package com.example.demo.application.service.comment;
 import com.example.demo.application.exception.comment.CommentFormInvalidException;
 import com.example.demo.application.exception.comment.CommentNotFoundException;
 import com.example.demo.application.exception.global.InternalServerError;
-import com.example.demo.dto.comment.CommentDto;
+import com.example.demo.dto.comment.CommentResponseDto;
+import com.example.demo.dto.comment.CommentRequestDto;
 import com.example.demo.repository.mybatis.comment.CommentDaoImpl;
 import java.util.List;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -29,10 +30,10 @@ public class CommentServiceImpl {
         return commentDao.count(bno);
     }
 
-    public void insert(CommentDto dto) {
+    public void create(CommentRequestDto dto) {
         // 댓글 등록 처리
         try {
-            int rowCnt = commentDao.insert(dto);
+            int rowCnt = commentDao.insert(dto.createCommentDto());
             if (rowCnt != 1) {
                 throw new InternalServerError();
             }
@@ -41,12 +42,12 @@ public class CommentServiceImpl {
         }
     }
 
-    public List<CommentDto> findByBno(Integer bno) {
+    public List<CommentResponseDto> findByBno(Integer bno) {
         // 게시글과 관련된 댓글 조회
         return commentDao.selectByBno(bno);
     }
 
-    public CommentDto findByCno(Integer cno) {
+    public CommentResponseDto findByCno(Integer cno) {
         // 댓글 번호로 특정 댓글 조회
         var foundComment = commentDao.selectByCno(cno);
         if (foundComment == null) {
@@ -56,12 +57,12 @@ public class CommentServiceImpl {
         return foundComment;
     }
 
-    public List<CommentDto> findAll() {
+    public List<CommentResponseDto> findAll() {
         // 모든 댓글 조회
         return commentDao.selectAll();
     }
 
-    public void update(CommentDto dto) {
+    public void update(CommentResponseDto dto) {
         // 댓글 수정 처리
         int rowCnt = 0;
 
@@ -89,7 +90,7 @@ public class CommentServiceImpl {
     @Transactional(rollbackFor = Exception.class)
     public void removeByBno(Integer bno) {
         // 게시글과 관련된 모든 댓글 삭제
-        List<CommentDto> foundComments = commentDao.selectByBno(bno);
+        List<CommentResponseDto> foundComments = commentDao.selectByBno(bno);
         int rowCnt = 0;
         int expectedRowCnt = foundComments.size();
 

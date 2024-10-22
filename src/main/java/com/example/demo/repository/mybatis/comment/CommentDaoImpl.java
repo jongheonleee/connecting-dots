@@ -1,6 +1,6 @@
 package com.example.demo.repository.mybatis.comment;
 
-import com.example.demo.dto.comment.CommentDto;
+import com.example.demo.dto.comment.CommentResponseDto;
 import java.util.List;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,23 +22,23 @@ public class CommentDaoImpl {
         return session.selectOne(namespace + "countByBno", bno);
     }
 
-    public int insert(CommentDto dto) {
+    public int insert(CommentResponseDto dto) {
         return session.insert(namespace + "insert", dto);
     }
 
-    public List<CommentDto> selectByBno(Integer bno) {
+    public List<CommentResponseDto> selectByBno(Integer bno) {
         return session.selectList(namespace + "selectByBno", bno);
     }
 
-    public CommentDto selectByCno(Integer cno) {
+    public CommentResponseDto selectByCno(Integer cno) {
         return session.selectOne(namespace + "selectByCno", cno);
     }
 
-    public List<CommentDto> selectAll() {
+    public List<CommentResponseDto> selectAll() {
         return session.selectList(namespace + "selectAll");
     }
 
-    public int update(CommentDto dto) {
+    public int update(CommentResponseDto dto) {
         return session.update(namespace + "update", dto);
     }
 

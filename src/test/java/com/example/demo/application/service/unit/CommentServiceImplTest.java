@@ -8,7 +8,8 @@ import com.example.demo.application.exception.comment.CommentFormInvalidExceptio
 import com.example.demo.application.exception.comment.CommentNotFoundException;
 import com.example.demo.application.exception.global.InternalServerError;
 import com.example.demo.application.service.comment.CommentServiceImpl;
-import com.example.demo.dto.comment.CommentDto;
+import com.example.demo.dto.comment.CommentResponseDto;
+import com.example.demo.dto.comment.CommentRequestDto;
 import com.example.demo.repository.mybatis.comment.CommentDaoImpl;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,7 @@ class CommentServiceImplTest {
     private CommentServiceImpl target;
 
 
-    private List<CommentDto> fixture = new ArrayList<>();
+    private List<CommentResponseDto> fixture = new ArrayList<>();
 
     @BeforeEach
     public void setUp() {
@@ -44,17 +45,19 @@ class CommentServiceImplTest {
     @DisplayName("댓글 등록과정에서 DB에 정상적으로 반영되지 않은 경우 -> InternalServerError")
     @Test
     void test1() {
-        CommentDto commentDto = createCommentDto(1, 1);
-        when(commentDao.insert(commentDto)).thenReturn(0);
-        assertThrows(InternalServerError.class, () -> target.insert(commentDto));
+        var commentRequestDto = createCommentRequestDto(1, 1);
+        CommentResponseDto commentResponseDto = commentRequestDto.createCommentDto();
+        when(commentDao.insert(commentResponseDto)).thenReturn(0);
+        assertThrows(InternalServerError.class, () -> target.create(commentRequestDto));
     }
 
     @DisplayName("댓글 등록 입력 폼이 잘못된 경우 -> CommentFormInvalidException")
     @Test
     void test2() {
-        CommentDto commentDto = createCommentDto(1, 1);
-        when(commentDao.insert(commentDto)).thenThrow(DataIntegrityViolationException.class);
-        assertThrows(CommentFormInvalidException.class, () -> target.insert(commentDto));
+        var commentRequestDto = createCommentRequestDto(1, 1);
+        CommentResponseDto commentResponseDto = commentRequestDto.createCommentDto();
+        when(commentDao.insert(commentResponseDto)).thenThrow(DataIntegrityViolationException.class);
+        assertThrows(CommentFormInvalidException.class, () -> target.create(commentRequestDto));
     }
 
     @DisplayName("존재하지 않는 댓글 번호로 댓글을 조회할 경우 -> CommentNotFoundException")
@@ -68,26 +71,34 @@ class CommentServiceImplTest {
     @DisplayName("댓글 수정 과정에서 DB에 정상적으로 반영되지 않은 경우 -> InternalServerError")
     @Test
     void test4() {
-        CommentDto commentDto = createCommentDto(1, 1);
-        when(commentDao.update(commentDto)).thenReturn(0);
-        assertThrows(InternalServerError.class, () -> target.update(commentDto));
+        CommentResponseDto commentResponseDto = createCommentDto(1, 1);
+        when(commentDao.update(commentResponseDto)).thenReturn(0);
+        assertThrows(InternalServerError.class, () -> target.update(commentResponseDto));
     }
 
     @DisplayName("댓글 수정 입력 폼이 잘못된 경우 -> CommentFormInvalidException")
     @Test
     void test5() {
-        CommentDto commentDto = createCommentDto(1, 1);
-        when(commentDao.update(commentDto)).thenThrow(DataIntegrityViolationException.class);
-        assertThrows(CommentFormInvalidException.class, () -> target.update(commentDto));
+        CommentResponseDto commentResponseDto = createCommentDto(1, 1);
+        when(commentDao.update(commentResponseDto)).thenThrow(DataIntegrityViolationException.class);
+        assertThrows(CommentFormInvalidException.class, () -> target.update(commentResponseDto));
     }
 
-    private CommentDto createCommentDto(int bno, int i) {
-        CommentDto commentDto = new CommentDto();
-        commentDto.setBno(bno);
-        commentDto.setWriter("writer" + i);
-        commentDto.setContent("content" + i);
-        commentDto.setReg_id("reg_id");
-        commentDto.setUp_id("up_id");
-        return commentDto;
+    private CommentResponseDto createCommentDto(int bno, int i) {
+        CommentResponseDto commentResponseDto = new CommentResponseDto();
+        commentResponseDto.setBno(bno);
+        commentResponseDto.setWriter("writer" + i);
+        commentResponseDto.setContent("content" + i);
+        commentResponseDto.setReg_id("reg_id");
+        commentResponseDto.setUp_id("up_id");
+        return commentResponseDto;
+    }
+
+    private CommentRequestDto createCommentRequestDto(int bno, int i) {
+        CommentRequestDto commentRequestDto = new CommentRequestDto();
+        commentRequestDto.setBno(bno);
+        commentRequestDto.setWriter("writer" + i);
+        commentRequestDto.setComment("content" + i);
+        return commentRequestDto;
     }
 }

@@ -1,6 +1,7 @@
 package com.example.demo.presentation;
 
 import com.example.demo.application.exception.global.InternalServerError;
+import com.example.demo.application.service.board.BoardServiceImpl;
 import com.example.demo.dto.user.UserFormDto;
 import com.example.demo.dto.user.UserLoginFormDto;
 import com.example.demo.application.exception.user.UserAlreadyExistsException;
@@ -34,10 +35,13 @@ public class UserController {
 
     private final UserServiceImpl userService;
     private final UserValidator userValidator;
+    private final BoardServiceImpl boardService;
 
-    public UserController(UserServiceImpl userService, UserValidator userValidator) {
+    public UserController(UserServiceImpl userService, UserValidator userValidator,
+                          BoardServiceImpl boardService) {
         this.userService = userService;
         this.userValidator = userValidator;
+        this.boardService = boardService;
     }
 
     @InitBinder("userFormDto")
@@ -55,6 +59,7 @@ public class UserController {
     @GetMapping("/myPage")
     public String getProfilePage(Model model, @SessionAttribute String id, HttpServletRequest request) {
         findUserById(model, id);
+//        findBoardsByUserId(model, id);
         return "profilePage";
     }
 
@@ -77,6 +82,11 @@ public class UserController {
         readCooke(request, model);
         return "loginForm";
     }
+
+//    private void findBoardsByUserId(Model model, String id) {
+//        var boards = boardService.findByUserId(id);
+//        model.addAttribute("boards", boards);
+//    }
 
 
     private void findUserById(Model model, String id) {

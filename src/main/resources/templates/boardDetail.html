@@ -192,18 +192,32 @@
   <div class="form-group">
     <label for="comment">댓글 작성</label>
     <input type="text" id="comment" name="comment" placeholder="댓글을 입력하세요..." required>
-    <button type="submit" class="submit-button">댓글 작성</button>
+    <button type="submit" id="comment-submit-button" class="submit-button">댓글 작성</button>
+  </div>
+
+
+  <div>
+    <th:block th:each="comment : ${comments}">
+      <div class="comment">
+        <div class="comment-meta">
+          아이디: <span th:text="${comment.writer}" /> | 좋아요: <span th:text="${comment.like_cnt}"/> | 싫어요: <span th:text="${comment.dislike_cnt}"/>
+          <p th:text="${comment.content}" />
+          <button id="comment-like-button" class="like-button">👍</button>
+          <button id="comment-dislike-button" class="dislike-button">👎</button>
+        </div>
+      </div>
+    </th:block>
   </div>
 
   <div class="comment-section">
     <h2>댓글</h2>
 
     <div class="comment">
-      <div class="comment-meta">
-        아이디: <span>댓글 아이디</span> | 작성자: <span>작성자 이름</span> | 좋아요: <span>5</span> | 싫어요: <span>1</span>
-        <button class="like-button">👍</button>
-        <button class="dislike-button">👎</button>
-      </div>
+<!--      <div class="comment-meta">-->
+<!--        아이디: <span>댓글 아이디</span> | 작성자: <span>작성자 이름</span> | 좋아요: <span>5</span> | 싫어요: <span>1</span>-->
+<!--        <button id="comment-like-button" class="like-button">👍</button>-->
+<!--        <button id="comment-dislike-button" class="dislike-button">👎</button>-->
+<!--      </div>-->
       <p>여기에 댓글 내용이 들어갑니다.</p>
 
       <div class="reply-section">
@@ -250,7 +264,13 @@
 </div>
 <script>
   $(document).ready(function () {
-    let bno = [[${boardDetail.bno}]]; // boardDetail의 bno를 바로 사용
+    const bno = [[${boardDetail.bno}]]; // boardDetail의 bno를 바로 사용
+    const writer = '[[@{${session.id}}]]';
+
+
+    alert(bno);
+    alert(writer);
+
 
     // 좋아요 버튼 누르면 ajax로 통신
     $('#like-button').click(function () {
@@ -264,8 +284,8 @@
         success: function (response) {
           alert(response);
         },
-        error: function () {
-          alert('추천에 실패했습니다.');
+        error: function (errorMessage) {
+          alert(errorMessage);
         }
       });
     });
@@ -287,6 +307,38 @@
         }
       });
     });
+
+    // 댓글 작성 버튼 누르면 ajax로 통신
+    $('#comment-submit-button').click(function () {
+      alert("댓글 버튼을 눌렀습니다.");
+      // 댓글 데이터 조회 - bno, content, writer만 있으면 됨
+      const comment = $('#comment').val();
+
+      // 댓글 데이터 형식
+      const data = {
+        bno: bno,
+        comment: comment,
+        writer : writer
+      }
+
+      alert(data);
+
+      $.ajax({
+        url : '/comments/write',
+        method : 'POST',
+        headers : { "content-type" : "application/json" },
+        data : JSON.stringify(data),
+        success : function(response) {
+          alert(response);
+        },
+        error : function() {
+          alert('댓글 작성에 실패했습니다.');
+        }
+      });
+    });
+
+    // 대댓글 작성 버튼 누르면 ajax로 통신
+
   });
 </script>
 </body>

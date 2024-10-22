@@ -7,7 +7,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class CommentDto {
+public class CommentResponseDto {
     private Integer cno;
     private Integer bno;
     private String content;
