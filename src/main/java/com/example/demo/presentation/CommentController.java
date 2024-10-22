@@ -51,15 +51,6 @@ public class CommentController {
         return null;
     }
 
-    @GetMapping("/{bno}")
-    public ResponseEntity<List<CommentResponseDto>> getCommentListByBno(@PathVariable("bno") Integer bno) {
-        List<CommentResponseDto> foundComments = commentService.findByBno(bno);
-        for (CommentResponseDto foundComment : foundComments) {
-            System.out.println("foundComment = " + foundComment);
-        }
-        return null;
-    }
-
     @PostMapping("/write")
     public ResponseEntity<String> write(@RequestBody @Valid CommentRequestDto commentRequestDto, BindingResult result, Errors errors) {
         if (result.hasErrors()) {
