@@ -31,9 +31,13 @@ public class CommentServiceImpl {
 
     public void insert(CommentDto dto) {
         // 댓글 등록 처리
-        int rowCnt = commentDao.insert(dto);
-        if (rowCnt != 1) {
-            throw new InternalServerError();
+        try {
+            int rowCnt = commentDao.insert(dto);
+            if (rowCnt != 1) {
+                throw new InternalServerError();
+            }
+        } catch (DataIntegrityViolationException e) {
+            throw new CommentFormInvalidException();
         }
     }
 
