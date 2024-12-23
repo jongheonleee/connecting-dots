@@ -4,11 +4,13 @@ import com.example.demo.dto.user.UserFormDto;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.regex.Pattern;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
+@Slf4j
 @Component
 public class UserValidator implements Validator {
 
@@ -92,8 +94,15 @@ public class UserValidator implements Validator {
 
     // 비밀번호 -> 영문자, 숫자, 특수문자 조합, 8글자 이상 20글자 이하
     private boolean isValidPwd(String pwd) {
+        log.info("-----------------------call validate for pwd-----------------------");
+        log.info("pwd: {}", pwd);
+        log.info("pwd.length(): {}", pwd.length());
+        log.info("REG_FOR_SPECIAL_CHAR.matcher(pwd).find(): {}", REG_FOR_SPECIAL_CHAR.matcher(pwd).find());
+        log.info("REG_FOR_BLANK.matcher(pwd).find(): {}", REG_FOR_BLANK.matcher(pwd).find());
+        log.info("REG_FOR_PWD.matcher(pwd).find(): {}", REG_FOR_PWD.matcher(pwd).find());
+
         return 8 <= pwd.length() && pwd.length() <= 20
-                && !REG_FOR_SPECIAL_CHAR.matcher(pwd).find()
+                && REG_FOR_SPECIAL_CHAR.matcher(pwd).find()
                 && !REG_FOR_BLANK.matcher(pwd).find()
                 && REG_FOR_PWD.matcher(pwd).find();
     }
