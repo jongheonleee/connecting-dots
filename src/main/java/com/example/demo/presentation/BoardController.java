@@ -41,6 +41,18 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * 게시판 개발 목록
+ * - 1. 게시글 작성 ✅
+ * - 2. 게시글 조회
+ *  - 1. 검색 ✅
+ *  - 2. 카테고리별 조회 ✅
+ *
+ * - 3. 게시글 수정 ⚠️
+ * - 4. 게시글 삭제 ⚠️
+ * - 5. 게시글 추천/비추천 ✅
+ */
+
 @Controller
 @RequestMapping("/board")
 public class BoardController {

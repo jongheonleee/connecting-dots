@@ -29,6 +29,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
+
+
+/**
+ * 회원 개발 목록
+ * - 1. 회원가입 ✅
+ * - 2. 로그인/로그아웃 ✅
+ * - 3. JWT & Outh2 소셜로그인
+ * - 4. 프로필 정보 조회
+ * - 5. 회원 정보 수정
+ * - 6. 회원 탈퇴
+ * - 7. 시큐리티 인증/인가
+ */
+
 @RequestMapping("/user")
 @Controller
 public class UserController {
