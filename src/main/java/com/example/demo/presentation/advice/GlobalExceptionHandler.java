@@ -1,4 +1,4 @@
-package com.example.demo.presentation;
+package com.example.demo.presentation.advice;
 
 import com.example.demo.application.exception.global.InternalServerError;
 import com.example.demo.application.exception.global.RetryFailedException;

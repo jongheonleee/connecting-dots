@@ -200,10 +200,13 @@
     <th:block th:each="comment : ${comments}">
       <div class="comment">
         <div class="comment-meta">
+          <!-- 히든태그로 comment cno 번호나 bno 번호 저장해놔야함 -->
           아이디: <span th:text="${comment.writer}" /> | 좋아요: <span th:text="${comment.like_cnt}"/> | 싫어요: <span th:text="${comment.dislike_cnt}"/>
           <p th:text="${comment.content}" />
-          <button id="comment-like-button" class="like-button">👍</button>
-          <button id="comment-dislike-button" class="dislike-button">👎</button>
+          <button class="comment-like-button">👍</button>
+          <button class="comment-dislike-button">👎</button>
+          <button class="comment-edit-button">수정</button>
+          <button class="comment-delete-button">삭제</button>
         </div>
       </div>
     </th:block>
@@ -264,17 +267,11 @@
 </div>
 <script>
   $(document).ready(function () {
-    const bno = [[${boardDetail.bno}]]; // boardDetail의 bno를 바로 사용
+    const bno = [[${boardDetail.bno}]];
     const writer = '[[@{${session.id}}]]';
 
-
-    alert(bno);
-    alert(writer);
-
-
-    // 좋아요 버튼 누르면 ajax로 통신
+    // 게시글 좋아요 버튼 누르면 ajax로 통신
     $('#like-button').click(function () {
-      alert('추천을 눌렀습니다.');
 
       $.ajax({
         url: '/board/like',
@@ -290,9 +287,8 @@
       });
     });
 
-    // 싫어요 버튼 누르면 ajax로 통신
+    // 게시글 싫어요 버튼 누르면 ajax로 통신
     $('#dislike-button').click(function () {
-      alert('비추천을 눌렀습니다.');
 
       $.ajax({
         url: '/board/dislike',
@@ -310,8 +306,6 @@
 
     // 댓글 작성 버튼 누르면 ajax로 통신
     $('#comment-submit-button').click(function () {
-      alert("댓글 버튼을 눌렀습니다.");
-      // 댓글 데이터 조회 - bno, content, writer만 있으면 됨
       const comment = $('#comment').val();
 
       // 댓글 데이터 형식
@@ -320,8 +314,6 @@
         comment: comment,
         writer : writer
       }
-
-      alert(data);
 
       $.ajax({
         url : '/comments/write',
@@ -335,6 +327,26 @@
           alert('댓글 작성에 실패했습니다.');
         }
       });
+    });
+
+    // 댓글 수정 버튼 누르면 ajax로 통신
+    $('.comment-edit-button').click(function (cno) {
+      alert('댓글 수정을 눌렀습니다.');
+    });
+
+    // 댓글 삭제 버튼 누르면 ajax로 통신
+    $('.comment-delete-button').click(function (cno) {
+      alert('댓글 추천을 눌렀습니다.');
+    });
+
+    // 댓글 좋아요 버튼 누르면 ajax로 통신
+    $('.comment-like-button').click(function (cno) {
+      alert('댓글 추천을 눌렀습니다.');
+    });
+
+    // 댓글 싫어요 버튼 누르면 ajax로 통신
+    $('.comment-dislike-button').click(function (cno) {
+      alert('댓글 추천을 눌렀습니다.');
     });
 
     // 대댓글 작성 버튼 누르면 ajax로 통신

@@ -9,6 +9,6 @@ package com.example.demo.presentation;
  *
  */
 
-public class BestController {
+public class BestViewController {
 
 }
