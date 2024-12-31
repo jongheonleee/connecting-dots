@@ -21,19 +21,22 @@ public class CommentServiceImpl {
         this.commentDao = commentDao;
     }
 
+    // 전체 댓글 수 카운트
     public int count() {
         return commentDao.count();
     }
 
+    // 게시판 관련 댓글 수 카운트
     public int count(Integer bno) {
         // 게시글 기반으로 카운팅 처리
         return commentDao.count(bno);
     }
 
+    // 댓글 등록 처리
     public void create(CommentRequestDto dto) {
         // 댓글 등록 처리
         try {
-            int rowCnt = commentDao.insert(dto.createCommentDto());
+            int rowCnt = commentDao.insert(dto);
             if (rowCnt != 1) {
                 throw new InternalServerError();
             }
@@ -42,11 +45,13 @@ public class CommentServiceImpl {
         }
     }
 
+    // 게시글과 관련된 댓글 조회
     public List<CommentResponseDto> findByBno(Integer bno) {
         // 게시글과 관련된 댓글 조회
         return commentDao.selectByBno(bno);
     }
 
+    // 특정 댓글 조회
     public CommentResponseDto findByCno(Integer cno) {
         // 댓글 번호로 특정 댓글 조회
         var foundComment = commentDao.selectByCno(cno);
@@ -57,12 +62,14 @@ public class CommentServiceImpl {
         return foundComment;
     }
 
+    // 모든 댓글 조회
     public List<CommentResponseDto> findAll() {
         // 모든 댓글 조회
         return commentDao.selectAll();
     }
 
-    public void update(CommentResponseDto dto) {
+    // 댓글 수정 처리
+    public void update(CommentRequestDto dto) {
         // 댓글 수정 처리
         int rowCnt = 0;
 
@@ -77,16 +84,19 @@ public class CommentServiceImpl {
         }
     }
 
+    // 댓글 좋아요 처리
     public void increaseLikeCnt(Integer cno) {
         // 좋아요 수 증가
         commentDao.increaseLikeCnt(cno);
     }
 
+    // 댓글 싫어요 처리
     public void increaseDislikeCnt(Integer cno) {
         // 싫어요 수 증가
         commentDao.increaseDislikeCnt(cno);
     }
 
+    // 게시글과 관련된 모든 댓글 삭제
     @Transactional(rollbackFor = Exception.class)
     public void removeByBno(Integer bno) {
         // 게시글과 관련된 모든 댓글 삭제
@@ -104,9 +114,14 @@ public class CommentServiceImpl {
     }
 
 
+    // 특정 댓글 삭제
     public void removeByCno(Integer cno) {
         // 댓글 번호로 특정 댓글 삭제
-        commentDao.deleteByCno(cno);
+        int rowCnt = commentDao.deleteByCno(cno);
+
+        if (rowCnt != 1) {
+            throw new InternalServerError();
+        }
     }
 
     @Transactional(rollbackFor = Exception.class)

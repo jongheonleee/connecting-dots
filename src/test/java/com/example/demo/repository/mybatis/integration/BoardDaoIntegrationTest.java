@@ -34,7 +34,7 @@ class BoardDaoIntegrationTest {
         assertNotNull(boardImgDao);
         assertNotNull(categoryDao);
         boardImgDao.deleteAll();
-//        categoryDao.deleteAll();
+        categoryDao.deleteAll();
         boardDao.deleteAll();
     }
 

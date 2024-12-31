@@ -1,5 +1,7 @@
 package com.example.demo.presentation;
 
+import static org.springframework.http.HttpStatus.*;
+
 import com.example.demo.application.exception.comment.CommentFormInvalidException;
 import com.example.demo.application.exception.comment.CommentNotFoundException;
 import com.example.demo.application.service.comment.CommentServiceImpl;
@@ -53,44 +55,66 @@ public class CommentController {
 
     @ExceptionHandler({CommentFormInvalidException.class, CommentNotFoundException.class})
     public ResponseEntity<String> handleCommentException(Exception ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        return ResponseEntity.status(BAD_REQUEST).body(ex.getMessage());
     }
 
     // 댓글 등록, 수정, 삭제, 조회 처리
-
     @GetMapping("/all")
-    public ResponseEntity<String> getCommentList() {
-        return null;
+    public ResponseEntity<List<CommentResponseDto>> getCommentList() {
+        List<CommentResponseDto> selectedAllComment = commentService.findAll();
+        return ResponseEntity.status(OK)
+                             .body(selectedAllComment);
     }
 
+    // 댓글 등록
     @PostMapping("/write")
     public ResponseEntity<String> write(@RequestBody @Valid CommentRequestDto commentRequestDto, BindingResult result, Errors errors) {
         if (result.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("댓글 등록에 실패했습니다.");
+            return ResponseEntity.status(BAD_REQUEST)
+                                 .body("댓글 등록에 실패했습니다.");
         }
 
         commentService.create(commentRequestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body("댓글이 등록되었습니다.");
+        return ResponseEntity.status(CREATED)
+                             .body("댓글이 등록되었습니다.");
     }
 
+    // 댓글 삭제
     @GetMapping("/{cno}")
     public ResponseEntity<String> remove(@PathVariable("cno") Integer cno) {
-        return null;
+        commentService.removeByCno(cno);
+        return ResponseEntity.status(OK)
+                             .body("댓글이 삭제되었습니다.");
     }
 
+    // 댓글 수정
     @PostMapping("/modify/{cno}")
-    public ResponseEntity<String> modify(@PathVariable("cno") Integer cno, CommentResponseDto commentResponseDto) {
-        return null;
+    public ResponseEntity<String> modify(@PathVariable("cno") Integer cno, @RequestBody @Valid CommentRequestDto commentRequestDto, BindingResult result) {
+        if (result.hasErrors()) {
+            return ResponseEntity.status(BAD_REQUEST)
+                                 .body("댓글 수정에 실패했습니다.");
+        }
+
+        commentRequestDto.setCno(cno);
+        commentService.update(commentRequestDto);
+        return ResponseEntity.status(OK)
+                             .body("댓글이 수정되었습니다.");
     }
 
+    // 댓글 좋아요 처리
     @PostMapping("/like")
     public ResponseEntity<String> like(@RequestBody Integer cno) {
-        return null;
+        commentService.increaseLikeCnt(cno);
+        return ResponseEntity.status(OK)
+                             .body("댓글 좋아요 처리가 되었습니다.");
     }
 
+    // 댓글 싫어요 처리
     @PostMapping("/dislike")
     public ResponseEntity<String> dislike(@RequestBody Integer cno) {
-        return null;
+        commentService.increaseDislikeCnt(cno);
+        return ResponseEntity.status(OK)
+                             .body("댓글 싫어요 처리가 되었습니다.");
     }
 
 

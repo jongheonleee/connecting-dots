@@ -11,6 +11,7 @@ import lombok.ToString;
 public class CommentRequestDto {
 
     private Integer bno;
+    private Integer cno;
     private String comment;
     private String writer;
 

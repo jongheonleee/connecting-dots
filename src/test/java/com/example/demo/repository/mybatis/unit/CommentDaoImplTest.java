@@ -3,6 +3,7 @@ package com.example.demo.repository.mybatis.unit;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.example.demo.dto.board.BoardFormDto;
+import com.example.demo.dto.comment.CommentRequestDto;
 import com.example.demo.dto.comment.CommentResponseDto;
 import com.example.demo.repository.mybatis.board.BoardDaoImpl;
 import com.example.demo.repository.mybatis.comment.CommentDaoImpl;
@@ -27,15 +28,16 @@ class CommentDaoImplTest {
     private BoardDaoImpl boardDao;
 
     private BoardFormDto boardFormDto = new BoardFormDto();
-
-    private List<CommentResponseDto> fixture = new ArrayList<>();
+    private List<CommentRequestDto> requestDummy = new ArrayList<>();
+    private List<CommentResponseDto> responseDummy = new ArrayList<>();
 
     @BeforeEach
     void setUp() {
         assertNotNull(target);
         assertNotNull(boardDao);
 
-        fixture.clear();
+        requestDummy.clear();
+        responseDummy.clear();
         target.deleteAll();
 
         createBoardFormDto();
@@ -151,8 +153,8 @@ class CommentDaoImplTest {
          * 생성된 dto를 일일이 insert함. 총 cnt 개수 만큼 insert됨
          * count()를 호출했을 때 cnt가 리턴되는지 확인
          */
-        createFixture(boardFormDto.getBno(), cnt);
-        for (var commentDto : fixture) {
+        createRequestDtoOnRequestDummy(boardFormDto.getBno(), cnt);
+        for (var commentDto : requestDummy) {
             assertTrue(1 == target.insert(commentDto));
         }
         assertTrue(cnt == target.count());
@@ -181,7 +183,7 @@ class CommentDaoImplTest {
     @Test
     public void test3() {
         var commentDto = createCommentDto(boardFormDto.getBno(), 0);
-        commentDto.setContent(null);
+        commentDto.setComment(null);
         assertThrows(DataIntegrityViolationException.class,
                 () -> target.insert(commentDto)
         );
@@ -192,7 +194,7 @@ class CommentDaoImplTest {
     @Test
     public void test5() {
         var commentDto = createCommentDto(boardFormDto.getBno(), 0);
-        commentDto.setContent("a".repeat(501));
+        commentDto.setComment("a".repeat(501));
         assertThrows(DataIntegrityViolationException.class,
                 () -> target.insert(commentDto)
         );
@@ -202,17 +204,19 @@ class CommentDaoImplTest {
     @ParameterizedTest
     @ValueSource(ints = {1, 5, 15, 20})
     public void test6(int cnt) {
-        createFixture(boardFormDto.getBno(), cnt);
-        for (var commentDto : fixture) {
+        createRequestDtoOnRequestDummy(boardFormDto.getBno(), cnt);
+        createResponseDtoOnResponseDummy(boardFormDto.getBno(), cnt);
+
+        for (var commentDto : requestDummy) {
             assertTrue(1 == target.insert(commentDto));
         }
 
         List<CommentResponseDto> foundComments = target.selectByBno(boardFormDto.getBno());
         assertTrue(cnt == foundComments.size());
 
-        sort(fixture, foundComments);
+        sort(responseDummy, foundComments);
         for (int i=0; i<cnt; i++) {
-            assertTrue(isSameCommentDto(fixture.get(i), foundComments.get(i)));
+            assertTrue(isSameCommentDto(responseDummy.get(i), foundComments.get(i)));
         }
     }
 
@@ -227,17 +231,19 @@ class CommentDaoImplTest {
     @ParameterizedTest
     @ValueSource(ints = {1, 5, 15, 20})
     public void test8(int cnt) {
-        createFixture(boardFormDto.getBno(), cnt);
-        for (var commentDto : fixture) {
+        createRequestDtoOnRequestDummy(boardFormDto.getBno(), cnt);
+        createResponseDtoOnResponseDummy(boardFormDto.getBno(), cnt);
+
+        for (var commentDto : requestDummy) {
             assertTrue(1 == target.insert(commentDto));
         }
 
         List<CommentResponseDto> foundComments = target.selectByBno(boardFormDto.getBno());
         assertTrue(cnt == foundComments.size());
 
-        sort(fixture, foundComments);
+        sort(responseDummy, foundComments);
         for (int i=0; i<cnt; i++) {
-            assertTrue(isSameCommentDto(fixture.get(i), foundComments.get(i)));
+            assertTrue(isSameCommentDto(responseDummy.get(i), foundComments.get(i)));
         }
     }
 
@@ -252,8 +258,8 @@ class CommentDaoImplTest {
     @ParameterizedTest
     @ValueSource(ints = {1, 5, 15, 20})
     public void test10(int cnt) {
-        createFixture(boardFormDto.getBno(), cnt);
-        for (var commentDto : fixture) {
+        createRequestDtoOnRequestDummy(boardFormDto.getBno(), cnt);
+        for (var commentDto : requestDummy) {
             assertTrue(1 == target.insert(commentDto));
         }
 
@@ -272,34 +278,38 @@ class CommentDaoImplTest {
     @ParameterizedTest
     @ValueSource(ints = {1, 5, 15, 20})
     public void test11(int cnt) {
-        createFixture(boardFormDto.getBno(), cnt);
-        for (var commentDto : fixture) {
+        createRequestDtoOnRequestDummy(boardFormDto.getBno(), cnt);
+        createResponseDtoOnResponseDummy(boardFormDto.getBno(), cnt);
+
+        for (var commentDto : requestDummy) {
             assertTrue(1 == target.insert(commentDto));
         }
 
         List<CommentResponseDto> foundComments = target.selectByBno(boardFormDto.getBno());
         assertTrue(cnt == foundComments.size());
 
-        sort(fixture, foundComments);
+        sort(responseDummy, foundComments);
         int randomIdx = chooseRandom(cnt);
-        assertTrue(isSameCommentDto(fixture.get(randomIdx), foundComments.get(randomIdx)));
+        assertTrue(isSameCommentDto(responseDummy.get(randomIdx), foundComments.get(randomIdx)));
     }
 
     @DisplayName("4-2-0. 특정 게시글에 댓글 여러개 등록하고 전체 조회해보기")
     @ParameterizedTest
     @ValueSource(ints = {1, 5, 15, 20})
     public void test12(int cnt) {
-        createFixture(boardFormDto.getBno(), cnt);
-        for (var commentDto : fixture) {
+        createRequestDtoOnRequestDummy(boardFormDto.getBno(), cnt);
+        createResponseDtoOnResponseDummy(boardFormDto.getBno(), cnt);
+
+        for (var commentDto : requestDummy) {
             assertTrue(1 == target.insert(commentDto));
         }
 
         List<CommentResponseDto> foundComments = target.selectAll();
         assertTrue(cnt == foundComments.size());
 
-        sort(fixture, foundComments);
+        sort(responseDummy, foundComments);
         for (int i=0; i<cnt; i++) {
-            assertTrue(isSameCommentDto(fixture.get(i), foundComments.get(i)));
+            assertTrue(isSameCommentDto(responseDummy.get(i), foundComments.get(i)));
         }
     }
 
@@ -309,7 +319,7 @@ class CommentDaoImplTest {
         var commentDto = createCommentDto(boardFormDto.getBno(), 1);
         assertTrue(1 == target.insert(commentDto));
 
-        commentDto.setContent(null);
+        commentDto.setComment(null);
         assertThrows(DataIntegrityViolationException.class,
                 () -> target.update(commentDto)
         );
@@ -321,7 +331,7 @@ class CommentDaoImplTest {
         var commentDto = createCommentDto(boardFormDto.getBno(), 1);
         assertTrue(1 == target.insert(commentDto));
 
-        commentDto.setContent("a".repeat(501));
+        commentDto.setComment("a".repeat(501));
         assertThrows(DataIntegrityViolationException.class,
                 () -> target.update(commentDto)
         );
@@ -342,15 +352,15 @@ class CommentDaoImplTest {
     @ParameterizedTest
     @ValueSource(ints = {1, 5, 15, 20})
     public void test16(int cnt) {
-        createFixture(boardFormDto.getBno(), cnt);
-        for (var commentDto : fixture) {
+        createRequestDtoOnRequestDummy(boardFormDto.getBno(), cnt);
+        for (var commentDto : requestDummy) {
             assertTrue(1 == target.insert(commentDto));
         }
 
         List<CommentResponseDto> foundComments = target.selectAll();
         for (var foundComment : foundComments) {
-            foundComment.setContent("new content");
-            assertTrue(1 == target.update(foundComment));
+            CommentRequestDto updateDto = createCommentDtoForUpdate(foundComment.getBno(), foundComment.getCno());
+            assertTrue(1 == target.update(updateDto));
         }
     }
 
@@ -358,8 +368,8 @@ class CommentDaoImplTest {
     @ParameterizedTest
     @ValueSource(ints = {1, 5, 15, 20})
     public void test17(int cnt) {
-        createFixture(boardFormDto.getBno(), cnt);
-        for (var commentDto : fixture) {
+        createRequestDtoOnRequestDummy(boardFormDto.getBno(), cnt);
+        for (var commentDto : requestDummy) {
             assertTrue(1 == target.insert(commentDto));
         }
 
@@ -367,8 +377,8 @@ class CommentDaoImplTest {
         int randomIdx = chooseRandom(cnt);
         var selectedDto = foundComments.get(randomIdx);
 
-        selectedDto.setContent("new content");
-        assertTrue(1 == target.update(selectedDto));
+        CommentRequestDto updateDto = createCommentDtoForUpdate(selectedDto.getBno(), selectedDto.getCno());
+        assertTrue(1 == target.update(updateDto));
     }
 
     @DisplayName("6-1-0. 댓글 번호가 없는 경우")
@@ -397,8 +407,8 @@ class CommentDaoImplTest {
     @ParameterizedTest
     @ValueSource(ints = {1, 5, 15, 20})
     public void test20(int cnt) {
-        createFixture(boardFormDto.getBno(), cnt);
-        for (var commentDto : fixture) {
+        createRequestDtoOnRequestDummy(boardFormDto.getBno(), cnt);
+        for (var commentDto : requestDummy) {
             assertTrue(1 == target.insert(commentDto));
         }
 
@@ -439,8 +449,8 @@ class CommentDaoImplTest {
     @ParameterizedTest
     @ValueSource(ints = {1, 5, 15, 20})
     public void test23(int cnt) {
-        createFixture(boardFormDto.getBno(), cnt);
-        for (var commentDto : fixture) {
+        createRequestDtoOnRequestDummy(boardFormDto.getBno(), cnt);
+        for (var commentDto : requestDummy) {
             assertTrue(1 == target.insert(commentDto));
         }
 
@@ -465,8 +475,8 @@ class CommentDaoImplTest {
     @ParameterizedTest
     @ValueSource(ints = {1, 5, 15, 20})
     public void test25(int cnt) {
-        createFixture(boardFormDto.getBno(), cnt);
-        for (var commentDto : fixture) {
+        createRequestDtoOnRequestDummy(boardFormDto.getBno(), cnt);
+        for (var commentDto : requestDummy) {
             assertTrue(1 == target.insert(commentDto));
         }
 
@@ -483,8 +493,8 @@ class CommentDaoImplTest {
     @ParameterizedTest
     @ValueSource(ints = {1, 5, 15, 20})
     public void test27(int cnt) {
-        createFixture(boardFormDto.getBno(), cnt);
-        for (var commentDto : fixture) {
+        createRequestDtoOnRequestDummy(boardFormDto.getBno(), cnt);
+        for (var commentDto : requestDummy) {
             assertTrue(1 == target.insert(commentDto));
         }
 
@@ -500,13 +510,13 @@ class CommentDaoImplTest {
     @ParameterizedTest
     @ValueSource(ints = {1, 5, 15, 20})
     public void test28(int cnt) {
-        createFixture(boardFormDto.getBno(), cnt);
-        for (var commentDto : fixture) {
+        createRequestDtoOnRequestDummy(boardFormDto.getBno(), cnt);
+        for (var commentDto : requestDummy) {
             assertTrue(1 == target.insert(commentDto));
         }
 
         int randomIdx = chooseRandom(cnt);
-        var selectedDto = fixture.get(randomIdx);
+        var selectedDto = requestDummy.get(randomIdx);
 
         assertTrue(1 == target.deleteByCno(selectedDto.getCno()));
         assertTrue(cnt - 1 == target.count());
@@ -517,8 +527,8 @@ class CommentDaoImplTest {
     @ParameterizedTest
     @ValueSource(ints = {1, 5, 15, 20})
     public void test29(int cnt) {
-        createFixture(boardFormDto.getBno(), cnt);
-        for (var commentDto : fixture) {
+        createRequestDtoOnRequestDummy(boardFormDto.getBno(), cnt);
+        for (var commentDto : requestDummy) {
             assertTrue(1 == target.insert(commentDto));
         }
 
@@ -529,27 +539,42 @@ class CommentDaoImplTest {
 
 
 
-    private CommentResponseDto createCommentDto(int bno, int i) {
-        CommentResponseDto commentResponseDto = new CommentResponseDto();
-        commentResponseDto.setBno(bno);
-        commentResponseDto.setWriter("writer" + i);
-        commentResponseDto.setContent("content" + i);
-        commentResponseDto.setReg_id("reg_id");
-        commentResponseDto.setUp_id("up_id");
-        return commentResponseDto;
+    private CommentRequestDto createCommentDto(int bno, int i) {
+        CommentRequestDto commentRequestDto = new CommentRequestDto();
+        commentRequestDto.setBno(bno);
+        commentRequestDto.setWriter("writer" + i);
+        commentRequestDto.setComment("comment" + i);
+        return commentRequestDto;
     }
 
-    private void createFixture(int bno, int cnt) {
+    private CommentRequestDto createCommentDtoForUpdate(int bno, int cno) {
+        CommentRequestDto commentRequestDto = new CommentRequestDto();
+        commentRequestDto.setCno(cno);
+        commentRequestDto.setBno(bno);
+        commentRequestDto.setWriter("new writer");
+        commentRequestDto.setComment("new comment");
+        return commentRequestDto;
+    }
+
+
+
+    private void createRequestDtoOnRequestDummy(int bno, int cnt) {
         for (int i = 0; i < cnt; i++) {
             var commentDto = createCommentDto(bno, i);
-            fixture.add(commentDto);
+            requestDummy.add(commentDto);
+        }
+    }
+
+    private void createResponseDtoOnResponseDummy(int bno, int cnt) {
+        for (int i = 0; i < cnt; i++) {
+            var commentDto = createCommentDto(bno, i);
+            responseDummy.add(commentDto.createCommentDto());
         }
     }
 
 
     private void createBoardFormDto() {
         boardFormDto = new BoardFormDto();
-
         boardFormDto.setCate_code("0101");
         boardFormDto.setId("id");
         boardFormDto.setTitle("title");

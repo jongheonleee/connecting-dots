@@ -1,5 +1,6 @@
 package com.example.demo.repository.mybatis.comment;
 
+import com.example.demo.dto.comment.CommentRequestDto;
 import com.example.demo.dto.comment.CommentResponseDto;
 import java.util.List;
 import org.apache.ibatis.session.SqlSession;
@@ -22,7 +23,7 @@ public class CommentDaoImpl {
         return session.selectOne(namespace + "countByBno", bno);
     }
 
-    public int insert(CommentResponseDto dto) {
+    public int insert(CommentRequestDto dto) {
         return session.insert(namespace + "insert", dto);
     }
 
@@ -38,7 +39,7 @@ public class CommentDaoImpl {
         return session.selectList(namespace + "selectAll");
     }
 
-    public int update(CommentResponseDto dto) {
+    public int update(CommentRequestDto dto) {
         return session.update(namespace + "update", dto);
     }
 

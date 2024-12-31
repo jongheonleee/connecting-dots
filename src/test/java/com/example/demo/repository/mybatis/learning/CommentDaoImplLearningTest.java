@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.example.demo.dto.board.BoardFormDto;
+import com.example.demo.dto.comment.CommentRequestDto;
 import com.example.demo.dto.comment.CommentResponseDto;
 import com.example.demo.repository.mybatis.board.BoardDaoImpl;
 import com.example.demo.repository.mybatis.comment.CommentDaoImpl;
@@ -28,7 +29,7 @@ class CommentDaoImplLearningTest {
 
     private BoardFormDto boardFormDto = new BoardFormDto();
 
-    private List<CommentResponseDto> fixture = new ArrayList<>();
+    private List<CommentRequestDto> fixture = new ArrayList<>();
 
     @BeforeEach
     void setUp() {
@@ -134,14 +135,13 @@ class CommentDaoImplLearningTest {
     }
 
 
-    private CommentResponseDto createCommentDto(int bno) {
-        CommentResponseDto commentResponseDto = new CommentResponseDto();
-        commentResponseDto.setBno(bno);
-        commentResponseDto.setWriter("writer");
-        commentResponseDto.setContent("content");
-        commentResponseDto.setReg_id("reg_id");
-        commentResponseDto.setUp_id("up_id");
-        return commentResponseDto;
+    private CommentRequestDto createCommentDto(int bno) {
+        CommentRequestDto commentRequestDto = new CommentRequestDto();
+        commentRequestDto.setCno(0);
+        commentRequestDto.setBno(bno);
+        commentRequestDto.setWriter("writer");
+        commentRequestDto.setComment("content");
+        return commentRequestDto;
     }
 
     private void createFixture(int bno, int cnt) {

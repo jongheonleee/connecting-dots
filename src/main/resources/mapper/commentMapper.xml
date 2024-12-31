@@ -14,7 +14,7 @@
   </select>
 
   <!-- 댓글 등록 -->
-  <insert id="insert" parameterType="com.example.demo.dto.comment.CommentResponseDto" >
+  <insert id="insert" parameterType="com.example.demo.dto.comment.CommentRequestDto" >
     <!-- 등록된 이후에 dto에 cno 저장 -->
     <selectKey keyProperty="cno" resultType="int" order="AFTER">
       SELECT LAST_INSERT_ID()
@@ -25,9 +25,8 @@
      reg_date, reg_id, up_date,
      up_id)
     VALUES
-    (#{bno}, #{writer}, #{content},
-     now(), #{reg_id}, now(),
-     #{up_id})
+    (#{bno}, #{writer}, #{comment},
+     now(), 'admin1234', now(), 'admin1234')
   </insert>
 
   <!-- 댓글 조회 -->
@@ -60,11 +59,11 @@
   </select>
 
   <!-- 댓글 수정 -->
-  <update id="update" parameterType="com.example.demo.dto.comment.CommentResponseDto">
+  <update id="update" parameterType="com.example.demo.dto.comment.CommentRequestDto">
     UPDATE comment
     SET
-        content = #{content},
-        up_date = now(), up_id = #{up_id}
+        content = #{comment},
+        up_date = now(), up_id = #{writer}
     WHERE cno = #{cno}
   </update>
 

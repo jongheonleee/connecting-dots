@@ -46,8 +46,7 @@ class CommentServiceImplTest {
     @Test
     void test1() {
         var commentRequestDto = createCommentRequestDto(1, 1);
-        CommentResponseDto commentResponseDto = commentRequestDto.createCommentDto();
-        when(commentDao.insert(commentResponseDto)).thenReturn(0);
+        when(commentDao.insert(commentRequestDto)).thenReturn(0);
         assertThrows(InternalServerError.class, () -> target.create(commentRequestDto));
     }
 
@@ -55,8 +54,7 @@ class CommentServiceImplTest {
     @Test
     void test2() {
         var commentRequestDto = createCommentRequestDto(1, 1);
-        CommentResponseDto commentResponseDto = commentRequestDto.createCommentDto();
-        when(commentDao.insert(commentResponseDto)).thenThrow(DataIntegrityViolationException.class);
+        when(commentDao.insert(commentRequestDto)).thenThrow(DataIntegrityViolationException.class);
         assertThrows(CommentFormInvalidException.class, () -> target.create(commentRequestDto));
     }
 
@@ -71,17 +69,17 @@ class CommentServiceImplTest {
     @DisplayName("댓글 수정 과정에서 DB에 정상적으로 반영되지 않은 경우 -> InternalServerError")
     @Test
     void test4() {
-        CommentResponseDto commentResponseDto = createCommentDto(1, 1);
-        when(commentDao.update(commentResponseDto)).thenReturn(0);
-        assertThrows(InternalServerError.class, () -> target.update(commentResponseDto));
+        var commentRequestDto = createCommentRequestDto(1, 1);
+        when(commentDao.update(commentRequestDto)).thenReturn(0);
+        assertThrows(InternalServerError.class, () -> target.update(commentRequestDto));
     }
 
     @DisplayName("댓글 수정 입력 폼이 잘못된 경우 -> CommentFormInvalidException")
     @Test
     void test5() {
-        CommentResponseDto commentResponseDto = createCommentDto(1, 1);
-        when(commentDao.update(commentResponseDto)).thenThrow(DataIntegrityViolationException.class);
-        assertThrows(CommentFormInvalidException.class, () -> target.update(commentResponseDto));
+        var commentRequestDto = createCommentRequestDto(1, 1);
+        when(commentDao.update(commentRequestDto)).thenThrow(DataIntegrityViolationException.class);
+        assertThrows(CommentFormInvalidException.class, () -> target.update(commentRequestDto));
     }
 
     private CommentResponseDto createCommentDto(int bno, int i) {

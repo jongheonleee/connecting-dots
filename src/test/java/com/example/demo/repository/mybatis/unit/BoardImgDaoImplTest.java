@@ -464,6 +464,7 @@ class BoardImgDaoImplTest {
 
         dto.setBno(bno);
         dto.setIno(1);
+        dto.setName("img_name");
         dto.setImg("img_path");
         dto.setComt("img_name");
         dto.setReg_date("2021-01-01");
@@ -479,6 +480,7 @@ class BoardImgDaoImplTest {
 
         dto.setBno(bno);
         dto.setIno(ino);
+        dto.setName("new_img_name");
         dto.setImg("new_img_path");
         dto.setComt("new_img_name");
         dto.setUp_id("new_up_id");
