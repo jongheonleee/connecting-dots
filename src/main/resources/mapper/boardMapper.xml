@@ -4,7 +4,7 @@
 <mapper namespace="com.example.demo.mapper.BoardMapper">
 
   <!-- v2 : 게시글 조회 -->
-  <select id="select_v2" parameterType="map" resultType="com.example.demo.dto.board.BoardResponseDto">
+  <select id="selectV2" parameterType="map" resultType="com.example.demo.dto.board.BoardResponseDto">
     SELECT
       bno, title, writer, cate_code,
       reg_date, view_cnt, reco_cnt,
@@ -20,7 +20,7 @@
   </select>
 
   <!-- v2 : 게시글 조회 - 카테고리 -->
-  <select id="select_v2ByCategory" parameterType="map" resultType="com.example.demo.dto.board.BoardResponseDto">
+  <select id="selectV2ByCategory" parameterType="map" resultType="com.example.demo.dto.board.BoardResponseDto">
     SELECT
       bno, title, writer, cate_code,
       reg_date, view_cnt, reco_cnt,
@@ -38,7 +38,7 @@
   </select>
 
   <!-- v2 : 게시글 검색 & 정렬 조건 기반 조회 -->
-  <select id="select_v2BySearchCondition" parameterType="map" resultType="com.example.demo.dto.board.BoardResponseDto">
+  <select id="selectV2BySearchCondition" parameterType="map" resultType="com.example.demo.dto.board.BoardResponseDto">
     SELECT
       bno, title, writer, cate_code,
       reg_date, view_cnt, reco_cnt,

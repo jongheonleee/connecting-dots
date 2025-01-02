@@ -3,8 +3,10 @@ package com.example.demo.repository.mybatis.board;
 import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.board.BoardDetailDto;
 import com.example.demo.dto.board.BoardFormDto;
+import com.example.demo.dto.board.BoardResponseDto;
 import com.example.demo.dto.board.BoardUpdatedFormDto;
 import java.util.List;
+import java.util.Map;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -76,6 +78,19 @@ public class BoardDaoImpl {
 
     public int deleteAll() {
         return session.delete(namespace + "deleteAll");
+    }
+
+    // v2 조회 내용 추가
+    public List<BoardResponseDto> selectV2(Map map) {
+        return session.selectOne(namespace + "selectV2", map);
+    }
+
+    public List<BoardResponseDto> selectV2ByCategory(Map map) {
+        return session.selectOne(namespace + "selectV2ByCategory", map);
+    }
+
+    public List<BoardResponseDto> selectV2BySearchCondition(Map map) {
+        return session.selectOne(namespace + "selectV2BySearchCondition", map);
     }
 
 
