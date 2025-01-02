@@ -9,10 +9,14 @@ import com.example.demo.dto.board.BoardDetailDto;
 import com.example.demo.dto.board.BoardFormDto;
 import com.example.demo.dto.board.BoardImgFormDto;
 import com.example.demo.dto.category.CategoryDto;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -27,6 +31,8 @@ class BoardDaoIntegrationTest {
 
     @Autowired
     private CategoryDaoImpl categoryDao;
+    @Autowired
+    private CategoryDaoImpl categoryDaoImpl;
 
     @BeforeEach
     void setUp() {
@@ -84,6 +90,88 @@ class BoardDaoIntegrationTest {
         System.out.println("foundBoardDetial = " + foundBoardDetial);
     }
 
+    /**
+     * v2 조회 테스트
+     *
+     * - v2-0. 게시글 여러건 단순 조회
+     * - v2-1. 게시글 여러건 카테고리 기반 조회
+     * - v2-2. 게시글 여러건 검색조건 기반 조회
+     *
+     */
+
+    @DisplayName("v2-0. 게시글 여러건 단순 조회 ")
+    @ParameterizedTest
+    @ValueSource(ints = {1, 5, 15, 20})
+    public void test3(int cnt) {
+        // given
+        // - 0. 카테고리 등록
+        CategoryDto categoryDto = createCategoryDto("0101");
+        assertTrue(1 == categoryDao.insert(categoryDto));
+
+        // - 1. 게시글 이미지와 동시에 cnt개 등록, 이때 섬네일 표시해주기
+        // - 2. 각 댓글 5개 등록
+        for (int i=0; i<cnt; i++) {
+            BoardFormDto boardFormDto = createBoardFormDto(i, categoryDto.getCate_code());
+            assertTrue(1 == boardDao.insert(boardFormDto));
+
+            for (int j=0; j<5; j++) {
+                if (j == 0) {
+                    BoardImgFormDto boardImgFormDto = createBoardImgFormDto(boardFormDto.getBno(), "Y");
+                    assertTrue(1 == boardImgDao.insert(boardImgFormDto));
+                } else {
+                    BoardImgFormDto boardImgFormDto = createBoardImgFormDto(boardFormDto.getBno(), "N");
+                    assertTrue(1 == boardImgDao.insert(boardImgFormDto));
+                }
+            }
+        }
+
+
+        // when
+        // - 필요한 매개변수 저장 - bno, mark, offset, pageSize
+        Map<String, String> map = new HashMap<>();
+        map.put("bno", "");
+        map.put("mark", "Y");
+        map.put("offset", "0");
+        map.put("pageSize", "10");
+
+        // - dao의 selectV2() 호출
+
+        // then
+        // - 결과 비교 : bno, 작성자, 카테고리 코드, 작성일, 조회수, 추천수, 섬네일, 댓글수
+    }
+
+    @DisplayName("v2-1. 게시글 여러건 카테고리 기반 조회 ")
+    @ParameterizedTest
+    @ValueSource(ints = {1, 5, 15, 20})
+    public void test4() {
+        // given
+        // - 0. 카테고리 등록
+        // - 1. 게시글 이미지와 동시에 cnt개 등록, 이때 섬네일 표시해주기
+        // - 2. 각 댓글 5개 등록
+
+        // when
+        // - 필요한 매개변수 저장 - cate_code, mark, offset, pageSize
+
+        // then
+        // - 결과 비교 : bno, 작성자, 카테고리 코드, 작성일, 조회수, 추천수, 섬네일, 댓글수
+    }
+
+    @DisplayName("v2-2. 게시글 여러건 검색조건 기반 조회 ")
+    @ParameterizedTest
+    @ValueSource(ints = {1, 5, 15, 20})
+    public void test5() {
+        // given
+        // - 0. 카테고리 등록
+        // - 1. 게시글 이미지와 동시에 cnt개 등록, 이때 섬네일 표시해주기
+        // - 2. 각 댓글 5개 등록
+
+        // when
+        // - 필요한 매개변수 저장 - searchCondition, mark, offset, pageSize
+
+        // then
+        // - 결과 비교 : bno, 작성자, 카테고리 코드, 작성일, 조회수, 추천수, 섬네일, 댓글수
+    }
+
     private BoardFormDto createBoardFormDto(int i, String cate_code) {
         var dto = new BoardFormDto();
 
@@ -104,7 +192,7 @@ class BoardDaoIntegrationTest {
         return dto;
     }
 
-    private BoardImgFormDto createBoardImgFormDto(int bno) {
+    private BoardImgFormDto createBoardImgFormDto(int bno, String mark) {
         var dto = new BoardImgFormDto();
 
         dto.setBno(bno);
@@ -115,6 +203,7 @@ class BoardDaoIntegrationTest {
         dto.setReg_id("reg_id");
         dto.setUp_date("2021-01-01");
         dto.setUp_id("up_id");
+        dto.setThumb(mark);
 
         return dto;
     }

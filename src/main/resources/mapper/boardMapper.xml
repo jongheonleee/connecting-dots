@@ -6,61 +6,76 @@
   <!-- v2 : 게시글 조회 -->
   <select id="selectV2" parameterType="map" resultType="com.example.demo.dto.board.BoardResponseDto">
     SELECT
-      bno, title, writer, cate_code,
-      reg_date, view_cnt, reco_cnt,
-      (SELECT img
-       FROM image
-       WHERE bno = #{bno}) AS thumb,
-      (SELECT count(*)
-       FROM comment
-       WHERE bno = #{bno}) AS comment_cnt
-    FROM board
-    ORDER BY reg_date DESC, view_cnt, comment_cnt
+      b.bno AS bno, b.title AS title, b.writer AS writer, b.cate_code AS cate_code,
+      b.reg_date AS reg_date, b.view_cnt AS view_cnt, b.reco_cnt AS reco_cnt,
+      (
+        SELECT img
+        FROM image AS i
+        WHERE b.bno = i.bno
+        AND i.thumb = 'Y'
+      ) AS thumb,
+      (
+        SELECT count(*)
+        FROM comment AS c
+        WHERE b.bno = c.bno
+      ) AS comment_cnt
+    FROM board AS b
+    ORDER BY reg_date DESC, view_cnt DESC, comment_cnt DESC
     LIMIT #{offset}, #{pageSize};
   </select>
 
   <!-- v2 : 게시글 조회 - 카테고리 -->
   <select id="selectV2ByCategory" parameterType="map" resultType="com.example.demo.dto.board.BoardResponseDto">
     SELECT
-      bno, title, writer, cate_code,
-      reg_date, view_cnt, reco_cnt,
-      (SELECT img
-       FROM image
-       WHERE bno = #{bno}) AS thumb,
-      (SELECT count(*)
-       FROM comment
-       WHERE bno = #{bno}) AS comment_cnt
-    FROM board
-    WHERE cate_code
+      b.bno AS bno, b.title AS title, b.writer AS writer, b.cate_code AS cate_code,
+      b.reg_date AS reg_date, b.view_cnt AS view_cnt, b.reco_cnt AS reco_cnt,
+      (
+        SELECT img
+        FROM image AS i
+        WHERE b.bno = i.bno
+        AND i.thumb = 'Y'
+      ) AS thumb,
+      (
+        SELECT count(*)
+        FROM comment AS c
+        WHERE b.bno = c.bno
+       ) AS comment_cnt
+    FROM board AS b
+    WHERE b.cate_code
     LIKE CONCAT(#{cate_code}, '%')
-    ORDER BY reg_date DESC, view_cnt, comment_cnt
+    ORDER BY reg_date DESC, view_cnt DESC, comment_cnt DESC
     LIMIT #{offset}, #{pageSize};
   </select>
 
   <!-- v2 : 게시글 검색 & 정렬 조건 기반 조회 -->
   <select id="selectV2BySearchCondition" parameterType="map" resultType="com.example.demo.dto.board.BoardResponseDto">
     SELECT
-      bno, title, writer, cate_code,
-      reg_date, view_cnt, reco_cnt,
-      (SELECT img
-       FROM image
-       WHERE bno = #{bno}) AS thumb,
-      (SELECT count(*)
-       FROM comment
-       WHERE bno = #{bno}) AS comment_cnt
-    FROM board
+      b.bno AS bno, b.title AS title, b.writer AS writer, b.cate_code AS cate_code,
+      b.reg_date AS reg_date, b.view_cnt AS view_cnt, b.reco_cnt AS reco_cnt,
+      (
+        SELECT img
+        FROM image AS i
+        WHERE b.bno = i.bno
+        AND i.thumb = 'Y'
+      ) AS thumb,
+      (
+        SELECT count(*)
+        FROM comment AS c
+        WHERE b.bno = c.bno
+       ) AS comment_cnt
+    FROM board AS b
     WHERE TRUE
       <!-- 검색 조건 -->
       <choose>
         <when test='searchOption=="T"'>
-          AND title LIKE CONCAT('%', #{searchKeyword}, '%')
+          AND b.title LIKE CONCAT('%', #{searchKeyword}, '%')
         </when>
         <when test='searchOption=="W"'>
-          AND writer LIKE CONCAT('%', #{searchKeyword}, '%')
+          AND b.writer LIKE CONCAT('%', #{searchKeyword}, '%')
         </when>
         <otherwise>
-          AND title LIKE CONCAT('%', #{searchKeyword}, '%')
-          OR writer LIKE CONCAT('%', #{searchKeyword}, '%')
+          AND b.title LIKE CONCAT('%', #{searchKeyword}, '%')
+          OR b.writer LIKE CONCAT('%', #{searchKeyword}, '%')
         </otherwise>
       </choose>
       <!-- 정렬 조건 -->
@@ -78,7 +93,6 @@
           ORDER BY reg_date DESC, bno DESC
         </otherwise>
     </choose>
-    ORDER BY reg_date DESC, view_cnt, comment_cnt
     LIMIT #{offset}, #{pageSize};
   </select>
 

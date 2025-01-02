@@ -14,6 +14,7 @@ public class BoardImgFormDto {
     private String name;
     private String img;
     private String comt;
+    private String thumb;
     private String reg_date;
     private String reg_id;
     private String up_date;

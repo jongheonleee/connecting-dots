@@ -19,6 +19,7 @@ public class BoardImgDaoImpl {
         return session.selectOne(namespace + "count");
     }
 
+
    public int insert(BoardImgFormDto dto) {
         return session.insert(namespace + "insert", dto);
    }

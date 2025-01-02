@@ -128,6 +128,7 @@ class BoardDaoImplTest {
      *
      */
 
+
     @DisplayName("0-2-0. 여러건 등록하고 전체 카운팅")
     @ParameterizedTest
     @ValueSource(ints = {1, 5, 15, 20})
