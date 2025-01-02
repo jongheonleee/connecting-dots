@@ -82,15 +82,15 @@ public class BoardDaoImpl {
 
     // v2 조회 내용 추가
     public List<BoardResponseDto> selectV2(Map map) {
-        return session.selectOne(namespace + "selectV2", map);
+        return session.selectList(namespace + "selectV2", map);
     }
 
     public List<BoardResponseDto> selectV2ByCategory(Map map) {
-        return session.selectOne(namespace + "selectV2ByCategory", map);
+        return session.selectList(namespace + "selectV2ByCategory", map);
     }
 
-    public List<BoardResponseDto> selectV2BySearchCondition(Map map) {
-        return session.selectOne(namespace + "selectV2BySearchCondition", map);
+    public List<BoardResponseDto> selectV2BySearchCondition(SearchCondition sc) {
+        return session.selectList(namespace + "selectV2BySearchCondition", sc);
     }
 
 

@@ -48,7 +48,7 @@
   </select>
 
   <!-- v2 : 게시글 검색 & 정렬 조건 기반 조회 -->
-  <select id="selectV2BySearchCondition" parameterType="map" resultType="com.example.demo.dto.board.BoardResponseDto">
+  <select id="selectV2BySearchCondition" parameterType="com.example.demo.dto.SearchCondition" resultType="com.example.demo.dto.board.BoardResponseDto">
     SELECT
       b.bno AS bno, b.title AS title, b.writer AS writer, b.cate_code AS cate_code,
       b.reg_date AS reg_date, b.view_cnt AS view_cnt, b.reco_cnt AS reco_cnt,

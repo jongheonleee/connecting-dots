@@ -10,9 +10,9 @@
   <!-- 이미지 등록 -->
   <insert id="insert" parameterType="com.example.demo.dto.board.BoardImgFormDto">
     INSERT INTO image
-    (bno, name, img, comt, reg_date, reg_id, up_date, up_id)
+    (bno, name, img, comt, reg_date, reg_id, up_date, up_id, thumb)
     VALUES
-    (#{bno}, #{name}, #{img}, #{comt}, now(), #{reg_id}, now(), #{up_id});
+    (#{bno}, #{name}, #{img}, #{comt}, now(), #{reg_id}, now(), #{up_id}, #{thumb});
   </insert>
 
   <!-- 특정 게시글의 이미지 조회 -->

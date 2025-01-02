@@ -2,6 +2,11 @@ package com.example.demo.repository.mybatis.integration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.example.demo.dto.PageHandler;
+import com.example.demo.dto.SearchCondition;
+import com.example.demo.dto.board.BoardResponseDto;
+import com.example.demo.dto.comment.CommentRequestDto;
+import com.example.demo.dto.comment.CommentResponseDto;
 import com.example.demo.repository.mybatis.board.BoardDaoImpl;
 import com.example.demo.repository.mybatis.board.BoardImgDaoImpl;
 import com.example.demo.repository.mybatis.category.CategoryDaoImpl;
@@ -9,6 +14,7 @@ import com.example.demo.dto.board.BoardDetailDto;
 import com.example.demo.dto.board.BoardFormDto;
 import com.example.demo.dto.board.BoardImgFormDto;
 import com.example.demo.dto.category.CategoryDto;
+import com.example.demo.repository.mybatis.comment.CommentDaoImpl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,14 +37,20 @@ class BoardDaoIntegrationTest {
 
     @Autowired
     private CategoryDaoImpl categoryDao;
+
     @Autowired
-    private CategoryDaoImpl categoryDaoImpl;
+    private CommentDaoImpl commentDao;
+    @Autowired
+    private BoardDaoImpl boardDaoImpl;
 
     @BeforeEach
     void setUp() {
         assertNotNull(boardDao);
         assertNotNull(boardImgDao);
         assertNotNull(categoryDao);
+        assertNotNull(commentDao);
+
+        commentDao.deleteAll();
         boardImgDao.deleteAll();
         categoryDao.deleteAll();
         boardDao.deleteAll();
@@ -114,62 +126,136 @@ class BoardDaoIntegrationTest {
             BoardFormDto boardFormDto = createBoardFormDto(i, categoryDto.getCate_code());
             assertTrue(1 == boardDao.insert(boardFormDto));
 
+            // 이미지 등록 처리
             for (int j=0; j<5; j++) {
                 if (j == 0) {
-                    BoardImgFormDto boardImgFormDto = createBoardImgFormDto(boardFormDto.getBno(), "Y");
+                    BoardImgFormDto boardImgFormDto = createBoardImgThumbnailForm(boardFormDto.getBno());
                     assertTrue(1 == boardImgDao.insert(boardImgFormDto));
                 } else {
-                    BoardImgFormDto boardImgFormDto = createBoardImgFormDto(boardFormDto.getBno(), "N");
+                    BoardImgFormDto boardImgFormDto = createBoardImgFormDto(boardFormDto.getBno());
                     assertTrue(1 == boardImgDao.insert(boardImgFormDto));
                 }
+            }
+
+            // 댓글 등록 처리
+            for (int j=0; j<5; j++) {
+                CommentRequestDto commentRequestDto = createCommentFormDto(boardFormDto.getBno());
+                assertTrue(1 == commentDao.insert(commentRequestDto));
             }
         }
 
 
         // when
-        // - 필요한 매개변수 저장 - bno, mark, offset, pageSize
-        Map<String, String> map = new HashMap<>();
-        map.put("bno", "");
-        map.put("mark", "Y");
-        map.put("offset", "0");
-        map.put("pageSize", "10");
+        // - 필요한 매개변수 저장 - offset, pageSize
+        Map<String, Object> map = new HashMap<>();
+        map.put("offset", 1);
+        map.put("pageSize", 10);
 
         // - dao의 selectV2() 호출
+        List<BoardResponseDto> boardResponseDtos = boardDao.selectV2(map);
 
         // then
         // - 결과 비교 : bno, 작성자, 카테고리 코드, 작성일, 조회수, 추천수, 섬네일, 댓글수
+        for (BoardResponseDto boardResponseDto : boardResponseDtos) {
+            System.out.println("boardResponseDto = " + boardResponseDto);
+        }
     }
 
     @DisplayName("v2-1. 게시글 여러건 카테고리 기반 조회 ")
     @ParameterizedTest
     @ValueSource(ints = {1, 5, 15, 20})
-    public void test4() {
+    public void test4(int cnt) {
         // given
         // - 0. 카테고리 등록
+        CategoryDto categoryDto = createCategoryDto("0101");
+        assertTrue(1 == categoryDao.insert(categoryDto));
+
         // - 1. 게시글 이미지와 동시에 cnt개 등록, 이때 섬네일 표시해주기
         // - 2. 각 댓글 5개 등록
+        for (int i=0; i<cnt; i++) {
+            BoardFormDto boardFormDto = createBoardFormDto(i, categoryDto.getCate_code());
+            assertTrue(1 == boardDao.insert(boardFormDto));
+
+            // 이미지 등록 처리
+            for (int j=0; j<5; j++) {
+                if (j == 0) {
+                    BoardImgFormDto boardImgFormDto = createBoardImgThumbnailForm(boardFormDto.getBno());
+                    assertTrue(1 == boardImgDao.insert(boardImgFormDto));
+                } else {
+                    BoardImgFormDto boardImgFormDto = createBoardImgFormDto(boardFormDto.getBno());
+                    assertTrue(1 == boardImgDao.insert(boardImgFormDto));
+                }
+            }
+
+            // 댓글 등록 처리
+            for (int j=0; j<5; j++) {
+                CommentRequestDto commentRequestDto = createCommentFormDto(boardFormDto.getBno());
+                assertTrue(1 == commentDao.insert(commentRequestDto));
+            }
+        }
 
         // when
-        // - 필요한 매개변수 저장 - cate_code, mark, offset, pageSize
+        // - 필요한 매개변수 저장 - cate_code, offset, pageSize
+        Map<String, Object> map = new HashMap<>();
+        map.put("cate_code", categoryDto.getCate_code());
+        map.put("offset", 1);
+        map.put("pageSize", 10);
 
         // then
         // - 결과 비교 : bno, 작성자, 카테고리 코드, 작성일, 조회수, 추천수, 섬네일, 댓글수
+        // - dao의 selectV2() 호출
+        List<BoardResponseDto> boardResponseDtos = boardDao.selectV2ByCategory(map);
+
+        // then
+        // - 결과 비교 : bno, 작성자, 카테고리 코드, 작성일, 조회수, 추천수, 섬네일, 댓글수
+        for (BoardResponseDto boardResponseDto : boardResponseDtos) {
+            System.out.println("boardResponseDto = " + boardResponseDto);
+        }
     }
 
     @DisplayName("v2-2. 게시글 여러건 검색조건 기반 조회 ")
     @ParameterizedTest
     @ValueSource(ints = {1, 5, 15, 20})
-    public void test5() {
+    public void test5(int cnt) {
         // given
         // - 0. 카테고리 등록
+        CategoryDto categoryDto = createCategoryDto("0101");
+        assertTrue(1 == categoryDao.insert(categoryDto));
+
         // - 1. 게시글 이미지와 동시에 cnt개 등록, 이때 섬네일 표시해주기
         // - 2. 각 댓글 5개 등록
+        for (int i=0; i<cnt; i++) {
+            BoardFormDto boardFormDto = createBoardFormDto(i, categoryDto.getCate_code());
+            assertTrue(1 == boardDao.insert(boardFormDto));
+
+            // 이미지 등록 처리
+            for (int j=0; j<5; j++) {
+                if (j == 0) {
+                    BoardImgFormDto boardImgFormDto = createBoardImgThumbnailForm(boardFormDto.getBno());
+                    assertTrue(1 == boardImgDao.insert(boardImgFormDto));
+                } else {
+                    BoardImgFormDto boardImgFormDto = createBoardImgFormDto(boardFormDto.getBno());
+                    assertTrue(1 == boardImgDao.insert(boardImgFormDto));
+                }
+            }
+
+            // 댓글 등록 처리
+            for (int j=0; j<5; j++) {
+                CommentRequestDto commentRequestDto = createCommentFormDto(boardFormDto.getBno());
+                assertTrue(1 == commentDao.insert(commentRequestDto));
+            }
+        }
 
         // when
-        // - 필요한 매개변수 저장 - searchCondition, mark, offset, pageSize
+        // - 필요한 매개변수 저장 - searchCondition, offset, pageSize
+        SearchCondition sc = new SearchCondition(1, 10, "T", "title", "1");
 
         // then
         // - 결과 비교 : bno, 작성자, 카테고리 코드, 작성일, 조회수, 추천수, 섬네일, 댓글수
+        List<BoardResponseDto> boardResponseDtos = boardDaoImpl.selectV2BySearchCondition(sc);
+        for (BoardResponseDto boardResponseDto : boardResponseDtos) {
+            System.out.println("boardResponseDto = " + boardResponseDto);
+        }
     }
 
     private BoardFormDto createBoardFormDto(int i, String cate_code) {
@@ -192,7 +278,7 @@ class BoardDaoIntegrationTest {
         return dto;
     }
 
-    private BoardImgFormDto createBoardImgFormDto(int bno, String mark) {
+    private BoardImgFormDto createBoardImgFormDto(int bno) {
         var dto = new BoardImgFormDto();
 
         dto.setBno(bno);
@@ -203,7 +289,23 @@ class BoardDaoIntegrationTest {
         dto.setReg_id("reg_id");
         dto.setUp_date("2021-01-01");
         dto.setUp_id("up_id");
-        dto.setThumb(mark);
+        dto.setThumb("N");
+
+        return dto;
+    }
+
+    private BoardImgFormDto createBoardImgThumbnailForm(int bno) {
+        var dto = new BoardImgFormDto();
+
+        dto.setBno(bno);
+        dto.setName("img_name");
+        dto.setImg("img_path");
+        dto.setComt("img_name");
+        dto.setReg_date("2021-01-01");
+        dto.setReg_id("reg_id");
+        dto.setUp_date("2021-01-01");
+        dto.setUp_id("up_id");
+        dto.setThumb("Y");
 
         return dto;
     }
@@ -219,6 +321,16 @@ class BoardDaoIntegrationTest {
         dto.setReg_id("reg_id");
         dto.setUp_date("up_date");
         dto.setUp_id("up_id");
+
+        return dto;
+    }
+
+    private CommentRequestDto createCommentFormDto(int bno) {
+        var dto = new CommentRequestDto();
+
+        dto.setBno(bno);
+        dto.setComment("dwadawdaw");
+        dto.setWriter("reg_id");
 
         return dto;
     }
