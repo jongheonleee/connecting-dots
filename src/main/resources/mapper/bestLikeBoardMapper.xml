@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.BestLikeBoardMapper">
+  <!--
+  CRUD
+  - 1. 베스트 댓글 게시글 등록
+  - 2. 베스트 댓글 게시글 조회
+    - 카운팅
+    - 페이징 처리 조회(페이지에 보여줄 데이터만 조회)
+    - 해당 내용만 조회
+    - 전체 내용 조회
+  - 3. 베스트 댓글 게시글 수정
+    - 내용 수정
+    - 기간 업데이트로 인한 used만 수정
+  - 4. 베스트 댓글 게시글 삭제
+  -->
+  <select id="count" resultType="int">
+    SELECT COUNT(*)
+    FROM best_like_board
+  </select>
+
+  <select id="countUsed" resultType="int">
+    SELECT COUNT(*)
+    FROM best_like_board
+    WHERE used = 'Y'
+  </select>
+
+  <insert id="insert" parameterType="com.example.demo.dto.board.BestLikeBoardDto">
+    <!-- 등록된 이후에 dto에 bno 저장 -->
+    <selectKey keyProperty="bno" resultType="int" order="AFTER">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+
+    INSERT INTO best_like_board
+    (bno, appl_begin, appl_end, comt, reg_date, reg_id, up_date, up_id)
+    VALUES
+    (#{bno}, #{appl_begin}, #{appl_end}, #{comt}, CURRENT_DATE, 'admin1234', CURRENT_DATE, 'admin1234');
+  </insert>
+
+  <select id="selectForView" parameterType="map" resultType="com.example.demo.dto.board.BoardResponseDto">
+    -- 조회 - 허용된 기간 내의 베스트 게시글 조회
+    SELECT
+      b.bno AS bno,
+      b.title AS title,
+      b.writer AS writer,
+      b.cate_code AS cate_code,
+      b.reg_date AS reg_date,
+      b.view_cnt AS view_cnt,
+      b.reco_cnt AS reco_cnt,
+      ( SELECT img
+        FROM image AS i
+        WHERE b.bno = i.bno
+        AND i.thumb = 'Y') AS thumb,
+      ( SELECT count(*)
+        FROM comment AS c
+        WHERE b.bno = c.bno
+      ) AS comment_cnt
+    FROM board AS b
+    INNER JOIN
+         ( SELECT bno, appl_begin, appl_end, used
+           FROM best_like_board
+           WHERE used = 'Y') AS lb
+         ON b.bno = lb.bno
+    WHERE CURRENT_DATE BETWEEN lb.appl_begin AND lb.appl_end
+    ORDER BY reg_date DESC, view_cnt DESC, comment_cnt DESC
+    LIMIT #{offset}, #{pageSize};
+  </select>
+
+  <select id="selectAll" resultType="com.example.demo.dto.board.BestLikeBoardDto">
+    SELECT
+      seq,
+      bno,
+      appl_begin,
+      appl_end,
+      comt,
+      reg_date,
+      reg_id,
+      up_date,
+      up_id,
+      used
+    FROM best_like_board
+  </select>
+
+  <select id="selectBySeq" parameterType="int" resultType="com.example.demo.dto.board.BestLikeBoardDto">
+    SELECT
+      seq,
+      bno,
+      appl_begin,
+      appl_end,
+      comt,
+      reg_date,
+      reg_id,
+      up_date,
+      up_id,
+      used
+    FROM best_like_board
+    WHERE seq = #{seq}
+  </select>
+
+  <update id="update" parameterType="com.example.demo.dto.board.BestLikeBoardUpdateDto">
+    UPDATE best_like_board
+    SET
+      appl_begin = #{appl_begin},
+      appl_end = #{appl_end},
+      comt = #{comt},
+      up_date = CURRENT_DATE,
+      up_id = 'admin1234',
+      used = #{used}
+    WHERE seq = #{seq}
+  </update>
+
+  <update id="updateUsed">
+    UPDATE best_like_board
+    SET used = 'N',
+        up_date = CURRENT_DATE,
+        up_id = 'admin1234'
+    WHERE used = 'Y'
+    AND CURRENT_DATE > appl_end
+  </update>
+</mapper>
