@@ -28,14 +28,14 @@
 
   <insert id="insert" parameterType="com.example.demo.dto.board.BestViewBoardDto">
     <!-- 등록된 이후에 dto에 bno 저장 -->
-    <selectKey keyProperty="bno" resultType="int" order="AFTER">
+    <selectKey keyProperty="seq" resultType="int" order="AFTER">
       SELECT LAST_INSERT_ID()
     </selectKey>
 
     INSERT INTO best_view_board
-    (bno, appl_begin, appl_end, comt, reg_date, reg_id, up_date, up_id)
+    (bno, appl_begin, appl_end, comt, reg_date, reg_id, up_date, up_id, used)
     VALUES
-    (#{bno}, #{appl_begin}, #{appl_end}, #{comt}, CURRENT_DATE, 'admin1234', CURRENT_DATE, 'admin1234');
+    (#{bno}, #{appl_begin}, #{appl_end}, #{comt}, CURRENT_DATE, #{reg_id}, CURRENT_DATE, #{up_id}, #{used});
   </insert>
 
   <select id="selectForView" parameterType="map" resultType="com.example.demo.dto.board.BoardResponseDto">

@@ -27,24 +27,28 @@ public class BestViewBoardDaoImpl {
         return session.selectOne(namespace + "countUsed");
     }
 
-    public void insert(BestViewBoardDto dto) {
-        session.insert(namespace + "insert", dto);
+    public int insert(BestViewBoardDto dto) {
+        return session.insert(namespace + "insert", dto);
     }
 
     public List<BoardResponseDto> selectForView(Map map) {
         return session.selectList(namespace + "selectForView", map);
     }
 
-    public BestViewBoardDto selectOne(Integer seq) {
+    public BestViewBoardDto select(Integer seq) {
         return session.selectOne(namespace + "selectBySeq", seq);
     }
 
-    public void update(BestViewBoardUpdateDto dto) {
-        session.update(namespace + "update", dto);
+    public List<BestViewBoardDto> selectAll() {
+        return session.selectList(namespace + "selectAll");
     }
 
-    public void updateUsed() {
-        session.update(namespace + "updateUsed");
+    public int update(BestViewBoardUpdateDto dto) {
+        return session.update(namespace + "update", dto);
+    }
+
+    public int updateUsed(BestViewBoardUpdateDto dto) {
+        return session.update(namespace + "updateUsed");
     }
 
     public int delete(Integer seq) {
