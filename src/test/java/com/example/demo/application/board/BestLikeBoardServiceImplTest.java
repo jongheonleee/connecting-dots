@@ -9,6 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
-class BestCommentBoardServiceImplTest {
+class BestLikeBoardServiceImplTest {
 
 }
