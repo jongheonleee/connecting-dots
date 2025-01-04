@@ -46,4 +46,13 @@ public class BestViewBoardDaoImpl {
     public void updateUsed() {
         session.update(namespace + "updateUsed");
     }
+
+    public int delete(Integer seq) {
+        return session.delete(namespace + "delete", seq);
+    }
+
+    public int deleteAll() {
+        return session.delete(namespace + "deleteAll");
+    }
+
 }

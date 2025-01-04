@@ -118,4 +118,15 @@
     WHERE used = 'Y'
       AND CURRENT_DATE > appl_end
   </update>
+
+  <delete id="delete" parameterType="int">
+    delete
+    from best_view_board
+    where seq = #{seq}
+  </delete>
+
+  <delete id="deleteAll">
+    delete
+    from best_view_board
+  </delete>
 </mapper>

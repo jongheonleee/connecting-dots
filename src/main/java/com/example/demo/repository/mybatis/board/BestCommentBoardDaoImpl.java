@@ -25,25 +25,36 @@ public class BestCommentBoardDaoImpl {
         return session.selectOne(namespace + "countUsed");
     }
 
-    public void insert(BestCommentBoardDto dto) {
-        session.insert(namespace + "insert", dto);
+    public int insert(BestCommentBoardDto dto) {
+        return session.insert(namespace + "insert", dto);
     }
 
     public List<BoardResponseDto> selectForView(Map map) {
         return session.selectList(namespace + "selectForView", map);
     }
 
-    public BestCommentBoardDto selectOne(Integer seq) {
-        return session.selectOne(namespace + "selectBySeq", seq);
+    public BestCommentBoardDto select(Integer seq) {
+        return session.selectOne(namespace + "select", seq);
     }
 
-    public void update(BestCommentBoardUpdateDto dto) {
-        session.update(namespace + "update", dto);
+    public List<BestCommentBoardDto> selectAll() {
+        return session.selectList(namespace + "selectAll");
     }
 
-    public void updateUsed() {
-        session.update(namespace + "updateUsed");
+    public int update(BestCommentBoardUpdateDto dto) {
+        return session.update(namespace + "update", dto);
     }
 
+    public int updateUsed(BestCommentBoardUpdateDto dto) {
+        return session.update(namespace + "updateUsed", dto);
+    }
+
+    public int delete(Integer seq) {
+        return session.delete(namespace + "delete", seq);
+    }
+
+    public int deleteAll() {
+        return session.delete(namespace + "deleteAll");
+    }
 
 }
