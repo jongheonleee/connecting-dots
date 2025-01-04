@@ -28,24 +28,28 @@ public class BestLikeBoardDaoImpl {
         return session.selectOne(namespace + "countUsed");
     }
 
-    public void insert(BestLikeBoardDto dto) {
-        session.insert(namespace + "insert", dto);
+    public int insert(BestLikeBoardDto dto) {
+        return session.insert(namespace + "insert", dto);
     }
 
     public List<BoardResponseDto> selectForView(Map map) {
         return session.selectList(namespace + "selectForView", map);
     }
 
-    public BestLikeBoardDto selectOne(Integer seq) {
-        return session.selectOne(namespace + "selectBySeq", seq);
+    public BestLikeBoardDto select(Integer seq) {
+        return session.selectOne(namespace + "select", seq);
     }
 
-    public void update(BestLikeBoardUpdateDto dto) {
-        session.update(namespace + "update", dto);
+    public List<BestLikeBoardDto> selectAll() {
+        return session.selectList(namespace + "selectAll");
     }
 
-    public void updateUsed() {
-        session.update(namespace + "updateUsed");
+    public int update(BestLikeBoardUpdateDto dto) {
+        return session.update(namespace + "update", dto);
+    }
+
+    public int updateUsed(BestLikeBoardUpdateDto dto) {
+        return session.update(namespace + "updateUsed", dto);
     }
 
     public int delete(Integer seq) {
