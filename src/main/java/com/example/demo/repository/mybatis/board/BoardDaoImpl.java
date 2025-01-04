@@ -101,8 +101,8 @@ public class BoardDaoImpl {
         return session.selectList(namespace + "selectTopByView");
     }
 
-    public List<BoardFormDto> selectTopByLike() {
-        return session.selectList(namespace + "selectTopByLike");
+    public List<BoardFormDto> selectTopByReco() {
+        return session.selectList(namespace + "selectTopByReco");
     }
 
 
