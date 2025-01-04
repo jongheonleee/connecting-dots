@@ -4,10 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
-import com.example.demo.application.exception.comment.CommentFormInvalidException;
-import com.example.demo.application.exception.comment.CommentNotFoundException;
-import com.example.demo.application.exception.global.InternalServerError;
-import com.example.demo.application.service.comment.CommentServiceImpl;
+import com.example.demo.exception.comment.CommentFormInvalidException;
+import com.example.demo.exception.comment.CommentNotFoundException;
+import com.example.demo.exception.global.InternalServerError;
+import com.example.demo.application.comment.CommentServiceImpl;
 import com.example.demo.dto.comment.CommentResponseDto;
 import com.example.demo.dto.comment.CommentRequestDto;
 import com.example.demo.repository.mybatis.comment.CommentDaoImpl;

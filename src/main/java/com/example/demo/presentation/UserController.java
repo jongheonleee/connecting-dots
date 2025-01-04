@@ -1,20 +1,15 @@
 package com.example.demo.presentation;
 
-import com.example.demo.application.exception.global.InternalServerError;
-import com.example.demo.application.service.board.BoardServiceImpl;
+import com.example.demo.application.board.BoardServiceImpl;
 import com.example.demo.dto.user.UserFormDto;
-import com.example.demo.dto.user.UserLoginFormDto;
-import com.example.demo.application.exception.user.UserAlreadyExistsException;
-import com.example.demo.application.exception.user.UserFormInvalidException;
-import com.example.demo.application.exception.user.UserNotFoundException;
-import com.example.demo.application.service.user.UserServiceImpl;
-import com.example.demo.application.validator.user.UserValidator;
+import com.example.demo.exception.user.UserAlreadyExistsException;
+import com.example.demo.exception.user.UserFormInvalidException;
+import com.example.demo.exception.user.UserNotFoundException;
+import com.example.demo.application.user.UserServiceImpl;
+import com.example.demo.validator.user.UserValidator;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

@@ -5,13 +5,12 @@ import static org.mockito.Mockito.when;
 
 import com.example.demo.dto.user.UserDto;
 import com.example.demo.repository.mybatis.user.UserDaoImpl;
-import com.example.demo.dto.user.User;
 import com.example.demo.dto.user.UserFormDto;
 import com.example.demo.dto.user.UserUpdatedFormDto;
-import com.example.demo.application.exception.user.UserAlreadyExistsException;
-import com.example.demo.application.exception.user.UserFormInvalidException;
-import com.example.demo.application.exception.user.UserNotFoundException;
-import com.example.demo.application.service.user.UserServiceImpl;
+import com.example.demo.exception.user.UserAlreadyExistsException;
+import com.example.demo.exception.user.UserFormInvalidException;
+import com.example.demo.exception.user.UserNotFoundException;
+import com.example.demo.application.user.UserServiceImpl;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,7 +25,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * 1차 기능 구현 목록

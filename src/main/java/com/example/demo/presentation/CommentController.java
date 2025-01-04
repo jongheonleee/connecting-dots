@@ -2,15 +2,14 @@ package com.example.demo.presentation;
 
 import static org.springframework.http.HttpStatus.*;
 
-import com.example.demo.application.exception.comment.CommentFormInvalidException;
-import com.example.demo.application.exception.comment.CommentNotFoundException;
-import com.example.demo.application.service.comment.CommentServiceImpl;
-import com.example.demo.application.validator.comment.CommentValidator;
+import com.example.demo.exception.comment.CommentFormInvalidException;
+import com.example.demo.exception.comment.CommentNotFoundException;
+import com.example.demo.application.comment.CommentServiceImpl;
+import com.example.demo.validator.comment.CommentValidator;
 import com.example.demo.dto.comment.CommentResponseDto;
 import com.example.demo.dto.comment.CommentRequestDto;
 import jakarta.validation.Valid;
 import java.util.List;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;

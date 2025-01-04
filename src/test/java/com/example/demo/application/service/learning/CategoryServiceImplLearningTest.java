@@ -4,7 +4,7 @@ package com.example.demo.application.service.learning;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.example.demo.repository.mybatis.category.CategoryDaoImpl;
-import com.example.demo.application.service.category.CategoryServiceImpl;
+import com.example.demo.application.category.CategoryServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
