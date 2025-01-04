@@ -34,7 +34,7 @@ public class BestCommentBoardServiceImpl {
 
     @Transactional(rollbackFor = Exception.class)
     public void saveBestCommentBoards() {
-        List<BoardFormDto> bestCommentBoards = boardDao.selectTopByComment();
+        List<BoardFormDto> bestCommentBoards = boardDao.selectTopByComment(5);
 
         bestCommentBoards.stream()
                 .forEach(board -> {

@@ -522,6 +522,7 @@ class BoardDaoImplTest {
     }
 
 
+
     private void createFixture(int cnt) {
         fixture.clear();
         for (int i = 0; i < cnt; i++) {
@@ -540,9 +541,9 @@ class BoardDaoImplTest {
         dto.setId("id" + i);
         dto.setTitle("title" + i);
         dto.setWriter("writer" + i);
-        dto.setView_cnt(0);
-        dto.setReco_cnt(0);
-        dto.setNot_reco_cnt(0);
+        dto.setView_cnt(i);
+        dto.setReco_cnt(i);
+        dto.setNot_reco_cnt(i);
         dto.setContent("content" + i);
         dto.setComt("comt" + i);
         dto.setReg_date("2021-01-01");

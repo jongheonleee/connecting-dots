@@ -15,9 +15,11 @@ import com.example.demo.dto.board.BoardFormDto;
 import com.example.demo.dto.board.BoardImgFormDto;
 import com.example.demo.dto.category.CategoryDto;
 import com.example.demo.repository.mybatis.comment.CommentDaoImpl;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,6 +28,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+@Slf4j
 @SpringBootTest
 class BoardDaoIntegrationTest {
 
@@ -258,6 +261,78 @@ class BoardDaoIntegrationTest {
         }
     }
 
+    @DisplayName("베스트 댓글수 게시글 추출 쿼리 테스트")
+    @ParameterizedTest
+    @ValueSource(ints = {10, 20, 30})
+    void 베스트_댓글수_게시글_추출_테스트(int cnt) {
+        // cnt 개수만큼 게시글 등록
+        for (int i=0; i<cnt; i++) {
+            BoardFormDto boardFormDto = createBoardFormDto(i, "0101");
+            assertTrue(1 == boardDao.insert(boardFormDto));
+
+            // 각 게시글에 자신의 수 * 3 만큼 댓글 등록
+            for (int j=0; j<i*3; j++) {
+                CommentRequestDto commentRequestDto = createCommentFormDto(boardFormDto.getBno());
+                assertTrue(1 == commentDao.insert(commentRequestDto));
+            }
+        }
+
+        // 베스트 댓글수 5개 추출
+        List<BoardFormDto> bestCommentBoardDtos = boardDao.selectTopByComment(5);
+        assertEquals(5, bestCommentBoardDtos.size());
+
+        // 결과 확인
+        bestCommentBoardDtos.stream().forEach(b -> log.info("bestCommentBoardDto: {}", b));
+    }
+
+
+    @DisplayName("베스트 조회수 게시글 추출 쿼리 테스트")
+    @ParameterizedTest
+    @ValueSource(ints = {10, 20, 30})
+    void 베스트_조회수_게시글_추출_테스트(int cnt) {
+        // cnt 개수만큼 게시글 등록
+        // 현재 게시글 등록될 때 조회수는 10의 배수로 증가
+        for (int i=0; i<cnt; i++) {
+            BoardFormDto boardFormDto = createBoardFormDto(i, "0101");
+            assertEquals(1, boardDao.insert(boardFormDto));
+
+            for (int j=0; j<i; j++) {
+                assertEquals(1, boardDao.increaseViewCnt(boardFormDto.getBno()));
+            }
+        }
+
+        // 베스트 조회수 5개 추출
+        List<BoardFormDto> bestViewBoardDtos = boardDao.selectTopByView(5);
+        assertEquals(5, bestViewBoardDtos.size());
+
+        // 결과 확인
+        bestViewBoardDtos.stream().forEach(b -> log.info("bestViewBoardDto: {}", b));
+    }
+
+
+    @DisplayName("베스트 추천수 게시글 추출 쿼리 테스트")
+    @ParameterizedTest
+    @ValueSource(ints = {10, 20, 30})
+    void 베스트_추천수_게시글_추출_테스트(int cnt) {
+        // cnt 개수만큼 게시글 등록
+        // 현재 게시글 등록될 때 추천수는 10의 배수로 증가
+        for (int i=0; i<cnt; i++) {
+            BoardFormDto boardFormDto = createBoardFormDto(i, "0101");
+            assertTrue(1 == boardDao.insert(boardFormDto));
+
+            for (int j=0; j<i; j++) {
+                assertEquals(1, boardDao.increaseRecoCnt(boardFormDto.getBno()));
+            }
+        }
+
+        // 베스트 추천수 5개 추출
+        List<BoardFormDto> bestRecoBoardDtos = boardDao.selectTopByReco(5);
+        assertEquals(5, bestRecoBoardDtos.size());
+
+        // 결과 확인
+        bestRecoBoardDtos.stream().forEach(b -> log.info("bestRecoBoardDto: {}", b));
+    }
+
     private BoardFormDto createBoardFormDto(int i, String cate_code) {
         var dto = new BoardFormDto();
 
@@ -265,9 +340,9 @@ class BoardDaoIntegrationTest {
         dto.setId("id" + i);
         dto.setTitle("title" + i);
         dto.setWriter("writer" + i);
-        dto.setView_cnt(0);
-        dto.setReco_cnt(0);
-        dto.setNot_reco_cnt(0);
+        dto.setView_cnt(i*10);
+        dto.setReco_cnt(i*10);
+        dto.setNot_reco_cnt(i*10);
         dto.setContent("content" + i);
         dto.setComt("comt" + i);
         dto.setReg_date("2021-01-01");
