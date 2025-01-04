@@ -223,12 +223,24 @@
   <!-- v1 : 게시글 상세 조회 - bno -->
   <select id="selectByBno" parameterType="int" resultMap="BoardDetailResultMap">
     SELECT
-      b.bno AS bno, b.cate_code AS cate_code, b.id AS id,
-      b.title AS title, b.writer AS writer, b.view_cnt AS view_cnt,
-      b.reco_cnt AS reco_cnt, b.not_reco_cnt AS not_reco_cnt, b.content AS content,
-      b.comt AS comt, b.reg_date AS reg_date, b.reg_id AS reg_id,
-      b.up_date AS up_date, b.up_id AS up_id,
-      i.ino AS ino, i.img AS img, i.comt AS comt, i.name AS name,
+      b.bno AS bno,
+      b.cate_code AS cate_code,
+      b.id AS id,
+      b.title AS title,
+      b.writer AS writer,
+      b.view_cnt AS view_cnt,
+      b.reco_cnt AS reco_cnt,
+      b.not_reco_cnt AS not_reco_cnt,
+      b.content AS content,
+      b.comt AS comt,
+      b.reg_date AS reg_date,
+      b.reg_id AS reg_id,
+      b.up_date AS up_date,
+      b.up_id AS up_id,
+      i.ino AS ino,
+      i.img AS img,
+      i.comt AS comt,
+      i.name AS name,
       c.name AS cate_name
     FROM board b
     INNER JOIN image i
@@ -236,6 +248,76 @@
     INNER JOIN category c
     ON b.cate_code = c.cate_code
     WHERE b.bno = #{bno};
+  </select>
+
+  <!-- v2 : 베스트 게시글 조회 - 댓글 -->
+  <select id="selectTopByComment" parameterType="int" resultType="com.example.demo.dto.board.BoardFormDto">
+    SELECT
+      b.bno AS bno,
+      b.cate_code AS cate_code,
+      b.id AS id,
+      b.title AS title,
+      b.writer AS writer,
+      b.view_cnt AS view_cnt,
+      b.reco_cnt AS reco_cnt,
+      b.not_reco_cnt AS not_reco_cnt,
+      b.content AS content,
+      b.comt AS comt,
+      b.reg_date AS reg_date,
+      b.reg_id AS reg_id,
+      b.up_date AS up_date,
+      b.up_id AS up_id
+    FROM (SELECT bno, COUNT(*) AS comment_cnt
+          FROM comment
+          GROUP BY bno) AS c, board AS b
+    WHERE c.bno = b.bno
+    ORDER BY c.comment_cnt DESC
+    LIMIT #{n};
+  </select>
+
+
+  <!-- v2 : 베스트 게시글 조회 - 조회수 -->
+  <select id="selectTopByView" parameterType="int" resultType="com.example.demo.dto.board.BoardFormDto">
+    SELECT
+      bno,
+      cate_code,
+      id,
+      title,
+      writer,
+      view_cnt,
+      reco_cnt,
+      not_reco_cnt,
+      content,
+      comt,
+      reg_date,
+      reg_id,
+      up_date,
+      up_id
+    FROM board
+    ORDER BY view_cnt DESC
+    LIMIT #{n};
+  </select>
+
+  <!-- v2 : 베스트 게시글 조회 - 좋아요 -->
+  <select id="selectTopByReco" parameterType="int" resultType="com.example.demo.dto.board.BoardFormDto">
+    SELECT
+      bno,
+      cate_code,
+      id,
+      title,
+      writer,
+      view_cnt,
+      reco_cnt,
+      not_reco_cnt,
+      content,
+      comt,
+      reg_date,
+      reg_id,
+      up_date,
+      up_id
+    FROM board
+    ORDER BY reco_cnt DESC
+    LIMIT #{n};
   </select>
 
   <!--v1 : 게시글 상세 조회 - bno 매핑 정보 -->

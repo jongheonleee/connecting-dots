@@ -93,6 +93,18 @@ public class BoardDaoImpl {
         return session.selectList(namespace + "selectV2BySearchCondition", sc);
     }
 
+    public List<BoardFormDto> selectTopByComment() {
+        return session.selectList(namespace + "selectTopByComment");
+    }
+
+    public List<BoardFormDto> selectTopByView() {
+        return session.selectList(namespace + "selectTopByView");
+    }
+
+    public List<BoardFormDto> selectTopByLike() {
+        return session.selectList(namespace + "selectTopByLike");
+    }
+
 
 
 }
