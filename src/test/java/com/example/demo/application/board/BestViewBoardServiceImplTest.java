@@ -5,7 +5,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.example.demo.dto.board.BestViewBoardDto;
-import com.example.demo.dto.board.BestCommentBoardUpdateDto;
+import com.example.demo.dto.board.BestViewBoardUpdateDto;
+import com.example.demo.dto.board.BestViewBoardUpdateDto;
 import com.example.demo.dto.board.BoardFormDto;
 import com.example.demo.dto.board.BoardResponseDto;
 import com.example.demo.repository.mybatis.board.BestViewBoardDaoImpl;
@@ -65,36 +66,36 @@ class BestViewBoardServiceImplTest {
     @ParameterizedTest
     @ValueSource(ints = {5, 10, 15, 20, 30})
     void 베스트_댓글_게시판_저장_테스트(int cnt) {
-        List<BoardFormDto> topByComment = createTopByComment(cnt);
-        when(boardDao.selectTopByComment(cnt)).thenReturn(topByComment);
+        List<BoardFormDto> topByView = createTopByView(cnt);
+        when(boardDao.selectTopByView(cnt)).thenReturn(topByView);
         when(bestViewBoardDao.insert(any(BestViewBoardDto.class))).thenReturn(1);
-        assertDoesNotThrow(() -> bestViewBoardService.saveForBestCommentBoards(cnt));
+        assertDoesNotThrow(() -> bestViewBoardService.saveForBestViewBoards(cnt));
     }
 
     @DisplayName("베스트 댓글 게시판 단건 저장 테스트")
     @Test
     void 베스트_댓글_게시판_단건_저장_테스트() {
         BoardFormDto boardFormDto = createBoardFormDto(1);
-        BestViewBoardDto bestCommentBoardDto = new BestViewBoardDto();
+        BestViewBoardDto bestViewBoardDto = new BestViewBoardDto();
         when(bestViewBoardDao.insert(any(BestViewBoardDto.class))).thenReturn(1);
-        assertDoesNotThrow(() -> bestViewBoardService.save(bestCommentBoardDto));
+        assertDoesNotThrow(() -> bestViewBoardService.save(bestViewBoardDto));
     }
 
     @DisplayName("베스트 댓글 게시판 단건 조회 테스트")
     @Test
     void 베스트_댓글_게시판_단건_조회_테스트() {
-        BestViewBoardDto bestCommentBoardDto = new BestViewBoardDto();
-        when(bestViewBoardDao.select(1)).thenReturn(bestCommentBoardDto);
-        assertEquals(bestCommentBoardDto, bestViewBoardService.read(1));
+        BestViewBoardDto bestViewBoardDto = new BestViewBoardDto();
+        when(bestViewBoardDao.select(1)).thenReturn(bestViewBoardDto);
+        assertEquals(bestViewBoardDto, bestViewBoardService.read(1));
     }
 
     @DisplayName("베스트 댓글 게시판 모두 조회 테스트")
     @ParameterizedTest
     @ValueSource(ints = {5, 10, 15, 20, 30})
     void 베스트_댓글_게시판_모두_조회_테스트(int cnt) {
-        List<BestViewBoardDto> bestCommentBoardDtos = createBestViewBoardDtos(cnt);
-        when(bestViewBoardDao.selectAll()).thenReturn(bestCommentBoardDtos);
-        assertEquals(bestCommentBoardDtos, bestViewBoardService.readAll());
+        List<BestViewBoardDto> bestViewBoardDtos = createBestViewBoardDtos(cnt);
+        when(bestViewBoardDao.selectAll()).thenReturn(bestViewBoardDtos);
+        assertEquals(bestViewBoardDtos, bestViewBoardService.readAll());
     }
 
     @DisplayName("베스트 댓글 게시판 뷰 전용 조회 테스트")
@@ -113,9 +114,9 @@ class BestViewBoardServiceImplTest {
     @DisplayName("베스트 댓글 게시판 수정 테스트")
     @Test
     void 베스트_댓글_게시판_수정_테스트() {
-        BestCommentBoardUpdateDto bestCommentBoardUpdateDto = createBestCommentBoardUpdateDto(1);
-        when(bestViewBoardDao.update(bestCommentBoardUpdateDto)).thenReturn(1);
-        assertDoesNotThrow(() -> bestViewBoardService.modify(bestCommentBoardUpdateDto));
+        BestViewBoardUpdateDto bestViewBoardUpdateDto = createBestViewBoardUpdateDto(1);
+        when(bestViewBoardDao.update(bestViewBoardUpdateDto)).thenReturn(1);
+        assertDoesNotThrow(() -> bestViewBoardService.modify(bestViewBoardUpdateDto));
     }
 
     @DisplayName("베스트 댓글 게시판 Y -> N 업데이트 테스트")
@@ -143,7 +144,7 @@ class BestViewBoardServiceImplTest {
         assertDoesNotThrow(() -> bestViewBoardService.removeAll());
     }
 
-    private List<BoardFormDto> createTopByComment(int cnt) {
+    private List<BoardFormDto> createTopByView(int cnt) {
         ArrayList<BoardFormDto> list = new ArrayList<>();
 
         for (int i=0; i<cnt; i++) {
@@ -188,38 +189,38 @@ class BestViewBoardServiceImplTest {
         return boardResponseDto;
     }
 
-    private List<BestCommentBoardUpdateDto> createBestCommentBoardUpdateDtos(int cnt) {
-        ArrayList<BestCommentBoardUpdateDto> list = new ArrayList<>();
+    private List<BestViewBoardUpdateDto> createBestViewBoardUpdateDtos(int cnt) {
+        ArrayList<BestViewBoardUpdateDto> list = new ArrayList<>();
 
         for (int i=0; i<cnt; i++) {
-            list.add(createBestCommentBoardUpdateDto(i));
+            list.add(createBestViewBoardUpdateDto(i));
         }
 
         return list;
     }
 
-    private BestCommentBoardUpdateDto createBestCommentBoardUpdateDto(int i) {
-        var bestCommentBoardUpdateDto = new BestCommentBoardUpdateDto();
+    private BestViewBoardUpdateDto createBestViewBoardUpdateDto(int i) {
+        var bestViewBoardUpdateDto = new BestViewBoardUpdateDto();
 
-        bestCommentBoardUpdateDto.setSeq(i);
-        bestCommentBoardUpdateDto.setUsed("N");
+        bestViewBoardUpdateDto.setSeq(i);
+        bestViewBoardUpdateDto.setUsed("N");
 
-        return bestCommentBoardUpdateDto;
+        return bestViewBoardUpdateDto;
     }
 
     private BestViewBoardDto createBestViewBoardDto(int i) {
-        var bestCommentBoardDto = new BestViewBoardDto();
+        var bestViewBoardDto = new BestViewBoardDto();
 
-        bestCommentBoardDto.setBno(i);
-        bestCommentBoardDto.setAppl_begin("2025-01-05 00:00:00");
-        bestCommentBoardDto.setAppl_end("2025-02-05 00:00:00");
-        bestCommentBoardDto.setReg_id("admin1234");
-        bestCommentBoardDto.setReg_date("2025-01-05 00:00:00");
-        bestCommentBoardDto.setUp_id("admin1234");
-        bestCommentBoardDto.setUp_date("2025-01-05 00:00:00");
-        bestCommentBoardDto.setUsed("Y");
+        bestViewBoardDto.setBno(i);
+        bestViewBoardDto.setAppl_begin("2025-01-05 00:00:00");
+        bestViewBoardDto.setAppl_end("2025-02-05 00:00:00");
+        bestViewBoardDto.setReg_id("admin1234");
+        bestViewBoardDto.setReg_date("2025-01-05 00:00:00");
+        bestViewBoardDto.setUp_id("admin1234");
+        bestViewBoardDto.setUp_date("2025-01-05 00:00:00");
+        bestViewBoardDto.setUsed("Y");
 
-        return bestCommentBoardDto;
+        return bestViewBoardDto;
     }
 
     private List<BestViewBoardDto> createBestViewBoardDtos(int cnt) {

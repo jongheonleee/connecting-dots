@@ -26,6 +26,13 @@
     WHERE used = 'Y'
   </select>
 
+  <select id="countForChangeUsed" resultType="int">
+    SELECT COUNT(*)
+    FROM best_view_board
+    WHERE used = 'Y'
+    AND CURRENT_DATE > appl_end
+  </select>
+
   <insert id="insert" parameterType="com.example.demo.dto.board.BestViewBoardDto">
     <!-- 등록된 이후에 dto에 bno 저장 -->
     <selectKey keyProperty="seq" resultType="int" order="AFTER">
@@ -110,13 +117,13 @@
     WHERE seq = #{seq}
   </update>
 
-  <update id="updateUsed">
+  <update id="updateUsed" parameterType="string">
     UPDATE best_view_board
     SET used = 'N',
         up_date = CURRENT_DATE,
-        up_id = 'admin1234'
+        up_id = #{up_id}
     WHERE used = 'Y'
-      AND CURRENT_DATE > appl_end
+    AND CURRENT_DATE > appl_end
   </update>
 
   <delete id="delete" parameterType="int">

@@ -27,6 +27,10 @@ public class BestViewBoardDaoImpl {
         return session.selectOne(namespace + "countUsed");
     }
 
+    public int countForChangeUsed() {
+        return session.selectOne(namespace + "countForChangeUsed");
+    }
+
     public int insert(BestViewBoardDto dto) {
         return session.insert(namespace + "insert", dto);
     }
@@ -47,8 +51,8 @@ public class BestViewBoardDaoImpl {
         return session.update(namespace + "update", dto);
     }
 
-    public int updateUsed(BestViewBoardUpdateDto dto) {
-        return session.update(namespace + "updateUsed");
+    public int updateUsed(String up_id) {
+        return session.update(namespace + "updateUsed", up_id);
     }
 
     public int delete(Integer seq) {

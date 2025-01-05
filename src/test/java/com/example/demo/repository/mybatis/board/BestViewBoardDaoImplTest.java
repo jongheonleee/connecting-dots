@@ -176,7 +176,7 @@ class BestViewBoardDaoImplTest {
         assertEquals(1, target.insert(bestViewBoardDto));
 
         var bestViewBoardUpdateDto = createBestViewBoardUpdateDto(bestViewBoardDto.getSeq());
-        assertEquals(1, target.updateUsed(bestViewBoardUpdateDto));
+        assertEquals(1, target.updateUsed("admin1234"));
 
         var foundDto = target.select(bestViewBoardDto.getSeq());
         assertNotNull(foundDto);

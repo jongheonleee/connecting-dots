@@ -33,10 +33,10 @@ public class BestViewBoardServiceImpl {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void saveForBestViewBoards() {
-        List<BoardFormDto> bestCommentBoards = boardDao.selectTopByComment(5);
+    public void saveForBestViewBoards(Integer cnt) {
+        List<BoardFormDto> bestViewBoards = boardDao.selectTopByView(cnt);
 
-        bestCommentBoards.stream()
+        bestViewBoards.stream()
                 .forEach(board -> {
                     var bestViewBoardDto = new BestViewBoardDto();
                     // 시간 세팅
@@ -96,9 +96,10 @@ public class BestViewBoardServiceImpl {
         }
     }
 
-    public void modifyUsed(BestViewBoardUpdateDto dto) {
-        int rowCnt = bestViewBoardDao.updateUsed(dto);
-        if (rowCnt != 1) {
+    public void modifyUsed(String up_id) {
+        int totalCnt = bestViewBoardDao.countForChangeUsed();
+        int rowCnt = bestViewBoardDao.updateUsed(up_id);
+        if (rowCnt != totalCnt) {
             throw new InternalServerError();
         }
     }
@@ -115,7 +116,7 @@ public class BestViewBoardServiceImpl {
     public void removeAll() {
         int totalCnt = bestViewBoardDao.count();
         int rowCnt = bestViewBoardDao.deleteAll();
-        if (rowCnt == totalCnt) {
+        if (rowCnt != totalCnt) {
             throw new InternalServerError();
         }
     }

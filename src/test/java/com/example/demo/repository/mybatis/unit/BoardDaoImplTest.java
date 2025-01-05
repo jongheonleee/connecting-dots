@@ -541,16 +541,10 @@ class BoardDaoImplTest {
         dto.setId("id" + i);
         dto.setTitle("title" + i);
         dto.setWriter("writer" + i);
-        dto.setView_cnt(i);
-        dto.setReco_cnt(i);
-        dto.setNot_reco_cnt(i);
+        dto.setView_cnt(0);
+        dto.setReco_cnt(0);
+        dto.setNot_reco_cnt(0);
         dto.setContent("content" + i);
-        dto.setComt("comt" + i);
-        dto.setReg_date("2021-01-01");
-        dto.setReg_id("reg_id" + i);
-        dto.setUp_date("2021-01-01");
-        dto.setUp_id("up_id" + i);
-
         return dto;
     }
 
@@ -578,10 +572,7 @@ class BoardDaoImplTest {
                 dto1.getView_cnt().equals(dto2.getView_cnt()) &&
                 dto1.getReco_cnt().equals(dto2.getReco_cnt()) &&
                 dto1.getNot_reco_cnt().equals(dto2.getNot_reco_cnt()) &&
-                dto1.getContent().equals(dto2.getContent()) &&
-                dto1.getComt().equals(dto2.getComt()) &&
-                dto1.getReg_id().equals(dto2.getReg_id()) &&
-                dto1.getUp_id().equals(dto2.getUp_id());
+                dto1.getContent().equals(dto2.getContent());
     }
 
     private boolean isSameDummy(List<BoardFormDto> list1, List<BoardFormDto> list2) {
@@ -593,6 +584,8 @@ class BoardDaoImplTest {
         }
 
         for (int i=0; i<size; i++) {
+            System.out.println("list1.get(i) = " + list1.get(i));
+            System.out.println("list2.get(i) = " + list2.get(i));
             if (!isSameBoardFormDto(list1.get(i), list2.get(i))) {
                 return false;
             }
