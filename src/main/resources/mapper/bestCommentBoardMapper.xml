@@ -26,6 +26,13 @@ CRUD
     WHERE used = 'Y'
   </select>
 
+  <select id="countForChangeUsed" resultType="int">
+    SELECT COUNT(*)
+    FROM best_comment_board
+    WHERE used = 'Y'
+    AND CURRENT_DATE > appl_end
+  </select>
+
   <insert id="insert" parameterType="com.example.demo.dto.board.BestCommentBoardDto">
     <!-- 등록된 이후에 dto에 bno 저장 -->
     <selectKey keyProperty="seq" resultType="int" order="AFTER">
@@ -110,7 +117,7 @@ CRUD
     WHERE seq = #{seq}
   </update>
 
-  <update id="updateUsed" parameterType="com.example.demo.dto.board.BestCommentBoardUpdateDto">
+  <update id="updateUsed" parameterType="string">
     UPDATE best_comment_board
     SET used = 'N',
         up_date = CURRENT_DATE,

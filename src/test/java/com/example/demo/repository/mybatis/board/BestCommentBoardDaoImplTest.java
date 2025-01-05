@@ -176,7 +176,7 @@ class BestCommentBoardDaoImplTest {
         assertEquals(1, target.insert(bestCommentBoardDto));
 
         var bestCommentBoardUpdateDto = createBestCommentBoardUpdateDto(bestCommentBoardDto.getSeq());
-        assertEquals(1, target.updateUsed(bestCommentBoardUpdateDto));
+        assertEquals(1, target.updateUsed("admin1234"));
 
         var foundDto = target.select(bestCommentBoardDto.getSeq());
         assertNotNull(foundDto);
