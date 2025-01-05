@@ -13,6 +13,8 @@ import com.example.demo.application.category.CategoryServiceImpl;
 import com.example.demo.validator.board.BoardValidator;
 import jakarta.validation.Valid;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -45,7 +47,8 @@ import org.springframework.web.multipart.MultipartFile;
  * - 5. 게시글 추천/비추천 ✅
  */
 
-@Controller
+@Slf4j
+@AllArgsConstructor
 @RequestMapping("/board")
 public class BoardController {
 
@@ -53,14 +56,6 @@ public class BoardController {
     private final BoardServiceImpl boardService;
     private final BoardValidator boardValidator;
     private final CommentServiceImpl commentService;
-
-    public BoardController(CategoryServiceImpl categoryService, BoardServiceImpl boardService,
-            BoardValidator boardValidator, CommentServiceImpl commentService) {
-        this.categoryService = categoryService;
-        this.boardService = boardService;
-        this.boardValidator = boardValidator;
-        this.commentService = commentService;
-    }
 
     @InitBinder({"boardFormDto", "updatedBoardFormDto"})
     public void initBinder(WebDataBinder binder) {

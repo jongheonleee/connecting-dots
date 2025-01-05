@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class BestCommentBoardController {
 
     private final BestCommentBoardServiceImpl bestCommentBoardService;
+    // 추후에 RestAPI 형태로 바꿀 계획이라 validator 부분 활용하지 말기
     private final BestCommentBoardValidator bestCommentBoardValidator;
 
 
