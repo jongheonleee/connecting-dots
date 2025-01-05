@@ -1,4 +1,4 @@
-package com.example.demo.presentation;
+package com.example.demo.presentation.user;
 
 import com.example.demo.application.board.BoardServiceImpl;
 import com.example.demo.dto.user.UserFormDto;

@@ -1,9 +1,7 @@
-package com.example.demo.presentation;
+package com.example.demo.presentation.board;
 
 import com.example.demo.application.board.BestLikeBoardServiceImpl;
 import com.example.demo.dto.SearchCondition;
-import com.example.demo.dto.board.BestCommentBoardDto;
-import com.example.demo.dto.board.BestCommentBoardUpdateDto;
 import com.example.demo.dto.board.BestLikeBoardDto;
 import com.example.demo.dto.board.BestLikeBoardUpdateDto;
 import com.example.demo.dto.board.BoardResponseDto;
@@ -14,7 +12,6 @@ import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;

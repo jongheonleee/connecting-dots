@@ -1,4 +1,4 @@
-package com.example.demo.presentation;
+package com.example.demo.presentation.board;
 
 import com.example.demo.exception.board.BoardFormInvalidException;
 import com.example.demo.exception.board.BoardImgNotFoundException;

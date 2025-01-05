@@ -1,4 +1,4 @@
-package com.example.demo.presentation;
+package com.example.demo.presentation.comment;
 
 import static org.springframework.http.HttpStatus.*;
 
