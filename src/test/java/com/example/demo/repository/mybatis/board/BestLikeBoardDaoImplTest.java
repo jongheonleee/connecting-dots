@@ -175,8 +175,8 @@ class BestLikeBoardDaoImplTest {
         bestCommentBoardDto.setAppl_end("2024-09-01");
         assertEquals(1, target.insert(bestCommentBoardDto));
 
-        var bestCommentBoardUpdateDto = createBestLikeBoardUpdateDto(bestCommentBoardDto.getSeq());
-        assertEquals(1, target.updateUsed(bestCommentBoardUpdateDto));
+        var bestLikeBoardUpdateDto = createBestLikeBoardUpdateDto(bestCommentBoardDto.getSeq());
+        assertEquals(1, target.updateUsed("admin1234"));
 
         var foundDto = target.select(bestCommentBoardDto.getSeq());
         assertNotNull(foundDto);

@@ -34,8 +34,8 @@ public class BestLikeBoardServiceImpl {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void saveForBestLikeBoards() {
-        List<BoardFormDto> bestCommentBoards = boardDao.selectTopByComment(5);
+    public void saveForBestLikeBoards(Integer cnt) {
+        List<BoardFormDto> bestCommentBoards = boardDao.selectTopByReco(cnt);
 
         bestCommentBoards.stream()
                 .forEach(board -> {
@@ -97,9 +97,10 @@ public class BestLikeBoardServiceImpl {
         }
     }
 
-    public void modifyUsed(BestLikeBoardUpdateDto dto) {
-        int rowCnt = bestLikeBoardDao.updateUsed(dto);
-        if (rowCnt != 1) {
+    public void modifyUsed(String up_id) {
+        int totalCnt = bestLikeBoardDao.countForChangeUsed();
+        int rowCnt = bestLikeBoardDao.updateUsed(up_id);
+        if (rowCnt != totalCnt) {
             throw new InternalServerError();
         }
     }
@@ -116,7 +117,7 @@ public class BestLikeBoardServiceImpl {
     public void removeAll() {
         int totalCnt = bestLikeBoardDao.count();
         int rowCnt = bestLikeBoardDao.deleteAll();
-        if (rowCnt == totalCnt) {
+        if (rowCnt != totalCnt) {
             throw new InternalServerError();
         }
     }

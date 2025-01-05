@@ -28,6 +28,10 @@ public class BestLikeBoardDaoImpl {
         return session.selectOne(namespace + "countUsed");
     }
 
+    public int countForChangeUsed() {
+        return session.selectOne(namespace + "countForChangeUsed");
+    }
+
     public int insert(BestLikeBoardDto dto) {
         return session.insert(namespace + "insert", dto);
     }
@@ -48,8 +52,8 @@ public class BestLikeBoardDaoImpl {
         return session.update(namespace + "update", dto);
     }
 
-    public int updateUsed(BestLikeBoardUpdateDto dto) {
-        return session.update(namespace + "updateUsed", dto);
+    public int updateUsed(String up_id) {
+        return session.update(namespace + "updateUsed", up_id);
     }
 
     public int delete(Integer seq) {
