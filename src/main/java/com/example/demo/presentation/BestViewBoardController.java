@@ -5,6 +5,8 @@ import com.example.demo.validator.board.BestViewBoardValidator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 메인 개발 목록
@@ -16,8 +18,9 @@ import org.springframework.stereotype.Controller;
  */
 
 @Slf4j
-@Controller
+@RestController
 @AllArgsConstructor
+@RequestMapping("/board/best-view")
 public class BestViewBoardController {
 
     private final BestViewBoardServiceImpl bestViewBoardService;
