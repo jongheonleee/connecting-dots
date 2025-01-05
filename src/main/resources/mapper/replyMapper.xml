@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.ReplyMapper">
+
+  <select id="count" resultType="int">
+    SELECT COUNT(*)
+    FROM reply
+  </select>
+
+  <select id="countByBno" parameterType="int" resultType="int">
+    SELECT COUNT(*)
+    FROM reply
+    WHERE bno = #{bno}
+  </select>
+
+  <insert id="insert" parameterType="com.example.demo.dto.reply.ReplyRequestDto">
+    <selectKey keyProperty="rcno" resultType="int" order="AFTER">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+
+    INSERT INTO reply
+    (bno, cno, writer,
+     content, reg_date, reg_id,
+     up_date, up_id)
+    VALUES
+    (#{bno}, #{cno}, #{writer},
+     #{content}, CURRENT_DATE, #{reg_id},
+     CURRENT_DATE, #{up_id})
+  </insert>
+
+  <select id="selectByBnoAndCno" parameterType="map" resultType="com.example.demo.dto.reply.ReplyResponseDto">
+    SELECT
+        rcno, bno, cno,
+        writer, content, reg_date,
+        reg_id, up_date, up_id
+    FROM reply
+    WHERE bno = #{bno}
+    AND cno = #{cno}
+  </select>
+
+  <select id="selectByBno" parameterType="int" resultType="com.example.demo.dto.reply.ReplyResponseDto">
+    SELECT
+        rcno, bno, cno,
+        writer, content, reg_date,
+        reg_id, up_date, up_id
+    FROM reply
+    WHERE bno = #{bno}
+  </select>
+
+  <select id="selectByCno" parameterType="int" resultType="com.example.demo.dto.reply.ReplyResponseDto">
+    SELECT
+      rcno, bno, cno,
+      writer, content, reg_date,
+      reg_id, up_date, up_id
+    FROM reply
+    WHERE cno = #{cno}
+  </select>
+
+  <select id="selectByRcno" parameterType="int" resultType="com.example.demo.dto.reply.ReplyResponseDto">
+    SELECT
+      rcno, bno, cno,
+      writer, content, reg_date,
+      reg_id, up_date, up_id
+    FROM reply
+    WHERE rcno = #{rcno}
+  </select>
+
+  <select id="selectAll" resultType="com.example.demo.dto.reply.ReplyResponseDto">
+    SELECT
+      rcno, bno, cno,
+      writer, content, reg_date,
+      reg_id, up_date, up_id
+    FROM reply
+  </select>
+
+  <update id="update" parameterType="com.example.demo.dto.reply.ReplyUpdateRequestDto">
+    UPDATE reply
+    SET
+        content = #{content},
+        up_date = CURRENT_DATE,
+        up_id = #{up_id}
+    WHERE rcno = #{rcno}
+  </update>
+
+  <update id="increaseRecoCnt" parameterType="int">
+    UPDATE reply
+    SET
+        reco_cnt = reco_cnt + 1
+    WHERE rcno = #{rcno}
+  </update>
+
+  <update id="increaseNotRecoCnt" parameterType="int">
+    UPDATE reply
+    SET
+        reco_cnt = reco_cnt + 1
+    WHERE rcno = #{rcno}
+  </update>
+
+  <delete id="delete" parameterType="int">
+    DELETE
+    FROM reply
+    WHERE rcno = #{rcno}
+  </delete>
+
+  <delete id="deleteByBno" parameterType="int">
+    DELETE
+    FROM reply
+    WHERE bno = #{bno}
+  </delete>
+
+  <delete id="deleteByCno" parameterType="int">
+    DELETE
+    FROM reply
+    WHERE cno = #{cno}
+  </delete>
+
+  <delete id="deleteByBnoAndCno" parameterType="map">
+    DELETE
+    FROM reply
+    WHERE bno = #{bno}
+    AND cno = #{cno}
+  </delete>
+
+  <delete id="deleteAll">
+    DELETE
+    FROM reply
+  </delete>
+
+</mapper>

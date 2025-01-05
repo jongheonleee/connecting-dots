@@ -28,9 +28,9 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * - 1. 댓글 작성 ✅
  * - 2. 댓글 조회 ✅
- * - 3. 댓글 수정
- * - 4. 댓글 삭제
- * - 5. 댓글 좋아요/싫어요
+ * - 3. 댓글 수정 ✅
+ * - 4. 댓글 삭제 ✅
+ * - 5. 댓글 좋아요/싫어요 ✅
  *
  **/
 
