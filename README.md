@@ -6,15 +6,22 @@
 > <strong>우리도 서로 멀리 떨어져 있으나 별들을  손으로 연결하듯이 이 프로젝트를 통해서 우리의 순간들이 이어지지 않을까요?</strong>
 > 이 생각으로 시작한 <strong>“Connecting Dots”</strong> 프로젝트를 소개합니다🥳
 
-_벤치마킹 사이트: 
+_벤치마킹 사이트: 디시인사이드, 티스토리
 
 <br>
 
-### 🏃🏻 프로젝트 기간 (30 days)
-> **전체 개발 기간: 2024.10.08 ~ 진행중 (4 Weeks | 60 %)**
-> - 기능 구현 기간: 2024.04.15 ~ 2024.05.19 (3 Weeks | 80 %) <br>
-> - UI 구현 기간: 2024.05.20 ~ 2024.05.28 (1 Week | 0 %) <br>
+### 🏃🏻 프로젝트 기간 (진행중)
+> **전체 개발 기간: 2025.01.03 ~ 진행중 ( Weeks |  %)**
+> - 서비스 정의 및 설계 : <br>
+> - 기능 구현 기간:  <br>
+> - UI 구현 기간: <br>
 
+
+<br>
+
+### 🧱 프로젝트 설계(ERD)
+
+<img src="description/erd모델링/connecting-dots-erd-modeling.png" height="800" width="1200">
 
 <br>
 
@@ -112,13 +119,6 @@ JavaScript   : 894 <br> </code></pre>
 
 #### Web Server
 
-<br>
-
-
-
-## ERD
-
-<img src="description/erd모델링/connecting-dots-erd-modeling.png" height="800" width="800">
 
 <br>
 <br>
