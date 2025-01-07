@@ -5,13 +5,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.example.demo.dto.code.CodeRequestDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 
 @SpringBootTest
+@TestPropertySource(locations = "classpath:application-test.properties")
 class CommonCodeDaoImplTest {
 
     private final Integer MAX_LEVEL = 3;
@@ -31,7 +32,7 @@ class CommonCodeDaoImplTest {
     @DisplayName("카운팅 테스트")
     @ParameterizedTest
     @ValueSource(ints = {1, 5, 10, 15, 20})
-    void testCount(int cnt) {
+    void 카운팅_테스트(int cnt) {
         int count = commonCodeDaoImpl.count();
         assertEquals(0, count);
     }
@@ -39,7 +40,7 @@ class CommonCodeDaoImplTest {
     @DisplayName("생성 테스트")
     @ParameterizedTest
     @ValueSource(ints = {1, 5, 10, 15, 20})
-    void testInsert(int cnt) {
+    void 생성_테스트(int cnt) {
          CodeRequestDto dto = new CodeRequestDto();
          dto.setLevel(1);
          dto.setCode("code");

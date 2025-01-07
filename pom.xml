@@ -98,6 +98,15 @@
 			<artifactId>spring-aspects</artifactId>
 			<version>5.3.15</version>
 		</dependency>
+
+		<!-- H2 Database 의존성 추가 -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+
 	</dependencies>
 
 
