@@ -2,8 +2,8 @@ package com.example.demo.repository.mybatis.code;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.example.demo.dto.code.CodeRequestDto;
-import com.example.demo.dto.code.CodeResponseDto;
+import com.example.demo.dto.code.CodeDto;
+import com.example.demo.dto.code.CodeResponse;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,7 +38,7 @@ class CommonCodeDaoImplTest {
     @ValueSource(ints = {1, 5, 10, 15, 20})
     void 카운팅_테스트(int cnt) {
         for (int i=0; i<cnt; i++) {
-            CodeRequestDto request = createRequest("100" + i, "테스트용" + i, null);
+            CodeDto request = createRequest("100" + i, "테스트용" + i, null);
             assertEquals(1, commonCodeDaoImpl.insert(request));
         }
 
@@ -51,7 +51,7 @@ class CommonCodeDaoImplTest {
     @ValueSource(ints = {1, 5, 10, 15, 20})
     void 상위_코드로_조회_테스트(int cnt) {
         String top_code = "100";
-        CodeRequestDto request = createRequest(top_code, "테스트용", null);
+        CodeDto request = createRequest(top_code, "테스트용", null);
         assertEquals(1, commonCodeDaoImpl.insert(request));
 
         for (int i=1; i<=cnt; i++) {
@@ -60,7 +60,7 @@ class CommonCodeDaoImplTest {
         }
 
 
-        List<CodeResponseDto> responses = commonCodeDaoImpl.selectByTopCode(top_code);
+        List<CodeDto> responses = commonCodeDaoImpl.selectByTopCode(top_code);
         assertEquals(cnt, responses.size());
         responses.stream().forEach(response -> {
             assertEquals(top_code, response.getTop_code());
@@ -70,10 +70,10 @@ class CommonCodeDaoImplTest {
     @Test
     @DisplayName("코드로 조회 테스트")
     void 코드로_조회_테스트() {
-        CodeRequestDto request = createRequest("100", "테스트용", null);
+        CodeDto request = createRequest("100", "테스트용", null);
         assertEquals(1, commonCodeDaoImpl.insert(request));
 
-        CodeResponseDto response = commonCodeDaoImpl.selectByCode("100");
+        CodeDto response = commonCodeDaoImpl.selectByCode("100");
         assertNotNull(response);
         assertEquals(request.getCode(), response.getCode());
         assertEquals(request.getLevel(), response.getLevel());
@@ -84,9 +84,9 @@ class CommonCodeDaoImplTest {
     @Test
     @DisplayName("시퀀스로 조회 테스트")
     void 시퀀스로_조회_테스트() {
-        CodeRequestDto request = createRequest("100", "테스트용", null);
+        CodeDto request = createRequest("100", "테스트용", null);
         assertEquals(1, commonCodeDaoImpl.insert(request));
-        CodeResponseDto response = commonCodeDaoImpl.selectByCode("100");
+        CodeDto response = commonCodeDaoImpl.selectByCode("100");
         response = commonCodeDaoImpl.selectBySeq(response.getSeq());
 
         assertNotNull(response);
@@ -100,15 +100,15 @@ class CommonCodeDaoImplTest {
     @ParameterizedTest
     @ValueSource(ints = {1, 5, 10, 15, 20})
     void 전체_조회_테스트(int cnt) {
-        List<CodeRequestDto> dummy = new ArrayList<>();
+        List<CodeDto> dummy = new ArrayList<>();
 
         for (int i=0; i<cnt; i++) {
-            CodeRequestDto request = createRequest("100" + i, "테스트용" + i, null);
+            CodeDto request = createRequest("100" + i, "테스트용" + i, null);
             dummy.add(request);
             assertEquals(1, commonCodeDaoImpl.insert(request));
         }
 
-        List<CodeResponseDto> responses = commonCodeDaoImpl.selectAll();
+        List<CodeDto> responses = commonCodeDaoImpl.selectAll();
 
         // 정렬로 데이터 순서 보장
         dummy.sort((a, b) -> a.getCode().compareTo(b.getCode()));
@@ -127,10 +127,10 @@ class CommonCodeDaoImplTest {
     @ValueSource(ints = {1, 5, 10, 15, 20})
     void 생성_테스트(int cnt) {
         for (int i=0; i<cnt; i++) {
-            CodeRequestDto request = createRequest("100" + i, "테스트용" + i, null);
+            CodeDto request = createRequest("100" + i, "테스트용" + i, null);
             assertEquals(1, commonCodeDaoImpl.insert(request));
 
-            CodeResponseDto response = commonCodeDaoImpl.selectByCode("100" + i);
+            CodeDto response = commonCodeDaoImpl.selectByCode("100" + i);
             assertEquals(request.getCode(), response.getCode());
             assertEquals(request.getLevel(), response.getLevel());
             assertEquals(request.getName(), response.getName());
@@ -143,17 +143,17 @@ class CommonCodeDaoImplTest {
     @ValueSource(ints = {1, 5, 10, 15, 20})
     void 수정_테스트(int cnt) {
         for (int i=0; i<cnt; i++) {
-            CodeRequestDto request = createRequest("100" + i, "테스트용" + i, null);
+            CodeDto request = createRequest("100" + i, "테스트용" + i, null);
             assertEquals(1, commonCodeDaoImpl.insert(request));
 
-            CodeResponseDto response = commonCodeDaoImpl.selectByCode("100" + i);
+            CodeDto response = commonCodeDaoImpl.selectByCode("100" + i);
 
-            CodeRequestDto updateRequest = createRequest(response.getCode(), "수정된 테스트용" + i, response.getTop_code());
+            CodeDto updateRequest = createRequest(response.getCode(), "수정된 테스트용" + i, response.getTop_code());
             updateRequest.setSeq(response.getSeq());
 
             assertEquals(1, commonCodeDaoImpl.update(updateRequest));
 
-            CodeResponseDto updatedResponse = commonCodeDaoImpl.selectByCode("100" + i);
+            CodeDto updatedResponse = commonCodeDaoImpl.selectByCode("100" + i);
             assertEquals(updateRequest.getCode(), updatedResponse.getCode());
             assertEquals(updateRequest.getName(), updatedResponse.getName());
             assertEquals(updateRequest.getChk_use(), updatedResponse.getChk_use());
@@ -165,18 +165,18 @@ class CommonCodeDaoImplTest {
     @ValueSource(ints = {1, 5, 10, 15, 20})
     void 사용여부_수정_테스트(int cnt) {
         for (int i=0; i<cnt; i++) {
-            CodeRequestDto request = createRequest("100" + i, "테스트용" + i, null);
+            CodeDto request = createRequest("100" + i, "테스트용" + i, null);
             assertEquals(1, commonCodeDaoImpl.insert(request));
 
-            CodeResponseDto response = commonCodeDaoImpl.selectByCode("100" + i);
+            CodeDto response = commonCodeDaoImpl.selectByCode("100" + i);
 
-            CodeRequestDto updateRequest = createRequest(response.getCode(), response.getName(), response.getTop_code());
+            CodeDto updateRequest = createRequest(response.getCode(), response.getName(), response.getTop_code());
             updateRequest.setSeq(response.getSeq());
             updateRequest.setChk_use("N");
 
             assertEquals(1, commonCodeDaoImpl.updateUse(updateRequest));
 
-            CodeResponseDto updatedResponse = commonCodeDaoImpl.selectByCode("100" + i);
+            CodeDto updatedResponse = commonCodeDaoImpl.selectByCode("100" + i);
             assertEquals(updateRequest.getCode(), updatedResponse.getCode());
             assertEquals(updateRequest.getName(), updatedResponse.getName());
             assertEquals(updateRequest.getChk_use(), updatedResponse.getChk_use());
@@ -188,16 +188,16 @@ class CommonCodeDaoImplTest {
     @ValueSource(ints = {1, 5, 10, 15, 20})
     void 삭제_테스트(int cnt) {
         for (int i=0; i<cnt; i++) {
-            CodeRequestDto request = createRequest("100" + i, "테스트용" + i, null);
+            CodeDto request = createRequest("100" + i, "테스트용" + i, null);
             assertEquals(1, commonCodeDaoImpl.insert(request));
         }
 
         for (int i=0; i<cnt; i++) {
-            CodeResponseDto response = commonCodeDaoImpl.selectByCode("100" + i);
+            CodeDto response = commonCodeDaoImpl.selectByCode("100" + i);
             assertEquals(1, commonCodeDaoImpl.delete(response.getSeq()));
         }
 
-        List<CodeResponseDto> responses = commonCodeDaoImpl.selectAll();
+        List<CodeDto> responses = commonCodeDaoImpl.selectAll();
         assertEquals(0, responses.size());
     }
 
@@ -206,12 +206,12 @@ class CommonCodeDaoImplTest {
     @ValueSource(ints = {1, 5, 10, 15, 20})
     void 레벨로_삭제_테스트(int cnt) {
         for (int i=0; i<cnt; i++) {
-            CodeRequestDto request = createRequest("100" + i, "테스트용" + i, null);
+            CodeDto request = createRequest("100" + i, "테스트용" + i, null);
             assertEquals(1, commonCodeDaoImpl.insert(request));
         }
 
         assertEquals(cnt, commonCodeDaoImpl.deleteByLevel(1));
-        List<CodeResponseDto> responses = commonCodeDaoImpl.selectAll();
+        List<CodeDto> responses = commonCodeDaoImpl.selectAll();
         assertEquals(0, responses.size());
     }
 
@@ -220,17 +220,17 @@ class CommonCodeDaoImplTest {
     @ValueSource(ints = {1, 5, 10, 15, 20})
     void 코드로_삭제_테스트(int cnt) {
         for (int i=0; i<cnt; i++) {
-            CodeRequestDto request = createRequest("100" + i, "테스트용" + i, null);
+            CodeDto request = createRequest("100" + i, "테스트용" + i, null);
             assertEquals(1, commonCodeDaoImpl.insert(request));
         }
 
         assertEquals(1, commonCodeDaoImpl.deleteByCode("100" + (cnt-1)));
-        List<CodeResponseDto> responses = commonCodeDaoImpl.selectAll();
+        List<CodeDto> responses = commonCodeDaoImpl.selectAll();
         assertEquals(cnt-1, responses.size());
     }
 
-    private CodeRequestDto createRequest(String code, String name, String top_code) {
-        CodeRequestDto dto = new CodeRequestDto();
+    private CodeDto createRequest(String code, String name, String top_code) {
+        CodeDto dto = new CodeDto();
         dto.setLevel(1);
         dto.setCode(code);
         dto.setName(name);
@@ -243,8 +243,8 @@ class CommonCodeDaoImplTest {
         return dto;
     }
 
-    private CodeResponseDto createResponse(String code, String name, String top_code) {
-        CodeResponseDto dto = new CodeResponseDto();
+    private CodeResponse createResponse(String code, String name, String top_code) {
+        CodeResponse dto = new CodeResponse();
         dto.setLevel(1);
         dto.setCode(code);
         dto.setName(name);

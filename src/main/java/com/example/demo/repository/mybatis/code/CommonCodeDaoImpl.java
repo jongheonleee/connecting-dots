@@ -1,7 +1,6 @@
 package com.example.demo.repository.mybatis.code;
 
-import com.example.demo.dto.code.CodeRequestDto;
-import com.example.demo.dto.code.CodeResponseDto;
+import com.example.demo.dto.code.CodeDto;
 import java.util.List;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,31 +18,31 @@ public class CommonCodeDaoImpl {
         return session.selectOne(namespace + "count");
     }
 
-    public List<CodeResponseDto> selectByTopCode(String top_code) {
+    public List<CodeDto> selectByTopCode(String top_code) {
         return session.selectList(namespace + "selectByTopCode", top_code);
     }
 
-    public CodeResponseDto selectBySeq(Integer seq) {
+    public CodeDto selectBySeq(Integer seq) {
         return session.selectOne(namespace + "selectBySeq", seq);
     }
 
-    public CodeResponseDto selectByCode(String code) {
+    public CodeDto selectByCode(String code) {
         return session.selectOne(namespace + "selectByCode", code);
     }
 
-    public List<CodeResponseDto> selectAll() {
+    public List<CodeDto> selectAll() {
         return session.selectList(namespace + "selectAll");
     }
 
-    public int insert(CodeRequestDto dto) {
+    public int insert(CodeDto dto) {
         return session.insert(namespace + "insert", dto);
     }
 
-    public int update(CodeRequestDto dto) {
+    public int update(CodeDto dto) {
         return session.update(namespace + "update", dto);
     }
 
-    public int updateUse(CodeRequestDto dto) {
+    public int updateUse(CodeDto dto) {
         return session.update(namespace + "updateUse", dto);
     }
 
