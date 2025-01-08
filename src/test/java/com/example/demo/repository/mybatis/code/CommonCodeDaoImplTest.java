@@ -2,7 +2,7 @@ package com.example.demo.repository.mybatis.code;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.example.demo.dto.code.CodeRequestDto;
+import com.example.demo.dto.code.request.CodeRequestDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;

@@ -7,14 +7,119 @@
     FROM common_code
   </select>
 
+  <select id="select" parameterType="string" resultType="CodeResponseDto">
+    SELECT
+      seq,
+      level,
+      code,
+      name,
+      chk_use,
+      reg_date,
+      reg_user_seq,
+      up_date,
+      up_user_seq,
+      top_code
+    FROM common_code
+    WHERE code = #{code}
+  </select>
+
+  <select id="selectByTopCode" parameterType="string" resultType="CodeResponseDto">
+    SELECT
+      seq,
+      level,
+      code,
+      name,
+      chk_use,
+      reg_date,
+      reg_user_seq,
+      up_date,
+      up_user_seq,
+      top_code
+    FROM common_code
+    WHERE top_code = #{top_code}
+  </select>
+
+  <select id="selectBySeq" parameterType="int" resultType="CodeResponseDto">
+    SELECT
+      seq,
+      level,
+      code,
+      name,
+      chk_use,
+      reg_date,
+      reg_user_seq,
+      up_date,
+      up_user_seq,
+      top_code
+    FROM common_code
+    WHERE seq = #{seq}
+  </select>
+
+  <select id="selectAll" resultType="CodeResponseDto">
+    SELECT
+      seq,
+      level,
+      code,
+      name,
+      chk_use,
+      reg_date,
+      reg_user_seq,
+      up_date,
+      up_user_seq,
+      top_code
+    FROM common_code
+  </select>
+
   <insert id="insert" parameterType="CodeRequestDto">
-    INSERT INTO common_code(level, code, name, chk_use, reg_date, reg_user_seq, up_date, up_user_seq)
-    VALUES(#{level}, #{code}, #{name}, #{chk_use}, #{reg_date}, #{reg_user_seq}, #{up_date}, #{up_user_seq});
+    INSERT INTO common_code
+    (
+        level, code, name,
+        chk_use, reg_date, reg_user_seq, up_date,
+        up_user_seq, top_code
+    )
+    VALUES
+    (
+        #{level}, #{code}, #{name},
+        #{chk_use}, #{reg_date}, #{reg_user_seq},
+        #{up_date}, #{up_user_seq}, #{top_code}
+    );
   </insert>
+
+  <update id="update" parameterType="CodeRequestDto">
+    UPDATE common_code
+    SET
+      level = #{level},
+      code = #{code},
+      name = #{name},
+      chk_use = #{chk_use},
+      up_date = #{up_date},
+      up_user_seq = #{up_user_seq},
+      top_code = #{top_code}
+    WHERE seq = #{seq}
+  </update>
+
+  <update id="updateNotUse" parameterType="CodeRequestDto">
+    UPDATE common_code
+    SET
+      chk_use = #{chk_use}
+    WHERE code = #{code}
+  </update>
 
   <delete id="deleteByLevel" parameterType="int">
     DELETE
     FROM common_code
     WHERE level = #{level}
+  </delete>
+
+  <delete id="deleteByCode" parameterType="string">
+    DELETE
+    FROM common_code
+    WHERE code = #{code}
+  </delete>
+
+  <delete id="delete" parameterType="int">
+    DELETE
+    FROM common_code
+    WHERE seq = #{seq}
   </delete>
 </mapper>

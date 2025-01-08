@@ -1,6 +1,6 @@
 package com.example.demo.repository.mybatis.code;
 
-import com.example.demo.dto.code.CodeRequestDto;
+import com.example.demo.dto.code.request.CodeRequestDto;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

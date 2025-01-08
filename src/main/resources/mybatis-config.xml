@@ -5,6 +5,8 @@
 
 <configuration>
   <typeAliases>
-    <typeAlias alias="CodeRequestDto" type="com.example.demo.dto.code.CodeRequestDto"/>
+    <!-- code -->
+    <typeAlias alias="CodeRequestDto" type="com.example.demo.dto.code.request.CodeRequestDto"/>
+    <typeAlias alias="CodeResponseDto" type="com.example.demo.dto.code.response.CodeResponseDto"/>
   </typeAliases>
 </configuration>
