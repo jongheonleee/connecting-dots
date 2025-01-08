@@ -7,6 +7,21 @@
     FROM common_code
   </select>
 
+  <insert id="insert" parameterType="CodeRequestDto">
+    INSERT INTO common_code
+    (
+      level, code, name,
+      chk_use, reg_date, reg_user_seq,
+      up_date, up_user_seq, top_code
+    )
+    VALUES
+      (
+        #{level}, #{code}, #{name},
+        #{chk_use}, #{reg_date}, #{reg_user_seq},
+        #{up_date}, #{up_user_seq}, #{top_code}
+      );
+  </insert>
+
   <select id="select" parameterType="string" resultType="CodeResponseDto">
     SELECT
       seq,
@@ -55,7 +70,7 @@
     WHERE seq = #{seq}
   </select>
 
-  <select id="selectBySeq" parameterType="string" resultType="CodeResponseDto">
+  <select id="selectByCode" parameterType="string" resultType="CodeResponseDto">
     SELECT
       seq,
       level,
@@ -85,21 +100,6 @@
       top_code
     FROM common_code
   </select>
-
-  <insert id="insert" parameterType="CodeRequestDto">
-    INSERT INTO common_code
-    (
-        level, code, name,
-        chk_use, reg_date, reg_user_seq, up_date,
-        up_user_seq, top_code
-    )
-    VALUES
-    (
-        #{level}, #{code}, #{name},
-        #{chk_use}, #{reg_date}, #{reg_user_seq},
-        #{up_date}, #{up_user_seq}, #{top_code}
-    );
-  </insert>
 
   <update id="update" parameterType="CodeRequestDto">
     UPDATE common_code
@@ -138,4 +138,5 @@
     FROM common_code
     WHERE seq = #{seq}
   </delete>
+
 </mapper>

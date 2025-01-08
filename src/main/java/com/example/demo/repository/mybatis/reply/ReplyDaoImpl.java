@@ -15,7 +15,7 @@ public class ReplyDaoImpl {
     @Autowired
     private SqlSession session;
 
-    private static final String namespace = "com.example.demo.mapper.ReplyMapper.";
+    private static final String namespace = "com.example.demo.mapper.reply.ReplyMapper.";
 
     public int count() {
         return session.selectOne(namespace + "count");

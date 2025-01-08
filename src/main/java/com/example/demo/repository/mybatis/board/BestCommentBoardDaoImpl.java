@@ -15,7 +15,7 @@ public class BestCommentBoardDaoImpl {
     @Autowired
     private SqlSession session;
 
-    private static final String namespace = "com.example.demo.mapper.BestCommentBoardMapper.";
+    private static final String namespace = "com.example.demo.mapper.board.BestCommentBoardMapper.";
 
     public int count() {
         return session.selectOne(namespace + "count");

@@ -17,7 +17,7 @@ public class BestViewBoardDaoImpl {
     @Autowired
     private SqlSession session;
 
-    private static final String namespace = "com.example.demo.mapper.BestViewBoardMapper.";
+    private static final String namespace = "com.example.demo.mapper.board.BestViewBoardMapper.";
 
     public int count() {
         return session.selectOne(namespace + "count");

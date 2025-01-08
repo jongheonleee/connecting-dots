@@ -17,7 +17,7 @@ public class BestLikeBoardDaoImpl {
     @Autowired
     private SqlSession session;
 
-    private static final String namespace = "com.example.demo.mapper.BestLikeBoardMapper.";
+    private static final String namespace = "com.example.demo.mapper.board.BestLikeBoardMapper.";
 
 
     public int count() {

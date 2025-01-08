@@ -13,7 +13,7 @@ public class CommentDaoImpl {
     @Autowired
     private SqlSession session;
 
-    private static final String namespace = "com.example.demo.mapper.CommentMapper.";
+    private static final String namespace = "com.example.demo.mapper.comment.CommentMapper.";
 
     public int count() {
         return session.selectOne(namespace + "count");

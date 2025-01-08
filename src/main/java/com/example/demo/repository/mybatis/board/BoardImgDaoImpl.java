@@ -12,7 +12,7 @@ public class BoardImgDaoImpl {
     @Autowired
     private SqlSession session;
 
-    private static final String namespace = "com.example.demo.mapper.BoardImgMapper.";
+    private static final String namespace = "com.example.demo.mapper.board.BoardImgMapper.";
 
 
     public int count() {

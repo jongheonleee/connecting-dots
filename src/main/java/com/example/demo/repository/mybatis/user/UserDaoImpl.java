@@ -15,7 +15,7 @@ public class UserDaoImpl {
     @Autowired
     private SqlSession session;
 
-    private static final String namespace = "com.example.demo.mapper.UserMapper.";
+    private static final String namespace = "com.example.demo.mapper.user.UserMapper.";
 
     public int count() {
         return session.selectOne(namespace + "count");

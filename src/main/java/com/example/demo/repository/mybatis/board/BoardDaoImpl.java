@@ -17,7 +17,7 @@ public class BoardDaoImpl {
     @Autowired
     private SqlSession session;
 
-    private static final String namespace = "com.example.demo.mapper.BoardMapper.";
+    private static final String namespace = "com.example.demo.mapper.board.BoardMapper.";
 
     public int count() {
         return session.selectOne(namespace + "count");

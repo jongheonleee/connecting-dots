@@ -12,7 +12,7 @@ public class CategoryDaoImpl {
     @Autowired
     private SqlSession session;
 
-    private static final String namespace = "com.example.demo.mapper.CategoryMapper.";
+    private static final String namespace = "com.example.demo.mapper.category.CategoryMapper.";
 
 
     public int count() {

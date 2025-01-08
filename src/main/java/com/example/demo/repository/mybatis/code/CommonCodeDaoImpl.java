@@ -1,7 +1,7 @@
 package com.example.demo.repository.mybatis.code;
 
-import com.example.demo.dto.code.request.CodeRequestDto;
-import com.example.demo.dto.code.response.CodeResponseDto;
+import com.example.demo.dto.code.CodeRequestDto;
+import com.example.demo.dto.code.CodeResponseDto;
 import java.util.List;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
