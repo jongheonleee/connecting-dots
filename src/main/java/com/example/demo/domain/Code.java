@@ -4,10 +4,14 @@ import com.example.demo.dto.code.CodeDto;
 import com.example.demo.dto.code.CodeRequest;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 
 @Getter
+@EqualsAndHashCode
+@AllArgsConstructor
 public class Code {
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");

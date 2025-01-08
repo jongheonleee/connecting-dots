@@ -2,7 +2,6 @@ package com.example.demo.application.code;
 
 import com.example.demo.domain.Code;
 import com.example.demo.dto.code.CodeDto;
-import com.example.demo.dto.code.CodeRequest;
 import com.example.demo.dto.code.CodeResponse;
 import com.example.demo.repository.mybatis.code.CommonCodeDaoImpl;
 import java.util.List;
@@ -25,8 +24,8 @@ public class CommonCodeServiceImpl {
         return commonCodeDao.count();
     }
 
-    public List<CodeResponse> readByTopCode() {
-        List<CodeDto> codeDtos = commonCodeDao.selectAll();
+    public List<CodeResponse> readByTopCode(String top_code) {
+        List<CodeDto> codeDtos = commonCodeDao.selectByTopCode(top_code);
         return codeDtos.stream()
                        .map(CodeResponse::new)
                        .toList();
@@ -58,7 +57,7 @@ public class CommonCodeServiceImpl {
         }
     }
 
-    public void update(Code code) {
+    public void modify(Code code) {
         CodeDto dto = code.toCodeDto();
         int rowCnt = commonCodeDao.update(dto);
         if (rowCnt != 1) {
@@ -67,7 +66,7 @@ public class CommonCodeServiceImpl {
         }
     }
 
-    public void updateUse(Code code) {
+    public void modifyUse(Code code) {
         CodeDto dto = code.toCodeDto();
 
         int rowCnt = commonCodeDao.updateUse(dto);
@@ -78,7 +77,7 @@ public class CommonCodeServiceImpl {
         }
     }
 
-    public void deleteByLevel(Integer level) {
+    public void removeByLevel(Integer level) {
         int rowCnt = commonCodeDao.deleteByLevel(level);
 
         if (rowCnt != 1) {
@@ -87,7 +86,7 @@ public class CommonCodeServiceImpl {
         }
     }
 
-    public void deleteByCode(String code) {
+    public void removeByCode(String code) {
         int rowCnt = commonCodeDao.deleteByCode(code);
 
         if (rowCnt != 1) {
@@ -96,7 +95,7 @@ public class CommonCodeServiceImpl {
         }
     }
 
-    public void delete(Integer seq) {
+    public void removeBySeq(Integer seq) {
         int rowCnt = commonCodeDao.delete(seq);
 
         if (rowCnt != 1) {
@@ -108,7 +107,7 @@ public class CommonCodeServiceImpl {
     @Transactional(rollbackFor = Exception.class)
     public void removeAll() {
         for (int level = MAX_LEVEL; level > 0; level--) {
-            deleteByLevel(level);
+            removeByLevel(level);
         }
 
         int totalCnt = count();

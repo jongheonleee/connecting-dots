@@ -2,6 +2,7 @@ package com.example.demo.dto.code;
 
 import com.example.demo.domain.Code;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +13,7 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 public class CodeDto {
     private Integer seq;
     private Integer level;
@@ -35,4 +37,7 @@ public class CodeDto {
         this.up_date = up_date;
         this.up_user_seq = up_user_seq;
     }
+
+
+
 }

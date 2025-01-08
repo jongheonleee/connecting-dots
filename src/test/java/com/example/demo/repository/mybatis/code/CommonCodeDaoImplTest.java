@@ -243,13 +243,4 @@ class CommonCodeDaoImplTest {
         return dto;
     }
 
-    private CodeResponse createResponse(String code, String name, String top_code) {
-        CodeResponse dto = new CodeResponse();
-        dto.setLevel(1);
-        dto.setCode(code);
-        dto.setName(name);
-        dto.setTop_code(top_code);
-        dto.setChk_use("Y");
-        return dto;
-    }
 }
