@@ -38,7 +38,7 @@ _벤치마킹 사이트: 디시인사이드, 티스토리
 
 > <img src="description/erd모델링/connecting-dots-erd-modeling.png" height="800" width="1200">
 >
-> - 테이블 수 : 37
+> - 테이블 수 : 42
 <br>
 
 <br>
