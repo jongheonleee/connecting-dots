@@ -2,7 +2,6 @@ package com.example.demo.application.code;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import com.example.demo.domain.Code;
@@ -145,7 +144,7 @@ class CommonCodeServiceImplTest {
     void 코드_생성_테스트() {
         // given
         Code code = new Code(1, "101", "테스트용", "Y", "100");
-        CodeDto dto = code.toCodeDto();
+        CodeDto dto = code.toDto();
         when(codeDao.insert(dto)).thenReturn(1);
 
         // when
@@ -157,7 +156,7 @@ class CommonCodeServiceImplTest {
     void 코드_수정_테스트() {
         // given
         Code code = new Code(1, "101", "테스트용", "Y", "100");
-        CodeDto dto = code.toCodeDto();
+        CodeDto dto = code.toDto();
         when(codeDao.update(dto)).thenReturn(1);
 
         // when
@@ -169,7 +168,7 @@ class CommonCodeServiceImplTest {
     void 사용여부_수정_테스트() {
         // given
         Code code = new Code(1, "101", "테스트용", "Y", "100");
-        CodeDto dto = code.toCodeDto();
+        CodeDto dto = code.toDto();
         when(codeDao.updateUse(dto)).thenReturn(1);
 
         // when

@@ -33,7 +33,7 @@ public class Code {
 
 
     // dao에 요구되는 데이터 형태로 변환
-    public CodeDto toCodeDto() {
+    public CodeDto toDto() {
         String formatedNow = getCurrentDateFormat();
         Integer regUserSeq = getRegUserSeq();
         return new CodeDto(this, formatedNow, regUserSeq, formatedNow, regUserSeq);

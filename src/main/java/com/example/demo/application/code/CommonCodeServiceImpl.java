@@ -49,7 +49,7 @@ public class CommonCodeServiceImpl {
     }
 
     public void create(Code code) {
-        CodeDto dto = code.toCodeDto();
+        CodeDto dto = code.toDto();
         int rowCnt = commonCodeDao.insert(dto);
         if (rowCnt != 1) {
             log.error("[CODE] - create() 실패 : {}", dto);
@@ -58,7 +58,7 @@ public class CommonCodeServiceImpl {
     }
 
     public void modify(Code code) {
-        CodeDto dto = code.toCodeDto();
+        CodeDto dto = code.toDto();
         int rowCnt = commonCodeDao.update(dto);
         if (rowCnt != 1) {
             log.error("[CODE] - update() 실패 : {}", dto);
@@ -67,7 +67,7 @@ public class CommonCodeServiceImpl {
     }
 
     public void modifyUse(Code code) {
-        CodeDto dto = code.toCodeDto();
+        CodeDto dto = code.toDto();
 
         int rowCnt = commonCodeDao.updateUse(dto);
 
