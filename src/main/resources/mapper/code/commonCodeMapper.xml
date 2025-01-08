@@ -55,6 +55,22 @@
     WHERE seq = #{seq}
   </select>
 
+  <select id="selectBySeq" parameterType="string" resultType="CodeResponseDto">
+    SELECT
+      seq,
+      level,
+      code,
+      name,
+      chk_use,
+      reg_date,
+      reg_user_seq,
+      up_date,
+      up_user_seq,
+      top_code
+    FROM common_code
+    WHERE code = #{code}
+  </select>
+
   <select id="selectAll" resultType="CodeResponseDto">
     SELECT
       seq,
@@ -98,7 +114,7 @@
     WHERE seq = #{seq}
   </update>
 
-  <update id="updateNotUse" parameterType="CodeRequestDto">
+  <update id="updateUse" parameterType="CodeRequestDto">
     UPDATE common_code
     SET
       chk_use = #{chk_use}
