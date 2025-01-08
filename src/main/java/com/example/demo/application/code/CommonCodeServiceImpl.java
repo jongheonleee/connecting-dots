@@ -2,23 +2,26 @@ package com.example.demo.application.code;
 
 import com.example.demo.domain.Code;
 import com.example.demo.dto.code.CodeDto;
+import com.example.demo.dto.code.CodeRequest;
 import com.example.demo.dto.code.CodeResponse;
 import com.example.demo.repository.mybatis.code.CommonCodeDaoImpl;
+import com.example.demo.utils.CustomFormatter;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 @Slf4j
 @Service
+@Validated
 @Transactional
 @AllArgsConstructor
 public class CommonCodeServiceImpl {
 
-    private static final Integer MAX_LEVEL = 3;
-
     private final CommonCodeDaoImpl commonCodeDao;
+    private final CustomFormatter formatter;
 
     public int count() {
         return commonCodeDao.count();
@@ -48,27 +51,31 @@ public class CommonCodeServiceImpl {
                         .toList();
     }
 
-    public void create(Code code) {
-        CodeDto dto = code.toDto();
+    public CodeResponse create(CodeRequest request) {
+        CodeDto dto = new CodeDto(request, formatter.getCurrentDateFormat(), formatter.getManagerSeq(), formatter.getCurrentDateFormat(), formatter.getManagerSeq());
         int rowCnt = commonCodeDao.insert(dto);
+
         if (rowCnt != 1) {
             log.error("[CODE] - create() 실패 : {}", dto);
             throw new RuntimeException(); // 다른 에러 정의해서 던지기
         }
+
+        return commonCodeDao.selectBySeq(dto.getSeq())
+                            .toResponse();
     }
 
-    public void modify(Code code) {
-        CodeDto dto = code.toDto();
+    public void modify(CodeRequest request) {
+        CodeDto dto = new CodeDto(request, formatter.getCurrentDateFormat(), formatter.getManagerSeq(), formatter.getCurrentDateFormat(), formatter.getManagerSeq());
         int rowCnt = commonCodeDao.update(dto);
+
         if (rowCnt != 1) {
             log.error("[CODE] - update() 실패 : {}", dto);
             throw new RuntimeException(); // 다른 에러 정의해서 던지기
         }
     }
 
-    public void modifyUse(Code code) {
-        CodeDto dto = code.toDto();
-
+    public void modifyUse(CodeRequest request) {
+        CodeDto dto = new CodeDto(request, formatter.getCurrentDateFormat(), formatter.getManagerSeq(), formatter.getCurrentDateFormat(), formatter.getManagerSeq());
         int rowCnt = commonCodeDao.updateUse(dto);
 
         if (rowCnt != 1) {
@@ -106,10 +113,9 @@ public class CommonCodeServiceImpl {
 
     @Transactional(rollbackFor = Exception.class)
     public void removeAll() {
-        for (int level = MAX_LEVEL; level > 0; level--) {
+        for (int level = Code.MAX_LEVEL; level > 0; level--) {
             removeByLevel(level);
         }
-
         int totalCnt = count();
 
         if (totalCnt != 0) {

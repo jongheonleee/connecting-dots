@@ -3,7 +3,6 @@ package com.example.demo.repository.mybatis.code;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.example.demo.dto.code.CodeDto;
-import com.example.demo.dto.code.CodeResponse;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +16,7 @@ import org.springframework.test.context.TestPropertySource;
 
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application-test.properties")
-class CommonCodeDaoImplTest {
+class CodeDaoImplTest {
 
     private final Integer MAX_LEVEL = 3;
 

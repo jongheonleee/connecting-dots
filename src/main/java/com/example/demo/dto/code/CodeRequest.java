@@ -3,13 +3,17 @@ package com.example.demo.dto.code;
 import com.example.demo.domain.Code;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class CodeRequest {
 
     @NotBlank(message = "level은 필수값입니다.")
@@ -30,7 +34,7 @@ public class CodeRequest {
     private String top_code;
 
     public Code toCode() {
-        return new Code(this);
+        return Code.of(code);
     }
 
 }

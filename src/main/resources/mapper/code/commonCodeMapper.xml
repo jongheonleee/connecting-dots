@@ -7,7 +7,12 @@
     FROM common_code
   </select>
 
-  <insert id="insert" parameterType="CodeRequestDto">
+
+  <insert id="insert" parameterType="CodeDto">
+    <selectKey keyProperty="id" order="AFTER" resultType="int">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+
     INSERT INTO common_code
     (
       level, code, name,
@@ -22,7 +27,7 @@
       );
   </insert>
 
-  <select id="select" parameterType="string" resultType="CodeResponseDto">
+  <select id="select" parameterType="string" resultType="CodeDto">
     SELECT
       seq,
       level,
@@ -38,7 +43,7 @@
     WHERE code = #{code}
   </select>
 
-  <select id="selectByTopCode" parameterType="string" resultType="CodeResponseDto">
+  <select id="selectByTopCode" parameterType="string" resultType="CodeDto">
     SELECT
       seq,
       level,
@@ -54,7 +59,7 @@
     WHERE top_code = #{top_code}
   </select>
 
-  <select id="selectBySeq" parameterType="int" resultType="CodeResponseDto">
+  <select id="selectBySeq" parameterType="int" resultType="CodeDto">
     SELECT
       seq,
       level,
@@ -70,7 +75,7 @@
     WHERE seq = #{seq}
   </select>
 
-  <select id="selectByCode" parameterType="string" resultType="CodeResponseDto">
+  <select id="selectByCode" parameterType="string" resultType="CodeDto">
     SELECT
       seq,
       level,
@@ -86,7 +91,7 @@
     WHERE code = #{code}
   </select>
 
-  <select id="selectAll" resultType="CodeResponseDto">
+  <select id="selectAll" resultType="CodeDto">
     SELECT
       seq,
       level,
@@ -101,7 +106,7 @@
     FROM common_code
   </select>
 
-  <update id="update" parameterType="CodeRequestDto">
+  <update id="update" parameterType="CodeDto">
     UPDATE common_code
     SET
       level = #{level},
@@ -114,7 +119,7 @@
     WHERE seq = #{seq}
   </update>
 
-  <update id="updateUse" parameterType="CodeRequestDto">
+  <update id="updateUse" parameterType="CodeDto">
     UPDATE common_code
     SET
       chk_use = #{chk_use}

@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import com.example.demo.domain.Code;
 import com.example.demo.dto.code.CodeDto;
+import com.example.demo.dto.code.CodeRequest;
 import com.example.demo.dto.code.CodeResponse;
 import com.example.demo.repository.mybatis.code.CommonCodeDaoImpl;
 import java.util.List;
@@ -21,7 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 
 @ExtendWith(MockitoExtension.class)
-class CommonCodeServiceImplTest {
+class CodeServiceImplTest {
 
     @InjectMocks
     private CommonCodeServiceImpl codeService;
@@ -143,36 +144,42 @@ class CommonCodeServiceImplTest {
     @DisplayName("코드 생성 테스트")
     void 코드_생성_테스트() {
         // given
-        Code code = new Code(1, "101", "테스트용", "Y", "100");
-        CodeDto dto = code.toDto();
+        CodeRequest request = new CodeRequest(1, "1001", "회원가입", "Y", "1000");
+        Code code = Code.of(request.getCode());
+
+        CodeDto dto = code.toDto("Y", "2025/01/08", 1, "2025/01/08", 1);
         when(codeDao.insert(dto)).thenReturn(1);
 
         // when
-        assertDoesNotThrow(() -> codeService.create(code));
+        assertDoesNotThrow(() -> codeService.create(request));
     }
 
     @Test
     @DisplayName("코드 수정 테스트")
     void 코드_수정_테스트() {
         // given
-        Code code = new Code(1, "101", "테스트용", "Y", "100");
-        CodeDto dto = code.toDto();
+        CodeRequest request = new CodeRequest(1, "1001", "회원가입", "Y", "1000");
+        Code code = Code.of(request.getCode());
+        CodeDto dto = code.toDto("Y", "2025/01/08", 1, "2025/01/08", 1);
+
         when(codeDao.update(dto)).thenReturn(1);
 
         // when
-        assertDoesNotThrow(() -> codeService.modify(code));
+        assertDoesNotThrow(() -> codeService.modify(request));
     }
 
     @Test
     @DisplayName("사용여부 수정 테스트")
     void 사용여부_수정_테스트() {
         // given
-        Code code = new Code(1, "101", "테스트용", "Y", "100");
-        CodeDto dto = code.toDto();
+        CodeRequest request = new CodeRequest(1, "1001", "회원가입", "Y", "1000");
+        Code code = Code.of(request.getCode());
+        CodeDto dto = code.toDto("N", "2025/01/08", 1, "2025/01/08", 1);
+
         when(codeDao.updateUse(dto)).thenReturn(1);
 
         // when
-        assertDoesNotThrow(() -> codeService.modifyUse(code));
+        assertDoesNotThrow(() -> codeService.modifyUse(request));
     }
 
     @Test
