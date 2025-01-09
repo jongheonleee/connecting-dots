@@ -8,6 +8,7 @@
     FROM service_rule_use
   </select>
 
+
   <select id="countByCode" parameterType="string" resultType="int">
     SELECT COUNT(*)
     FROM service_rule_use
