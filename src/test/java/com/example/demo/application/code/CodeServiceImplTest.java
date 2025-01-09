@@ -38,6 +38,7 @@ class CodeServiceImplTest {
     void setUp() {
         assertNotNull(codeService);
         assertNotNull(codeDao);
+        assertNotNull(formatter);
     }
 
     @DisplayName("카운팅 테스트")
