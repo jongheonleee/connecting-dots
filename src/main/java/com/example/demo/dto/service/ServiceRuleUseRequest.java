@@ -17,7 +17,7 @@ public class ServiceRuleUseRequest {
 
 
     @NotBlank(message = "rule_stat은 필수값입니다.")
-    @Pattern(regexp = "^[A-Z]{2}\\d{4}$\n", message = "rule_stat은 대문자 2글자와 숫자 4자리로 구성되어야 합니다.")
+    @Pattern(regexp = "^[A-Z]{2}\\d{4}$", message = "rule_stat은 대문자 2글자와 숫자 4자리로 구성되어야 합니다.")
     private String rule_stat;
 
     @NotBlank(message = "name은 필수값입니다.")
@@ -27,13 +27,13 @@ public class ServiceRuleUseRequest {
     private String tar_name;
 
     @NotBlank(message = "op1은 필수값입니다.")
-    @Pattern(regexp = "^(=|!=|<=|>=|<|>)$\n", message = "op1는 연산자만 허용됩니다.")
+    @Pattern(regexp = "^(=|!=|<=|>=|<|>)$", message = "op1는 연산자만 허용됩니다.")
     private String op1;
 
-    @Pattern(regexp = "^(=|!=|<=|>=|<|>)$\n", message = "op2는 연산자만 허용됩니다.")
+    @Pattern(regexp = "^(=|!=|<=|>=|<|>)$", message = "op2는 연산자만 허용됩니다.")
     private String op2;
 
-    @Pattern(regexp = "^(=|!=|<=|>=|<|>)$\n", message = "op3는 연산자만 허용됩니다.")
+    @Pattern(regexp = "^(=|!=|<=|>=|<|>)$", message = "op3는 연산자만 허용됩니다.")
     private String op3;
 
     @NotBlank(message = "val1은 필수값입니다.")

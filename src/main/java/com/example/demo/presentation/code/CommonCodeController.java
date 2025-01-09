@@ -4,14 +4,17 @@ import com.example.demo.application.code.CommonCodeServiceImpl;
 import com.example.demo.dto.code.CodeRequest;
 import com.example.demo.dto.code.CodeResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import java.net.URI;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,8 +22,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 // 1차 엔드포인트 개발
-// - 추후에 예외처리 및 테스트 코드 강화 적용 계획
+// - 페이지네이션 처리 추가[]
+// - 추후에 예외처리 및 테스트 코드 강화 적용 계획[]
 @Slf4j
+@Validated
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/common-code")
@@ -35,32 +40,29 @@ public class CommonCodeController {
                              .body(response);
     }
 
-    @GetMapping("/count")
-    public ResponseEntity<Integer> count() {
-        return ResponseEntity.ok(commonCodeService.count());
-    }
 
-    @GetMapping("/read-top")
-    public ResponseEntity<List<CodeResponse>> readByTopCode(String top_code) {
+    @GetMapping("/list/top/{top_code}")
+    public ResponseEntity<List<CodeResponse>> readByTopCode(@PathVariable("top_code")  @Pattern(regexp = "^[0-9]{4}$", message = "code는 4자리 숫자 형태로 구성되어야 합니다.") String top_code) {
         return ResponseEntity.ok(commonCodeService.readByTopCode(top_code));
     }
 
-    @GetMapping("/read-seq")
-    public ResponseEntity<CodeResponse> readBySeq(Integer seq) {
+    @GetMapping("/list/{seq}")
+    public ResponseEntity<CodeResponse> readBySeq(@PathVariable("seq") Integer seq) {
         return ResponseEntity.ok(commonCodeService.readBySeq(seq));
     }
 
-    @GetMapping("/read-code")
-    public ResponseEntity<CodeResponse> readByCode(String code) {
+    @GetMapping("/list/{code}")
+    public ResponseEntity<CodeResponse> readByCode(@PathVariable @Pattern(regexp = "^[0-9]{4}$", message = "code는 4자리 숫자 형태로 구성되어야 합니다.") String code) {
         return ResponseEntity.ok(commonCodeService.readByCode(code));
     }
 
-    @GetMapping("/read-all")
+    @GetMapping("/list")
     public ResponseEntity<List<CodeResponse>> readAll() {
         return ResponseEntity.ok(commonCodeService.readAll());
     }
 
-    @PatchMapping("/modify")
+
+    @PatchMapping("/modify/{seq}")
     public ResponseEntity<Void> modify(@RequestBody @Valid CodeRequest request) {
         commonCodeService.modify(request);
         return ResponseEntity.noContent()
@@ -74,28 +76,28 @@ public class CommonCodeController {
                              .build();
     }
 
-    @DeleteMapping("/remove-level")
-    public ResponseEntity<Void> removeByLevel(Integer level) {
+    @DeleteMapping("/remove/{level}")
+    public ResponseEntity<Void> removeByLevel(@PathVariable("level") Integer level) {
         commonCodeService.removeByLevel(level);
         return ResponseEntity.noContent()
                              .build();
     }
 
-    @DeleteMapping("/remove-code")
-    public ResponseEntity<Void> removeByCode(String code) {
+    @DeleteMapping("/remove/{code}")
+    public ResponseEntity<Void> removeByCode(@PathVariable("code") String code) {
         commonCodeService.removeByCode(code);
         return ResponseEntity.noContent()
                              .build();
     }
 
-    @DeleteMapping("/remove-seq")
-    public ResponseEntity<Void> removeBySeq(Integer seq) {
+    @DeleteMapping("/remove/{seq}")
+    public ResponseEntity<Void> removeBySeq(@PathVariable("seq") Integer seq) {
         commonCodeService.removeBySeq(seq);
         return ResponseEntity.noContent()
                              .build();
     }
 
-    @DeleteMapping("/remove-all")
+    @DeleteMapping("/remove")
     public ResponseEntity<Void> removeAll() {
         commonCodeService.removeAll();
         return ResponseEntity.noContent()
