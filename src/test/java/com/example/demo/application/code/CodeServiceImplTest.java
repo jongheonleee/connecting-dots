@@ -9,6 +9,7 @@ import com.example.demo.dto.code.CodeDto;
 import com.example.demo.dto.code.CodeRequest;
 import com.example.demo.dto.code.CodeResponse;
 import com.example.demo.repository.mybatis.code.CommonCodeDaoImpl;
+import com.example.demo.utils.CustomFormatter;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,6 +30,9 @@ class CodeServiceImplTest {
 
     @Mock
     private CommonCodeDaoImpl codeDao;
+
+    @Mock
+    private CustomFormatter formatter;
 
     @BeforeEach
     void setUp() {
@@ -144,11 +148,16 @@ class CodeServiceImplTest {
     @DisplayName("코드 생성 테스트")
     void 코드_생성_테스트() {
         // given
-        CodeRequest request = new CodeRequest(1, "1001", "회원가입", "Y", "1000");
-        Code code = Code.of(request.getCode());
+        String currentDateFormat = "2025/01/09";
+        Integer managerSeq = 1;
 
-        CodeDto dto = code.toDto("Y", "2025/01/08", 1, "2025/01/08", 1);
+        CodeRequest request = new CodeRequest(1, "1001", "회원가입", "Y", "1000");
+        CodeDto dto = new CodeDto(request, currentDateFormat, managerSeq, currentDateFormat, managerSeq);
+
+        when(formatter.getCurrentDateFormat()).thenReturn(currentDateFormat);
+        when(formatter.getManagerSeq()).thenReturn(managerSeq);
         when(codeDao.insert(dto)).thenReturn(1);
+        when(codeDao.selectBySeq(dto.getSeq())).thenReturn(dto);
 
         // when
         assertDoesNotThrow(() -> codeService.create(request));
@@ -158,10 +167,14 @@ class CodeServiceImplTest {
     @DisplayName("코드 수정 테스트")
     void 코드_수정_테스트() {
         // given
-        CodeRequest request = new CodeRequest(1, "1001", "회원가입", "Y", "1000");
-        Code code = Code.of(request.getCode());
-        CodeDto dto = code.toDto("Y", "2025/01/08", 1, "2025/01/08", 1);
+        String currentDateFormat = "2025/01/09";
+        Integer managerSeq = 1;
 
+        CodeRequest request = new CodeRequest(1, "1001", "회원가입", "Y", "1000");
+        CodeDto dto = new CodeDto(request, currentDateFormat, managerSeq, currentDateFormat, managerSeq);
+
+        when(formatter.getCurrentDateFormat()).thenReturn(currentDateFormat);
+        when(formatter.getManagerSeq()).thenReturn(managerSeq);
         when(codeDao.update(dto)).thenReturn(1);
 
         // when
@@ -172,10 +185,15 @@ class CodeServiceImplTest {
     @DisplayName("사용여부 수정 테스트")
     void 사용여부_수정_테스트() {
         // given
-        CodeRequest request = new CodeRequest(1, "1001", "회원가입", "Y", "1000");
-        Code code = Code.of(request.getCode());
-        CodeDto dto = code.toDto("N", "2025/01/08", 1, "2025/01/08", 1);
+        String currentDateFormat = "2025/01/09";
+        Integer managerSeq = 1;
 
+        Code code = Code.of("1001");
+        CodeRequest request = new CodeRequest(code.getLevel(), code.getCode(), code.getName(), "N", code.getTopCode());
+        CodeDto dto = code.toDto("N", currentDateFormat, managerSeq, currentDateFormat, managerSeq);
+
+        when(formatter.getCurrentDateFormat()).thenReturn(currentDateFormat);
+        when(formatter.getManagerSeq()).thenReturn(managerSeq);
         when(codeDao.updateUse(dto)).thenReturn(1);
 
         // when
