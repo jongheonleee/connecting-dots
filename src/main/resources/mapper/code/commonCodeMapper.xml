@@ -9,7 +9,7 @@
 
 
   <insert id="insert" parameterType="CodeDto">
-    <selectKey keyProperty="id" order="AFTER" resultType="int">
+    <selectKey keyProperty="seq" order="AFTER" resultType="int">
       SELECT LAST_INSERT_ID()
     </selectKey>
 
@@ -20,11 +20,11 @@
       up_date, up_user_seq, top_code
     )
     VALUES
-      (
-        #{level}, #{code}, #{name},
-        #{chk_use}, #{reg_date}, #{reg_user_seq},
-        #{up_date}, #{up_user_seq}, #{top_code}
-      );
+    (
+      #{level}, #{code}, #{name},
+      #{chk_use}, #{reg_date}, #{reg_user_seq},
+      #{up_date}, #{up_user_seq}, #{top_code}
+    );
   </insert>
 
   <select id="select" parameterType="string" resultType="CodeDto">

@@ -19,8 +19,8 @@ public class ServiceRuleUseDaoImpl {
         return session.selectOne(namespace + "count");
     }
 
-    public int countByCode() {
-        return session.selectOne(namespace + "countByCode");
+    public int countByCode(String code) {
+        return session.selectOne(namespace + "countByCode", code);
     }
 
     public int insert(ServiceRuleUseDto dto) {

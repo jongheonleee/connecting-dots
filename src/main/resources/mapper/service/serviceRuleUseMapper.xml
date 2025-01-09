@@ -33,7 +33,7 @@
       #{val4}, #{val5}, #{chk_use},
       #{reg_date}, #{reg_user_seq}, #{up_date},
       #{up_user_seq}, #{code}
-    )
+    );
   </insert>
 
   <select id="selectByRuleStat" parameterType="string" resultType="ServiceRuleUseDto">
