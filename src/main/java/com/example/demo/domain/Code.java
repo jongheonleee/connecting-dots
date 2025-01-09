@@ -2,6 +2,7 @@ package com.example.demo.domain;
 
 import com.example.demo.dto.code.CodeDto;
 import java.util.Arrays;
+import lombok.Getter;
 
 // 코드는 현재 계층구조로 이루어져 있음
 public enum Code {
