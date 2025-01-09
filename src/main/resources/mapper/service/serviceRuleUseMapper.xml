@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.service.ServiceRuleUseMapper">
+
+  <select id="count" resultType="int">
+    SELECT COUNT(*)
+    FROM service_rule_use
+  </select>
+
+  <select id="countByCode" parameterType="string" resultType="int">
+    SELECT COUNT(*)
+    FROM service_rule_use
+    WHERE code = #{code}
+  </select>
+
+  <insert id="insert" parameterType="ServiceRuleUseDto">
+    INSERT INTO service_rule_use
+    (
+      rule_stat, name, tar_name,
+      op1, op2, op3,
+      val1, val2, val3,
+      val4, val5, chk_use,
+      reg_date, reg_user_seq, up_date,
+      up_user_seq, code
+    )
+    VALUES
+    (
+      #{rule_stat}, #{name}, #{tar_name},
+      #{op1}, #{op2}, #{op3},
+      #{val1}, #{val2}, #{val3},
+      #{val4}, #{val5}, #{chk_use},
+      #{reg_date}, #{reg_user_seq}, #{up_date},
+      #{up_user_seq}, #{code}
+    )
+  </insert>
+
+  <select id="selectByRuleStat" parameterType="string" resultType="ServiceRuleUseDto">
+    SELECT
+        rule_stat,
+        name,
+        tar_name,
+        op1,
+        op2,
+        op3,
+        val1,
+        val2,
+        val3,
+        val4,
+        val5,
+        chk_use,
+        reg_date,
+        reg_user_seq,
+        up_date,
+        up_user_seq,
+        code
+    FROM service_rule_use
+    WHERE rule_stat = #{rule_stat}
+  </select>
+
+  <select id="selectByCode" parameterType="string" resultType="ServiceRuleUseDto">
+    SELECT
+        rule_stat,
+        name,
+        tar_name,
+        op1,
+        op2,
+        op3,
+        val1,
+        val2,
+        val3,
+        val4,
+        val5,
+        chk_use,
+        reg_date,
+        reg_user_seq,
+        up_date,
+        up_user_seq,
+        code
+    FROM service_rule_use
+    WHERE code = #{code}
+
+  </select>
+
+  <select id="selectAll" resultType="ServiceRuleUseDto">
+    SELECT
+        rule_stat,
+        name,
+        tar_name,
+        op1,
+        op2,
+        op3,
+        val1,
+        val2,
+        val3,
+        val4,
+        val5,
+        chk_use,
+        reg_date,
+        reg_user_seq,
+        up_date,
+        up_user_seq,
+        code
+    FROM service_rule_use
+  </select>
+
+  <update id="update" parameterType="ServiceRuleUseDto">
+    UPDATE service_rule_use
+    SET
+      rule_stat = #{rule_stat},
+      name = #{name},
+      tar_name = #{tar_name},
+      op1 = #{op1},
+      op2 = #{op2},
+      op3 = #{op3},
+      val1 = #{val1},
+      val2 = #{val2},
+      val3 = #{val3},
+      val4 = #{val4},
+      val5 = #{val5},
+      chk_use = #{chk_use},
+      reg_date = #{reg_date},
+      reg_user_seq = #{reg_user_seq},
+      up_date = #{up_date},
+      up_user_seq = #{up_user_seq},
+      code = #{code}
+    WHERE rule_stat = #{rule_stat}
+  </update>
+
+  <update id="updateUse" parameterType="ServiceRuleUseDto">
+    UPDATE service_rule_use
+    SET
+      chk_use = #{chk_use}
+    WHERE rule_stat = #{rule_stat}
+  </update>
+
+  <delete id="deleteByRuleStat" parameterType="string">
+    DELETE
+    FROM service_rule_use
+    WHERE rule_stat = #{rule_stat}
+  </delete>
+
+  <delete id="deleteByCode" parameterType="string">
+    DELETE
+    FROM service_rule_use
+    WHERE code = #{code}
+  </delete>
+
+  <delete id="deleteAll">
+    DELETE
+    FROM service_rule_use
+  </delete>
+
+</mapper>

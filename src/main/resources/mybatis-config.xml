@@ -7,5 +7,8 @@
   <typeAliases>
     <!-- code -->
     <typeAlias alias="CodeDto" type="com.example.demo.dto.code.CodeDto"/>
+
+    <!-- service -->
+    <typeAlias alias="ServiceRuleUseDto" type="com.example.demo.dto.service.ServiceRuleUseDto"/>
   </typeAliases>
 </configuration>
