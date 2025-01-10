@@ -2,6 +2,7 @@ package com.example.demo.repository.mybatis.code;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.code.CodeDto;
 import java.util.ArrayList;
 import java.util.List;
@@ -228,6 +229,23 @@ class CodeDaoImplTest {
         assertEquals(cnt-1, responses.size());
     }
 
+    @DisplayName("페이징 처리 테스트")
+    @ParameterizedTest
+    @ValueSource(ints = {10, 50, 100, 150, 200})
+    void 페이징_처리_테스트(int cnt) {
+        SearchCondition sc = createSearchCondition(1, 10, "NM", "테스트용", "1");
+
+        for (int i=0; i<cnt; i++) {
+            CodeDto request = createRequest("100" + i, "테스트용" + i, null);
+            assertEquals(1, commonCodeDaoImpl.insert(request));
+        }
+
+        int totalCnt = commonCodeDaoImpl.countBySearchCondition(sc);
+        assertEquals(cnt, totalCnt);
+        List<CodeDto> codeDtos = commonCodeDaoImpl.selectBySearchCondition(sc);
+        assertEquals(10, codeDtos.size());
+    }
+
     private CodeDto createRequest(String code, String name, String top_code) {
         CodeDto dto = new CodeDto();
         dto.setLevel(1);
@@ -240,6 +258,10 @@ class CodeDaoImplTest {
         dto.setUp_user_seq(1);
         dto.setUp_date("2025-01-01");
         return dto;
+    }
+
+    private SearchCondition createSearchCondition(int page, int pageSize, String searchOption, String searchKeyword, String sortOption) {
+        return new SearchCondition(page, pageSize, searchOption, searchKeyword, sortOption);
     }
 
 }

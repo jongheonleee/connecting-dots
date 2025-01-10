@@ -7,7 +7,7 @@
     FROM common_code
   </select>
 
-  <select id="countBySearchCondition" parameterType="SearchCondition">
+  <select id="countBySearchCondition" parameterType="SearchCondition" resultType="int">
     SELECT COUNT(*)
     FROM common_code
     WHERE TRUE
