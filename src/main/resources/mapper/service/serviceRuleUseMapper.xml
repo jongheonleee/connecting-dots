@@ -38,46 +38,50 @@
 
   <select id="selectByRuleStat" parameterType="string" resultType="ServiceRuleUseDto">
     SELECT
-        rule_stat,
-        name,
-        tar_name,
-        op1,
-        op2,
-        op3,
-        val1,
-        val2,
-        val3,
-        val4,
-        val5,
-        chk_use,
-        reg_date,
-        reg_user_seq,
-        up_date,
-        up_user_seq,
-        code
+      rule_stat,
+      name,
+      tar_name,
+      op1,
+      op2,
+      op3,
+      val1,
+      val2,
+      val3,
+      val4,
+      val5,
+      chk_use,
+      curr_use_op,
+      curr_use_val,
+      reg_date,
+      reg_user_seq,
+      up_date,
+      up_user_seq,
+      code
     FROM service_rule_use
     WHERE rule_stat = #{rule_stat}
   </select>
 
   <select id="selectByCode" parameterType="string" resultType="ServiceRuleUseDto">
     SELECT
-        rule_stat,
-        name,
-        tar_name,
-        op1,
-        op2,
-        op3,
-        val1,
-        val2,
-        val3,
-        val4,
-        val5,
-        chk_use,
-        reg_date,
-        reg_user_seq,
-        up_date,
-        up_user_seq,
-        code
+      rule_stat,
+      name,
+      tar_name,
+      op1,
+      op2,
+      op3,
+      val1,
+      val2,
+      val3,
+      val4,
+      val5,
+      chk_use,
+      curr_use_op,
+      curr_use_val,
+      reg_date,
+      reg_user_seq,
+      up_date,
+      up_user_seq,
+      code
     FROM service_rule_use
     WHERE code = #{code}
 
@@ -97,6 +101,8 @@
         val4,
         val5,
         chk_use,
+        curr_use_op,
+        curr_use_val,
         reg_date,
         reg_user_seq,
         up_date,
@@ -138,23 +144,25 @@
 
   <select id="selectAll" resultType="ServiceRuleUseDto">
     SELECT
-        rule_stat,
-        name,
-        tar_name,
-        op1,
-        op2,
-        op3,
-        val1,
-        val2,
-        val3,
-        val4,
-        val5,
-        chk_use,
-        reg_date,
-        reg_user_seq,
-        up_date,
-        up_user_seq,
-        code
+      rule_stat,
+      name,
+      tar_name,
+      op1,
+      op2,
+      op3,
+      val1,
+      val2,
+      val3,
+      val4,
+      val5,
+      chk_use,
+      curr_use_op,
+      curr_use_val,
+      reg_date,
+      reg_user_seq,
+      up_date,
+      up_user_seq,
+      code
     FROM service_rule_use
   </select>
 
@@ -165,8 +173,9 @@
       op1, op2, op3,
       val1, val2, val3,
       val4, val5, chk_use,
-      reg_date, reg_user_seq, up_date,
-      up_user_seq, code
+      curr_use_op, curr_use_val, reg_date,
+      reg_user_seq, up_date, up_user_seq,
+      code
     )
     VALUES
       (
@@ -174,8 +183,9 @@
         #{op1}, #{op2}, #{op3},
         #{val1}, #{val2}, #{val3},
         #{val4}, #{val5}, #{chk_use},
-        #{reg_date}, #{reg_user_seq}, #{up_date},
-        #{up_user_seq}, #{code}
+        #{curr_use_op}, #{curr_use_val}, #{reg_date},
+        #{reg_user_seq}, #{up_date}, #{up_user_seq},
+        #{code}
       );
   </insert>
 
