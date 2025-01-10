@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.service.ServiceUserConditionMapper">
+
+  <select id="count" resultType="int">
+    SELECT COUNT(*)
+    FROM service_user_condition
+  </select>
+
+  <select id="existsByCondCode" parameterType="string" resultType="boolean">
+    SELECT  COUNT(*) > 0
+    FROM    service_user_condition
+    WHERE   cond_code = #{cond_code}
+  </select>
+
+  <select id="select" parameterType="string" resultType="ServiceUserConditionDto">
+    SELECT
+      cond_code,
+      name,
+      short_exp,
+      long_exp,
+      chk_use,
+      law1,
+      law2,
+      law3,
+      comt,
+      reg_date,
+      reg_user_seq,
+      up_date,
+      up_user_seq
+    FROM service_user_condition
+    WHERE cond_code = #{cond_code}
+  </select>
+
+
+  <select id="selectAll" resultType="ServiceUserConditionDto">
+    SELECT
+      cond_code,
+      name,
+      short_exp,
+      long_exp,
+      chk_use,
+      law1,
+      law2,
+      law3,
+      comt,
+      reg_date,
+      reg_user_seq,
+      up_date,
+      up_user_seq
+    FROM service_user_condition
+  </select>
+
+  <insert id="insert" parameterType="ServiceUserConditionDto">
+    INSERT INTO service_user_condition
+    (
+      cond_code, name, short_exp,
+      long_exp, chk_use, law1,
+      law2, law3, comt,
+      reg_date, reg_user_seq, up_date,
+      up_user_seq
+    )
+    VALUES
+    (
+      #{cond_code}, #{name}, #{short_exp},
+      #{long_exp}, #{chk_use}, #{law1},
+      #{law2}, #{law3}, #{comt},
+      #{reg_date}, #{reg_user_seq}, #{up_date},
+      #{up_user_seq}
+    )
+  </insert>
+
+  <update id="update" parameterType="ServiceUserConditionDto">
+    UPDATE service_user_condition
+    SET
+      name = #{name}, short_exp = #{short_exp},
+      long_exp = #{long_exp}, chk_use = #{chk_use},
+      law1 = #{law1}, law2 = #{law2},
+      law3 = #{law3}, comt = #{comt},
+      up_date = #{up_date}, up_user_seq = #{up_user_seq}
+    WHERE cond_code = #{cond_code}
+  </update>
+
+  <delete id="delete" parameterType="string">
+    DELETE
+    FROM service_user_condition
+    WHERE cond_code = #{cond_code}
+  </delete>
+
+  <delete id="deleteAll">
+    DELETE
+    FROM service_user_condition
+  </delete>
+</mapper>
