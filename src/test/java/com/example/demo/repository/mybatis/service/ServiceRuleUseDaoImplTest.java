@@ -3,6 +3,7 @@ package com.example.demo.repository.mybatis.service;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.example.demo.domain.Code;
+import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.code.CodeDto;
 import com.example.demo.dto.service.ServiceRuleUseDto;
 import com.example.demo.dto.service.ServiceRuleUseRequest;
@@ -276,6 +277,24 @@ class ServiceRuleUseDaoImplTest {
         assertEquals(0, totalCnt);
     }
 
+    @DisplayName("페이징 처리 테스트")
+    @ParameterizedTest
+    @ValueSource(ints = {10, 50, 100, 150, 200})
+    void 페이징_처리_테스트(int cnt) {
+        SearchCondition sc = createSearchCondition(1, 10, "NM", "테스트용", "1");
+
+        for (int i=0; i<cnt; i++) {
+            ServiceRuleUseRequest request = createRequest(i);
+            ServiceRuleUseDto dto = new ServiceRuleUseDto(request, "2025-01-09", 1, "2025-01-09", 1);
+            assertEquals(1, serviceRuleUseDao.insert(dto));
+        }
+
+        int totalCnt = serviceRuleUseDao.countBySearchCondition(sc);
+        assertEquals(cnt, totalCnt);
+        List<ServiceRuleUseDto> codeDtos = serviceRuleUseDao.selectBySearchCondition(sc);
+        assertEquals(10, codeDtos.size());
+    }
+
 
 
     private ServiceRuleUseRequest createRequest(int i) {
@@ -288,5 +307,9 @@ class ServiceRuleUseDaoImplTest {
         request.setChk_use("Y");
         request.setCode("2002");
         return request;
+    }
+
+    private SearchCondition createSearchCondition(int page, int pageSize, String searchOption, String searchKeyword, String sortOption) {
+        return new SearchCondition(page, pageSize, searchOption, searchKeyword, sortOption);
     }
 }

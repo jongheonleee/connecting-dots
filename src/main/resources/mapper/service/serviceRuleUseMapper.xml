@@ -85,19 +85,25 @@
 
   <select id="selectBySearchCondition" parameterType="SearchCondition" resultType="ServiceRuleUseDto">
     SELECT
-    seq,
-    level,
-    code,
-    name,
-    chk_use,
-    reg_date,
-    reg_user_seq,
-    up_date,
-    up_user_seq,
-    top_code
-    FROM common_code
+        rule_stat,
+        name,
+        tar_name,
+        op1,
+        op2,
+        op3,
+        val1,
+        val2,
+        val3,
+        val4,
+        val5,
+        chk_use,
+        reg_date,
+        reg_user_seq,
+        up_date,
+        up_user_seq,
+        code
+    FROM service_rule_use
     WHERE TRUE
-    <!-- 검색 조건 -->
     <choose>
       <when test='searchOption=="NM"'>
         AND name LIKE CONCAT('%', #{searchKeyword}, '%')

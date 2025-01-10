@@ -3,6 +3,7 @@ package com.example.demo.application.service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
+import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.service.ServiceRuleUseDto;
 import com.example.demo.dto.service.ServiceRuleUseRequest;
 import com.example.demo.dto.service.ServiceRuleUseResponse;
@@ -254,6 +255,10 @@ class ServiceRuleUseServiceImplTest {
         request.setChk_use("Y");
         request.setCode("2002");
         return request;
+    }
+
+    private SearchCondition createSearchCondition(int page, int pageSize, String searchOption, String searchKeyword, String sortOption) {
+        return new SearchCondition(page, pageSize, searchOption, searchKeyword, sortOption);
     }
 
 }
