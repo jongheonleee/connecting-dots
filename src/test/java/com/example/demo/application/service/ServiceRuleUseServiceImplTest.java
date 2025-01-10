@@ -35,8 +35,8 @@ class ServiceRuleUseServiceImplTest {
     @Mock
     private CustomFormatter formatter;
 
-    private String currentDateFormat = "2025/01/09";
-    private Integer managerSeq = 1;
+    private final String currentDateFormat = "2025/01/09";
+    private final Integer managerSeq = 1;
 
     @BeforeEach
     void setUp() {
