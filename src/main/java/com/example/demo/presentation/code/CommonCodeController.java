@@ -1,6 +1,8 @@
 package com.example.demo.presentation.code;
 
 import com.example.demo.application.code.CommonCodeServiceImpl;
+import com.example.demo.dto.SearchCondition;
+import com.example.demo.dto.code.CodePageResponse;
 import com.example.demo.dto.code.CodeRequest;
 import com.example.demo.dto.code.CodeResponse;
 import jakarta.validation.Valid;
@@ -41,24 +43,20 @@ public class CommonCodeController {
     }
 
 
-    @GetMapping("/list/top/{top_code}")
-    public ResponseEntity<List<CodeResponse>> readByTopCode(@PathVariable("top_code")  @Pattern(regexp = "^[0-9]{4}$", message = "code는 4자리 숫자 형태로 구성되어야 합니다.") String top_code) {
-        return ResponseEntity.ok(commonCodeService.readByTopCode(top_code));
-    }
-
     @GetMapping("/list/{seq}")
-    public ResponseEntity<CodeResponse> readBySeq(@PathVariable("seq") Integer seq) {
+    public ResponseEntity<CodeResponse> readDetailBySeq(@PathVariable("seq") Integer seq) {
         return ResponseEntity.ok(commonCodeService.readBySeq(seq));
     }
 
     @GetMapping("/list/{code}")
-    public ResponseEntity<CodeResponse> readByCode(@PathVariable @Pattern(regexp = "^[0-9]{4}$", message = "code는 4자리 숫자 형태로 구성되어야 합니다.") String code) {
+    public ResponseEntity<CodeResponse> readDetailByCode(@PathVariable @Pattern(regexp = "^[0-9]{4}$", message = "code는 4자리 숫자 형태로 구성되어야 합니다.") String code) {
         return ResponseEntity.ok(commonCodeService.readByCode(code));
     }
 
+
     @GetMapping("/list")
-    public ResponseEntity<List<CodeResponse>> readAll() {
-        return ResponseEntity.ok(commonCodeService.readAll());
+    public ResponseEntity<CodePageResponse> read(SearchCondition sc) {
+        return ResponseEntity.ok(commonCodeService.readBySearchCondition(sc));
     }
 
 
