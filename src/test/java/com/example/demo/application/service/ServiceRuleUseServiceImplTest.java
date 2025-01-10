@@ -1,9 +1,12 @@
 package com.example.demo.application.service;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.example.demo.dto.SearchCondition;
+import com.example.demo.dto.code.CodeDto;
+import com.example.demo.dto.code.CodeResponse;
 import com.example.demo.dto.service.ServiceRuleUseDto;
 import com.example.demo.dto.service.ServiceRuleUseRequest;
 import com.example.demo.dto.service.ServiceRuleUseResponse;
@@ -244,6 +247,35 @@ class ServiceRuleUseServiceImplTest {
         assertDoesNotThrow(() -> serviceRuleUseService.removeByCode(code));
     }
 
+    @Test
+    @DisplayName("코드 페이지네이션 조회 테스트")
+    void 코드_페이지네이션_조회_테스트() {
+        // given
+        SearchCondition sc = createSearchCondition(1, 10, "NM", "테스트용", "1");
+        List<ServiceRuleUseDto> dummy = List.of(
+                new ServiceRuleUseDto(createRequest(1), "2025/01/05", 1, "2025/01/05", 1),
+                new ServiceRuleUseDto(createRequest(2), "2025/01/05", 1, "2025/01/05", 1),
+                new ServiceRuleUseDto(createRequest(3), "2025/01/05", 1, "2025/01/05", 1)
+        );
+        when(serviceRuleUseDao.selectBySearchCondition(any())).thenReturn(dummy);
+
+        // when
+        List<ServiceRuleUseResponse> expectedResponses = dummy.stream()
+                                                            .map(ServiceRuleUseResponse::new)
+                                                            .toList();
+        var responses = serviceRuleUseService.readBySearchCondition(sc);
+
+        // then
+        assertNotNull(responses);
+        assertEquals(expectedResponses.size(), responses.getResponses().size());
+
+        for (int i = 0; i < expectedResponses.size(); i++) {
+            ServiceRuleUseResponse response = responses.getResponses().get(i);
+            assertEquals(expectedResponses.get(i).getRule_stat(), response.getRule_stat());
+            assertEquals(expectedResponses.get(i).getName(), response.getName());
+            assertEquals(expectedResponses.get(i).getTar_name(), response.getTar_name());
+        }
+    }
 
     private ServiceRuleUseRequest createRequest(int i) {
         ServiceRuleUseRequest request = new ServiceRuleUseRequest();
