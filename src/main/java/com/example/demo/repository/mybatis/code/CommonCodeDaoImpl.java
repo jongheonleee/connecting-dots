@@ -1,5 +1,6 @@
 package com.example.demo.repository.mybatis.code;
 
+import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.code.CodeDto;
 import java.util.List;
 import org.apache.ibatis.session.SqlSession;
@@ -18,6 +19,10 @@ public class CommonCodeDaoImpl {
         return session.selectOne(namespace + "count");
     }
 
+    public int countBySearchCondition(SearchCondition sc) {
+        return session.selectOne(namespace + "countBySearchCondition", sc);
+    }
+
     public List<CodeDto> selectByTopCode(String top_code) {
         return session.selectList(namespace + "selectByTopCode", top_code);
     }
@@ -28,6 +33,10 @@ public class CommonCodeDaoImpl {
 
     public CodeDto selectByCode(String code) {
         return session.selectOne(namespace + "selectByCode", code);
+    }
+
+    public List<CodeDto> selectBySearchCondition(SearchCondition sc) {
+        return session.selectList(namespace + "selectBySearchCondition", sc);
     }
 
     public List<CodeDto> selectAll() {
