@@ -8,6 +8,26 @@
     FROM service_rule_use
   </select>
 
+  <select id="countBySearchCondition" parameterType="SearchCondition" resultType="int">
+    SELECT COUNT(*)
+    FROM service_rule_use
+    WHERE TRUE
+    <choose>
+      <when test='searchOption=="NM"'>
+        AND name LIKE CONCAT('%', #{searchKeyword}, '%')
+      </when>
+      <when test='searchOption=="CV"'>
+        AND chk_use LIKE CONCAT('%', #{searchKeyword}, '%')
+      </when>
+      <when test='searchOption=="TN"'>
+        AND tar_name = #{searchKeyword}
+      </when>
+      <when test='searchOption=="CD"'>
+        AND code LIKE CONCAT('%', #{searchKeyword}, '%')
+      </when>
+    </choose>
+  </select>
+
 
   <select id="countByCode" parameterType="string" resultType="int">
     SELECT COUNT(*)
@@ -15,26 +35,6 @@
     WHERE code = #{code}
   </select>
 
-  <insert id="insert" parameterType="ServiceRuleUseDto">
-    INSERT INTO service_rule_use
-    (
-      rule_stat, name, tar_name,
-      op1, op2, op3,
-      val1, val2, val3,
-      val4, val5, chk_use,
-      reg_date, reg_user_seq, up_date,
-      up_user_seq, code
-    )
-    VALUES
-    (
-      #{rule_stat}, #{name}, #{tar_name},
-      #{op1}, #{op2}, #{op3},
-      #{val1}, #{val2}, #{val3},
-      #{val4}, #{val5}, #{chk_use},
-      #{reg_date}, #{reg_user_seq}, #{up_date},
-      #{up_user_seq}, #{code}
-    );
-  </insert>
 
   <select id="selectByRuleStat" parameterType="string" resultType="ServiceRuleUseDto">
     SELECT
@@ -83,6 +83,53 @@
 
   </select>
 
+  <select id="selectBySearchCondition" parameterType="SearchCondition" resultType="ServiceRuleUseDto">
+    SELECT
+    seq,
+    level,
+    code,
+    name,
+    chk_use,
+    reg_date,
+    reg_user_seq,
+    up_date,
+    up_user_seq,
+    top_code
+    FROM common_code
+    WHERE TRUE
+    <!-- 검색 조건 -->
+    <choose>
+      <when test='searchOption=="NM"'>
+        AND name LIKE CONCAT('%', #{searchKeyword}, '%')
+      </when>
+      <when test='searchOption=="CV"'>
+        AND chk_use LIKE CONCAT('%', #{searchKeyword}, '%')
+      </when>
+      <when test='searchOption=="TN"'>
+        AND tar_name = #{searchKeyword}
+      </when>
+      <when test='searchOption=="CD"'>
+        AND code LIKE CONCAT('%', #{searchKeyword}, '%')
+      </when>
+    </choose>
+
+    <!-- 정렬 조건 -->
+    <choose>
+      <when test='sortOption == "1"'> <!-- 최신순 -->
+        ORDER BY reg_date DESC
+      </when>
+      <when test='sortOption == "2"'> <!-- 오래된순 -->
+        ORDER BY reg_date
+      </when>
+      <otherwise> <!-- 기본값, 최신순 -->
+        ORDER BY reg_date DESC
+      </otherwise>
+    </choose>
+
+    <!-- 페이징 처리 -->
+    LIMIT #{offset}, #{pageSize};
+  </select>
+
   <select id="selectAll" resultType="ServiceRuleUseDto">
     SELECT
         rule_stat,
@@ -104,6 +151,27 @@
         code
     FROM service_rule_use
   </select>
+
+  <insert id="insert" parameterType="ServiceRuleUseDto">
+    INSERT INTO service_rule_use
+    (
+      rule_stat, name, tar_name,
+      op1, op2, op3,
+      val1, val2, val3,
+      val4, val5, chk_use,
+      reg_date, reg_user_seq, up_date,
+      up_user_seq, code
+    )
+    VALUES
+      (
+        #{rule_stat}, #{name}, #{tar_name},
+        #{op1}, #{op2}, #{op3},
+        #{val1}, #{val2}, #{val3},
+        #{val4}, #{val5}, #{chk_use},
+        #{reg_date}, #{reg_user_seq}, #{up_date},
+        #{up_user_seq}, #{code}
+      );
+  </insert>
 
   <update id="update" parameterType="ServiceRuleUseDto">
     UPDATE service_rule_use
