@@ -55,6 +55,15 @@ public class ServiceRuleUseServiceImpl {
                                  .toList();
     }
 
+    public ServiceRuleUsePageResponse readBySearchCondition(SearchCondition sc) {
+        int totalCnt = serviceRuleUseDao.countBySearchCondition(sc);
+        List<ServiceRuleUseDto> serviceRuleUseDtos = serviceRuleUseDao.selectBySearchCondition(sc);
+        List<ServiceRuleUseResponse> responses = serviceRuleUseDtos.stream()
+                                                                  .map(ServiceRuleUseResponse::new)
+                                                                  .toList();
+        return ServiceRuleUsePageResponse.of(totalCnt, sc, responses);
+    }
+
 
     public List<ServiceRuleUseResponse> readAll() {
         List<ServiceRuleUseDto> serviceRuleUseDtos = serviceRuleUseDao.selectAll();
