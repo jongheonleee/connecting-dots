@@ -60,4 +60,12 @@ public class ServiceRuleUseRequest {
     @Pattern(regexp = "^[0-9]{4}$", message = "code는 4자리 숫자 형태로 구성되어야 합니다.")
     private String code;
 
+    @NotBlank(message = "curr_use_op은 필수값입니다.")
+    @Pattern(regexp = "^[1-3]{1}$", message = "curr_use_op은 1자리 숫자 형태로 구성되어야 합니다.")
+    private Integer curr_use_op;
+
+    @NotBlank(message = "curr_use_val은 필수값입니다.")
+    @Pattern(regexp = "^[1-5]{1}$", message = "curr_use_val 1자리 숫자 형태로 구성되어야 합니다.")
+    private Integer curr_use_val;
+
 }

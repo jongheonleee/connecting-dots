@@ -28,6 +28,8 @@ public class ServiceRuleUseDto {
     private String val5;
     private String code;
     private String chk_use;
+    private Integer curr_use_op;
+    private Integer curr_use_val;
     private String reg_date;
     private Integer reg_user_seq;
     private String up_date;

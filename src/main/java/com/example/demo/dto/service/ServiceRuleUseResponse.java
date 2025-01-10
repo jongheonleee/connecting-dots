@@ -22,6 +22,8 @@ public class ServiceRuleUseResponse {
     private String val3;
     private String val4;
     private String val5;
+    private Integer curr_use_op;
+    private Integer curr_use_val;
     private String chk_use;
 
     public ServiceRuleUseResponse(ServiceRuleUseDto dto) {
