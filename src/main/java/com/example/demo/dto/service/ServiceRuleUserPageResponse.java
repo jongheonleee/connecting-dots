@@ -1,17 +1,11 @@
 package com.example.demo.dto.service;
 
 import java.util.List;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
 @Getter
-@Setter
 @ToString
-@AllArgsConstructor
-@NoArgsConstructor
 public class ServiceRuleUserPageResponse {
 
     private static final Integer DEFAULT_PAGE = 1;

@@ -3,16 +3,11 @@ package com.example.demo.dto.code;
 
 import com.example.demo.dto.SearchCondition;
 import java.util.List;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
 @Getter
-@Setter
 @ToString
-@AllArgsConstructor
 public class CodePageResponse {
 
     private static final Integer DEFAULT_PAGE = 1;
