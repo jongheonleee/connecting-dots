@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.example.demo.domain.Code;
+import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.code.CodeDto;
 import com.example.demo.dto.code.CodeRequest;
 import com.example.demo.dto.code.CodeResponse;
@@ -254,6 +255,39 @@ class CodeServiceImplTest {
 
         // when
         assertDoesNotThrow(() -> codeService.removeAll());
+    }
+
+    @Test
+    @DisplayName("코드 페이지네이션 조회 테스트")
+    void 코드_페이지네이션_조회_테스트() {
+        // given
+        SearchCondition sc = createSearchCondition(1, 10, "NM", "테스트용", "1");
+        List<CodeDto> dummy = List.of(
+            new CodeDto(1, 1, "101", "테스트용", "Y", "100", "2025/01/05", 1, "2025/01/05", 1),
+            new CodeDto(2, 2, "102", "테스트용", "Y", "100", "2025/01/05", 1, "2025/01/05", 1),
+            new CodeDto(3, 3, "103", "테스트용", "Y", "100", "2025/01/05", 1, "2025/01/05", 1)
+        );
+        when(codeDao.selectBySearchCondition(any())).thenReturn(dummy);
+
+        // when
+        List<CodeResponse> expectedResponses = dummy.stream().map(CodeResponse::new).toList();
+        var responses = codeService.readBySearchCondition(sc);
+
+        // then
+        assertNotNull(responses);
+        assertEquals(expectedResponses.size(), responses.getResponses().size());
+
+        for (int i = 0; i < expectedResponses.size(); i++) {
+            CodeResponse response = responses.getResponses().get(i);
+            assertEquals(expectedResponses.get(i).getSeq(), response.getSeq());
+            assertEquals(expectedResponses.get(i).getCode(), response.getCode());
+            assertEquals(expectedResponses.get(i).getName(), response.getName());
+            assertEquals(expectedResponses.get(i).getLevel(), response.getLevel());
+        }
+    }
+
+    private SearchCondition createSearchCondition(int page, int pageSize, String searchOption, String searchKeyword, String sortOption) {
+        return new SearchCondition(page, pageSize, searchOption, searchKeyword, sortOption);
     }
 
 
