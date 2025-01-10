@@ -1,5 +1,6 @@
 package com.example.demo.repository.mybatis.service;
 
+import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.service.ServiceRuleUseDto;
 import java.util.List;
 import org.apache.ibatis.session.SqlSession;
@@ -23,6 +24,10 @@ public class ServiceRuleUseDaoImpl {
         return session.selectOne(namespace + "countByCode", code);
     }
 
+    public int countBySearchCondition(SearchCondition sc) {
+        return session.selectOne(namespace + "countBySearchCondition", sc);
+    }
+
     public int insert(ServiceRuleUseDto dto) {
         return session.insert(namespace + "insert", dto);
     }
@@ -33,6 +38,10 @@ public class ServiceRuleUseDaoImpl {
 
     public List<ServiceRuleUseDto> selectByCode(String code) {
         return session.selectList(namespace + "selectByCode", code);
+    }
+
+    public List<ServiceRuleUseDto> selectBySearchCondition(SearchCondition sc) {
+        return session.selectList(namespace + "selectBySearchCondition", sc);
     }
 
     public List<ServiceRuleUseDto> selectAll() {
