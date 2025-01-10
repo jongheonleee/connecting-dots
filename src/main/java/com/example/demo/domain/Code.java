@@ -4,6 +4,11 @@ import com.example.demo.dto.code.CodeDto;
 import java.util.Arrays;
 import lombok.Getter;
 
+// 이렇게 할 경우엔 하드코딩이랑 무슨차이가 있나
+// 그리고 RDB에 저장하는 것 자체가 의미 없는 것 같음
+// 클래스로 변환해서 도메인으로서 활용하는 게 좋을 것 같음
+
+
 // 코드는 현재 계층구조로 이루어져 있음
 public enum Code {
     // 최상위 코드
