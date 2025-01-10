@@ -28,4 +28,25 @@ public class ServiceTermsDto {
     private Integer reg_user_seq;
     private String up_date;
     private Integer up_user_seq;
+
+    public ServiceTermsDto(ServiceTermsRequest request, String reg_date, Integer reg_user_seq, String up_date, Integer up_user_seq) {
+        this.poli_stat = request.getPoli_stat();
+        this.name = request.getName();
+        this.rule_stat1 = request.getRule_stat1();
+        this.op1 = request.getOp1();
+        this.rule_stat2 = request.getRule_stat2();
+        this.op2 = request.getOp2();
+        this.rule_stat3 = request.getRule_stat3();
+        this.comt = request.getComt();
+        this.chk_use = request.getChk_use();
+        this.code = request.getCode();
+        this.reg_date = reg_date;
+        this.reg_user_seq = reg_user_seq;
+        this.up_date = up_date;
+        this.up_user_seq = up_user_seq;
+    }
+
+    public ServiceTermsResponse toResponse() {
+        return new ServiceTermsResponse(this);
+    }
 }

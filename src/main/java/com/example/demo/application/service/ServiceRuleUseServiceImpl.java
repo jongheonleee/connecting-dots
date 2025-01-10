@@ -55,21 +55,21 @@ public class ServiceRuleUseServiceImpl {
                                  .toList();
     }
 
-    public PageResponse readBySearchCondition(SearchCondition sc) {
+    public PageResponse<ServiceRuleUseResponse> readBySearchCondition(SearchCondition sc) {
         int totalCnt = serviceRuleUseDao.countBySearchCondition(sc);
         List<ServiceRuleUseDto> serviceRuleUseDtos = serviceRuleUseDao.selectBySearchCondition(sc);
         List<ServiceRuleUseResponse> responses = serviceRuleUseDtos.stream()
                                                                   .map(ServiceRuleUseResponse::new)
                                                                   .toList();
-        return new PageResponse<ServiceRuleUseResponse>(totalCnt, sc, responses);
+        return new PageResponse<>(totalCnt, sc, responses);
     }
 
 
     public List<ServiceRuleUseResponse> readAll() {
-        List<ServiceRuleUseDto> serviceRuleUseDtos = serviceRuleUseDao.selectAll();
-        return serviceRuleUseDtos.stream()
-                                 .map(ServiceRuleUseResponse::new)
-                                 .toList();
+        List<ServiceRuleUseDto> dtos = serviceRuleUseDao.selectAll();
+        return dtos.stream()
+                   .map(ServiceRuleUseResponse::new)
+                   .toList();
     }
 
     public void modify(ServiceRuleUseRequest request) {
@@ -82,7 +82,7 @@ public class ServiceRuleUseServiceImpl {
         }
     }
 
-    public void modifyUse(ServiceRuleUseRequest request) {
+    public void modifyChkUse(ServiceRuleUseRequest request) {
         ServiceRuleUseDto dto = new ServiceRuleUseDto(request, formatter.getCurrentDateFormat(), formatter.getManagerSeq(), formatter.getCurrentDateFormat(), formatter.getManagerSeq());
         int rowCnt = serviceRuleUseDao.updateUse(dto);
 

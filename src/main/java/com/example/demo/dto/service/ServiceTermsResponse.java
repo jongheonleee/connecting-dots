@@ -21,4 +21,17 @@ public class ServiceTermsResponse {
     private String comt;
     private String chk_use;
     private String code;
+
+    public ServiceTermsResponse(ServiceTermsDto dto) {
+        this.poli_stat = dto.getPoli_stat();
+        this.name = dto.getName();
+        this.rule_stat1 = dto.getRule_stat1();
+        this.op1 = dto.getOp1();
+        this.rule_stat2 = dto.getRule_stat2();
+        this.op2 = dto.getOp2();
+        this.rule_stat3 = dto.getRule_stat3();
+        this.comt = dto.getComt();
+        this.chk_use = dto.getChk_use();
+        this.code = dto.getCode();
+    }
 }
