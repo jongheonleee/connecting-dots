@@ -1,6 +1,7 @@
 package com.example.demo.repository.mybatis.service;
 
 import com.example.demo.dto.SearchCondition;
+import com.example.demo.dto.service.ServiceTermsConditionDto;
 import com.example.demo.dto.service.ServiceTermsDto;
 import java.util.List;
 import org.apache.ibatis.session.SqlSession;
@@ -33,6 +34,10 @@ public class ServiceTermsDaoImpl {
 
     public List<ServiceTermsDto> selectAll() {
         return session.selectList(namespace + "selectAll");
+    }
+
+    public ServiceTermsConditionDto selectForCondition(String poli_stat) {
+        return session.selectOne(namespace + "selectForCondition", poli_stat);
     }
 
     public int insert(ServiceTermsDto dto) {

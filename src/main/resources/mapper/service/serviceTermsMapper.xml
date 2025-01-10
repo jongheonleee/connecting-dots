@@ -110,6 +110,51 @@
     LIMIT #{offset}, #{pageSize};
   </select>
 
+  <select id="selectForCondition" parameterType="string" resultType="ServiceTermsConditionDto">
+    SELECT
+      st.poli_stat AS poli_stat,
+      st.name AS name,
+
+      CONCAT(
+        -- 1. 첫 번째 이용 규칙 조건문 생성
+        (SELECT
+             GROUP_CONCAT(CONCAT(sr1.tar_name, ' ', sr1.op1, ' ', sr1.val1) SEPARATOR ';')
+         FROM service_rule_use AS sr1
+         WHERE sr1.rule_stat = st.rule_stat1
+         AND sr1.chk_use = 'Y'
+         AND st.rule_stat1 IS NOT NULL),
+
+        -- 다른 조건문과 결합
+        ' ',
+        st.op1,
+        ' ',
+
+        -- 2. 두 번째 이용 규칙 조건문 생성
+        (SELECT
+             GROUP_CONCAT(CONCAT(sr2.tar_name, ' ', sr2.op1, ' ', sr2.val1) SEPARATOR ';')
+         FROM service_rule_use AS sr2
+         WHERE sr2.rule_stat = st.rule_stat2
+         AND sr2.chk_use = 'Y'
+         AND st.rule_stat2 IS NOT NULL),
+
+        -- 다른 조건문과 결합
+        ' ',
+        st.op2,
+        ' ',
+
+        -- 3. 세 번째 이용 규칙 조건문 생성
+        (SELECT
+             GROUP_CONCAT(CONCAT(sr3.tar_name, ' ', sr3.op1, ' ', sr3.val1) SEPARATOR ';')
+         FROM service_rule_use AS sr3
+         WHERE sr3.rule_stat = st.rule_stat3
+         AND sr3.chk_use = 'Y'
+         AND st.rule_stat3 IS NOT NULL)
+      ) AS cond
+    FROM service_terms AS st
+    WHERE st.poli_stat = #{poli_stat}
+    AND st.chk_use = 'Y';
+  </select>
+
   <insert id="insert" parameterType="ServiceTermsDto">
     INSERT INTO service_terms
     (
