@@ -13,5 +13,7 @@
 
     <!-- service -->
     <typeAlias alias="ServiceRuleUseDto" type="com.example.demo.dto.service.ServiceRuleUseDto"/>
+    <typeAlias alias="ServiceTermsDto" type="com.example.demo.dto.service.ServiceTermsDto"/>
+
   </typeAliases>
 </configuration>
