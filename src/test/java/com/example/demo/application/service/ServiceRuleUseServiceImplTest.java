@@ -204,7 +204,7 @@ class ServiceRuleUseServiceImplTest {
             when(serviceRuleUseDao.updateUse(dto)).thenReturn(1);
 
             // when
-            assertDoesNotThrow(() -> serviceRuleUseService.modifyUse(request));
+            assertDoesNotThrow(() -> serviceRuleUseService.modifyChkUse(request));
         }
     }
 

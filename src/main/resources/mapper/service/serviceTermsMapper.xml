@@ -42,6 +42,12 @@
     LIMIT #{offset}, #{pageSize};
   </select>
 
+  <select id="existsByPoliStat" parameterType="string" resultType="boolean">
+    SELECT  COUNT(*) > 0
+    FROM    service_terms
+    WHERE   poli_stat = #{poli_stat}
+  </select>
+
   <select id="select" parameterType="string" resultType="ServiceTermsDto">
     SELECT
       poli_stat,

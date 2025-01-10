@@ -24,6 +24,10 @@ public class ServiceTermsDaoImpl {
         return session.selectOne(namespace + "countBySearchCondition", sc);
     }
 
+    public boolean existsByPoliStat(String poli_stat) {
+        return session.selectOne(namespace + "existsByPoliStat", poli_stat);
+    }
+
     public ServiceTermsDto select(String poli_stat) {
         return session.selectOne(namespace + "select", poli_stat);
     }

@@ -2,6 +2,7 @@ package com.example.demo.application.service;
 
 import com.example.demo.dto.PageResponse;
 import com.example.demo.dto.SearchCondition;
+import com.example.demo.dto.service.ServiceTermsConditionDto;
 import com.example.demo.dto.service.ServiceTermsDto;
 import com.example.demo.dto.service.ServiceTermsRequest;
 import com.example.demo.dto.service.ServiceTermsResponse;
@@ -29,7 +30,14 @@ public class ServiceTermsServiceImpl {
         return serviceTermsDao.countBySearchCondition(sc);
     }
 
+
     public ServiceTermsResponse create(ServiceTermsRequest request) {
+        boolean exists = serviceTermsDao.existsByPoliStat(request.getPoli_stat());
+        if (exists) {
+            log.error("[SERVICE-TERMS] create() 실패 - 중복된 키 값 : {}", request.getPoli_stat());
+            throw new RuntimeException();
+        }
+
         ServiceTermsDto dto = new ServiceTermsDto(request, formatter.getCurrentDateFormat(), formatter.getManagerSeq(), formatter.getCurrentDateFormat(), formatter.getManagerSeq());
         int rowCnt = serviceTermsDao.insert(dto);
 
@@ -43,27 +51,51 @@ public class ServiceTermsServiceImpl {
     }
 
     public ServiceTermsResponse readByPoliStat(String poli_stat) {
+        boolean exists = serviceTermsDao.existsByPoliStat(poli_stat);
+        if (!exists) {
+            log.error("[SERVICE-TERMS] getServiceTermsCondition() 실패 : {}", poli_stat);
+            throw new RuntimeException();
+        }
+
         return serviceTermsDao.select(poli_stat)
-                             .toResponse();
+                              .toResponse();
     }
 
     public PageResponse<ServiceTermsResponse> readBySearchCondition(SearchCondition sc) {
         int totalCnt = serviceTermsDao.countBySearchCondition(sc);
-        List<ServiceTermsDto> dtos = serviceTermsDao.selectBySearchCondition(sc);
-        List<ServiceTermsResponse> responses = dtos.stream()
-                                                   .map(ServiceTermsResponse::new)
-                                                   .toList();
+        List<ServiceTermsResponse> responses = serviceTermsDao.selectBySearchCondition(sc)
+                                                              .stream()
+                                                              .map(ServiceTermsResponse::new)
+                                                              .toList();
+
         return new PageResponse<>(totalCnt, sc, responses);
     }
 
     public List<ServiceTermsResponse> readAll() {
-        List<ServiceTermsDto> dtos = serviceTermsDao.selectAll();
-        return dtos.stream()
-                   .map(ServiceTermsResponse::new)
-                   .toList();
+        return serviceTermsDao.selectAll()
+                              .stream()
+                              .map(ServiceTermsResponse::new)
+                              .toList();
+    }
+
+    public String getServiceTermsCondition(String poli_stat) {
+        boolean exists = serviceTermsDao.existsByPoliStat(poli_stat);
+        if (!exists) {
+            log.error("[SERVICE-TERMS] getServiceTermsCondition() 실패 : {}", poli_stat);
+            throw new RuntimeException();
+        }
+
+        ServiceTermsConditionDto serviceTermsConditionDto = serviceTermsDao.selectForCondition(poli_stat);
+        return serviceTermsConditionDto.getCond();
     }
 
     public void modify(ServiceTermsRequest request) {
+        boolean exists = serviceTermsDao.existsByPoliStat(request.getPoli_stat());
+        if (!exists) {
+            log.error("[SERVICE-TERMS] modify() 실패 - {} 키 값에 대한 정책이 존재하지 않음", request.getPoli_stat());
+            throw new RuntimeException();
+        }
+
         ServiceTermsDto dto = new ServiceTermsDto(request, formatter.getCurrentDateFormat(), formatter.getManagerSeq(), formatter.getCurrentDateFormat(), formatter.getManagerSeq());
         int rowCnt = serviceTermsDao.update(dto);
 
@@ -74,6 +106,12 @@ public class ServiceTermsServiceImpl {
     }
 
     public void modifyChkUse(ServiceTermsRequest request) {
+        boolean exists = serviceTermsDao.existsByPoliStat(request.getPoli_stat());
+        if (!exists) {
+            log.error("[SERVICE-TERMS] modifyChkUse() 실패 - {} 키 값에 대한 정책이 존재하지 않음", request.getPoli_stat());
+            throw new RuntimeException();
+        }
+
         ServiceTermsDto dto = new ServiceTermsDto(request, formatter.getCurrentDateFormat(), formatter.getManagerSeq(), formatter.getCurrentDateFormat(), formatter.getManagerSeq());
         int rowCnt = serviceTermsDao.updateChkUse(dto);
 
