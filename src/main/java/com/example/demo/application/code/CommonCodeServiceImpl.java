@@ -1,11 +1,12 @@
 package com.example.demo.application.code;
 
 import com.example.demo.domain.Code;
+import com.example.demo.dto.PageResponse;
 import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.code.CodeDto;
-import com.example.demo.dto.code.CodePageResponse;
 import com.example.demo.dto.code.CodeRequest;
 import com.example.demo.dto.code.CodeResponse;
+import com.example.demo.dto.service.ServiceRuleUseResponse;
 import com.example.demo.repository.mybatis.code.CommonCodeDaoImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.List;
@@ -46,13 +47,13 @@ public class CommonCodeServiceImpl {
         return new CodeResponse(dto);
     }
 
-    public CodePageResponse readBySearchCondition(SearchCondition sc) {
+    public PageResponse readBySearchCondition(SearchCondition sc) {
         int totalCnt = commonCodeDao.countBySearchCondition(sc);
         List<CodeDto> codeDtos = commonCodeDao.selectBySearchCondition(sc);
         List<CodeResponse> responses = codeDtos.stream()
                                                 .map(CodeResponse::new)
                                                 .toList();
-        return CodePageResponse.of(totalCnt, sc, responses);
+        return new PageResponse<CodeResponse>(totalCnt, sc, responses);
     }
 
     public List<CodeResponse> readAll() {

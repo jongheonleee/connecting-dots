@@ -4,9 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import com.example.demo.dto.PageResponse;
 import com.example.demo.dto.SearchCondition;
-import com.example.demo.dto.code.CodeDto;
-import com.example.demo.dto.code.CodeResponse;
 import com.example.demo.dto.service.ServiceRuleUseDto;
 import com.example.demo.dto.service.ServiceRuleUseRequest;
 import com.example.demo.dto.service.ServiceRuleUseResponse;
@@ -263,7 +262,7 @@ class ServiceRuleUseServiceImplTest {
         List<ServiceRuleUseResponse> expectedResponses = dummy.stream()
                                                             .map(ServiceRuleUseResponse::new)
                                                             .toList();
-        var responses = serviceRuleUseService.readBySearchCondition(sc);
+        PageResponse<ServiceRuleUseResponse> responses = serviceRuleUseService.readBySearchCondition(sc);
 
         // then
         assertNotNull(responses);

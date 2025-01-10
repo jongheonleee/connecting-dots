@@ -4,7 +4,7 @@ import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.service.ServiceRuleUseDto;
 import com.example.demo.dto.service.ServiceRuleUseRequest;
 import com.example.demo.dto.service.ServiceRuleUseResponse;
-import com.example.demo.dto.service.ServiceRuleUsePageResponse;
+import com.example.demo.dto.PageResponse;
 import com.example.demo.repository.mybatis.service.ServiceRuleUseDaoImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.List;
@@ -55,13 +55,13 @@ public class ServiceRuleUseServiceImpl {
                                  .toList();
     }
 
-    public ServiceRuleUsePageResponse readBySearchCondition(SearchCondition sc) {
+    public PageResponse readBySearchCondition(SearchCondition sc) {
         int totalCnt = serviceRuleUseDao.countBySearchCondition(sc);
         List<ServiceRuleUseDto> serviceRuleUseDtos = serviceRuleUseDao.selectBySearchCondition(sc);
         List<ServiceRuleUseResponse> responses = serviceRuleUseDtos.stream()
                                                                   .map(ServiceRuleUseResponse::new)
                                                                   .toList();
-        return ServiceRuleUsePageResponse.of(totalCnt, sc, responses);
+        return new PageResponse<ServiceRuleUseResponse>(totalCnt, sc, responses);
     }
 
 

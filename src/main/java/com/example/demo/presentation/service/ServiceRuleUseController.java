@@ -2,7 +2,7 @@ package com.example.demo.presentation.service;
 
 import com.example.demo.application.service.ServiceRuleUseServiceImpl;
 import com.example.demo.dto.SearchCondition;
-import com.example.demo.dto.service.ServiceRuleUsePageResponse;
+import com.example.demo.dto.PageResponse;
 import com.example.demo.dto.service.ServiceRuleUseRequest;
 import com.example.demo.dto.service.ServiceRuleUseResponse;
 import jakarta.validation.Valid;
@@ -42,8 +42,9 @@ public class ServiceRuleUseController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<ServiceRuleUsePageResponse> readAll(SearchCondition sc) {
-        return ResponseEntity.ok(serviceRuleUseService.readBySearchCondition(sc));
+    public ResponseEntity<PageResponse<ServiceRuleUseResponse>> readAll(SearchCondition sc) {
+        PageResponse<ServiceRuleUseResponse> response = serviceRuleUseService.readBySearchCondition(sc);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/list/{code}")

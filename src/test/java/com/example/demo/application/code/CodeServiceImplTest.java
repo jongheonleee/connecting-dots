@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.example.demo.domain.Code;
+import com.example.demo.dto.PageResponse;
 import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.code.CodeDto;
 import com.example.demo.dto.code.CodeRequest;
@@ -271,7 +272,7 @@ class CodeServiceImplTest {
 
         // when
         List<CodeResponse> expectedResponses = dummy.stream().map(CodeResponse::new).toList();
-        var responses = codeService.readBySearchCondition(sc);
+        PageResponse<CodeResponse> responses = codeService.readBySearchCondition(sc);
 
         // then
         assertNotNull(responses);
