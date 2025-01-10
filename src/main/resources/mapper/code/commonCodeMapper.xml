@@ -7,25 +7,26 @@
     FROM common_code
   </select>
 
+  <select id="countBySearchCondition" parameterType="SearchCondition">
+    SELECT COUNT(*)
+    FROM common_code
+    WHERE TRUE
+        <choose>
+          <when test='searchOption=="NM"'>
+            AND name LIKE CONCAT('%', #{searchKeyword}, '%')
+          </when>
+          <when test='searchOption=="CV"'>
+            AND chk_use LIKE CONCAT('%', #{searchKeyword}, '%')
+          </when>
+          <when test='searchOption=="LV"'>
+            AND level = #{searchKeyword}
+          </when>
+          <when test='searchOption=="TC"'>
+            AND top_code LIKE CONCAT('%', #{searchKeyword}, '%')
+          </when>
+        </choose>
+  </select>
 
-  <insert id="insert" parameterType="CodeDto">
-    <selectKey keyProperty="seq" order="AFTER" resultType="int">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
-
-    INSERT INTO common_code
-    (
-      level, code, name,
-      chk_use, reg_date, reg_user_seq,
-      up_date, up_user_seq, top_code
-    )
-    VALUES
-    (
-      #{level}, #{code}, #{name},
-      #{chk_use}, #{reg_date}, #{reg_user_seq},
-      #{up_date}, #{up_user_seq}, #{top_code}
-    );
-  </insert>
 
   <select id="select" parameterType="string" resultType="CodeDto">
     SELECT
@@ -91,6 +92,53 @@
     WHERE code = #{code}
   </select>
 
+  <select id="selectBySearchCondition" parameterType="SearchCondition" resultType="CodeDto">
+    SELECT
+      seq,
+      level,
+      code,
+      name,
+      chk_use,
+      reg_date,
+      reg_user_seq,
+      up_date,
+      up_user_seq,
+      top_code
+    FROM common_code
+    WHERE TRUE
+    <!-- 검색 조건 -->
+    <choose>
+      <when test='searchOption=="NM"'>
+        AND name LIKE CONCAT('%', #{searchKeyword}, '%')
+      </when>
+      <when test='searchOption=="CV"'>
+        AND chk_use LIKE CONCAT('%', #{searchKeyword}, '%')
+      </when>
+      <when test='searchOption=="LV"'>
+        AND level = #{searchKeyword}
+      </when>
+      <when test='searchOption=="TC"'>
+        AND top_code LIKE CONCAT('%', #{searchKeyword}, '%')
+      </when>
+    </choose>
+
+    <!-- 정렬 조건 -->
+    <choose>
+      <when test='sortOption == "1"'> <!-- 최신순 -->
+        ORDER BY reg_date DESC
+      </when>
+      <when test='sortOption == "2"'> <!-- 오래된순 -->
+        ORDER BY reg_date
+      </when>
+      <otherwise> <!-- 기본값, 최신순 -->
+        ORDER BY reg_date DESC
+      </otherwise>
+    </choose>
+
+    <!-- 페이징 처리 -->
+    LIMIT #{offset}, #{pageSize};
+  </select>
+
   <select id="selectAll" resultType="CodeDto">
     SELECT
       seq,
@@ -105,6 +153,25 @@
       top_code
     FROM common_code
   </select>
+
+  <insert id="insert" parameterType="CodeDto">
+    <selectKey keyProperty="seq" order="AFTER" resultType="int">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+
+    INSERT INTO common_code
+    (
+    level, code, name,
+    chk_use, reg_date, reg_user_seq,
+    up_date, up_user_seq, top_code
+    )
+    VALUES
+    (
+    #{level}, #{code}, #{name},
+    #{chk_use}, #{reg_date}, #{reg_user_seq},
+    #{up_date}, #{up_user_seq}, #{top_code}
+    );
+  </insert>
 
   <update id="update" parameterType="CodeDto">
     UPDATE common_code

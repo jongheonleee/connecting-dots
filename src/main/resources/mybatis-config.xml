@@ -5,6 +5,9 @@
 
 <configuration>
   <typeAliases>
+    <!-- 공통 -->
+    <typeAlias alias="SearchCondition" type="com.example.demo.dto.SearchCondition"/>
+
     <!-- code -->
     <typeAlias alias="CodeDto" type="com.example.demo.dto.code.CodeDto"/>
 
