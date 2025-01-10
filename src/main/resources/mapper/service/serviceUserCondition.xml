@@ -82,6 +82,15 @@
     WHERE cond_code = #{cond_code}
   </update>
 
+  <update id="updateChkUse">
+    UPDATE service_user_condition
+    SET
+      chk_use = #{chk_use},
+      up_date = #{up_date},
+      up_user_seq = #{up_user_seq}
+    WHERE cond_code = #{cond_code}
+  </update>
+
   <delete id="delete" parameterType="string">
     DELETE
     FROM service_user_condition

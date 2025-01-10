@@ -15,6 +15,8 @@
     <typeAlias alias="ServiceRuleUseDto" type="com.example.demo.dto.service.ServiceRuleUseDto"/>
     <typeAlias alias="ServiceTermsDto" type="com.example.demo.dto.service.ServiceTermsDto"/>
     <typeAlias alias="ServiceTermsConditionDto" type="com.example.demo.dto.service.ServiceTermsConditionDto"/>
+    <typeAlias alias="ServiceUserConditionDto" type="com.example.demo.dto.service.ServiceUserConditionDto"/>
+
 
   </typeAliases>
 </configuration>
