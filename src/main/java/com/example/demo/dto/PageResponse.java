@@ -4,10 +4,7 @@ import java.util.List;
 import lombok.Getter;
 import lombok.ToString;
 
-// 현재 이 코드는 중복되고 있음
-// code, serviceRuleUse, ....
-// 서로 다른 부분은 List<CodeResponse> responses; 또는 List<ServiceRuleUseResponse> responses; 부분임
-// 이 부분 지네릭스로 처리할 예정
+
 @Getter
 @ToString
 public class PageResponse<T> {
