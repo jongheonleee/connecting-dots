@@ -6,7 +6,7 @@ import lombok.ToString;
 
 @Getter
 @ToString
-public class ServiceRuleUserPageResponse {
+public class ServiceRuleUsePageResponse {
 
     private static final Integer DEFAULT_PAGE = 1;
     private static final Integer DEFAULT_PAGE_SIZE = 10;
@@ -19,7 +19,7 @@ public class ServiceRuleUserPageResponse {
     private Integer totalPage;
     private List<ServiceRuleUseResponse> responses;
 
-    private ServiceRuleUserPageResponse(Integer totalCnt, Integer page, Integer pageSize, List<ServiceRuleUseResponse> responses) {
+    private ServiceRuleUsePageResponse(Integer totalCnt, Integer page, Integer pageSize, List<ServiceRuleUseResponse> responses) {
         this.totalCnt = totalCnt;
         this.page = page == null ? DEFAULT_PAGE : page;
         this.pageSize = pageSize == null ? DEFAULT_PAGE_SIZE : pageSize;
@@ -29,8 +29,8 @@ public class ServiceRuleUserPageResponse {
         this.responses = responses;
     }
 
-    public static ServiceRuleUserPageResponse of(Integer totalCnt, Integer page, Integer pageSize, List<ServiceRuleUseResponse> responses) {
-        return new ServiceRuleUserPageResponse(totalCnt, page, pageSize, responses);
+    public static ServiceRuleUsePageResponse of(Integer totalCnt, Integer page, Integer pageSize, List<ServiceRuleUseResponse> responses) {
+        return new ServiceRuleUsePageResponse(totalCnt, page, pageSize, responses);
     }
 
 }

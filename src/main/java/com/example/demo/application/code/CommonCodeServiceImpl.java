@@ -1,7 +1,9 @@
 package com.example.demo.application.code;
 
 import com.example.demo.domain.Code;
+import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.code.CodeDto;
+import com.example.demo.dto.code.CodePageResponse;
 import com.example.demo.dto.code.CodeRequest;
 import com.example.demo.dto.code.CodeResponse;
 import com.example.demo.repository.mybatis.code.CommonCodeDaoImpl;
@@ -42,6 +44,15 @@ public class CommonCodeServiceImpl {
     public CodeResponse readByCode(String code) {
         CodeDto dto = commonCodeDao.selectByCode(code);
         return new CodeResponse(dto);
+    }
+
+    public CodePageResponse readBySearchCondition(SearchCondition sc) {
+        int totalCnt = commonCodeDao.countBySearchCondition(sc);
+        List<CodeDto> codeDtos = commonCodeDao.selectBySearchCondition(sc);
+        List<CodeResponse> responses = codeDtos.stream()
+                                                .map(CodeResponse::new)
+                                                .toList();
+        return CodePageResponse.of(totalCnt, sc, responses);
     }
 
     public List<CodeResponse> readAll() {

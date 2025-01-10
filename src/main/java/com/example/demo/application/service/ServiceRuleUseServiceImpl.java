@@ -1,8 +1,10 @@
 package com.example.demo.application.service;
 
+import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.service.ServiceRuleUseDto;
 import com.example.demo.dto.service.ServiceRuleUseRequest;
 import com.example.demo.dto.service.ServiceRuleUseResponse;
+import com.example.demo.dto.service.ServiceRuleUsePageResponse;
 import com.example.demo.repository.mybatis.service.ServiceRuleUseDaoImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.List;
@@ -52,6 +54,7 @@ public class ServiceRuleUseServiceImpl {
                                  .map(ServiceRuleUseResponse::new)
                                  .toList();
     }
+
 
     public List<ServiceRuleUseResponse> readAll() {
         List<ServiceRuleUseDto> serviceRuleUseDtos = serviceRuleUseDao.selectAll();
