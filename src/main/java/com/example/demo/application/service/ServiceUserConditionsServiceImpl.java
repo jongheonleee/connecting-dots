@@ -3,7 +3,6 @@ package com.example.demo.application.service;
 
 import com.example.demo.dto.PageResponse;
 import com.example.demo.dto.SearchCondition;
-import com.example.demo.dto.service.ServiceUserConditionResponse;
 import com.example.demo.dto.service.ServiceUserConditionsDetailResponse;
 import com.example.demo.dto.service.ServiceUserConditionsDto;
 import com.example.demo.dto.service.ServiceUserConditionsRequest;
@@ -11,7 +10,6 @@ import com.example.demo.dto.service.ServiceUserConditionsResponse;
 import com.example.demo.repository.mybatis.service.ServiceUserConditionsDaoImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
