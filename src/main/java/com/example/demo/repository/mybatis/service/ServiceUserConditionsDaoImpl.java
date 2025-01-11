@@ -68,6 +68,10 @@ public class ServiceUserConditionsDaoImpl {
         return session.delete(namespace + "delete", seq);
     }
 
+    public int deleteByCondsCode(String conds_code) {
+        return session.delete(namespace + "deleteByCondsCode", conds_code);
+    }
+
     public int deleteAll() {
         return session.delete(namespace + "deleteAll");
     }

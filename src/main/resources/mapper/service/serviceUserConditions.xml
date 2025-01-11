@@ -295,6 +295,12 @@
     WHERE seq = #{seq}
   </delete>
 
+  <delete id="deleteByCondsCode" parameterType="string">
+    DELETE
+    FROM service_user_conditions
+    WHERE conds_code = #{conds_code}
+  </delete>
+
   <delete id="deleteAll">
     DELETE
     FROM service_user_conditions

@@ -41,4 +41,8 @@ public class ServiceUserConditionsDetailDto {
     private String short_exp4;
     private String long_exp4;
     private String chk_cond_code4;
+
+    public ServiceUserConditionsDetailResponse toResponse() {
+        return new ServiceUserConditionsDetailResponse(this);
+    }
 }
