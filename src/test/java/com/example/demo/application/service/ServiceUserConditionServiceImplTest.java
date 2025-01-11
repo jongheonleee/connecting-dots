@@ -147,7 +147,7 @@ class ServiceUserConditionServiceImplTest {
             when(formatter.getManagerSeq()).thenReturn(up_user_seq);
             when(serviceUserConditionDao.update(dto)).thenReturn(1);
 
-            serviceUserConditionService.update(request);
+            serviceUserConditionService.modify(request);
         }
     }
 
@@ -164,7 +164,7 @@ class ServiceUserConditionServiceImplTest {
             when(formatter.getManagerSeq()).thenReturn(up_user_seq);
             when(serviceUserConditionDao.updateChkUse(dto)).thenReturn(1);
 
-            assertDoesNotThrow(() -> serviceUserConditionService.updateChkUse(request));
+            assertDoesNotThrow(() -> serviceUserConditionService.modifyChkUse(request));
         }
     }
 

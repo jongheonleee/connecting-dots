@@ -69,7 +69,7 @@ public class ServiceUserConditionServiceImpl {
                    .toList();
     }
 
-    public void update(ServiceUserConditionRequest request) {
+    public void modify(ServiceUserConditionRequest request) {
         // 존재하는 키인지 확인
         boolean exists = serviceUserConditionDao.existsByCondCode(request.getCond_code());
         // 존재하지 않으면 notFoundException 발생
@@ -88,7 +88,7 @@ public class ServiceUserConditionServiceImpl {
         }
     }
 
-    public void updateChkUse(ServiceUserConditionRequest request) {
+    public void modifyChkUse(ServiceUserConditionRequest request) {
         // 존재하는 키인지 확인
         boolean exists = serviceUserConditionDao.existsByCondCode(request.getCond_code());
         // 존재하지 않으면 notFoundException 발생
