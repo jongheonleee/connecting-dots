@@ -7,6 +7,21 @@
     FROM service_user_conditions
   </select>
 
+  <select id="countBySearchCondition" parameterType="SearchCondition" resultType="ServiceUserConditionsDto">
+    SELECT COUNT(*)
+    FROM service_user_conditions
+    WHERE TRUE
+    <!-- 검색 조건 -->
+    <choose>
+      <when test='searchOption=="NM"'>
+        AND name LIKE CONCAT('%', #{searchKeyword}, '%')
+      </when>
+      <when test='searchOption=="CV"'>
+        AND chk_use LIKE CONCAT('%', #{searchKeyword}, '%')
+      </when>
+    </choose>
+  </select>
+
   <select id="existsBySeq" parameterType="int" resultType="boolean">
     SELECT  COUNT(*) > 0
     FROM    service_user_conditions
@@ -148,6 +163,7 @@
       sucs.chk_cond_code4 AS chk_cond_code4
 
     FROM service_user_conditions AS sucs
+
            -- 서비스 이용 약관 항목 1 조인
            INNER JOIN service_user_condition AS suc1
            ON sucs.cond_code1 = suc1.cond_code
