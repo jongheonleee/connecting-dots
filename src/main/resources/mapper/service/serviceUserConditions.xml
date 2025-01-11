@@ -7,7 +7,7 @@
     FROM service_user_conditions
   </select>
 
-  <select id="countBySearchCondition" parameterType="SearchCondition" resultType="ServiceUserConditionsDto">
+  <select id="countBySearchCondition" parameterType="SearchCondition" resultType="int">
     SELECT COUNT(*)
     FROM service_user_conditions
     WHERE TRUE
@@ -126,6 +126,28 @@
 
     <!-- 페이징 처리 -->
     LIMIT #{offset}, #{pageSize};
+  </select>
+
+  <select id="selectAll" resultType="ServiceUserConditionsDto">
+    SELECT
+      seq,
+      conds_code,
+      name,
+      cond_code1,
+      chk_cond_code1,
+      cond_code2,
+      chk_cond_code2,
+      cond_code3,
+      chk_cond_code3,
+      cond_code4,
+      chk_cond_code4,
+      chk_use,
+      comt,
+      reg_date,
+      reg_user_seq,
+      up_date,
+      up_user_seq
+    FROM service_user_conditions
   </select>
 
   <select id="selectForUserConditions" parameterType="string" resultType="ServiceUserConditionsDetailDto">
