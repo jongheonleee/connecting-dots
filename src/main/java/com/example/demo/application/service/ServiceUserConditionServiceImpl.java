@@ -6,7 +6,6 @@ import com.example.demo.dto.service.ServiceUserConditionResponse;
 import com.example.demo.repository.mybatis.service.ServiceUserConditionDaoImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @AllArgsConstructor
-public class ServiceUserConditionImpl {
+public class ServiceUserConditionServiceImpl {
 
     private final ServiceUserConditionDaoImpl serviceUserConditionDao;
     private final CustomFormatter formatter;
