@@ -1,12 +1,17 @@
 package com.example.demo.application.service;
 
 
+import com.example.demo.dto.PageResponse;
+import com.example.demo.dto.SearchCondition;
+import com.example.demo.dto.service.ServiceUserConditionResponse;
 import com.example.demo.dto.service.ServiceUserConditionsDetailResponse;
 import com.example.demo.dto.service.ServiceUserConditionsDto;
 import com.example.demo.dto.service.ServiceUserConditionsRequest;
 import com.example.demo.dto.service.ServiceUserConditionsResponse;
 import com.example.demo.repository.mybatis.service.ServiceUserConditionsDaoImpl;
 import com.example.demo.utils.CustomFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,6 +28,10 @@ public class ServiceUserConditionsServiceImpl {
 
     public int count() {
         return serviceUserConditionsDao.count();
+    }
+
+    public int countBySearchCondition(SearchCondition sc) {
+        return serviceUserConditionsDao.countBySearchCondition(sc);
     }
 
     public ServiceUserConditionsResponse create(ServiceUserConditionsRequest request) {
@@ -53,6 +62,15 @@ public class ServiceUserConditionsServiceImpl {
 
         return serviceUserConditionsDao.selectByCondsCode(conds_code)
                                        .toResponse();
+    }
+
+    public PageResponse<ServiceUserConditionsResponse> readBySearchCondition(SearchCondition sc) {
+        int totalCnt = serviceUserConditionsDao.countBySearchCondition(sc);
+        List<ServiceUserConditionsResponse> responses = serviceUserConditionsDao.selectBySearchCondition(sc)
+                                                                                .stream()
+                                                                                .map(ServiceUserConditionsResponse::new)
+                                                                                .toList();
+        return new PageResponse<>(totalCnt, sc, responses);
     }
 
     public ServiceUserConditionsDetailResponse readByCondsCodeForUserConditions(String conds_code) {

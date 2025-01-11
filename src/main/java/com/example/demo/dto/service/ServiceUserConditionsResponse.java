@@ -28,4 +28,24 @@ public class ServiceUserConditionsResponse {
     private Integer reg_user_seq;
     private String up_date;
     private Integer up_user_seq;
+
+    public ServiceUserConditionsResponse(ServiceUserConditionsDto dto) {
+        this.seq = dto.getSeq();
+        this.conds_code = dto.getConds_code();
+        this.name = dto.getName();
+        this.cond_code1 = dto.getCond_code1();
+        this.chk_cond_code1 = dto.getChk_cond_code1();
+        this.cond_code2 = dto.getCond_code2();
+        this.chk_cond_code2 = dto.getChk_cond_code2();
+        this.cond_code3 = dto.getCond_code3();
+        this.chk_cond_code3 = dto.getChk_cond_code3();
+        this.cond_code4 = dto.getCond_code4();
+        this.chk_cond_code4 = dto.getChk_cond_code4();
+        this.chk_use = dto.getChk_use();
+        this.comt = dto.getComt();
+        this.reg_date = dto.getReg_date();
+        this.reg_user_seq = dto.getReg_user_seq();
+        this.up_date = dto.getUp_date();
+        this.up_user_seq = dto.getUp_user_seq();
+    }
 }
