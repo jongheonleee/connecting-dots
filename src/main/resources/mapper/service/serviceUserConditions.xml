@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.service.ServiceUserConditionsMapper">
+  <select id="count" resultType="int">
+    SELECT COUNT(*)
+    FROM service_user_conditions
+  </select>
+
+  <select id="existsBySeq" parameterType="int" resultType="boolean">
+    SELECT  COUNT(*) > 0
+    FROM    service_user_conditions
+    WHERE   seq = #{seq}
+  </select>
+
+  <select id="existsByCondsCode" parameterType="string" resultType="boolean">
+    SELECT  COUNT(*) > 0
+    FROM    service_user_conditions
+    WHERE   conds_code = #{conds_code}
+  </select>
+
+  <select id="select" parameterType="int" resultType="ServiceUserConditionsDto">
+    SELECT
+      seq,
+      conds_code,
+      name,
+      cond_code1,
+      chk_cond_code1,
+      cond_code2,
+      chk_cond_code2,
+      cond_code3,
+      chk_cond_code3,
+      cond_code4,
+      chk_cond_code4,
+      chk_use,
+      comt,
+      reg_date,
+      reg_user_seq,
+      up_date,
+      up_user_seq
+    FROM service_user_conditions
+    WHERE seq = #{seq}
+  </select>
+
+  <select id="selectByCondsCode" parameterType="string" resultType="ServiceUserConditionsDto">
+    SELECT
+      seq,
+      conds_code,
+      name,
+      cond_code1,
+      chk_cond_code1,
+      cond_code2,
+      chk_cond_code2,
+      cond_code3,
+      chk_cond_code3,
+      cond_code4,
+      chk_cond_code4,
+      chk_use,
+      comt,
+      reg_date,
+      reg_user_seq,
+      up_date,
+      up_user_seq
+    FROM service_user_conditions
+    WHERE conds_code = #{conds_code}
+  </select>
+
+  <select id="selectBySearchCondition" parameterType="SearchCondition" resultType="ServiceUserConditionsDto">
+    SELECT
+      seq,
+      conds_code,
+      name,
+      cond_code1,
+      chk_cond_code1,
+      cond_code2,
+      chk_cond_code2,
+      cond_code3,
+      chk_cond_code3,
+      cond_code4,
+      chk_cond_code4,
+      chk_use,
+      comt,
+      reg_date,
+      reg_user_seq,
+      up_date,
+      up_user_seq
+    FROM service_user_conditions
+    WHERE TRUE
+    <!-- 검색 조건 -->
+    <choose>
+      <when test='searchOption=="NM"'>
+        AND name LIKE CONCAT('%', #{searchKeyword}, '%')
+      </when>
+      <when test='searchOption=="CV"'>
+        AND chk_use LIKE CONCAT('%', #{searchKeyword}, '%')
+      </when>
+    </choose>
+
+    <!-- 정렬 조건 -->
+    <choose>
+      <when test='sortOption == "1"'> <!-- 최신순 -->
+        ORDER BY reg_date DESC
+      </when>
+      <when test='sortOption == "2"'> <!-- 오래된순 -->
+        ORDER BY reg_date
+      </when>
+      <otherwise> <!-- 기본값, 최신순 -->
+        ORDER BY reg_date DESC
+      </otherwise>
+    </choose>
+
+    <!-- 페이징 처리 -->
+    LIMIT #{offset}, #{pageSize};
+  </select>
+
+  <select id="selectForUserConditions" parameterType="string" resultType="ServiceUserConditionsDetailDto">
+    SELECT
+      -- 서비스 이용 약관 필수 정보
+      sucs.conds_code AS conds_code,
+      sucs.name AS name,
+
+      -- 서비스 이용 약관 항목 1
+      suc1.cond_code AS cond_code1,
+      suc1.name AS name1,
+      suc1.short_exp AS short_exp1,
+      suc1.long_exp AS long_exp1,
+      sucs.chk_cond_code1 AS chk_cond_code1,
+
+      -- 서비스 이용 약관 항목 2
+      suc2.cond_code AS cond_code2,
+      suc2.name AS name2,
+      suc2.short_exp AS short_exp2,
+      suc2.long_exp AS long_exp2,
+      sucs.chk_cond_code2 AS chk_cond_code2,
+
+      -- 서비스 이용 약관 항목 3
+      suc3.cond_code AS cond_code3,
+      suc3.name AS name3,
+      suc3.short_exp AS short_exp3,
+      suc3.long_exp AS long_exp3,
+      sucs.chk_cond_code3 AS chk_cond_code3,
+
+      -- 서비스 이용 약관 항목 4
+      suc4.cond_code AS cond_code4,
+      suc4.name AS name4,
+      suc4.short_exp AS short_exp4,
+      suc4.long_exp AS long_exp4,
+      sucs.chk_cond_code4 AS chk_cond_code4
+
+    FROM service_user_conditions AS sucs
+           -- 서비스 이용 약관 항목 1 조인
+           INNER JOIN service_user_condition AS suc1
+           ON sucs.cond_code1 = suc1.cond_code
+           AND sucs.cond_code1 IS NOT NULL
+           AND suc1.chk_use = 'Y'
+
+           -- 서비스 이용 약관 항목 2 조인
+           INNER JOIN service_user_condition AS suc2
+           ON sucs.cond_code2 = suc2.cond_code
+           AND sucs.cond_code2 IS NOT NULL
+           AND suc2.chk_use = 'Y'
+
+           -- 서비스 이용 약관 항목 3 조인
+           INNER JOIN service_user_condition AS suc3
+           ON sucs.cond_code3 = suc3.cond_code
+           AND sucs.cond_code3 IS NOT NULL
+           AND suc3.chk_use = 'Y'
+
+           -- 서비스 이용 약관 항목 4 조인
+           INNER JOIN service_user_condition AS suc4
+           ON sucs.cond_code4 = suc4.cond_code
+           AND sucs.cond_code4 IS NOT NULL
+           AND suc4.chk_use = 'Y'
+
+    -- 서비스 이용 약관 코드와 사용 여부 조회
+    WHERE sucs.chk_use = 'Y'
+    AND sucs.conds_code = #{conds_code};
+  </select>
+
+  <insert id="insert" parameterType="ServiceUserConditionsDto">
+    <selectKey keyProperty="seq" resultType="int" order="AFTER">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+
+    INSERT INTO service_user_conditions
+    (
+      conds_code,
+      name,
+      cond_code1,
+      chk_cond_code1,
+      cond_code2,
+      chk_cond_code2,
+      cond_code3,
+      chk_cond_code3,
+      cond_code4,
+      chk_cond_code4,
+      chk_use,
+      comt,
+      reg_date,
+      reg_user_seq,
+      up_date,
+      up_user_seq
+    )
+    VALUES
+    (
+      #{conds_code},
+      #{name},
+      #{cond_code1},
+      #{chk_cond_code1},
+      #{cond_code2},
+      #{chk_cond_code2},
+      #{cond_code3},
+      #{chk_cond_code3},
+      #{cond_code4},
+      #{chk_cond_code4},
+      #{chk_use},
+      #{comt},
+      #{reg_date},
+      #{reg_user_seq},
+      #{up_date},
+      #{up_user_seq}
+    )
+  </insert>
+
+  <update id="update" parameterType="ServiceUserConditionsDto">
+    UPDATE service_user_conditions
+    SET
+      conds_code = #{conds_code},
+      name = #{name},
+      cond_code1 = #{cond_code1},
+      chk_cond_code1 = #{chk_cond_code1},
+      cond_code2 = #{cond_code2},
+      chk_cond_code2 = #{chk_cond_code2},
+      cond_code3 = #{cond_code3},
+      chk_cond_code3 = #{chk_cond_code3},
+      cond_code4 = #{cond_code4},
+      chk_cond_code4 = #{chk_cond_code4},
+      chk_use = #{chk_use},
+      comt = #{comt},
+      up_date = #{up_date},
+      up_user_seq = #{up_user_seq}
+    WHERE seq = #{seq}
+  </update>
+
+  <update id="updateChkUse" parameterType="ServiceUserConditionsDto">
+    UPDATE service_user_conditions
+    SET
+      chk_use = #{chk_use},
+      up_date = #{up_date},
+      up_user_seq = #{up_user_seq}
+    WHERE seq = #{seq}
+  </update>
+
+  <delete id="delete" parameterType="int">
+    DELETE
+    FROM service_user_conditions
+    WHERE seq = #{seq}
+  </delete>
+
+  <delete id="deleteAll">
+    DELETE
+    FROM service_user_conditions
+  </delete>
+
+</mapper>
