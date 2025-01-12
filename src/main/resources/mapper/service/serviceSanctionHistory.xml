@@ -2,5 +2,218 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.service.ServiceSanctionHistoryMapper">
+  <select id="count" resultType="int">
+    SELECT COUNT(*)
+    FROM service_sanction_history
+  </select>
+
+  <select id="countBySearchCondition" parameterType="SearchCondition" resultType="int">
+    SELECT COUNT(*)
+    FROM service_sanction_history
+    WHERE TRUE
+
+    <!-- 검색 조건 -->
+    <choose>
+      <when test='searchOption=="PS"'>
+        AND poli_stat LIKE CONCAT('%', #{searchKeyword}, '%')
+      </when>
+      <when test='searchOption=="US"'>
+        AND user_seq LIKE CONCAT('%', #{searchKeyword}, '%')
+      </when>
+    </choose>
+  </select>
+
+  <select id="existsBySeq" parameterType="int" resultType="boolean">
+    SELECT  COUNT(*) > 0
+    FROM    service_sanction_history
+    WHERE   seq = #{seq}
+  </select>
+
+  <select id="selectBySeq" parameterType="int" resultType="ServiceSanctionHistoryDto">
+    SELECT
+      seq,
+      poli_stat,
+      user_seq,
+      appl_begin,
+      appl_end,
+      short_exp,
+      long_exp,
+      comt,
+      reg_date,
+      reg_user_seq,
+      up_date,
+      up_user_seq
+    FROM service_sanction_history
+    WHERE seq = #{seq}
+  </select>
+
+  <select id="selectBySeqForUpdate" parameterType="int" resultType="ServiceSanctionHistoryDto">
+    SELECT
+      seq,
+      poli_stat,
+      user_seq,
+      appl_begin,
+      appl_end,
+      short_exp,
+      long_exp,
+      comt,
+      reg_date,
+      reg_user_seq,
+      up_date,
+      up_user_seq
+    FROM service_sanction_history
+    WHERE seq = #{seq}
+    FOR UPDATE
+  </select>
+
+  <select id="selectByPoliStat" parameterType="string" resultType="ServiceSanctionHistoryDto">
+    SELECT
+      seq,
+      poli_stat,
+      user_seq,
+      appl_begin,
+      appl_end,
+      short_exp,
+      long_exp,
+      comt,
+      reg_date,
+      reg_user_seq,
+      up_date,
+      up_user_seq
+    FROM service_sanction_history
+    WHERE poli_stat = #{poli_stat};
+  </select>
+
+  <select id="selectByUserSeq" parameterType="int" resultType="ServiceSanctionHistoryDto">
+    SELECT
+      seq,
+      poli_stat,
+      user_seq,
+      appl_begin,
+      appl_end,
+      short_exp,
+      long_exp,
+      comt,
+      reg_date,
+      reg_user_seq,
+      up_date,
+      up_user_seq
+    FROM service_sanction_history
+    WHERE user_seq = #{userSeq}
+  </select>
+
+  <select id="selectByUserSeqForNow" parameterType="int" resultType="ServiceSanctionHistoryDto">
+    SELECT
+      seq,
+      poli_stat,
+      user_seq,
+      appl_begin,
+      appl_end,
+      short_exp,
+      long_exp,
+      comt,
+      reg_date,
+      reg_user_seq,
+      up_date,
+      up_user_seq
+    FROM service_sanction_history
+    WHERE user_seq = #{userSeq}
+    AND CURRENT_DATE BETWEEN appl_begin AND appl_end;
+  </select>
+
+  <select id="selectBySearchCondition" parameterType="SearchCondition" resultType="ServiceSanctionHistoryDto">
+    SELECT
+      seq,
+      poli_stat,
+      user_seq,
+      appl_begin,
+      appl_end,
+      short_exp,
+      long_exp,
+      comt,
+      reg_date,
+      reg_user_seq,
+      up_date,
+      up_user_seq
+    FROM service_sanction_history
+    WHERE TRUE
+
+    <!-- 검색 조건 -->
+    <choose>
+      <when test='searchOption=="PS"'>
+        AND poli_stat LIKE CONCAT('%', #{searchKeyword}, '%')
+      </when>
+      <when test='searchOption=="US"'>
+        AND user_seq LIKE CONCAT('%', #{searchKeyword}, '%')
+      </when>
+    </choose>
+
+    <!-- 정렬 조건 -->
+    <choose>
+      <when test='sortOption == "1"'> <!-- 최신순 -->
+        ORDER BY reg_date DESC
+      </when>
+      <when test='sortOption == "2"'> <!-- 오래된순 -->
+        ORDER BY reg_date
+      </when>
+      <otherwise> <!-- 기본값, 최신순 -->
+        ORDER BY reg_date DESC
+      </otherwise>
+    </choose>
+
+    <!-- 페이징 처리 -->
+    LIMIT #{offset}, #{pageSize};
+  </select>
+
+  <select id="selectAll" resultType="ServiceSanctionHistoryDto">
+    SELECT
+      poli_stat,
+      user_seq,
+      appl_begin,
+      appl_end,
+      short_exp,
+      long_exp,
+      comt,
+      reg_date,
+      reg_user_seq,
+      up_date,
+      up_user_seq
+    FROM service_sanction_history;
+  </select>
+
+  <insert id="insert" parameterType="ServiceSanctionHistoryDto">
+    INSERT INTO service_sanction_history
+      (poli_stat, user_seq, appl_begin,
+       appl_end, short_exp, long_exp,
+       comt, reg_date, reg_user_seq,
+       up_date, up_user_seq)
+    VALUES
+      (#{poli_stat}, #{user_eq}, #{appl_begin},
+       #{appl_end}, #{short_exp}, #{long_exp},
+       #{comt}, #{reg_date}, #{reg_user_seq},
+       #{up_date}, #{up_user_seq});
+  </insert>
+
+  <update id="update" parameterType="ServiceSanctionHistoryDto">
+    UPDATE service_sanction_history
+    SET poli_stat = #{poli_stat},
+        appl_begin = #{appl_begin},
+        appl_end = #{appl_end},
+        short_exp = #{short_exp},
+        long_exp = #{long_exp},
+        comt = #{comt},
+        up_date = #{up_date},
+        up_user_seq = #{up_user_seq}
+    WHERE user_seq = #{user_seq};
+  </update>
+
+  <update id="updateForApplEnd" parameterType="ServiceSanctionHistoryDto">
+    UPDATE service_sanction_history
+    SET
+      appl_end = #{appl_end},
+      up_date = #{up_date},
+      up_user_seq = #{up_user_seq}
+    WHERE user_seq = #{user_seq};
+  </update>
 
 </mapper>
