@@ -10,6 +10,7 @@ import com.example.demo.dto.service.ServiceUserConditionsResponse;
 import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -25,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @Validated
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/api/service-user-conditions")
 public class ServiceUserConditionsController {
 

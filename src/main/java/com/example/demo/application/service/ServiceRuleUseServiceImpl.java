@@ -9,13 +9,14 @@ import com.example.demo.repository.mybatis.service.ServiceRuleUseDaoImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ServiceRuleUseServiceImpl {
 
     private final ServiceRuleUseDaoImpl serviceRuleUseDao;
