@@ -13,7 +13,6 @@
     WHERE seq = #{seq}
   </select>
 
-  <!-- 다른 파트에도 적용하기 -->
   <select id="existsBySeqForUpdate" parameterType="int" resultType="boolean">
     SELECT COUNT(*) > 0
     FROM service_sanction_history

@@ -28,6 +28,14 @@
     WHERE   seq = #{seq}
   </select>
 
+  <select id="existsBySeq" parameterType="int" resultType="boolean">
+    SELECT  COUNT(*) > 0
+    FROM    service_user_conditions
+    WHERE   seq = #{seq}
+    FOR UPDATE
+  </select>
+
+
   <select id="existsByCondsCode" parameterType="string" resultType="boolean">
     SELECT  COUNT(*) > 0
     FROM    service_user_conditions

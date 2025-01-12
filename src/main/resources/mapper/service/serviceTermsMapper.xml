@@ -8,6 +8,13 @@
     FROM service_terms
   </select>
 
+  <select id="existsByPoliStatForUpdate" parameterType="string" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM service_terms
+    WHERE poli_stat = #{poli_stat}
+    FOR UPDATE
+  </select>
+
   <select id="countBySearchCondition" parameterType="SearchCondition" resultType="int">
     SELECT COUNT(*)
     FROM service_terms
