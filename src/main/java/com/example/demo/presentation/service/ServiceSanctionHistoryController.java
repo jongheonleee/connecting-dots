@@ -53,7 +53,7 @@ public class ServiceSanctionHistoryController {
         return ResponseEntity.ok(serviceSanctionHistoryService.readAll());
     }
 
-    @GetMapping("/{user_seq}/all")
+    @GetMapping("/all/{user_seq}")
     public ResponseEntity<List<ServiceSanctionHistoryResponse>> readAllByUserSeq(@PathVariable("user_seq") Integer user_seq) {
         return ResponseEntity.ok(serviceSanctionHistoryService.readByUserSeq(user_seq));
     }
