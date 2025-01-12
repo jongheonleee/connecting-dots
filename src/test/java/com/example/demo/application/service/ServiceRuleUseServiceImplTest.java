@@ -184,6 +184,8 @@ class ServiceRuleUseServiceImplTest {
             ServiceRuleUseDto dto = new ServiceRuleUseDto(request, currentDateFormat, managerSeq, currentDateFormat, managerSeq);
             when(formatter.getCurrentDateFormat()).thenReturn(currentDateFormat);
             when(formatter.getManagerSeq()).thenReturn(managerSeq);
+
+            when(serviceRuleUseDao.existsByRuleStatForUpdate(request.getRule_stat())).thenReturn(true);
             when(serviceRuleUseDao.update(dto)).thenReturn(1);
 
             // when
@@ -201,6 +203,8 @@ class ServiceRuleUseServiceImplTest {
             ServiceRuleUseDto dto = new ServiceRuleUseDto(request, currentDateFormat, managerSeq, currentDateFormat, managerSeq);
             when(formatter.getCurrentDateFormat()).thenReturn(currentDateFormat);
             when(formatter.getManagerSeq()).thenReturn(managerSeq);
+
+            when(serviceRuleUseDao.existsByRuleStatForUpdate(request.getRule_stat())).thenReturn(true);
             when(serviceRuleUseDao.updateUse(dto)).thenReturn(1);
 
             // when

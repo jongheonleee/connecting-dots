@@ -94,6 +94,7 @@ public class ServiceSanctionHistoryServiceImpl {
         return new PageResponse<>(totalCnt, sc, responses);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void modify(ServiceSanctionHistoryRequest request) {
         boolean exists = serviceSanctionHistoryDao.existsBySeqForUpdate(request.getSeq());
 

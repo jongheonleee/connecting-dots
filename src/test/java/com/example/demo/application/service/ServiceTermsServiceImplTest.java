@@ -178,7 +178,7 @@ class ServiceTermsServiceImplTest {
     void modify(int cnt) {
         for (int i=0; i<cnt; i++) {
             ServiceTermsRequest request = createRequest(i);
-            when(serviceTermsDao.existsByPoliStat(request.getPoli_stat())).thenReturn(true);
+            when(serviceTermsDao.existsByPoliStatForUpdate(request.getPoli_stat())).thenReturn(true);
             when(formatter.getCurrentDateFormat()).thenReturn(up_date);
             when(formatter.getManagerSeq()).thenReturn(up_user_seq);
 
@@ -195,7 +195,7 @@ class ServiceTermsServiceImplTest {
     void modifyChkUse(int cnt) {
         for (int i=0; i<cnt; i++) {
             ServiceTermsRequest request = createRequest(i);
-            when(serviceTermsDao.existsByPoliStat(request.getPoli_stat())).thenReturn(true);
+            when(serviceTermsDao.existsByPoliStatForUpdate(request.getPoli_stat())).thenReturn(true);
             when(formatter.getCurrentDateFormat()).thenReturn(up_date);
             when(formatter.getManagerSeq()).thenReturn(up_user_seq);
 

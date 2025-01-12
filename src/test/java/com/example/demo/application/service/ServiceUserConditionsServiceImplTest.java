@@ -192,7 +192,7 @@ class ServiceUserConditionsServiceImplTest {
             when(formatter.getCurrentDateFormat()).thenReturn(up_date);
             when(formatter.getManagerSeq()).thenReturn(up_user_seq);
 
-            when(serviceUserConditionsDao.existsByCondsCode(request.getConds_code())).thenReturn(true);
+            when(serviceUserConditionsDao.existsByCondsCodeForUpdate(request.getConds_code())).thenReturn(true);
             when(serviceUserConditionsDao.update(dto)).thenReturn(1);
 
             assertDoesNotThrow(() -> serviceUserConditionsService.modify(request));
@@ -210,7 +210,7 @@ class ServiceUserConditionsServiceImplTest {
             when(formatter.getCurrentDateFormat()).thenReturn(up_date);
             when(formatter.getManagerSeq()).thenReturn(up_user_seq);
 
-            when(serviceUserConditionsDao.existsByCondsCode(request.getConds_code())).thenReturn(true);
+            when(serviceUserConditionsDao.existsByCondsCodeForUpdate(request.getConds_code())).thenReturn(true);
             when(serviceUserConditionsDao.updateChkUse(dto)).thenReturn(1);
 
             assertDoesNotThrow(() -> serviceUserConditionsService.modifyChkUse(request));

@@ -142,7 +142,7 @@ class ServiceUserConditionServiceImplTest {
             ServiceUserConditionRequest request = createRequest(i);
             ServiceUserConditionDto dto = createDto(request);
 
-            when(serviceUserConditionDao.existsByCondCode(request.getCond_code())).thenReturn(true);
+            when(serviceUserConditionDao.existsByCondCodeForUpdate(request.getCond_code())).thenReturn(true);
             when(formatter.getCurrentDateFormat()).thenReturn(up_date);
             when(formatter.getManagerSeq()).thenReturn(up_user_seq);
             when(serviceUserConditionDao.update(dto)).thenReturn(1);
@@ -159,7 +159,7 @@ class ServiceUserConditionServiceImplTest {
             ServiceUserConditionRequest request = createRequest(i);
             ServiceUserConditionDto dto = createDto(request);
 
-            when(serviceUserConditionDao.existsByCondCode(request.getCond_code())).thenReturn(true);
+            when(serviceUserConditionDao.existsByCondCodeForUpdate(request.getCond_code())).thenReturn(true);
             when(formatter.getCurrentDateFormat()).thenReturn(up_date);
             when(formatter.getManagerSeq()).thenReturn(up_user_seq);
             when(serviceUserConditionDao.updateChkUse(dto)).thenReturn(1);

@@ -22,6 +22,10 @@ public class ServiceUserConditionDaoImpl {
         return session.selectOne(namespace + "existsByCondCode", cond_code);
     }
 
+    public boolean existsByCondCodeForUpdate(String cond_code) {
+        return session.selectOne(namespace + "existsByCondCodeForUpdate", cond_code);
+    }
+
     public ServiceUserConditionDto select(String cond_code) {
         return session.selectOne(namespace + "select", cond_code);
     }

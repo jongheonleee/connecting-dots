@@ -83,8 +83,9 @@ public class ServiceUserConditionsServiceImpl {
                                        .toResponse();
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void modify(ServiceUserConditionsRequest request) {
-        boolean exists = serviceUserConditionsDao.existsByCondsCode(request.getConds_code());
+        boolean exists = serviceUserConditionsDao.existsByCondsCodeForUpdate(request.getConds_code());
         if (!exists) {
             log.error("[SERVICE-USER-CONDITIONS] update() 실패 - 해당 conds_code와 관련된 회원 이용 약관 존재하지 않음 : {}", request.getConds_code());
             throw new RuntimeException();
@@ -100,8 +101,9 @@ public class ServiceUserConditionsServiceImpl {
 
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void modifyChkUse(ServiceUserConditionsRequest request) {
-        boolean exists = serviceUserConditionsDao.existsByCondsCode(request.getConds_code());
+        boolean exists = serviceUserConditionsDao.existsByCondsCodeForUpdate(request.getConds_code());
         if (!exists) {
             log.error("[SERVICE-USER-CONDITIONS] updateChkUse() 실패 - 해당 conds_code와 관련된 회원 이용 약관 존재하지 않음 : {}", request.getConds_code());
             throw new RuntimeException();

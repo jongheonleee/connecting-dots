@@ -28,6 +28,10 @@ public class ServiceTermsDaoImpl {
         return session.selectOne(namespace + "existsByPoliStat", poli_stat);
     }
 
+    public boolean existsByPoliStatForUpdate(String poli_stat) {
+        return session.selectOne(namespace + "existsByPoliStatForUpdate", poli_stat);
+    }
+
     public ServiceTermsDto select(String poli_stat) {
         return session.selectOne(namespace + "select", poli_stat);
     }

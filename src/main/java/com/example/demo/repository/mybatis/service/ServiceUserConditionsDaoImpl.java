@@ -32,6 +32,10 @@ public class ServiceUserConditionsDaoImpl {
         return session.selectOne(namespace + "existsByCondsCode", conds_code);
     }
 
+    public boolean existsByCondsCodeForUpdate(String conds_code) {
+        return session.selectOne(namespace + "existsByCondsCodeForUpdate", conds_code);
+    }
+
     public ServiceUserConditionsDto select(Integer seq) {
         return session.selectOne(namespace + "select", seq);
     }

@@ -8,7 +8,6 @@ import com.example.demo.dto.PageResponse;
 import com.example.demo.repository.mybatis.service.ServiceRuleUseDaoImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.List;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -73,7 +72,14 @@ public class ServiceRuleUseServiceImpl {
                    .toList();
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void modify(ServiceRuleUseRequest request) {
+        boolean exists = serviceRuleUseDao.existsByRuleStatForUpdate(request.getRule_stat());
+        if (!exists) {
+            log.error("[SERVICE-RULE-USE] modify() 해당 rule_stat와 관련된 서비스 이용 규칙 존재하지 않음 : {}", request.getRule_stat());
+            throw new RuntimeException();
+        }
+
         ServiceRuleUseDto dto = new ServiceRuleUseDto(request, formatter.getCurrentDateFormat(), formatter.getManagerSeq(), formatter.getCurrentDateFormat(), formatter.getManagerSeq());
         int rowCnt = serviceRuleUseDao.update(dto);
 
@@ -83,7 +89,14 @@ public class ServiceRuleUseServiceImpl {
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void modifyChkUse(ServiceRuleUseRequest request) {
+        boolean exists = serviceRuleUseDao.existsByRuleStatForUpdate(request.getRule_stat());
+        if (!exists) {
+            log.error("[SERVICE-RULE-USE] modify() 해당 rule_stat와 관련된 서비스 이용 규칙 존재하지 않음 : {}", request.getRule_stat());
+            throw new RuntimeException();
+        }
+
         ServiceRuleUseDto dto = new ServiceRuleUseDto(request, formatter.getCurrentDateFormat(), formatter.getManagerSeq(), formatter.getCurrentDateFormat(), formatter.getManagerSeq());
         int rowCnt = serviceRuleUseDao.updateUse(dto);
 

@@ -24,6 +24,10 @@ public class ServiceRuleUseDaoImpl {
         return session.selectOne(namespace + "countByCode", code);
     }
 
+    public boolean existsByRuleStatForUpdate(String rule_stat) {
+        return session.selectOne(namespace + "existsByRuleStatForUpdate", rule_stat);
+    }
+
     public int countBySearchCondition(SearchCondition sc) {
         return session.selectOne(namespace + "countBySearchCondition", sc);
     }

@@ -90,8 +90,9 @@ public class ServiceTermsServiceImpl {
         return serviceTermsConditionDto.getCond();
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void modify(ServiceTermsRequest request) {
-        boolean exists = serviceTermsDao.existsByPoliStat(request.getPoli_stat());
+        boolean exists = serviceTermsDao.existsByPoliStatForUpdate(request.getPoli_stat());
         if (!exists) {
             log.error("[SERVICE-TERMS] modify() 실패 - {} 키 값에 대한 정책이 존재하지 않음", request.getPoli_stat());
             throw new RuntimeException();
@@ -106,8 +107,9 @@ public class ServiceTermsServiceImpl {
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void modifyChkUse(ServiceTermsRequest request) {
-        boolean exists = serviceTermsDao.existsByPoliStat(request.getPoli_stat());
+        boolean exists = serviceTermsDao.existsByPoliStatForUpdate(request.getPoli_stat());
         if (!exists) {
             log.error("[SERVICE-TERMS] modifyChkUse() 실패 - {} 키 값에 대한 정책이 존재하지 않음", request.getPoli_stat());
             throw new RuntimeException();

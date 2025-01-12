@@ -70,9 +70,10 @@ public class ServiceUserConditionServiceImpl {
                    .toList();
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void modify(ServiceUserConditionRequest request) {
         // 존재하는 키인지 확인
-        boolean exists = serviceUserConditionDao.existsByCondCode(request.getCond_code());
+        boolean exists = serviceUserConditionDao.existsByCondCodeForUpdate(request.getCond_code());
         // 존재하지 않으면 notFoundException 발생
         if (!exists) {
             log.error("[SERVICE-USER-CONDITION] update() 해당 cond_code와 관련된 회원 이용 약관 항목 존재하지 않음 : {}", request.getCond_code());
@@ -89,9 +90,10 @@ public class ServiceUserConditionServiceImpl {
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void modifyChkUse(ServiceUserConditionRequest request) {
         // 존재하는 키인지 확인
-        boolean exists = serviceUserConditionDao.existsByCondCode(request.getCond_code());
+        boolean exists = serviceUserConditionDao.existsByCondCodeForUpdate(request.getCond_code());
         // 존재하지 않으면 notFoundException 발생
         if (!exists) {
             log.error("[SERVICE-USER-CONDITION] updateChkUse() 해당 cond_code와 관련된 회원 이용 약관 항목 존재하지 않음 : {}", request.getCond_code());
