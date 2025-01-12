@@ -23,10 +23,10 @@
     </choose>
   </select>
 
-  <select id="existsBySeq" parameterType="int" resultType="boolean">
-    SELECT  COUNT(*) > 0
+  <select id="countByUserSeq" parameterType="int" resultType="int">
+    SELECT  COUNT(*)
     FROM    service_sanction_history
-    WHERE   seq = #{seq}
+    WHERE   user_seq = #{user_seq}
   </select>
 
   <select id="selectBySeq" parameterType="int" resultType="ServiceSanctionHistoryDto">
@@ -167,6 +167,7 @@
 
   <select id="selectAll" resultType="ServiceSanctionHistoryDto">
     SELECT
+      seq,
       poli_stat,
       user_seq,
       appl_begin,
@@ -215,5 +216,22 @@
       up_user_seq = #{up_user_seq}
     WHERE user_seq = #{user_seq};
   </update>
+
+  <delete id="deleteBySeq" parameterType="int">
+    DELETE
+    FROM service_sanction_history
+    WHERE seq = #{seq};
+  </delete>
+
+  <delete id="deleteByUserSeq" parameterType="int">
+    DELETE
+    FROM service_sanction_history
+    WHERE user_seq = #{user_seq};
+  </delete>
+
+  <delete id="deleteAll">
+    DELETE
+    FROM service_sanction_history;
+  </delete>
 
 </mapper>
