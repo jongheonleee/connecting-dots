@@ -18,7 +18,7 @@
     <typeAlias alias="ServiceUserConditionDto" type="com.example.demo.dto.service.ServiceUserConditionDto"/>
     <typeAlias alias="ServiceUserConditionsDto" type="com.example.demo.dto.service.ServiceUserConditionsDto"/>
     <typeAlias alias="ServiceUserConditionsDetailDto" type="com.example.demo.dto.service.ServiceUserConditionsDetailDto"/>
-    <typeAlias alias="ServiceSacntionHistoryDto" type="com.example.demo.dto.service.ServiceSacntionHistoryDto"/>
+    <typeAlias alias="ServiceSanctionHistoryDto" type="com.example.demo.dto.service.ServiceSanctionHistoryDto"/>
 
 
   </typeAliases>

@@ -189,7 +189,7 @@
        comt, reg_date, reg_user_seq,
        up_date, up_user_seq)
     VALUES
-      (#{poli_stat}, #{user_eq}, #{appl_begin},
+      (#{poli_stat}, #{user_seq}, #{appl_begin},
        #{appl_end}, #{short_exp}, #{long_exp},
        #{comt}, #{reg_date}, #{reg_user_seq},
        #{up_date}, #{up_user_seq});

@@ -13,41 +13,42 @@ import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 
-@Configuration
-@EnableWebSecurity
+// 추후에 수정해야함 현재 컨테이너 빌드가 안됨
+//@Configuration
+//@EnableWebSecurity
 public class SecurityConfig{
 
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/", "/user/register", "/user/login", "/resources/**", "/images/**").permitAll()
-                        .requestMatchers("/board/**", "/comments/**", "/reply/**", "/user/myPage").authenticated()
-                )
-                .formLogin(formLogin -> formLogin
-                        .loginPage("/user/login")
-                        .successHandler(new LoginAuthenticationSuccessHandler())
-                        .failureUrl("/user/login")
-                )
-                .logout(logout -> logout
-                        .logoutUrl("/user/logout")
-                        .invalidateHttpSession(true)
-                        .logoutSuccessUrl("/")
-                );
-
-        return http.build();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public RequestCache requestCache() {
-        return new HttpSessionRequestCache();
-    }
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http
+//                .csrf(csrf -> csrf.disable())
+//                .authorizeHttpRequests(authorize -> authorize
+//                        .requestMatchers("/", "/user/register", "/user/login", "/resources/**", "/images/**").permitAll()
+//                        .requestMatchers("/board/**", "/comments/**", "/reply/**", "/user/myPage").authenticated()
+//                )
+//                .formLogin(formLogin -> formLogin
+//                        .loginPage("/user/login")
+//                        .successHandler(new LoginAuthenticationSuccessHandler())
+//                        .failureUrl("/user/login")
+//                )
+//                .logout(logout -> logout
+//                        .logoutUrl("/user/logout")
+//                        .invalidateHttpSession(true)
+//                        .logoutSuccessUrl("/")
+//                );
+//
+//        return http.build();
+//    }
+//
+//    @Bean
+//    public PasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
+//
+//    @Bean
+//    public RequestCache requestCache() {
+//        return new HttpSessionRequestCache();
+//    }
 
 }

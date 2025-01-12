@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/service-user-condition")
+@RequestMapping("/api/service-user-conditions")
 public class ServiceUserConditionsController {
 
     private final ServiceUserConditionsServiceImpl serviceUserConditionsService;
