@@ -28,6 +28,14 @@ public class ServiceSanctionHistoryDaoImpl {
         return session.selectOne(namespace + "countBySearchCondition", sc);
     }
 
+    public boolean existsBySeq(Integer seq) {
+        return session.selectOne(namespace + "existsBySeq", seq);
+    }
+
+    public boolean existsBySeqForUpdate(Integer seq) {
+        return session.selectOne(namespace + "existsBySeqForUpdate", seq);
+    }
+
 
     public ServiceSanctionHistoryDto selectBySeq(Integer seq) {
         return session.selectOne(namespace + "selectBySeq", seq);
@@ -52,7 +60,6 @@ public class ServiceSanctionHistoryDaoImpl {
 
     public ServiceSanctionHistoryDto selectBySeqForUpdate(Integer seq) {
         return session.selectOne(namespace + "selectBySeqForUpdate", seq);
-
     }
 
     public List<ServiceSanctionHistoryDto> selectAll() {

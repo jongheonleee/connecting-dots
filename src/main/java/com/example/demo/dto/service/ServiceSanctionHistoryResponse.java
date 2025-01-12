@@ -18,4 +18,15 @@ public class ServiceSanctionHistoryResponse {
     private String short_exp;
     private String long_exp;
     private String comt;
+
+    public ServiceSanctionHistoryResponse(ServiceSanctionHistoryDto dto) {
+        this.seq = dto.getSeq();
+        this.poli_stat = dto.getPoli_stat();
+        this.user_seq = dto.getUser_seq();
+        this.appl_begin = dto.getAppl_begin();
+        this.appl_end = dto.getAppl_end();
+        this.short_exp = dto.getShort_exp();
+        this.long_exp = dto.getLong_exp();
+        this.comt = dto.getComt();
+    }
 }

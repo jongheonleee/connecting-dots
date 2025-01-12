@@ -7,6 +7,20 @@
     FROM service_sanction_history
   </select>
 
+  <select id="existsBySeq" parameterType="int" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM service_sanction_history
+    WHERE seq = #{seq}
+  </select>
+
+  <!-- 다른 파트에도 적용하기 -->
+  <select id="existsBySeqForUpdate" parameterType="int" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM service_sanction_history
+    WHERE seq = #{seq}
+    FOR UPDATE
+  </select>
+
   <select id="countBySearchCondition" parameterType="SearchCondition" resultType="int">
     SELECT COUNT(*)
     FROM service_sanction_history
