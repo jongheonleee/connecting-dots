@@ -94,6 +94,13 @@ public class ServiceSanctionHistoryServiceImpl {
         return new PageResponse<>(totalCnt, sc, responses);
     }
 
+    public List<ServiceSanctionHistoryResponse> readAll() {
+        return serviceSanctionHistoryDao.selectAll()
+                                        .stream()
+                                        .map(ServiceSanctionHistoryResponse::new)
+                                        .toList();
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public void modify(ServiceSanctionHistoryRequest request) {
         boolean exists = serviceSanctionHistoryDao.existsBySeqForUpdate(request.getSeq());
