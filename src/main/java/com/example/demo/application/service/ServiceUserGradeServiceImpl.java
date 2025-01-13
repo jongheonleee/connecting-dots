@@ -21,6 +21,25 @@ public class ServiceUserGradeServiceImpl {
     private final ServiceUserGradeDaoImpl serviceUserGradeDao;
     private final CustomFormatter formatter;
 
+    // 추후에 회원 중에서 회원들 중에서 특정 조건을 만족하는 회원들의 등급을 적용할 때 사용할 오브젝트들
+    // private final ServiceTermsDaoImpl serviceTermsDao;
+    // private final UserServiceDaoImpl userServiceDao;
+    // private final UserActivityDaoImpl userActivityDao;
+    // private final ServiceUserGradeChecker(JDBC) serviceUserGradeChecker;
+
+    // - # 1. 배치 처리? WebFlux? 어떤거 적용할지 고민
+    //  - 배치 처리로 구현한다면 이점은?
+    //  - WebFlux(비동기)로 구현한다면 이점은?
+    // - # 2. 재시도 복구 처리 적용할지 고민
+    //  - 재시도 복구 처리를 적용한다면 어떤 정책으로 처리할지 고민
+
+    // - 1. 특정 시간에 실행함, 예를 들어 새벽 04:00
+    // - 2. 모든 회원과 활동 내역을 조회함
+    // - 3. 서비스 정책 dao에서 조회한 조건문 생성
+    // - 4. serviceUserGradeChecker 통해서 회원중에 등급 업그레이드 대상을 식별하고 업그레이드 처리
+    //  - 4-1. 회원 상태를 등급변경 상태
+
+
 
     public int count() {
         return serviceUserGradeDao.count();
