@@ -2,8 +2,8 @@ package com.example.demo.application.board;
 
 import com.example.demo.repository.mybatis.board.BoardImgDaoImpl;
 import com.example.demo.dto.board.BoardImgFormDto;
-import com.example.demo.exception.board.BoardImgNotFoundException;
-import com.example.demo.exception.global.InternalServerError;
+import com.example.demo.global.error.exception.business.board.BoardImgNotFoundException;
+import com.example.demo.global.error.exception.technology.InternalServerError;
 import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

@@ -2,8 +2,8 @@ package com.example.demo.presentation.comment;
 
 import static org.springframework.http.HttpStatus.*;
 
-import com.example.demo.exception.comment.CommentFormInvalidException;
-import com.example.demo.exception.comment.CommentNotFoundException;
+import com.example.demo.global.error.exception.business.comment.CommentFormInvalidException;
+import com.example.demo.global.error.exception.business.comment.CommentNotFoundException;
 import com.example.demo.application.comment.CommentServiceImpl;
 import com.example.demo.validator.comment.CommentValidator;
 import com.example.demo.dto.comment.CommentResponseDto;

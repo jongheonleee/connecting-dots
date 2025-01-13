@@ -1,12 +1,10 @@
 package com.example.demo.application.board;
 
-import com.example.demo.dto.board.BestLikeBoardDto;
-import com.example.demo.dto.board.BestLikeBoardUpdateDto;
 import com.example.demo.dto.board.BestViewBoardDto;
 import com.example.demo.dto.board.BestViewBoardUpdateDto;
 import com.example.demo.dto.board.BoardFormDto;
 import com.example.demo.dto.board.BoardResponseDto;
-import com.example.demo.exception.global.InternalServerError;
+import com.example.demo.global.error.exception.technology.InternalServerError;
 import com.example.demo.repository.mybatis.board.BestViewBoardDaoImpl;
 import com.example.demo.repository.mybatis.board.BoardDaoImpl;
 import java.time.LocalDateTime;

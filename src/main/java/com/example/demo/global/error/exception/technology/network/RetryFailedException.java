@@ -1,4 +1,4 @@
-package com.example.demo.exception.global;
+package com.example.demo.global.error.exception.technology.network;
 
 public class RetryFailedException extends RuntimeException {
 

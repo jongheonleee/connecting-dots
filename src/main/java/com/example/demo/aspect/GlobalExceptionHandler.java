@@ -1,7 +1,7 @@
 package com.example.demo.aspect;
 
-import com.example.demo.exception.global.InternalServerError;
-import com.example.demo.exception.global.RetryFailedException;
+import com.example.demo.global.error.exception.technology.InternalServerError;
+import com.example.demo.global.error.exception.technology.network.RetryFailedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;

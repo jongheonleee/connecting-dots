@@ -1,4 +1,4 @@
-package com.example.demo.exception.category;
+package com.example.demo.global.error.exception.business.category;
 
 public class CategoryAlreadyExistsException extends RuntimeException {
 

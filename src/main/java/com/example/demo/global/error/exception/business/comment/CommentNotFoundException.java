@@ -1,4 +1,4 @@
-package com.example.demo.exception.comment;
+package com.example.demo.global.error.exception.business.comment;
 
 public class CommentNotFoundException extends RuntimeException {
 

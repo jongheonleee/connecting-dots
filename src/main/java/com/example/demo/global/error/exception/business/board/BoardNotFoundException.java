@@ -1,4 +1,4 @@
-package com.example.demo.exception.board;
+package com.example.demo.global.error.exception.business.board;
 
 public class BoardNotFoundException extends RuntimeException {
 

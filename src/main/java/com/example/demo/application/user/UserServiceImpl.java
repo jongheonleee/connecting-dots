@@ -6,7 +6,7 @@
 ////import com.example.demo.dto.user.User;
 //import com.example.demo.dto.user.UserFormDto;
 //import com.example.demo.dto.user.UserUpdatedFormDto;
-//import com.example.demo.exception.global.InternalServerError;
+//import com.example.demo.exception.technology.InternalServerError;
 //import com.example.demo.exception.user.UserAlreadyExistsException;
 //import com.example.demo.exception.user.UserFormInvalidException;
 //import com.example.demo.exception.user.UserNotFoundException;

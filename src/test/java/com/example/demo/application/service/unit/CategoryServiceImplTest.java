@@ -5,10 +5,10 @@ import static org.mockito.Mockito.when;
 
 import com.example.demo.repository.mybatis.category.CategoryDaoImpl;
 import com.example.demo.dto.category.CategoryDto;
-import com.example.demo.exception.category.CategoryAlreadyExistsException;
-import com.example.demo.exception.category.CategoryFormInvalidException;
-import com.example.demo.exception.category.CategoryNotFoundException;
-import com.example.demo.exception.global.InternalServerError;
+import com.example.demo.global.error.exception.business.category.CategoryAlreadyExistsException;
+import com.example.demo.global.error.exception.business.category.CategoryFormInvalidException;
+import com.example.demo.global.error.exception.business.category.CategoryNotFoundException;
+import com.example.demo.global.error.exception.technology.InternalServerError;
 import com.example.demo.application.category.CategoryServiceImpl;
 import java.util.ArrayList;
 import java.util.List;

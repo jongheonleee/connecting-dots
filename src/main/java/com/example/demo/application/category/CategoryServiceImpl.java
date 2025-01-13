@@ -2,15 +2,13 @@ package com.example.demo.application.category;
 
 import com.example.demo.repository.mybatis.category.CategoryDaoImpl;
 import com.example.demo.dto.category.CategoryDto;
-import com.example.demo.exception.category.CategoryAlreadyExistsException;
-import com.example.demo.exception.category.CategoryFormInvalidException;
-import com.example.demo.exception.category.CategoryNotFoundException;
-import com.example.demo.exception.global.InternalServerError;
+import com.example.demo.global.error.exception.business.category.CategoryAlreadyExistsException;
+import com.example.demo.global.error.exception.business.category.CategoryFormInvalidException;
+import com.example.demo.global.error.exception.business.category.CategoryNotFoundException;
+import com.example.demo.global.error.exception.technology.InternalServerError;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 //@Service

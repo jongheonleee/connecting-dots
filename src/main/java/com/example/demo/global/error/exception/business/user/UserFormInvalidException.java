@@ -1,4 +1,4 @@
-package com.example.demo.exception.user;
+package com.example.demo.global.error.exception.business.user;
 
 public class UserFormInvalidException extends RuntimeException {
 

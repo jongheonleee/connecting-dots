@@ -1,9 +1,9 @@
 package com.example.demo.application.comment;
 
 
-import com.example.demo.exception.comment.CommentFormInvalidException;
-import com.example.demo.exception.comment.CommentNotFoundException;
-import com.example.demo.exception.global.InternalServerError;
+import com.example.demo.global.error.exception.business.comment.CommentFormInvalidException;
+import com.example.demo.global.error.exception.business.comment.CommentNotFoundException;
+import com.example.demo.global.error.exception.technology.InternalServerError;
 import com.example.demo.dto.comment.CommentResponseDto;
 import com.example.demo.dto.comment.CommentRequestDto;
 import com.example.demo.repository.mybatis.comment.CommentDaoImpl;
