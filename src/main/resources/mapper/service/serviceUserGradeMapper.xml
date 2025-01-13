@@ -127,7 +127,7 @@
       up_date, up_user_seq,
       poli_stat
     )
-    VALUE
+    VALUES
     (
       #{stat_code}, #{name}, #{ord},
       #{short_exp}, #{long_exp}, #{img},

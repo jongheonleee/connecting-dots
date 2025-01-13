@@ -13,12 +13,12 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
+//@Service
 public class CategoryServiceImpl {
 
     private CategoryDaoImpl categoryDao;
 
-    @Autowired
+//    @Autowired
     public CategoryServiceImpl(CategoryDaoImpl categoryRepository) {
         this.categoryDao = categoryRepository;
     }

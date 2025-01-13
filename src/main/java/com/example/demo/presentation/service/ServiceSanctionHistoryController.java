@@ -70,7 +70,7 @@ public class ServiceSanctionHistoryController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/seq}")
+    @DeleteMapping("/{seq}")
     public ResponseEntity<Void> remove(@PathVariable("seq") Integer seq) {
         serviceSanctionHistoryService.remove(seq);
         return ResponseEntity.noContent()

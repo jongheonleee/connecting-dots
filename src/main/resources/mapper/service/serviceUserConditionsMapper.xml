@@ -28,7 +28,7 @@
     WHERE   seq = #{seq}
   </select>
 
-  <select id="existsBySeq" parameterType="int" resultType="boolean">
+  <select id="existsBySeqForUpdate" parameterType="int" resultType="boolean">
     SELECT  COUNT(*) > 0
     FROM    service_user_conditions
     WHERE   seq = #{seq}

@@ -28,6 +28,10 @@ public class ServiceUserConditionsDaoImpl {
         return session.selectOne(namespace + "existsBySeq", seq);
     }
 
+    public boolean existsBySeqForUpdate(Integer seq) {
+        return session.selectOne(namespace + "existsBySeqForUpdate", seq);
+    }
+
     public boolean existsByCondsCode(String conds_code) {
         return session.selectOne(namespace + "existsByCondsCode", conds_code);
     }

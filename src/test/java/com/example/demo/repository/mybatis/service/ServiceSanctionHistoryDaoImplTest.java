@@ -64,6 +64,7 @@ class ServiceSanctionHistoryDaoImplTest {
         serviceSanctionHistoryDao.deleteAll();
         serviceTermsDao.deleteAll();
         serviceRuleUseDao.deleteAll();
+
         for (int i= Code.MAX_LEVEL; i>=0; i--) {
             commonCodeDao.deleteByLevel(i);
         }
