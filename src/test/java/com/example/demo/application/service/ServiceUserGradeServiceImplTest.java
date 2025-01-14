@@ -8,12 +8,16 @@ import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.service.ServiceUserGradeDto;
 import com.example.demo.dto.service.ServiceUserGradeRequest;
 import com.example.demo.dto.service.ServiceUserGradeResponse;
+import com.example.demo.global.error.exception.business.service.ServiceUserGradeAlreadyExistsException;
+import com.example.demo.global.error.exception.business.service.ServiceUserGradeNotFoundException;
+import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
 import com.example.demo.repository.mybatis.service.ServiceUserGradeDaoImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -49,6 +53,9 @@ class ServiceUserGradeServiceImplTest {
         assertNotNull(serviceUserGradeDao);
         assertNotNull(formatter);
     }
+
+    // ===================== 지원 기능 단순 성공 테스트 =====================
+
 
     @DisplayName("카운팅 테스트")
     @ParameterizedTest
@@ -212,6 +219,81 @@ class ServiceUserGradeServiceImplTest {
         when(serviceUserGradeDao.deleteAll()).thenReturn(cnt);
         assertDoesNotThrow(() -> serviceUserGradeService.removeAll());
     }
+
+    // ===================== 예외 처리 테스트 =====================
+    @Test
+    @DisplayName("create() -> 중복된 키 값으로 인한 예외 발생")
+    void create_중복된_키_값으로_인한_예외_발생() {
+        ServiceUserGradeRequest request = createRequest(1);
+        when(serviceUserGradeDao.existsByStatCode(request.getStat_code())).thenReturn(true);
+        assertThrows(ServiceUserGradeAlreadyExistsException.class, () -> serviceUserGradeService.create(request));
+    }
+
+    @Test
+    @DisplayName("create() -> DBMS 적용 실패로 인한 예외 발생")
+    void create_DBMS_적용_실패로_인한_예외_발생() {
+        ServiceUserGradeRequest request = createRequest(1);
+        ServiceUserGradeDto dto = createDto(request);
+
+        when(formatter.getCurrentDateFormat()).thenReturn(reg_date);
+        when(formatter.getManagerSeq()).thenReturn(reg_user_seq);
+
+        when(serviceUserGradeDao.existsByStatCode(request.getStat_code())).thenReturn(false);
+        when(serviceUserGradeDao.insert(dto)).thenReturn(0);
+
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceUserGradeService.create(request));
+    }
+
+    @Test
+    @DisplayName("readByStatCode() -> 존재하지 않는 키 값으로 인한 예외 발생")
+    void readByStatCode_존재하지_않는_키_값으로_인한_예외_발생() {
+        String stat_code = "TET0001";
+        when(serviceUserGradeDao.existsByStatCode(stat_code)).thenReturn(false);
+        assertThrows(ServiceUserGradeNotFoundException.class, () -> serviceUserGradeService.readByStatCode(stat_code));
+    }
+
+    @Test
+    @DisplayName("modify() -> 존재하지 않는 키 값으로 인한 예외 발생")
+    void modify_존재하지_않는_키_값으로_인한_예외_발생() {
+        ServiceUserGradeRequest request = createRequest(1);
+        when(serviceUserGradeDao.existsByStatCodeForUpdate(request.getStat_code())).thenReturn(false);
+        assertThrows(ServiceUserGradeNotFoundException.class, () -> serviceUserGradeService.modify(request));
+    }
+
+    @Test
+    @DisplayName("modify() -> DBMS 적용 실패로 인한 예외 발생")
+    void modify_DBMS_적용_실패로_인한_예외_발생() {
+        ServiceUserGradeRequest request = createRequest(1);
+        ServiceUserGradeDto dto = createDto(request);
+
+        when(formatter.getCurrentDateFormat()).thenReturn(up_date);
+        when(formatter.getManagerSeq()).thenReturn(up_user_seq);
+
+        when(serviceUserGradeDao.existsByStatCodeForUpdate(request.getStat_code())).thenReturn(true);
+        when(serviceUserGradeDao.update(dto)).thenReturn(0);
+
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceUserGradeService.modify(request));
+    }
+
+
+    @Test
+    @DisplayName("removeByStatCode() -> DBMS 적용 실패로 인한 예외 발생")
+    void removeByStatCode_DBMS_적용_실패로_인한_예외_발생() {
+        String stat_code = "TET0001";
+        when(serviceUserGradeDao.deleteByStatCode(stat_code)).thenReturn(5);
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceUserGradeService.removeByStatCode(stat_code));
+    }
+
+
+    @Test
+    @DisplayName("removeAll() -> DBMS 적용 실패로 인한 예외 발생")
+    void removeAll_DBMS_적용_실패로_인한_예외_발생() {
+        when(serviceUserGradeDao.count()).thenReturn(10);
+        when(serviceUserGradeDao.deleteAll()).thenReturn(5);
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceUserGradeService.removeAll());
+    }
+
+
 
 
 
