@@ -10,12 +10,16 @@ import com.example.demo.dto.service.ServiceUserConditionsDetailResponse;
 import com.example.demo.dto.service.ServiceUserConditionsDto;
 import com.example.demo.dto.service.ServiceUserConditionsRequest;
 import com.example.demo.dto.service.ServiceUserConditionsResponse;
+import com.example.demo.global.error.exception.business.service.ServiceUserConditionsAlreadyExistsException;
+import com.example.demo.global.error.exception.business.service.ServiceUserConditionsNotFoundException;
+import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
 import com.example.demo.repository.mybatis.service.ServiceUserConditionsDaoImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -50,12 +54,15 @@ class ServiceUserConditionsServiceImplTest {
     private final String condCode3 = "CD0003";
     private final String condCode4 = "CD0004";
 
+
     @BeforeEach
     void setUp() {
         assertNotNull(serviceUserConditionsService);
         assertNotNull(serviceUserConditionsDao);
         assertNotNull(formatter);
     }
+
+    // ===================== 지원 기능 단순 성공 테스트 =====================
 
     @DisplayName("카운팅 테스트")
     @ParameterizedTest
@@ -249,6 +256,117 @@ class ServiceUserConditionsServiceImplTest {
         assertDoesNotThrow(() -> serviceUserConditionsService.removeAll());
     }
 
+    // ===================== 예외 처리 테스트 =====================
+    @Test
+    @DisplayName("create() -> 중복된 키 값으로 인한 예외 발생")
+    void create_중복된_키_값으로_인한_예외_발생() {
+        ServiceUserConditionsRequest request = createRequest(1);
+        when(serviceUserConditionsDao.existsByCondsCode(request.getConds_code())).thenReturn(true);
+        assertThrows(ServiceUserConditionsAlreadyExistsException.class, () -> serviceUserConditionsService.create(request));
+    }
+
+    @Test
+    @DisplayName("create() -> DBMS 적용 실패로 인한 예외 발생")
+    void create_DBMS_적용_실패로_인한_예외_발생() {
+        ServiceUserConditionsRequest request = createRequest(1);
+        ServiceUserConditionsDto dto = createDto(request);
+
+        when(formatter.getCurrentDateFormat()).thenReturn(reg_date);
+        when(formatter.getManagerSeq()).thenReturn(reg_user_seq);
+
+        when(serviceUserConditionsDao.existsByCondsCode(request.getConds_code())).thenReturn(false);
+        when(serviceUserConditionsDao.insert(dto)).thenReturn(0);
+
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceUserConditionsService.create(request));
+    }
+
+    @Test
+    @DisplayName("readByCondsCode() -> 존재하지 않는 키 값으로 인한 예외 발생")
+    void readByCondsCode_존재하지_않는_키_값으로_인한_예외_발생() {
+        ServiceUserConditionsRequest request = createRequest(1);
+        when(serviceUserConditionsDao.existsByCondsCode(request.getConds_code())).thenReturn(false);
+        assertThrows(ServiceUserConditionsNotFoundException.class, () -> serviceUserConditionsService.readByCondsCode(request.getConds_code()));
+    }
+
+
+    @Test
+    @DisplayName("readByCondsCodeForUserConditions() -> 존재하지 않는 키 값으로 인한 예외 발생")
+    void readByCondsCodeForUserConditions_존재하지_않는_키_값으로_인한_예외_발생() {
+        ServiceUserConditionsRequest request = createRequest(1);
+        when(serviceUserConditionsDao.existsByCondsCode(request.getConds_code())).thenReturn(false);
+        assertThrows(ServiceUserConditionsNotFoundException.class, () -> serviceUserConditionsService.readByCondsCodeForUserConditions(request.getConds_code()));
+    }
+
+    @Test
+    @DisplayName("modify() -> 존재하지 않는 키 값으로 인한 예외 발생")
+    void modify_존재하지_않는_키_값으로_인한_예외_발생() {
+        ServiceUserConditionsRequest request = createRequest(1);
+        when(serviceUserConditionsDao.existsByCondsCodeForUpdate(request.getConds_code())).thenReturn(false);
+        assertThrows(ServiceUserConditionsNotFoundException.class, () -> serviceUserConditionsService.modify(request));
+    }
+
+    @Test
+    @DisplayName("modify() -> DBMS 적용 실패로 인한 예외 발생")
+    void modify_DBMS_적용_실패로_인한_예외_발생() {
+        ServiceUserConditionsRequest request = createRequest(1);
+        ServiceUserConditionsDto dto = createDto(request);
+
+        when(formatter.getCurrentDateFormat()).thenReturn(up_date);
+        when(formatter.getManagerSeq()).thenReturn(up_user_seq);
+
+        when(serviceUserConditionsDao.existsByCondsCodeForUpdate(request.getConds_code())).thenReturn(true);
+        when(serviceUserConditionsDao.update(dto)).thenReturn(0);
+
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceUserConditionsService.modify(request));
+    }
+
+    @Test
+    @DisplayName("modifyChkUse() -> 존재하지 않는 키 값으로 인한 예외 발생")
+    void modifyChkUse_존재하지_않는_키_값으로_인한_예외_발생() {
+        ServiceUserConditionsRequest request = createRequest(1);
+        when(serviceUserConditionsDao.existsByCondsCodeForUpdate(request.getConds_code())).thenReturn(false);
+        assertThrows(ServiceUserConditionsNotFoundException.class, () -> serviceUserConditionsService.modifyChkUse(request));
+    }
+
+    @Test
+    @DisplayName("modifyChkUse() -> DBMS 적용 실패로 인한 예외 발생")
+    void modifyChkUse_DBMS_적용_실패로_인한_예외_발생() {
+        ServiceUserConditionsRequest request = createRequest(1);
+        ServiceUserConditionsDto dto = createDto(request);
+
+        when(formatter.getCurrentDateFormat()).thenReturn(up_date);
+        when(formatter.getManagerSeq()).thenReturn(up_user_seq);
+
+        when(serviceUserConditionsDao.existsByCondsCodeForUpdate(request.getConds_code())).thenReturn(true);
+        when(serviceUserConditionsDao.updateChkUse(dto)).thenReturn(0);
+
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceUserConditionsService.modifyChkUse(request));
+    }
+
+    @Test
+    @DisplayName("removeByCondsCode() -> DBMS 적용 실패로 인한 예외 발생")
+    void removeByCondsCode_DBMS_적용_실패로_인한_예외_발생() {
+        ServiceUserConditionsRequest request = createRequest(1);
+        when(serviceUserConditionsDao.deleteByCondsCode(request.getConds_code())).thenReturn(0);
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceUserConditionsService.removeByCondsCode(request.getConds_code()));
+    }
+
+    @Test
+    @DisplayName("remove() -> DBMS 적용 실패로 인한 예외 발생")
+    void remove_DBMS_적용_실패로_인한_예외_발생() {
+        ServiceUserConditionsRequest request = createRequest(1);
+        ServiceUserConditionsDto dto = createDto(request);
+        when(serviceUserConditionsDao.delete(dto.getSeq())).thenReturn(0);
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceUserConditionsService.remove(dto.getSeq()));
+    }
+
+    @Test
+    @DisplayName("removeAll() -> DBMS 적용 실패로 인한 예외 발생")
+    void removeAll_DBMS_적용_실패로_인한_예외_발생() {
+        when(serviceUserConditionsDao.count()).thenReturn(10);
+        when(serviceUserConditionsDao.deleteAll()).thenReturn(0);
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceUserConditionsService.removeAll());
+    }
 
 
     private ServiceUserConditionsRequest createRequest(int i) {
