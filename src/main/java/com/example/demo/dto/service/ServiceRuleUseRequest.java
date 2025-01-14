@@ -1,8 +1,13 @@
 package com.example.demo.dto.service;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,8 +16,10 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 public class ServiceRuleUseRequest {
 
 
@@ -60,12 +67,14 @@ public class ServiceRuleUseRequest {
     @Pattern(regexp = "^[0-9]{4}$", message = "code는 4자리 숫자 형태로 구성되어야 합니다.")
     private String code;
 
-    @NotBlank(message = "curr_use_op은 필수값입니다.")
-    @Pattern(regexp = "^[1-3]{1}$", message = "curr_use_op은 1자리 숫자 형태로 구성되어야 합니다.")
-    private Integer curr_use_op;
-
-    @NotBlank(message = "curr_use_val은 필수값입니다.")
-    @Pattern(regexp = "^[1-5]{1}$", message = "curr_use_val 1자리 숫자 형태로 구성되어야 합니다.")
+    @NotNull(message = "curr_use_val은 필수값입니다.")
+    @Min(value = 1, message = "curr_use_val은 1 이상이어야 합니다.")
+    @Max(value = 5, message = "curr_use_val은 5 이하여야 합니다.")
     private Integer curr_use_val;
+
+    @NotNull(message = "curr_use_op은 필수값입니다.")
+    @Min(value = 1, message = "curr_use_op은 1 이상이어야 합니다.")
+    @Max(value = 3, message = "curr_use_op은 3 이하여야 합니다.")
+    private Integer curr_use_op;
 
 }

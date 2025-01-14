@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.RestController;
 // - 페이지네이션 처리 추가[]
 // - 추후에 예외처리 및 테스트 코드 강화 적용 계획[]
 @Slf4j
-@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/service-rule-use")
@@ -69,13 +68,6 @@ public class ServiceRuleUseController {
     @DeleteMapping("/remove/{rule_stat}")
     public ResponseEntity<Void> remove(@PathVariable("rule_stat") @Pattern(regexp = "^[A-Z]{2}\\d{4}$", message = "rule_stat은 대문자 2글자와 숫자 4자리로 구성되어야 합니다.") String rule_stat) {
         serviceRuleUseService.removeByRuleStat(rule_stat);
-        return ResponseEntity.noContent()
-                             .build();
-    }
-
-    @DeleteMapping("/remove/{code}")
-    public ResponseEntity<Void> removeByCode(@PathVariable("code") @Pattern(regexp = "^[0-9]{4}$", message = "code는 4자리 숫자 형태로 구성되어야 합니다.") String code) {
-        serviceRuleUseService.removeByCode(code);
         return ResponseEntity.noContent()
                              .build();
     }

@@ -19,22 +19,22 @@ public enum ErrorCode {
     // > 비즈니스
     // - 서비스
     SERVICE_USER_GRADE_ALREADY_EXISTS(400, "EC1001", "해당 사용자 등급이 이미 존재합니다"),
-    SERVICE_USER_GRADE_NOT_FOUND(400, "EC1002", "해당 사용자 등급을 찾을 수 없습니다"),
+    SERVICE_USER_GRADE_NOT_FOUND(404, "EC1002", "해당 사용자 등급을 찾을 수 없습니다"),
 
-    SERVICE_RULE_USE_ALREADY_EXISTS(400, "EC1003", "해당 이용 규칙 존재합니다"),
-    SERVICE_RULE_USE_NOT_FOUND(400, "EC1004", "해당 이용 규칙을 찾을 수 없습니다"),
+    SERVICE_RULE_USE_ALREADY_EXISTS(409, "EC1003", "해당 이용 규칙 존재합니다"),
+    SERVICE_RULE_USE_NOT_FOUND(404, "EC1004", "해당 이용 규칙을 찾을 수 없습니다"),
 
     SERVICE_SANCTION_HISTORY_ALREADY_EXISTS(400, "EC1005", "해당 제재 내역이 이미 존재합니다"),
-    SERVICE_SANCTION_HISTORY_NOT_FOUND(400, "EC1005", "해당 제재 내역을 찾을 수 없습니다"),
+    SERVICE_SANCTION_HISTORY_NOT_FOUND(404, "EC1005", "해당 제재 내역을 찾을 수 없습니다"),
 
     SERVICE_TERMS_ALREADY_EXISTS(400, "EC1006", "해당 정책이 이미 존재합니다"),
-    SERVICE_TERMS_NOT_FOUND(400, "EC1007", "해당 정책을 찾을 수 없습니다"),
+    SERVICE_TERMS_NOT_FOUND(404, "EC1007", "해당 정책을 찾을 수 없습니다"),
 
     SERVICE_USER_CONDITION_ALREADY_EXISTS(400, "EC1008", "해당 회원 약관 항목이 이미 존재합니다"),
-    SERVICE_USER_CONDITION_NOT_FOUND(400, "EC1009", "해당 회원 약관 항목을 찾을 수 없습니다"),
+    SERVICE_USER_CONDITION_NOT_FOUND(404, "EC1009", "해당 회원 약관 항목을 찾을 수 없습니다"),
 
     SERVICE_USER_CONDITIONS_ALREADY_EXISTS(400, "EC1010", "해당 회원 약관이 이미 존재합니다"),
-    SERVICE_USER_CONDITIONS_NOT_FOUND(400, "EC1011", "해당 회원 약관을 찾을 수 없습니다"),
+    SERVICE_USER_CONDITIONS_NOT_FOUND(404, "EC1011", "해당 회원 약관을 찾을 수 없습니다"),
 
     // 회원
 
