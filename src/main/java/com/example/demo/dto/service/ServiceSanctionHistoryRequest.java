@@ -1,8 +1,11 @@
 package com.example.demo.dto.service;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,9 +13,11 @@ import lombok.ToString;
 
 @Getter
 @Setter
+@Builder
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 public class ServiceSanctionHistoryRequest {
     private Integer seq;
 
@@ -20,7 +25,7 @@ public class ServiceSanctionHistoryRequest {
     @Pattern(regexp = "^[A-Z]{3}\\d{4}$", message = "rule_stat은 대문자 3글자와 숫자 4자리로 구성되어야 합니다.")
     private String poli_stat;
 
-    @NotBlank(message = "user_seq은 필수값입니다.")
+    @NotNull(message = "user_seq은 필수값입니다.")
     private Integer user_seq;
 
     @NotBlank(message = "appl_begin은 필수값입니다.")

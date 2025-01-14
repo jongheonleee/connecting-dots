@@ -7,6 +7,7 @@ import com.example.demo.dto.service.ServiceSanctionHistoryRequest;
 import com.example.demo.dto.service.ServiceSanctionHistoryResponse;
 import com.example.demo.global.error.exception.business.service.ServiceSanctionHistoryAlreadyExistsException;
 import com.example.demo.global.error.exception.business.service.ServiceSanctionHistoryNotFoundException;
+import com.example.demo.global.error.exception.business.user.UserNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
 import com.example.demo.repository.mybatis.service.ServiceSanctionHistoryDaoImpl;
 import com.example.demo.utils.CustomFormatter;
@@ -26,7 +27,7 @@ public class ServiceSanctionHistoryServiceImpl {
 
     // 추후에 회원 중에서 특정 조건을 만족하는 회원들의 제재 내역을 적용할 때 사용할 오브젝트들
     // private final ServiceTermsDaoImpl serviceTermsDao;
-    // private final UserServiceDaoImpl userServiceDao;
+    // private final UserDaoImpl userDao;
     // private final UserActivityDaoImpl userActivityDao;
     // private final ServiceSanctionChecker(JDBC) serviceSanctionChecker;
 
@@ -55,23 +56,29 @@ public class ServiceSanctionHistoryServiceImpl {
     //  - 4-2. 제재 내역을 추가함
 
     public ServiceSanctionHistoryResponse create(ServiceSanctionHistoryRequest request) {
+        // 이 부분 잘못된 로직임
+        // - 체크해야할 부분은 회원이 존재하는지 파악하고 없으면 그때 예외를 발생 시키는 것
+        // - 이 부분은 중복된 제재 내역이 존재하는지 파악하는 것이므로 이 부분은 필요 없음
         boolean exists = serviceSanctionHistoryDao.existsByPoliStat(request.getPoli_stat());
         if (exists) {
             log.error("[SERVICE-SANCTION-HISTORY] create() 실패 - 중복된 키 값 : {}", request.getPoli_stat());
             throw new ServiceSanctionHistoryAlreadyExistsException();
         }
 
-        // request -> dto
+//        boolean exists = userDao.existsBySeq(request.getUser_seq());
+//        if (exists) {
+//            log.error("[SERVICE-SANCTION-HISTORY] create() 실패 - 회원이 존재하지 않음 : {}", request.getUser_seq());
+//            throw new UserNotFoundException();
+//        }
+
         ServiceSanctionHistoryDto dto = new ServiceSanctionHistoryDto(request, formatter.getCurrentDateFormat(), formatter.getManagerSeq(), formatter.getCurrentDateFormat(), formatter.getManagerSeq());
         int rowCnt = serviceSanctionHistoryDao.insert(dto);
 
-        // check rowCnt
         if (rowCnt != 1) {
             log.error("[SERVICE-SANCTION-HISTORY] create() 실패 : {}", dto);
             throw new NotApplyOnDbmsException();
         }
 
-        // select and convert response
         return serviceSanctionHistoryDao.selectBySeq(dto.getSeq())
                                         .toResponse();
     }

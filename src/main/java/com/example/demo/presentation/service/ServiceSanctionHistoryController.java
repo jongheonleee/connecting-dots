@@ -66,7 +66,8 @@ public class ServiceSanctionHistoryController {
     public ResponseEntity<Void> modify(@PathVariable("seq") Integer seq, @Valid @RequestBody ServiceSanctionHistoryRequest request) {
         request.setSeq(seq);
         serviceSanctionHistoryService.modify(request);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent()
+                             .build();
     }
 
     @DeleteMapping("/{seq}")
@@ -76,7 +77,7 @@ public class ServiceSanctionHistoryController {
                              .build();
     }
 
-    @DeleteMapping("/{user_seq}")
+    @DeleteMapping("/list/{user_seq}")
     public ResponseEntity<Void> removeByUserSeq(@PathVariable("user_seq") Integer user_seq) {
         serviceSanctionHistoryService.removeByUserSeq(user_seq);
         return ResponseEntity.noContent()
