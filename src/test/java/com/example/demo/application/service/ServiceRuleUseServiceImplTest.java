@@ -9,6 +9,9 @@ import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.service.ServiceRuleUseDto;
 import com.example.demo.dto.service.ServiceRuleUseRequest;
 import com.example.demo.dto.service.ServiceRuleUseResponse;
+import com.example.demo.global.error.exception.business.service.ServiceRuleUseAlreadyExistsException;
+import com.example.demo.global.error.exception.business.service.ServiceRuleUseNotFoundException;
+import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
 import com.example.demo.repository.mybatis.service.ServiceRuleUseDaoImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.ArrayList;
@@ -44,6 +47,8 @@ class ServiceRuleUseServiceImplTest {
         assertNotNull(serviceRuleUseDao);
         assertNotNull(formatter);
     }
+
+    // ===================== 지원 기능 단순 성공 테스트 =====================
 
     @DisplayName("카운팅 테스트")
     @ParameterizedTest
@@ -98,6 +103,7 @@ class ServiceRuleUseServiceImplTest {
 
         ServiceRuleUseDto dto = new ServiceRuleUseDto(request, currentDateFormat, managerSeq, currentDateFormat, managerSeq);
         when(serviceRuleUseDao.selectByRuleStat(rule_stat)).thenReturn(dto);
+        when(serviceRuleUseDao.existsByRuleStat(rule_stat)).thenReturn(true);
 
         // when
         ServiceRuleUseResponse response = serviceRuleUseService.readByRuleStat(rule_stat);
@@ -279,6 +285,131 @@ class ServiceRuleUseServiceImplTest {
             assertEquals(expectedResponses.get(i).getTar_name(), response.getTar_name());
         }
     }
+
+    // ===================== 예외처리 테스트 =====================
+    @Test
+    @DisplayName("create() -> 중복된 키 값 요청시 예외 발생 ")
+    void create_중복된_키_값_요청시_예외_발생() {
+        // given
+        ServiceRuleUseRequest request = createRequest(1);
+        when(serviceRuleUseDao.existsByRuleStat(request.getRule_stat())).thenReturn(true);
+
+        // when
+        assertThrows(ServiceRuleUseAlreadyExistsException.class, () -> serviceRuleUseService.create(request));
+    }
+
+    @Test
+    @DisplayName("create() -> DBMS 정상 반영 안될 경우 예외 발생")
+    void create_DBMS_정상_반영_안될_경우_예외_발생() {
+        // given
+        ServiceRuleUseRequest request = createRequest(1);
+        ServiceRuleUseDto dto = new ServiceRuleUseDto(request, currentDateFormat, managerSeq, currentDateFormat, managerSeq);
+        when(formatter.getCurrentDateFormat()).thenReturn(currentDateFormat);
+        when(formatter.getManagerSeq()).thenReturn(managerSeq);
+        when(serviceRuleUseDao.insert(dto)).thenReturn(0);
+
+        // when
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceRuleUseService.create(request));
+    }
+
+
+    @Test
+    @DisplayName("selectByRuleStat() -> 서비스 이용 규칙 코드로 조회 실패시 예외 발생")
+    void selectByRuleStat_서비스_이용_규칙_코드로_조회_실패시_예외_발생() {
+        // given
+        String notExistsRuleStat = "2002";
+        when(serviceRuleUseDao.existsByRuleStat(notExistsRuleStat)).thenReturn(false);
+
+        // when
+        assertThrows(ServiceRuleUseNotFoundException.class, () -> serviceRuleUseService.readByRuleStat(notExistsRuleStat));
+    }
+
+    @Test
+    @DisplayName("modify() -> 해당 키와 관련된 데이터가 없을 경우 예외 발생")
+    void modify_해당_키와_관련된_데이터가_없을_경우_예외_발생() {
+        // given
+        ServiceRuleUseRequest request = createRequest(1);
+        when(serviceRuleUseDao.existsByRuleStatForUpdate(request.getRule_stat())).thenReturn(false);
+
+        // when
+        assertThrows(ServiceRuleUseNotFoundException.class, () -> serviceRuleUseService.modify(request));
+    }
+
+    @Test
+    @DisplayName("modify() -> DBMS에 정상 반영 안될 경우 예외 발생")
+    void modify_DBMS에_정상_반영_안될_경우_예외_발생() {
+        // given
+        ServiceRuleUseRequest request = createRequest(1);
+        ServiceRuleUseDto dto = new ServiceRuleUseDto(request, currentDateFormat, managerSeq, currentDateFormat, managerSeq);
+        when(formatter.getCurrentDateFormat()).thenReturn(currentDateFormat);
+        when(formatter.getManagerSeq()).thenReturn(managerSeq);
+        when(serviceRuleUseDao.existsByRuleStatForUpdate(request.getRule_stat())).thenReturn(true);
+        when(serviceRuleUseDao.update(dto)).thenReturn(0);
+
+        // when
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceRuleUseService.modify(request));
+    }
+
+    @Test
+    @DisplayName("modifyChkUse() -> 해당 키와 관련된 데이터가 없을 경우 예외 발생")
+    void modifyChkUse_해당_키와_관련된_데이터가_없을_경우_예외_발생() {
+        // given
+        ServiceRuleUseRequest request = createRequest(1);
+        when(serviceRuleUseDao.existsByRuleStatForUpdate(request.getRule_stat())).thenReturn(false);
+
+        // when
+        assertThrows(ServiceRuleUseNotFoundException.class, () -> serviceRuleUseService.modifyChkUse(request));
+    }
+
+    @Test
+    @DisplayName("modifyChkUse() -> DBMS에 정상 반영 안될 경우 예외 발생")
+    void modifyChkUse_DBMS에_정상_반영_안될_경우_예외_발생() {
+        // given
+        ServiceRuleUseRequest request = createRequest(1);
+        ServiceRuleUseDto dto = new ServiceRuleUseDto(request, currentDateFormat, managerSeq, currentDateFormat, managerSeq);
+        when(formatter.getCurrentDateFormat()).thenReturn(currentDateFormat);
+        when(formatter.getManagerSeq()).thenReturn(managerSeq);
+        when(serviceRuleUseDao.existsByRuleStatForUpdate(request.getRule_stat())).thenReturn(true);
+        when(serviceRuleUseDao.updateUse(dto)).thenReturn(0);
+
+        // when
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceRuleUseService.modifyChkUse(request));
+    }
+
+    @Test
+    @DisplayName("removeByRuleStat() -> DBMS에 정상 반영 안될 경우 예외 발생")
+    void removeByRuleStat_DBMS에_정상_반영_안될_경우_예외_발생() {
+        // given
+        String ruleStat = "SA0001";
+        when(serviceRuleUseDao.deleteByRuleStat(ruleStat)).thenReturn(0);
+
+        // when
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceRuleUseService.removeByRuleStat(ruleStat));
+    }
+
+    @Test
+    @DisplayName("removeByCode() -> DBMS에 정상 반영 안될 경우 예외 발생")
+    void removeByCode_DBMS에_정상_반영_안될_경우_예외_발생() {
+        // given
+        String code = "2002";
+        when(serviceRuleUseDao.countByCode(code)).thenReturn(5);
+        when(serviceRuleUseDao.deleteByCode(code)).thenReturn(0);
+
+        // when
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceRuleUseService.removeByCode(code));
+    }
+
+    @Test
+    @DisplayName("removeAll() -> DBMS에 정상 반영 안될 경우 예외 발생")
+    void removeAll_DBMS에_정상_반영_안될_경우_예외_발생() {
+        // given
+        when(serviceRuleUseDao.count()).thenReturn(20);
+        when(serviceRuleUseDao.deleteAll()).thenReturn(0);
+
+        // when
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceRuleUseService.removeAll());
+    }
+
 
     private ServiceRuleUseRequest createRequest(int i) {
         ServiceRuleUseRequest request = new ServiceRuleUseRequest();
