@@ -8,12 +8,16 @@ import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.service.ServiceSanctionHistoryDto;
 import com.example.demo.dto.service.ServiceSanctionHistoryRequest;
 import com.example.demo.dto.service.ServiceSanctionHistoryResponse;
+import com.example.demo.global.error.exception.business.service.ServiceSanctionHistoryAlreadyExistsException;
+import com.example.demo.global.error.exception.business.service.ServiceSanctionHistoryNotFoundException;
+import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
 import com.example.demo.repository.mybatis.service.ServiceSanctionHistoryDaoImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -41,11 +45,11 @@ class ServiceSanctionHistoryServiceImplTest {
 
     private final String currentDateFormat = "2025-01-08 00:00:00";
     private final Integer managerSeq = 1;
-    private final String currentUpdateDateFormat = "2025-01-12 00:00:00";
-    private final Integer updateManagerSeq = 1;
 
     private final Integer page = 1;
     private final Integer pageSize = 10;
+
+    // ===================== 지원 기능 단순 성공 테스트 =====================
 
     @BeforeEach
     void setUp() {
@@ -242,6 +246,76 @@ class ServiceSanctionHistoryServiceImplTest {
 
         serviceSanctionHistoryService.removeAll();
     }
+
+    // ===================== 예외 처리 테스트 =====================
+    @Test
+    @DisplayName("create() -> 중복된 키 값으로 인한 예외 발생")
+    void create_중복된_키_값으로_인한_예외_발생() {
+        ServiceSanctionHistoryRequest request = createRequest(1);
+        when(serviceSanctionHistoryDao.existsByPoliStat(request.getPoli_stat())).thenReturn(true);
+        assertThrows(ServiceSanctionHistoryAlreadyExistsException.class, () -> serviceSanctionHistoryService.create(request));
+    }
+
+    @Test
+    @DisplayName("create() -> DBMS 반영되지 않아서 예외 발생")
+    void create_DBMS_반영되지_않아서_예외_발생() {
+        ServiceSanctionHistoryRequest request = createRequest(1);
+        ServiceSanctionHistoryDto dto = createDto(request);
+
+        when(formatter.getCurrentDateFormat()).thenReturn(currentDateFormat);
+        when(formatter.getManagerSeq()).thenReturn(managerSeq);
+
+        when(serviceSanctionHistoryDao.insert(dto)).thenReturn(0);
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceSanctionHistoryService.create(request));
+    }
+
+    @Test
+    @DisplayName("readBySeq() -> 존재하지 않는 seq로 조회하여 예외 발생")
+    void readBySeq_존재하지_않는_seq로_조회하여_예외_발생() {
+        Integer seq = 1;
+        when(serviceSanctionHistoryDao.existsBySeq(seq)).thenReturn(false);
+        assertThrows(ServiceSanctionHistoryNotFoundException.class, () -> serviceSanctionHistoryService.readBySeq(seq));
+    }
+
+    @Test
+    @DisplayName("modify() -> 존재하지 않는 seq로 수정하여 예외 발생")
+    void modify_존재하지_않는_seq로_수정하여_예외_발생() {
+        ServiceSanctionHistoryRequest request = createRequest(1);
+        when(serviceSanctionHistoryDao.existsBySeqForUpdate(request.getSeq())).thenReturn(false);
+        assertThrows(ServiceSanctionHistoryNotFoundException.class, () -> serviceSanctionHistoryService.modify(request));
+    }
+
+    @Test
+    @DisplayName("modify() -> DBMS 반영되지 않아서 예외 발생")
+    void modify_DBMS_반영되지_않아서_예외_발생() {
+        ServiceSanctionHistoryRequest request = createRequest(1);
+        ServiceSanctionHistoryDto dto = createDto(request);
+
+        when(formatter.getCurrentDateFormat()).thenReturn(currentDateFormat);
+        when(formatter.getManagerSeq()).thenReturn(managerSeq);
+
+        when(serviceSanctionHistoryDao.existsBySeqForUpdate(request.getSeq())).thenReturn(true);
+        when(serviceSanctionHistoryDao.update(any())).thenReturn(0);
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceSanctionHistoryService.modify(request));
+    }
+
+    @Test
+    @DisplayName("remove() -> 존재하지 않는 seq로 삭제하여 예외 발생")
+    void remove_존재하지_않는_seq로_삭제하여_예외_발생() {
+        Integer seq = 1;
+        when(serviceSanctionHistoryDao.existsBySeqForUpdate(seq)).thenReturn(false);
+        assertThrows(ServiceSanctionHistoryNotFoundException.class, () -> serviceSanctionHistoryService.remove(seq));
+    }
+
+
+    @Test
+    @DisplayName("removeAll() -> DBMS 반영되지 않아서 예외 발생")
+    void removeAll_DBMS_반영되지_않아서_예외_발생() {
+        when(serviceSanctionHistoryDao.count()).thenReturn(10);
+        when(serviceSanctionHistoryDao.deleteAll()).thenReturn(0);
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceSanctionHistoryService.removeAll());
+    }
+
 
 
     private ServiceSanctionHistoryRequest createRequest(int i) {
