@@ -5,6 +5,9 @@ import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.service.ServiceUserGradeDto;
 import com.example.demo.dto.service.ServiceUserGradeRequest;
 import com.example.demo.dto.service.ServiceUserGradeResponse;
+import com.example.demo.global.error.exception.business.service.ServiceUserGradeAlreadyExistsException;
+import com.example.demo.global.error.exception.business.service.ServiceUserGradeNotFoundException;
+import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
 import com.example.demo.repository.mybatis.service.ServiceUserGradeDaoImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.List;
@@ -49,7 +52,7 @@ public class ServiceUserGradeServiceImpl {
         boolean exists = serviceUserGradeDao.existsByStatCode(request.getStat_code());
         if (exists) {
             log.error("[SERVICE-USER-GRADE] create() 실패 - 중복된 키 값 : {}", request.getStat_code());
-            throw new RuntimeException();
+            throw new ServiceUserGradeAlreadyExistsException();
         }
 
         ServiceUserGradeDto dto = new ServiceUserGradeDto(request, formatter.getCurrentDateFormat(), formatter.getManagerSeq(), formatter.getCurrentDateFormat(), formatter.getManagerSeq());
@@ -57,7 +60,7 @@ public class ServiceUserGradeServiceImpl {
 
         if (rowCnt != 1) {
             log.error("[SERVICE-USER-GRADE] create() 실패 : {}", dto);
-            throw new RuntimeException();
+            throw new NotApplyOnDbmsException();
         }
 
         return serviceUserGradeDao.selectByStatCode(dto.getStat_code())
@@ -85,7 +88,7 @@ public class ServiceUserGradeServiceImpl {
         boolean exists = serviceUserGradeDao.existsByStatCode(stat_code);
         if (!exists) {
             log.error("[SERVICE-USER-GRADE] readByStatCode() 실패 : {}", stat_code);
-            throw new RuntimeException();
+            throw new ServiceUserGradeNotFoundException();
         }
 
         return serviceUserGradeDao.selectByStatCode(stat_code)
@@ -97,7 +100,7 @@ public class ServiceUserGradeServiceImpl {
         boolean exists = serviceUserGradeDao.existsByStatCodeForUpdate(request.getStat_code());
         if (!exists) {
             log.error("[SERVICE-USER-GRADE] modify() 실패, 해당 키와 관련된 데이터가 없음 : {}", request.getStat_code());
-            throw new RuntimeException();
+            throw new ServiceUserGradeNotFoundException();
         }
 
         ServiceUserGradeDto dto = new ServiceUserGradeDto(request, formatter.getCurrentDateFormat(), formatter.getManagerSeq(), formatter.getCurrentDateFormat(), formatter.getManagerSeq());
@@ -105,7 +108,7 @@ public class ServiceUserGradeServiceImpl {
 
         if (rowCnt != 1) {
             log.error("[SERVICE-USER-GRADE] modify() 실패 : {}", dto);
-            throw new RuntimeException();
+            throw new NotApplyOnDbmsException();
         }
     }
 
@@ -114,7 +117,7 @@ public class ServiceUserGradeServiceImpl {
 
         if (rowCnt != 1) {
             log.error("[SERVICE-USER-GRADE] removeByStatCode() 실패 : {}", stat_code);
-            throw new RuntimeException();
+            throw new NotApplyOnDbmsException();
         }
     }
 
@@ -125,7 +128,7 @@ public class ServiceUserGradeServiceImpl {
 
         if (rowCnt != totalCnt) {
             log.error("[SERVICE-USER-GRADE] removeAll() 실패");
-            throw new RuntimeException();
+            throw new NotApplyOnDbmsException();
         }
     }
 

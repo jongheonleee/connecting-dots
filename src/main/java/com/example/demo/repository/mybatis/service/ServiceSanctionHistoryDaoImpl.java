@@ -36,6 +36,10 @@ public class ServiceSanctionHistoryDaoImpl {
         return session.selectOne(namespace + "existsBySeqForUpdate", seq);
     }
 
+    public boolean existsByPoliStat(String poli_stat) {
+        return session.selectOne(namespace + "existsByPoliStat", poli_stat);
+    }
+
 
     public ServiceSanctionHistoryDto selectBySeq(Integer seq) {
         return session.selectOne(namespace + "selectBySeq", seq);

@@ -5,7 +5,7 @@ import com.example.demo.dto.board.BestCommentBoardDto;
 import com.example.demo.dto.board.BestCommentBoardUpdateDto;
 import com.example.demo.dto.board.BoardFormDto;
 import com.example.demo.dto.board.BoardResponseDto;
-import com.example.demo.global.error.exception.technology.InternalServerError;
+import com.example.demo.global.error.exception.technology.InternalServerException;
 import com.example.demo.repository.mybatis.board.BestCommentBoardDaoImpl;
 import com.example.demo.repository.mybatis.board.BoardDaoImpl;
 import java.time.LocalDateTime;
@@ -64,7 +64,7 @@ public class BestCommentBoardServiceImpl {
 
                     int rowCnt = bestCommentBoardDao.insert(bestCommentBoardDto);
                     if (rowCnt != 1) {
-                        throw new InternalServerError(null);
+                        throw new InternalServerException(null);
                     }
                 });
     }
@@ -72,7 +72,7 @@ public class BestCommentBoardServiceImpl {
     public void save(BestCommentBoardDto dto) {
         int rowCnt = bestCommentBoardDao.insert(dto);
         if (rowCnt != 1) {
-            throw new InternalServerError(null);
+            throw new InternalServerException(null);
         }
     }
 
@@ -91,7 +91,7 @@ public class BestCommentBoardServiceImpl {
     public void modify(BestCommentBoardUpdateDto dto) {
         int rowCnt = bestCommentBoardDao.update(dto);
         if (rowCnt != 1) {
-            throw new InternalServerError(null);
+            throw new InternalServerException(null);
         }
     }
 
@@ -99,14 +99,14 @@ public class BestCommentBoardServiceImpl {
         int totalCnt = bestCommentBoardDao.countForChangeUsed();
         int rowCnt = bestCommentBoardDao.updateUsed(up_id);
         if (totalCnt != rowCnt) {
-            throw new InternalServerError(null);
+            throw new InternalServerException(null);
         }
     }
 
     public void remove(Integer seq) {
         int rowCnt = bestCommentBoardDao.delete(seq);
         if (rowCnt != 1) {
-            throw new InternalServerError(null);
+            throw new InternalServerException(null);
         }
     }
 
@@ -116,7 +116,7 @@ public class BestCommentBoardServiceImpl {
         int totalCnt = bestCommentBoardDao.count();
         int rowCnt = bestCommentBoardDao.deleteAll();
         if (totalCnt != rowCnt) {
-            throw new InternalServerError(null);
+            throw new InternalServerException(null);
         }
     }
 

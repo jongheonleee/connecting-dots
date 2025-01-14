@@ -8,7 +8,7 @@ import com.example.demo.dto.category.CategoryDto;
 import com.example.demo.global.error.exception.business.category.CategoryAlreadyExistsException;
 import com.example.demo.global.error.exception.business.category.CategoryFormInvalidException;
 import com.example.demo.global.error.exception.business.category.CategoryNotFoundException;
-import com.example.demo.global.error.exception.technology.InternalServerError;
+import com.example.demo.global.error.exception.technology.InternalServerException;
 import com.example.demo.application.category.CategoryServiceImpl;
 import java.util.ArrayList;
 import java.util.List;
@@ -114,7 +114,7 @@ class CategoryServiceImplTest {
         // service에서 해당 에러를 InternalServerError 변환해서 던지기
         var dto = createCategoryDto(1);
         when(categoryDao.insert(dto)).thenReturn(0);
-        assertThrows(InternalServerError.class, () -> target.create(dto));
+        assertThrows(InternalServerException.class, () -> target.create(dto));
     }
 
     @DisplayName("3-1. 여러개의 카테고리 등록하고 조회해서 비교해보기")
@@ -266,7 +266,7 @@ class CategoryServiceImplTest {
         // service에서 해당 에러를 InternalServerError 변환해서 던지기
         var dto = createCategoryDto(1);
         when(categoryDao.update(dto)).thenReturn(0);
-        assertThrows(InternalServerError.class, () -> target.modify(dto));
+        assertThrows(InternalServerException.class, () -> target.modify(dto));
     }
 
     @DisplayName("3-1. 여러개의 카테고리 등록하고 각각 수정해서 비교해보기")

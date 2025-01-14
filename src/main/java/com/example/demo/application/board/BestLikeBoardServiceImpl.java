@@ -4,7 +4,7 @@ import com.example.demo.dto.board.BestLikeBoardDto;
 import com.example.demo.dto.board.BestLikeBoardUpdateDto;
 import com.example.demo.dto.board.BoardFormDto;
 import com.example.demo.dto.board.BoardResponseDto;
-import com.example.demo.global.error.exception.technology.InternalServerError;
+import com.example.demo.global.error.exception.technology.InternalServerException;
 import com.example.demo.repository.mybatis.board.BestLikeBoardDaoImpl;
 import com.example.demo.repository.mybatis.board.BoardDaoImpl;
 import java.time.LocalDateTime;
@@ -63,7 +63,7 @@ public class BestLikeBoardServiceImpl {
 
                     int rowCnt = bestLikeBoardDao.insert(bestLikeBoardDto);
                     if (rowCnt != 1) {
-                        throw new InternalServerError(null);
+                        throw new InternalServerException(null);
                     }
                 });
     }
@@ -71,7 +71,7 @@ public class BestLikeBoardServiceImpl {
     public void save(BestLikeBoardDto dto) {
         int rowCnt = bestLikeBoardDao.insert(dto);
         if (rowCnt != 1) {
-            throw new InternalServerError(null);
+            throw new InternalServerException(null);
         }
     }
 
@@ -90,7 +90,7 @@ public class BestLikeBoardServiceImpl {
     public void modify(BestLikeBoardUpdateDto dto) {
         int rowCnt = bestLikeBoardDao.update(dto);
         if (rowCnt != 1) {
-            throw new InternalServerError(null);
+            throw new InternalServerException(null);
         }
     }
 
@@ -98,14 +98,14 @@ public class BestLikeBoardServiceImpl {
         int totalCnt = bestLikeBoardDao.countForChangeUsed();
         int rowCnt = bestLikeBoardDao.updateUsed(up_id);
         if (rowCnt != totalCnt) {
-            throw new InternalServerError(null);
+            throw new InternalServerException(null);
         }
     }
 
     public void remove(Integer seq) {
         int rowCnt = bestLikeBoardDao.delete(seq);
         if (rowCnt != 1) {
-            throw new InternalServerError(null);
+            throw new InternalServerException(null);
         }
     }
 
@@ -115,7 +115,7 @@ public class BestLikeBoardServiceImpl {
         int totalCnt = bestLikeBoardDao.count();
         int rowCnt = bestLikeBoardDao.deleteAll();
         if (rowCnt != totalCnt) {
-            throw new InternalServerError(null);
+            throw new InternalServerException(null);
         }
     }
 

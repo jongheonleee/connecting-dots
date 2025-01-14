@@ -3,7 +3,7 @@ package com.example.demo.application.comment;
 
 import com.example.demo.global.error.exception.business.comment.CommentFormInvalidException;
 import com.example.demo.global.error.exception.business.comment.CommentNotFoundException;
-import com.example.demo.global.error.exception.technology.InternalServerError;
+import com.example.demo.global.error.exception.technology.InternalServerException;
 import com.example.demo.dto.comment.CommentResponseDto;
 import com.example.demo.dto.comment.CommentRequestDto;
 import com.example.demo.repository.mybatis.comment.CommentDaoImpl;
@@ -38,7 +38,7 @@ public class CommentServiceImpl {
         try {
             int rowCnt = commentDao.insert(dto);
             if (rowCnt != 1) {
-                throw new InternalServerError(null);
+                throw new InternalServerException(null);
             }
         } catch (DataIntegrityViolationException e) {
             throw new CommentFormInvalidException();
@@ -76,7 +76,7 @@ public class CommentServiceImpl {
         try {
             rowCnt = commentDao.update(dto);
             if (rowCnt != 1) {
-                throw new InternalServerError(null);
+                throw new InternalServerException(null);
             }
 
         } catch (DataIntegrityViolationException e) {
@@ -109,7 +109,7 @@ public class CommentServiceImpl {
         }
 
         if (rowCnt != expectedRowCnt) {
-            throw new InternalServerError(null);
+            throw new InternalServerException(null);
         }
     }
 
@@ -120,7 +120,7 @@ public class CommentServiceImpl {
         int rowCnt = commentDao.deleteByCno(cno);
 
         if (rowCnt != 1) {
-            throw new InternalServerError(null);
+            throw new InternalServerException(null);
         }
     }
 
@@ -131,7 +131,7 @@ public class CommentServiceImpl {
         int rowCnt = commentDao.deleteAll();
 
         if (expectedRowCnt != rowCnt) {
-            throw new InternalServerError(null);
+            throw new InternalServerException(null);
         }
     }
 }

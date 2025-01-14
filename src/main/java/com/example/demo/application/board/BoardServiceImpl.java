@@ -7,7 +7,7 @@ import com.example.demo.dto.board.BoardFormDto;
 import com.example.demo.dto.board.BoardImgFormDto;
 import com.example.demo.global.error.exception.business.board.BoardFormInvalidException;
 import com.example.demo.global.error.exception.business.board.BoardNotFoundException;
-import com.example.demo.global.error.exception.technology.InternalServerError;
+import com.example.demo.global.error.exception.technology.InternalServerException;
 import com.example.demo.repository.mybatis.board.BoardImgDaoImpl;
 import java.sql.SQLSyntaxErrorException;
 import java.util.List;
@@ -63,7 +63,7 @@ public class BoardServiceImpl {
             // 게시글 등록
             rowCnt = boardDao.insert(dto);
             if (rowCnt != 1) {
-                throw new InternalServerError(null);
+                throw new InternalServerException(null);
             }
 
             // 이미지 등록
@@ -126,7 +126,7 @@ public class BoardServiceImpl {
         try {
             rowCnt = boardDao.update(dto);
             if (rowCnt != 1) {
-                throw new InternalServerError(null);
+                throw new InternalServerException(null);
             }
 
             // 기존에 저장된 이미지 전체 삭제 - DB, 파일시스템
@@ -181,7 +181,7 @@ public class BoardServiceImpl {
         rowCnt += boardDao.delete(bno);
 
         if (rowCnt != expectedRowCnt) {
-            throw new InternalServerError(null);
+            throw new InternalServerException(null);
         }
     }
 
@@ -194,7 +194,7 @@ public class BoardServiceImpl {
         rowCnt += boardDao.deleteAll();
 
         if (expectedRowCnt != rowCnt) {
-            throw new InternalServerError(null);
+            throw new InternalServerException(null);
         }
     }
 

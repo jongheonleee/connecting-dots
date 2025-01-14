@@ -5,6 +5,9 @@ import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.service.ServiceSanctionHistoryDto;
 import com.example.demo.dto.service.ServiceSanctionHistoryRequest;
 import com.example.demo.dto.service.ServiceSanctionHistoryResponse;
+import com.example.demo.global.error.exception.business.service.ServiceSanctionHistoryAlreadyExistsException;
+import com.example.demo.global.error.exception.business.service.ServiceSanctionHistoryNotFoundException;
+import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
 import com.example.demo.repository.mybatis.service.ServiceSanctionHistoryDaoImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.List;
@@ -52,15 +55,22 @@ public class ServiceSanctionHistoryServiceImpl {
     //  - 4-2. 제재 내역을 추가함
 
     public ServiceSanctionHistoryResponse create(ServiceSanctionHistoryRequest request) {
+        boolean exists = serviceSanctionHistoryDao.existsByPoliStat(request.getPoli_stat());
+        if (exists) {
+            log.error("[SERVICE-SANCTION-HISTORY] create() 실패 - 중복된 키 값 : {}", request.getPoli_stat());
+            throw new ServiceSanctionHistoryAlreadyExistsException();
+        }
+
         // request -> dto
         ServiceSanctionHistoryDto dto = new ServiceSanctionHistoryDto(request, formatter.getCurrentDateFormat(), formatter.getManagerSeq(), formatter.getCurrentDateFormat(), formatter.getManagerSeq());
-        // insert
         int rowCnt = serviceSanctionHistoryDao.insert(dto);
+
         // check rowCnt
         if (rowCnt != 1) {
             log.error("[SERVICE-SANCTION-HISTORY] create() 실패 : {}", dto);
-            throw new RuntimeException();
+            throw new NotApplyOnDbmsException();
         }
+
         // select and convert response
         return serviceSanctionHistoryDao.selectBySeq(dto.getSeq())
                                         .toResponse();
@@ -71,7 +81,7 @@ public class ServiceSanctionHistoryServiceImpl {
 
         if (!exists) {
             log.error("[SERVICE-SANCTION-HISTORY] readBySeq() 해당 seq와 관련된 제재 내역 존재하지 않음 : {}", seq);
-            throw new RuntimeException();
+            throw new ServiceSanctionHistoryNotFoundException();
         }
 
         return serviceSanctionHistoryDao.selectBySeq(seq)
@@ -107,7 +117,7 @@ public class ServiceSanctionHistoryServiceImpl {
 
         if (!exists) {
             log.error("[SERVICE-SANCTION-HISTORY] modify() 해당 seq와 관련된 제재 내역 존재하지 않음 : {}", request.getSeq());
-            throw new RuntimeException();
+            throw new ServiceSanctionHistoryNotFoundException();
         }
 
         ServiceSanctionHistoryDto dto = new ServiceSanctionHistoryDto(request, formatter.getCurrentDateFormat(), formatter.getManagerSeq(), formatter.getCurrentDateFormat(), formatter.getManagerSeq());
@@ -115,7 +125,7 @@ public class ServiceSanctionHistoryServiceImpl {
 
         if (rowCnt != 1) {
             log.error("[SERVICE-SANCTION-HISTORY] modify() 실패 : {}", dto);
-            throw new RuntimeException();
+            throw new NotApplyOnDbmsException();
         }
     }
 
@@ -124,14 +134,14 @@ public class ServiceSanctionHistoryServiceImpl {
 
         if (!exists) {
             log.error("[SERVICE-SANCTION-HISTORY] remove() 해당 seq와 관련된 제재 내역 존재하지 않음 : {}", seq);
-            throw new RuntimeException();
+            throw new ServiceSanctionHistoryNotFoundException();
         }
 
         int rowCnt = serviceSanctionHistoryDao.deleteBySeq(seq);
 
         if (rowCnt != 1) {
             log.error("[SERVICE-SANCTION-HISTORY] remove() 실패 : {}", seq);
-            throw new RuntimeException();
+            throw new NotApplyOnDbmsException();
         }
     }
 
@@ -142,7 +152,7 @@ public class ServiceSanctionHistoryServiceImpl {
 
         if (totalCnt != rowCnt) {
             log.error("[SERVICE-SANCTION-HISTORY] removeByUserSeq() 실패 : {}", user_seq);
-            throw new RuntimeException();
+            throw new NotApplyOnDbmsException();
         }
     }
 
@@ -153,7 +163,7 @@ public class ServiceSanctionHistoryServiceImpl {
 
         if (totalCnt != rowCnt) {
             log.error("[SERVICE-SANCTION-HISTORY] removeAll() 실패");
-            throw new RuntimeException();
+            throw new NotApplyOnDbmsException();
         }
     }
 

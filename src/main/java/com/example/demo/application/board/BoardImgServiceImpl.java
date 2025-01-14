@@ -3,7 +3,7 @@ package com.example.demo.application.board;
 import com.example.demo.repository.mybatis.board.BoardImgDaoImpl;
 import com.example.demo.dto.board.BoardImgFormDto;
 import com.example.demo.global.error.exception.business.board.BoardImgNotFoundException;
-import com.example.demo.global.error.exception.technology.InternalServerError;
+import com.example.demo.global.error.exception.technology.InternalServerException;
 import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,12 +42,12 @@ public class BoardImgServiceImpl {
             dto.updateBoardImg(imgName, imgUrl);
             int rowCnt = boardImgDao.insert(dto);
             if (rowCnt != 1) {
-                throw new InternalServerError(null);
+                throw new InternalServerException(null);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new InternalServerError(null);
+            throw new InternalServerException(null);
         }
     }
 
@@ -71,12 +71,12 @@ public class BoardImgServiceImpl {
 
                 int rowCnt = boardImgDao.update(foundBoardImg);
                 if (rowCnt != 1) {
-                    throw new InternalServerError(null);
+                    throw new InternalServerException(null);
                 }
             }
 
         } catch (Exception e) {
-            throw new InternalServerError(null);
+            throw new InternalServerException(null);
         }
     }
 

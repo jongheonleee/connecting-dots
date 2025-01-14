@@ -8,6 +8,12 @@
     FROM service_rule_use
   </select>
 
+  <select id="existsByRuleStat" parameterType="string" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM service_rule_use
+    WHERE rule_stat = #{rule_stat}
+  </select>
+
   <select id="existsByRuleStatForUpdate" parameterType="string" resultType="boolean">
     SELECT COUNT(*) > 0
     FROM service_rule_use

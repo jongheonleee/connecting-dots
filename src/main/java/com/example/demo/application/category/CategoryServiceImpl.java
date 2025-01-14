@@ -5,7 +5,7 @@ import com.example.demo.dto.category.CategoryDto;
 import com.example.demo.global.error.exception.business.category.CategoryAlreadyExistsException;
 import com.example.demo.global.error.exception.business.category.CategoryFormInvalidException;
 import com.example.demo.global.error.exception.business.category.CategoryNotFoundException;
-import com.example.demo.global.error.exception.technology.InternalServerError;
+import com.example.demo.global.error.exception.technology.InternalServerException;
 import java.util.List;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
@@ -25,7 +25,7 @@ public class CategoryServiceImpl {
         try {
             return categoryDao.count();
         } catch (Exception e) {
-            throw new InternalServerError(null);
+            throw new InternalServerException(null);
         }
     }
 
@@ -33,7 +33,7 @@ public class CategoryServiceImpl {
         try {
             int rowCnt = categoryDao.insert(dto);
             if (rowCnt != 1) {
-                throw new InternalServerError(null);
+                throw new InternalServerException(null);
             }
         } catch (DuplicateKeyException e) {
             throw new CategoryAlreadyExistsException();
@@ -60,7 +60,7 @@ public class CategoryServiceImpl {
         try {
             int rowCnt = categoryDao.update(dto);
             if (rowCnt != 1) {
-                throw new InternalServerError(null);
+                throw new InternalServerException(null);
             }
         } catch (DuplicateKeyException e) {
             throw new CategoryAlreadyExistsException();
@@ -77,7 +77,7 @@ public class CategoryServiceImpl {
         int rowCnt = categoryDao.deleteByCode(code);
 
         if (rowCnt != 1) {
-            throw new InternalServerError(null);
+            throw new InternalServerException(null);
         }
     }
 
@@ -87,7 +87,7 @@ public class CategoryServiceImpl {
         int rowCnt = categoryDao.deleteAll();
 
         if (totalCnt != rowCnt) {
-            throw new InternalServerError(null);
+            throw new InternalServerException(null);
         }
     }
 

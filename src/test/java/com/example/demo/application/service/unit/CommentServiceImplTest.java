@@ -6,7 +6,7 @@ import static org.mockito.Mockito.when;
 
 import com.example.demo.global.error.exception.business.comment.CommentFormInvalidException;
 import com.example.demo.global.error.exception.business.comment.CommentNotFoundException;
-import com.example.demo.global.error.exception.technology.InternalServerError;
+import com.example.demo.global.error.exception.technology.InternalServerException;
 import com.example.demo.application.comment.CommentServiceImpl;
 import com.example.demo.dto.comment.CommentResponseDto;
 import com.example.demo.dto.comment.CommentRequestDto;
@@ -47,7 +47,7 @@ class CommentServiceImplTest {
     void test1() {
         var commentRequestDto = createCommentRequestDto(1, 1);
         when(commentDao.insert(commentRequestDto)).thenReturn(0);
-        assertThrows(InternalServerError.class, () -> target.create(commentRequestDto));
+        assertThrows(InternalServerException.class, () -> target.create(commentRequestDto));
     }
 
     @DisplayName("댓글 등록 입력 폼이 잘못된 경우 -> CommentFormInvalidException")
@@ -71,7 +71,7 @@ class CommentServiceImplTest {
     void test4() {
         var commentRequestDto = createCommentRequestDto(1, 1);
         when(commentDao.update(commentRequestDto)).thenReturn(0);
-        assertThrows(InternalServerError.class, () -> target.update(commentRequestDto));
+        assertThrows(InternalServerException.class, () -> target.update(commentRequestDto));
     }
 
     @DisplayName("댓글 수정 입력 폼이 잘못된 경우 -> CommentFormInvalidException")

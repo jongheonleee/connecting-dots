@@ -3,10 +3,12 @@ package com.example.demo.application.service;
 import com.example.demo.dto.service.ServiceUserConditionDto;
 import com.example.demo.dto.service.ServiceUserConditionRequest;
 import com.example.demo.dto.service.ServiceUserConditionResponse;
+import com.example.demo.global.error.exception.business.service.ServiceUserConditionAlreadyExistsException;
+import com.example.demo.global.error.exception.business.service.ServiceUserConditionNotFoundException;
+import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
 import com.example.demo.repository.mybatis.service.ServiceUserConditionDaoImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.List;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,7 +32,7 @@ public class ServiceUserConditionServiceImpl {
         // 존재하면 duplicatedKeyException 발생
         if (exists) {
             log.error("[SERVICE-USER-CONDITION] create() 실패 - 중복된 키 값 : {}", request.getCond_code());
-            throw new RuntimeException();
+            throw new ServiceUserConditionAlreadyExistsException();
         }
 
         // 그게 아니면 생성 처리
@@ -39,7 +41,7 @@ public class ServiceUserConditionServiceImpl {
 
         if (rowCnt != 1) {
             log.error("[SERVICE-USER-CONDITION] create() 실패, DB 상의 문제 혹은 네트워크 연결 문제일 확률이 높음 : {}", dto);
-            throw new RuntimeException();
+            throw new NotApplyOnDbmsException();
         }
 
         // 생성 이후에 select로 조회해서 리스폰 형태로 반환
@@ -53,7 +55,7 @@ public class ServiceUserConditionServiceImpl {
         // 존재하지 않으면 notFoundException 발생
         if (!exists) {
             log.error("[SERVICE-USER-CONDITION] readByCondCode() 해당 cond_code와 관련된 회원 이용 약관 항목 존재하지 않음 : {}", cond_code);
-            throw new RuntimeException();
+            throw new ServiceUserConditionNotFoundException();
         }
 
         // 존재하면 select로 조회해서 리스폰 형태로 반환
@@ -77,7 +79,7 @@ public class ServiceUserConditionServiceImpl {
         // 존재하지 않으면 notFoundException 발생
         if (!exists) {
             log.error("[SERVICE-USER-CONDITION] update() 해당 cond_code와 관련된 회원 이용 약관 항목 존재하지 않음 : {}", request.getCond_code());
-            throw new RuntimeException();
+            throw new ServiceUserConditionNotFoundException();
         }
 
         // 존재하면 업데이트 처리
@@ -86,7 +88,7 @@ public class ServiceUserConditionServiceImpl {
 
         if (rowCnt != 1) {
             log.error("[SERVICE-USER-CONDITION] update() 실패, DB 상의 문제 혹은 네트워크 연결 문제일 확률이 높음 : {}", dto);
-            throw new RuntimeException();
+            throw new NotApplyOnDbmsException();
         }
     }
 
@@ -97,7 +99,7 @@ public class ServiceUserConditionServiceImpl {
         // 존재하지 않으면 notFoundException 발생
         if (!exists) {
             log.error("[SERVICE-USER-CONDITION] updateChkUse() 해당 cond_code와 관련된 회원 이용 약관 항목 존재하지 않음 : {}", request.getCond_code());
-            throw new RuntimeException();
+            throw new ServiceUserConditionNotFoundException();
         }
 
         // 존재하면 업데이트 처리
@@ -106,7 +108,7 @@ public class ServiceUserConditionServiceImpl {
 
         if (rowCnt != 1) {
             log.error("[SERVICE-USER-CONDITION] updateChkUse() 실패, DB 상의 문제 혹은 네트워크 연결 문제일 확률이 높음 : {}", dto);
-            throw new RuntimeException();
+            throw new NotApplyOnDbmsException();
         }
     }
 
@@ -116,7 +118,7 @@ public class ServiceUserConditionServiceImpl {
 
         if (rowCnt != 1) {
             log.error("[SERVICE-USER-CONDITION] remove() 실패 : {}", cond_code);
-            throw new RuntimeException();
+            throw new NotApplyOnDbmsException();
         }
     }
 
@@ -128,7 +130,7 @@ public class ServiceUserConditionServiceImpl {
 
         if (rowCnt != totalCnt) {
             log.error("[SERVICE-USER-CONDITION] removeAll() 실패 : 전체 개수와 삭제된 항목의 개수가 일치하지 않음");
-            throw new RuntimeException();
+            throw new NotApplyOnDbmsException();
         }
     }
 

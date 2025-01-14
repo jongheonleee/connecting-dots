@@ -13,12 +13,27 @@
     WHERE seq = #{seq}
   </select>
 
+
   <select id="existsBySeqForUpdate" parameterType="int" resultType="boolean">
     SELECT COUNT(*) > 0
     FROM service_sanction_history
     WHERE seq = #{seq}
     FOR UPDATE
   </select>
+
+  <select id="existsByPoliStat" parameterType="string" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM service_sanction_history
+    WHERE poli_stat = #{poli_stat}
+  </select>
+
+  <select id="existsByPoliStatForUpdate" parameterType="string" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM service_sanction_history
+    WHERE poli_stat = #{poli_stat}
+    FOR UPDATE
+  </select>
+
 
   <select id="countBySearchCondition" parameterType="SearchCondition" resultType="int">
     SELECT COUNT(*)
