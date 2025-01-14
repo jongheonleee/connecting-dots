@@ -38,7 +38,7 @@ public class CommentServiceImpl {
         try {
             int rowCnt = commentDao.insert(dto);
             if (rowCnt != 1) {
-                throw new InternalServerError();
+                throw new InternalServerError(null);
             }
         } catch (DataIntegrityViolationException e) {
             throw new CommentFormInvalidException();
@@ -76,7 +76,7 @@ public class CommentServiceImpl {
         try {
             rowCnt = commentDao.update(dto);
             if (rowCnt != 1) {
-                throw new InternalServerError();
+                throw new InternalServerError(null);
             }
 
         } catch (DataIntegrityViolationException e) {
@@ -109,7 +109,7 @@ public class CommentServiceImpl {
         }
 
         if (rowCnt != expectedRowCnt) {
-            throw new InternalServerError();
+            throw new InternalServerError(null);
         }
     }
 
@@ -120,7 +120,7 @@ public class CommentServiceImpl {
         int rowCnt = commentDao.deleteByCno(cno);
 
         if (rowCnt != 1) {
-            throw new InternalServerError();
+            throw new InternalServerError(null);
         }
     }
 
@@ -131,7 +131,7 @@ public class CommentServiceImpl {
         int rowCnt = commentDao.deleteAll();
 
         if (expectedRowCnt != rowCnt) {
-            throw new InternalServerError();
+            throw new InternalServerError(null);
         }
     }
 }

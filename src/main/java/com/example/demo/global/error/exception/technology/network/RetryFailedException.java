@@ -1,12 +1,25 @@
 package com.example.demo.global.error.exception.technology.network;
 
-public class RetryFailedException extends RuntimeException {
+import static com.example.demo.global.error.exception.ErrorCode.*;
 
-    public RetryFailedException() {
-        this("애플리케이션에서 정한 대기시간과 재시도 횟수만큼 시도했지만, 복구에 실패하였습니다.");
-    }
+import com.example.demo.global.error.exception.ErrorCode;
+import com.example.demo.global.error.exception.technology.InternalServerError;
+
+public class RetryFailedException extends InternalServerError {
+
+    private ErrorCode errorCode;
 
     public RetryFailedException(String message) {
-        super(message);
+        super(message, INTERNAL_SERVER_ERROR);
+    }
+
+    public RetryFailedException(String message, ErrorCode errorCode) {
+        super(message, errorCode);
+        this.errorCode = errorCode;
+    }
+
+
+    public ErrorCode getErrorCode() {
+        return errorCode;
     }
 }

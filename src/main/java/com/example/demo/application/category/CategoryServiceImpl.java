@@ -25,7 +25,7 @@ public class CategoryServiceImpl {
         try {
             return categoryDao.count();
         } catch (Exception e) {
-            throw new InternalServerError();
+            throw new InternalServerError(null);
         }
     }
 
@@ -33,7 +33,7 @@ public class CategoryServiceImpl {
         try {
             int rowCnt = categoryDao.insert(dto);
             if (rowCnt != 1) {
-                throw new InternalServerError();
+                throw new InternalServerError(null);
             }
         } catch (DuplicateKeyException e) {
             throw new CategoryAlreadyExistsException();
@@ -60,7 +60,7 @@ public class CategoryServiceImpl {
         try {
             int rowCnt = categoryDao.update(dto);
             if (rowCnt != 1) {
-                throw new InternalServerError();
+                throw new InternalServerError(null);
             }
         } catch (DuplicateKeyException e) {
             throw new CategoryAlreadyExistsException();
@@ -77,7 +77,7 @@ public class CategoryServiceImpl {
         int rowCnt = categoryDao.deleteByCode(code);
 
         if (rowCnt != 1) {
-            throw new InternalServerError();
+            throw new InternalServerError(null);
         }
     }
 
@@ -87,7 +87,7 @@ public class CategoryServiceImpl {
         int rowCnt = categoryDao.deleteAll();
 
         if (totalCnt != rowCnt) {
-            throw new InternalServerError();
+            throw new InternalServerError(null);
         }
     }
 

@@ -64,7 +64,7 @@ public class BestCommentBoardServiceImpl {
 
                     int rowCnt = bestCommentBoardDao.insert(bestCommentBoardDto);
                     if (rowCnt != 1) {
-                        throw new InternalServerError();
+                        throw new InternalServerError(null);
                     }
                 });
     }
@@ -72,7 +72,7 @@ public class BestCommentBoardServiceImpl {
     public void save(BestCommentBoardDto dto) {
         int rowCnt = bestCommentBoardDao.insert(dto);
         if (rowCnt != 1) {
-            throw new InternalServerError();
+            throw new InternalServerError(null);
         }
     }
 
@@ -91,7 +91,7 @@ public class BestCommentBoardServiceImpl {
     public void modify(BestCommentBoardUpdateDto dto) {
         int rowCnt = bestCommentBoardDao.update(dto);
         if (rowCnt != 1) {
-            throw new InternalServerError();
+            throw new InternalServerError(null);
         }
     }
 
@@ -99,14 +99,14 @@ public class BestCommentBoardServiceImpl {
         int totalCnt = bestCommentBoardDao.countForChangeUsed();
         int rowCnt = bestCommentBoardDao.updateUsed(up_id);
         if (totalCnt != rowCnt) {
-            throw new InternalServerError();
+            throw new InternalServerError(null);
         }
     }
 
     public void remove(Integer seq) {
         int rowCnt = bestCommentBoardDao.delete(seq);
         if (rowCnt != 1) {
-            throw new InternalServerError();
+            throw new InternalServerError(null);
         }
     }
 
@@ -116,7 +116,7 @@ public class BestCommentBoardServiceImpl {
         int totalCnt = bestCommentBoardDao.count();
         int rowCnt = bestCommentBoardDao.deleteAll();
         if (totalCnt != rowCnt) {
-            throw new InternalServerError();
+            throw new InternalServerError(null);
         }
     }
 

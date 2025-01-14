@@ -42,12 +42,12 @@ public class BoardImgServiceImpl {
             dto.updateBoardImg(imgName, imgUrl);
             int rowCnt = boardImgDao.insert(dto);
             if (rowCnt != 1) {
-                throw new InternalServerError();
+                throw new InternalServerError(null);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new InternalServerError();
+            throw new InternalServerError(null);
         }
     }
 
@@ -71,12 +71,12 @@ public class BoardImgServiceImpl {
 
                 int rowCnt = boardImgDao.update(foundBoardImg);
                 if (rowCnt != 1) {
-                    throw new InternalServerError();
+                    throw new InternalServerError(null);
                 }
             }
 
         } catch (Exception e) {
-            throw new InternalServerError();
+            throw new InternalServerError(null);
         }
     }
 

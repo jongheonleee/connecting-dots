@@ -63,7 +63,7 @@ public class BestViewBoardServiceImpl {
 
                     int rowCnt = bestViewBoardDao.insert(bestViewBoardDto);
                     if (rowCnt != 1) {
-                        throw new InternalServerError();
+                        throw new InternalServerError(null);
                     }
                 });
     }
@@ -71,7 +71,7 @@ public class BestViewBoardServiceImpl {
     public void save(BestViewBoardDto dto) {
         int rowCnt = bestViewBoardDao.insert(dto);
         if (rowCnt != 1) {
-            throw new InternalServerError();
+            throw new InternalServerError(null);
         }
     }
 
@@ -90,7 +90,7 @@ public class BestViewBoardServiceImpl {
     public void modify(BestViewBoardUpdateDto dto) {
         int rowCnt = bestViewBoardDao.update(dto);
         if (rowCnt != 1) {
-            throw new InternalServerError();
+            throw new InternalServerError(null);
         }
     }
 
@@ -98,14 +98,14 @@ public class BestViewBoardServiceImpl {
         int totalCnt = bestViewBoardDao.countForChangeUsed();
         int rowCnt = bestViewBoardDao.updateUsed(up_id);
         if (rowCnt != totalCnt) {
-            throw new InternalServerError();
+            throw new InternalServerError(null);
         }
     }
 
     public void remove(Integer seq) {
         int rowCnt = bestViewBoardDao.delete(seq);
         if (rowCnt != 1) {
-            throw new InternalServerError();
+            throw new InternalServerError(null);
         }
     }
 
@@ -115,7 +115,7 @@ public class BestViewBoardServiceImpl {
         int totalCnt = bestViewBoardDao.count();
         int rowCnt = bestViewBoardDao.deleteAll();
         if (rowCnt != totalCnt) {
-            throw new InternalServerError();
+            throw new InternalServerError(null);
         }
     }
 
