@@ -6,12 +6,16 @@ import static org.mockito.Mockito.when;
 import com.example.demo.dto.service.ServiceUserConditionDto;
 import com.example.demo.dto.service.ServiceUserConditionRequest;
 import com.example.demo.dto.service.ServiceUserConditionResponse;
+import com.example.demo.global.error.exception.business.service.ServiceUserConditionAlreadyExistsException;
+import com.example.demo.global.error.exception.business.service.ServiceUserConditionNotFoundException;
+import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
 import com.example.demo.repository.mybatis.service.ServiceUserConditionDaoImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -43,6 +47,8 @@ class ServiceUserConditionServiceImplTest {
         assertNotNull(serviceUserConditionDao);
         assertNotNull(formatter);
     }
+
+    // ===================== 지원 기능 단순 성공 테스트 =====================
 
     @DisplayName("카운팅 테스트")
     @ParameterizedTest
@@ -186,6 +192,112 @@ class ServiceUserConditionServiceImplTest {
         when(serviceUserConditionDao.count()).thenReturn(cnt);
         when(serviceUserConditionDao.deleteAll()).thenReturn(cnt);
         assertDoesNotThrow(() -> serviceUserConditionService.removeAll());
+    }
+
+    // ===================== 예외 처리 테스트 =====================
+    @Test
+    @DisplayName("create() -> 중복된 키값으로 인한 예외 발생")
+    void create_중복된_키_값으로_인한_예외_발생() {
+        ServiceUserConditionRequest request = createRequest(1);
+        ServiceUserConditionDto dto = createDto(request);
+
+        when(serviceUserConditionDao.existsByCondCode(request.getCond_code())).thenReturn(true);
+
+        assertThrows(ServiceUserConditionAlreadyExistsException.class, () -> serviceUserConditionService.create(request));
+    }
+
+    @Test
+    @DisplayName("create() -> DBMS 정상 반영 실패로 인한 예외 발생")
+    void create_DBMS_정상_반영_실패로_인한_예외_발생() {
+        ServiceUserConditionRequest request = createRequest(1);
+        ServiceUserConditionDto dto = createDto(request);
+
+        when(formatter.getCurrentDateFormat()).thenReturn(reg_date);
+        when(formatter.getManagerSeq()).thenReturn(reg_user_seq);
+        when(serviceUserConditionDao.existsByCondCode(request.getCond_code())).thenReturn(false);
+        when(serviceUserConditionDao.insert(dto)).thenReturn(0);
+
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceUserConditionService.create(request));
+    }
+
+    @Test
+    @DisplayName("readByCondCode() -> 조건 코드 조회 실패로 인한 예외 발생")
+    void readByCondCode_조건_코드_조회_실패로_인한_예외_발생() {
+        ServiceUserConditionRequest request = createRequest(1);
+        ServiceUserConditionDto dto = createDto(request);
+
+        when(serviceUserConditionDao.existsByCondCode(request.getCond_code())).thenReturn(false);
+
+        assertThrows(ServiceUserConditionNotFoundException.class, () -> serviceUserConditionService.readByCondCode(request.getCond_code()));
+    }
+
+    @Test
+    @DisplayName("modify() -> 존재하지 않는 키 수정 시도할 때 예외 발생")
+    void modify_존재하지_않는_키_수정_시도할_때_예외_발생() {
+        ServiceUserConditionRequest request = createRequest(1);
+        ServiceUserConditionDto dto = createDto(request);
+
+        when(serviceUserConditionDao.existsByCondCodeForUpdate(request.getCond_code())).thenReturn(false);
+
+        assertThrows(ServiceUserConditionNotFoundException.class, () -> serviceUserConditionService.modify(request));
+    }
+
+    @Test
+    @DisplayName("modify() -> DBMS 정상 반영 실패로 인한 예외 발생")
+    void modify_DBMS_정상_반영_실패로_인한_예외_발생() {
+        ServiceUserConditionRequest request = createRequest(1);
+        ServiceUserConditionDto dto = createDto(request);
+
+        when(serviceUserConditionDao.existsByCondCodeForUpdate(request.getCond_code())).thenReturn(true);
+        when(formatter.getCurrentDateFormat()).thenReturn(up_date);
+        when(formatter.getManagerSeq()).thenReturn(up_user_seq);
+        when(serviceUserConditionDao.update(dto)).thenReturn(0);
+
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceUserConditionService.modify(request));
+    }
+
+    @Test
+    @DisplayName("modifyChkUse() -> 존재하지 않는 키 수정 시도할 때 예외 발생")
+    void modifyChkUse_존재하지_않는_키_수정_시도할_때_예외_발생() {
+        ServiceUserConditionRequest request = createRequest(1);
+        ServiceUserConditionDto dto = createDto(request);
+
+        when(serviceUserConditionDao.existsByCondCodeForUpdate(request.getCond_code())).thenReturn(false);
+
+        assertThrows(ServiceUserConditionNotFoundException.class, () -> serviceUserConditionService.modifyChkUse(request));
+    }
+
+    @Test
+    @DisplayName("modifyChkUse() -> DBMS 정상 반영 실패로 인한 예외 발생")
+    void modifyChkUse_DBMS_정상_반영_실패로_인한_예외_발생() {
+        ServiceUserConditionRequest request = createRequest(1);
+        ServiceUserConditionDto dto = createDto(request);
+
+        when(serviceUserConditionDao.existsByCondCodeForUpdate(request.getCond_code())).thenReturn(true);
+        when(formatter.getCurrentDateFormat()).thenReturn(up_date);
+        when(formatter.getManagerSeq()).thenReturn(up_user_seq);
+        when(serviceUserConditionDao.updateChkUse(dto)).thenReturn(0);
+
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceUserConditionService.modifyChkUse(request));
+    }
+
+    @Test
+    @DisplayName("remove() -> DBMS 정상 반영 실패로 인한 예외 발생")
+    void remove_DBMS_정상_반영_실패로_인한_예외_발생() {
+        ServiceUserConditionRequest request = createRequest(1);
+
+        when(serviceUserConditionDao.delete(request.getCond_code())).thenReturn(0);
+
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceUserConditionService.remove(request.getCond_code()));
+    }
+
+    @Test
+    @DisplayName("removaAll() -> DBMS 정상 반영 실패로 인한 예외 발생")
+    void removeAll_DBMS_정상_반영_실패로_인한_예외_발생() {
+        when(serviceUserConditionDao.count()).thenReturn(10);
+        when(serviceUserConditionDao.deleteAll()).thenReturn(5);
+
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceUserConditionService.removeAll());
     }
 
     private ServiceUserConditionRequest createRequest(int i) {
