@@ -403,7 +403,7 @@ class BoardCategoryServiceImplTest {
             for(int i=0; i<cnt; i++) {
                 BoardCategoryRequest request = createRequest(i);
                 String cate_code = request.getCate_code();
-
+                when(boardCategoryDao.existsByCateCodeForUpdate(cate_code)).thenReturn(true);
                 when(boardCategoryDao.deleteByCateCode(cate_code)).thenReturn(1);
 
                 assertDoesNotThrow(() -> boardCategoryService.remove(cate_code));
@@ -417,9 +417,8 @@ class BoardCategoryServiceImplTest {
             for(int i=0; i<cnt; i++) {
                 BoardCategoryRequest request = createRequest(i);
                 String cate_code = request.getCate_code();
-
+                when(boardCategoryDao.existsByCateCodeForUpdate(cate_code)).thenReturn(true);
                 when(boardCategoryDao.deleteByCateCode(cate_code)).thenReturn(0);
-
                 assertThrows(NotApplyOnDbmsException.class, () -> boardCategoryService.remove(cate_code));
             }
         }

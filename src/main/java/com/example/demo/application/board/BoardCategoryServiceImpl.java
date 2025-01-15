@@ -30,41 +30,20 @@ public class BoardCategoryServiceImpl {
     }
 
     public BoardCategoryResponse create(BoardCategoryRequest request) {
-        boolean exists = boardCategoryDao.existsByCateCode(request.getCate_code());
-        if (exists) {
-            log.info("[BOARD_CATEGORY_SERVICE] 이미 존재하는 키 값입니다. : {}", request.getCate_code());
-            throw new BoardCategoryAlreadyExistsException();
-        }
-
+        checkDuplicated(request);
         var dto = createDto(request);
-        int rowCnt = boardCategoryDao.insert(dto);
-
-        if (rowCnt != 1) {
-            log.error("[BOARD_CATEGORY_SERVICE] 카테고리 생성 실패 - DBMS에 정상적으로 반영되지 않았습니다.");
-            throw new NotApplyOnDbmsException();
-        }
-
+        checkApplied(1, boardCategoryDao.insert(dto));
         return createResponse(dto);
     }
 
     public BoardCategoryResponse readByCateCode(String cate_code) {
-        boolean exists = boardCategoryDao.existsByCateCode(cate_code);
-        if (!exists) {
-            log.info("[BOARD_CATEGORY_SERVICE] 존재하지 않는 키 값입니다. : {}", cate_code);
-            throw new BoardCategoryNotFoundException();
-        }
-
+        checkExisted(cate_code);
         var dto = boardCategoryDao.selectByCateCode(cate_code);
         return createResponse(dto);
     }
 
     public List<BoardCategoryResponse> readByTopCate(String top_cate) {
-        boolean exists = boardCategoryDao.existsByCateCode(top_cate);
-        if (!exists) {
-            log.info("[BOARD_CATEGORY_SERVICE] 존재하지 않는 상위 키 값입니다. : {}", top_cate);
-            throw new BoardCategoryNotFoundException();
-        }
-
+        checkExisted(top_cate);
         return boardCategoryDao.selectByTopCate(top_cate)
                                .stream()
                                .map(this::createResponse)
@@ -80,73 +59,64 @@ public class BoardCategoryServiceImpl {
     }
 
     public void modify(String cate_code, BoardCategoryRequest request) {
-        boolean exists = boardCategoryDao.existsByCateCodeForUpdate(cate_code);
-        if (!exists) {
-            log.info("[BOARD_CATEGORY_SERVICE] 존재하지 않는 키 값입니다. : {}", cate_code);
-            throw new BoardCategoryNotFoundException();
-        }
-
+        checkExistedForUpdate(cate_code);
         var dto = createDto(request);
         dto.setCate_code(cate_code);
-        int rowCnt = boardCategoryDao.update(dto);
-
-        if (rowCnt != 1) {
-            log.error("[BOARD_CATEGORY_SERVICE] 카테고리 수정 실패 - DBMS에 정상적으로 반영되지 않았습니다.");
-            throw new NotApplyOnDbmsException();
-        }
+        checkApplied(1, boardCategoryDao.update(dto));
     }
 
     public void modifyChkUseY(String cate_code) {
-        boolean exists = boardCategoryDao.existsByCateCodeForUpdate(cate_code);
-        if (!exists) {
-            log.info("[BOARD_CATEGORY_SERVICE] 존재하지 않는 키 값입니다. : {}", cate_code);
-            throw new BoardCategoryNotFoundException();
-        }
-
-        int rowCnt = boardCategoryDao.updateChkUseY(cate_code);
-
-        if (rowCnt != 1) {
-            log.error("[BOARD_CATEGORY_SERVICE] 카테고리 수정 실패 - DBMS에 정상적으로 반영되지 않았습니다.");
-            throw new NotApplyOnDbmsException();
-        }
+        checkExistedForUpdate(cate_code);
+        checkApplied(1, boardCategoryDao.updateChkUseY(cate_code));
     }
 
     public void modifyChkUseN(String cate_code) {
-        boolean exists = boardCategoryDao.existsByCateCodeForUpdate(cate_code);
-        if (!exists) {
-            log.info("[BOARD_CATEGORY_SERVICE] 존재하지 않는 키 값입니다. : {}", cate_code);
-            throw new BoardCategoryNotFoundException();
-        }
-
-        int rowCnt = boardCategoryDao.updateChkUseN(cate_code);
-
-        if (rowCnt != 1) {
-            log.error("[BOARD_CATEGORY_SERVICE] 카테고리 수정 실패 - DBMS에 정상적으로 반영되지 않았습니다.");
-            throw new NotApplyOnDbmsException();
-        }
+        checkExistedForUpdate(cate_code);
+        checkApplied(1, boardCategoryDao.updateChkUseN(cate_code));
     }
 
     public void remove(String cate_code) {
-        int rowCnt = boardCategoryDao.deleteByCateCode(cate_code);
-
-        if (rowCnt != 1) {
-            log.error("[BOARD_CATEGORY_SERVICE] 카테고리 삭제 실패 - DBMS에 정상적으로 반영되지 않았습니다.");
-            throw new NotApplyOnDbmsException();
-        }
+        checkExistedForUpdate(cate_code);
+        checkApplied(1, boardCategoryDao.deleteByCateCode(cate_code));
     }
 
     @Transactional(rollbackFor = Exception.class)
     public void removeAll() {
         int totalCnt = boardCategoryDao.count();
         int rowCnt = 0;
-
-        for (int i= BoardCategory.MAX_LEVEL; i>0; i--) {
+        for (int i= BoardCategory.MAX_LEVEL; i>0; i--)
             rowCnt += boardCategoryDao.deleteByLevel(i);
-        }
+        checkApplied(totalCnt, rowCnt);
+    }
 
-        if (rowCnt != totalCnt) {
-            log.error("[BOARD_CATEGORY_SERVICE] 카테고리 삭제 실패 - DBMS에 정상적으로 반영되지 않았습니다.");
+    private void checkDuplicated(BoardCategoryRequest request) {
+        boolean exists = boardCategoryDao.existsByCateCode(request.getCate_code());
+        if (exists) {
+            log.info("[BOARD_CATEGORY_SERVICE] 이미 존재하는 키 값입니다. : {}", request.getCate_code());
+            throw new BoardCategoryAlreadyExistsException();
+        }
+    }
+
+    private void checkApplied(Integer expected, Integer actual) {
+        if (!expected.equals(actual)) {
+            log.error("[BOARD_CATEGORY_SERVICE] DBMS에 정상적으로 반영되지 않았습니다.");
             throw new NotApplyOnDbmsException();
+        }
+    }
+
+    private void checkExisted(String cate_code) {
+        boolean exists = boardCategoryDao.existsByCateCode(cate_code);
+        if (!exists) {
+            log.info("[BOARD_CATEGORY_SERVICE] 존재하지 않는 키 값입니다. : {}", cate_code);
+            throw new BoardCategoryNotFoundException();
+        }
+    }
+
+    private void checkExistedForUpdate(String cate_code) {
+        boolean exists = boardCategoryDao.existsByCateCodeForUpdate(cate_code);
+        if (!exists) {
+            log.info("[BOARD_CATEGORY_SERVICE] 존재하지 않는 키 값입니다. : {}", cate_code);
+            throw new BoardCategoryNotFoundException();
         }
     }
 
