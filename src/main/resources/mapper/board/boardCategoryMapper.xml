@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.category.BoardCategoryMapper">
+  <select id="count" resultType="int">
+    SELECT COUNT(*)
+    FROM board_category
+  </select>
+
+  <select id="existsByCateCode" parameterType="string" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM board_category
+    WHERE cate_code = #{cate_code}
+  </select>
+
+  <select id="existsByCateCodeForUpdate" parameterType="string" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM board_category
+    WHERE cate_code = #{cate_code}
+  </select>
+
+  <select id="selectAll" resultType="BoardCategoryDto">
+    SELECT
+      cate_code, top_cate, name,
+      comt, reg_date, reg_user_seq,
+      up_date, up_user_seq, ord,
+      chk_use, level
+    FROM board_category
+    ORDER BY reg_date DESC
+  </select>
+
+  <select id="selectByCateCode" parameterType="string" resultType="BoardCategoryDto">
+    SELECT
+      cate_code, top_cate, name,
+      comt, reg_date, reg_user_seq,
+      up_date, up_user_seq, ord,
+      chk_use, level
+    FROM board_category
+    WHERE cate_code = #{cate_code}
+  </select>
+
+  <select id="selectByTopCate" parameterType="string" resultType="BoardCategoryDto">
+    SELECT
+      cate_code, top_cate, name,
+      comt, reg_date, reg_user_seq,
+      up_date, up_user_seq, ord,
+      chk_use, level
+    FROM board_category
+    WHERE top_cate = #{top_cate}
+    ORDER BY ord
+  </select>
+
+  <insert id="insert" parameterType="BoardCategoryDto">
+    INSERT INTO board_category
+    (
+      cate_code, top_cate, name,
+      comt, reg_date, reg_user_seq,
+      up_date, up_user_seq, ord,
+      chk_use, level
+    )
+    VALUES
+    (
+      #{cate_code}, #{top_cate}, #{name},
+      #{comt}, #{reg_date}, #{reg_user_seq},
+      #{up_date}, #{up_user_seq}, #{ord},
+      #{chk_use}, #{level}
+    )
+  </insert>
+
+  <update id="update" parameterType="BoardCategoryDto">
+    UPDATE board_category
+    SET
+      top_cate = #{top_cate},
+      name = #{name},
+      comt = #{comt},
+      up_date = #{up_date},
+      up_user_seq = #{up_user_seq},
+      ord = #{ord},
+      chk_use = #{chk_use},
+      level = #{level}
+    WHERE cate_code = #{cate_code}
+  </update>
+
+  <update id="updateChkUseY" parameterType="string">
+    UPDATE board_category
+    SET
+      chk_use = 'Y'
+    WHERE cate_code = #{cate_code}
+  </update>
+
+  <update id="updateChkUseN" parameterType="string">
+    UPDATE board_category
+    SET
+      chk_use = 'N'
+    WHERE cate_code = #{cate_code}
+  </update>
+</mapper>
