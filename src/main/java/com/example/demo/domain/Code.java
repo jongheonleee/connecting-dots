@@ -10,6 +10,7 @@ import lombok.Getter;
 
 
 // 코드는 현재 계층구조로 이루어져 있음
+
 public enum Code {
     // 최상위 코드
     CODE(0, "0000", "코드", null),
