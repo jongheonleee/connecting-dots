@@ -21,6 +21,12 @@
     <typeAlias alias="ServiceSanctionHistoryDto" type="com.example.demo.dto.service.ServiceSanctionHistoryDto"/>
     <typeAlias alias="ServiceUserGradeDto" type="com.example.demo.dto.service.ServiceUserGradeDto"/>
 
+    <!-- board -->
+
+    <!-- comment -->
+
+    <!-- reply -->
+
 
 
   </typeAliases>
