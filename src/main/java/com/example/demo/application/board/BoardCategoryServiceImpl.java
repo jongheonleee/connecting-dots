@@ -58,10 +58,10 @@ public class BoardCategoryServiceImpl {
                                .toList();
     }
 
-    public void modify(String cate_code, BoardCategoryRequest request) {
-        checkExistedForUpdate(cate_code);
+    public void modify(BoardCategoryRequest request) {
+        checkExistedForUpdate(request.getCate_code());
         var dto = createDto(request);
-        dto.setCate_code(cate_code);
+        dto.setCate_code(request.getCate_code());
         checkApplied(1, boardCategoryDao.update(dto));
     }
 

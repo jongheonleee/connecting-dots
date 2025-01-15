@@ -3,7 +3,6 @@ package com.example.demo.application.board;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-import com.example.demo.domain.BoardCategory;
 import com.example.demo.dto.board.BoardCategoryDto;
 import com.example.demo.dto.board.BoardCategoryRequest;
 import com.example.demo.dto.board.BoardCategoryResponse;
@@ -262,7 +261,7 @@ class BoardCategoryServiceImplTest {
                 when(boardCategoryDao.existsByCateCodeForUpdate(cate_code)).thenReturn(true);
                 when(boardCategoryDao.update(dto)).thenReturn(1);
 
-                assertDoesNotThrow(() -> boardCategoryService.modify(cate_code, request));
+                assertDoesNotThrow(() -> boardCategoryService.modify(request));
             }
         }
 
@@ -281,7 +280,7 @@ class BoardCategoryServiceImplTest {
                 when(boardCategoryDao.existsByCateCodeForUpdate(cate_code)).thenReturn(false);
 
                 assertThrows(BoardCategoryNotFoundException.class,
-                        () -> boardCategoryService.modify(cate_code, request)
+                        () -> boardCategoryService.modify(request)
                 );
             }
         }
@@ -307,7 +306,7 @@ class BoardCategoryServiceImplTest {
                 when(boardCategoryDao.update(dto)).thenReturn(0);
 
                 assertThrows(NotApplyOnDbmsException.class,
-                        () -> boardCategoryService.modify(cate_code, request)
+                        () -> boardCategoryService.modify(request)
                 );
             }
         }

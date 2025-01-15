@@ -21,11 +21,11 @@ import lombok.ToString;
 @EqualsAndHashCode
 public class BoardCategoryRequest {
     @NotBlank(message = "cate_code 필수값입니다.")
-    @Pattern(regexp = "^[A-Z]{3}\\d{6}$", message = "cate_code 대문자 2글자와 숫자 4자리로 구성되어야 합니다.")
+    @Pattern(regexp = "^[A-Z]{2}\\d{6}$", message = "cate_code 대문자 2글자와 숫자 6자리로 구성되어야 합니다.")
     private String cate_code;
 
     @NotBlank(message = "top_cate 필수값입니다.")
-    @Pattern(regexp = "^[A-Z]{3}\\d{6}$", message = "top_cate 대문자 2글자와 숫자 4자리로 구성되어야 합니다.")
+    @Pattern(regexp = "^[A-Z]{2}\\d{6}$", message = "top_cate 대문자 2글자와 숫자 6자리로 구성되어야 합니다.")
     private String top_cate;
 
     @NotBlank(message = "name 필수값입니다.")
