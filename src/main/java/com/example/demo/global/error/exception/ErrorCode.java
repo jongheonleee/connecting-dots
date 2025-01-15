@@ -36,9 +36,12 @@ public enum ErrorCode {
     SERVICE_USER_CONDITIONS_ALREADY_EXISTS(409, "EC1010", "해당 회원 약관이 이미 존재합니다"),
     SERVICE_USER_CONDITIONS_NOT_FOUND(404, "EC1011", "해당 회원 약관을 찾을 수 없습니다"),
 
-    // 회원
 
     // 게시판
+    BOARD_CATEGORY_ALREADY_EXISTS(409, "EC2001", "해당 게시판 카테고리가 이미 존재합니다"),
+    BOARD_CATEGORY_NOT_FOUND(404, "EC2002", "해당 게시판 카테고리를 찾을 수 없습니다"),
+
+    // 회원
 
     // 리포트
 
