@@ -44,9 +44,5 @@ public class BoardCategoryRequest {
     private Integer level;
 
     private String comt;
-    private String reg_date;
-    private Integer reg_user_seq;
-    private String up_date;
-    private Integer up_user_seq;
 
 }

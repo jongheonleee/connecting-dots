@@ -7,6 +7,12 @@
     FROM board_category
   </select>
 
+  <select id="countByLevel" parameterType="int" resultType="int">
+    SELECT COUNT(*)
+    FROM board_category
+    WHERE level = #{level}
+  </select>
+
   <select id="existsByCateCode" parameterType="string" resultType="boolean">
     SELECT COUNT(*) > 0
     FROM board_category
@@ -94,4 +100,16 @@
       chk_use = 'N'
     WHERE cate_code = #{cate_code}
   </update>
+
+  <delete id="deleteByCateCode" parameterType="string">
+    DELETE
+    FROM board_category
+    WHERE cate_code = #{cate_code}
+  </delete>
+
+  <delete id="deleteByLevel" parameterType="int">
+    DELETE
+    FROM board_category
+    WHERE level = #{level}
+  </delete>
 </mapper>

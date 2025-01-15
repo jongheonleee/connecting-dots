@@ -12,10 +12,14 @@ public class BoardCategoryDaoImpl {
     @Autowired
     private SqlSession session;
 
-    private final String namespace = "com.example.demo.repository.mybatis.board.BoardCategoryMapper.";
+    private final String namespace = "com.example.demo.mapper.category.BoardCategoryMapper.";
 
     public int count() {
         return session.selectOne(namespace + "count");
+    }
+
+    public int countByLevel(Integer level) {
+        return session.selectOne(namespace + "countByLevel", level);
     }
 
     public boolean existsByCateCode(String cate_code) {
@@ -54,4 +58,11 @@ public class BoardCategoryDaoImpl {
         return session.update(namespace + "updateChkUseN", cate_code);
     }
 
+    public int deleteByCateCode(String cate_code) {
+        return session.delete(namespace + "deleteByCateCode", cate_code);
+    }
+
+    public int deleteByLevel(int level) {
+        return session.delete(namespace + "deleteByLevel", level);
+    }
 }
