@@ -1,6 +1,6 @@
 package com.example.demo.validator.user;
 
-import com.example.demo.dto.user.UserFormDto;
+import com.example.demo.dto.ord_user.UserFormDto;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.regex.Pattern;

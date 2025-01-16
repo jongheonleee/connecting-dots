@@ -1,6 +1,6 @@
 package com.example.demo.validator.board;
 
-import com.example.demo.dto.board.BoardFormDto;
+import com.example.demo.dto.ord_board.BoardFormDto;
 import java.util.regex.Pattern;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;

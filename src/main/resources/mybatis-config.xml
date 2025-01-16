@@ -23,7 +23,7 @@
 
     <!-- board -->
     <typeAlias alias="BoardCategoryDto" type="com.example.demo.dto.board.BoardCategoryDto"/>
-
+    <typeAlias alias="BoardDto" type="com.example.demo.dto.board.BoardDto"/>
 
     <!-- comment -->
 

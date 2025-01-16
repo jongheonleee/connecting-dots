@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
-import com.example.demo.dto.comment.CommentRequestDto;
+import com.example.demo.dto.ord_comment.CommentRequestDto;
 
 
 @Component

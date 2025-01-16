@@ -1,13 +1,10 @@
 package com.example.demo.repository.mybatis.user;
 
-import com.example.demo.dto.user.User;
-import com.example.demo.dto.user.UserDto;
-import com.example.demo.dto.user.UserFormDto;
-import com.example.demo.dto.user.UserUpdatedFormDto;
+import com.example.demo.dto.ord_user.UserDto;
+import com.example.demo.dto.ord_user.UserFormDto;
+import com.example.demo.dto.ord_user.UserUpdatedFormDto;
 import java.util.List;
 import org.apache.ibatis.session.SqlSession;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 
 //@Repository
 public class UserDaoImpl {

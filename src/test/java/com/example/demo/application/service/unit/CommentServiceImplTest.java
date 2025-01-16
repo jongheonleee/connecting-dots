@@ -8,8 +8,8 @@ import com.example.demo.global.error.exception.business.comment.CommentFormInval
 import com.example.demo.global.error.exception.business.comment.CommentNotFoundException;
 import com.example.demo.global.error.exception.technology.InternalServerException;
 import com.example.demo.application.comment.CommentServiceImpl;
-import com.example.demo.dto.comment.CommentResponseDto;
-import com.example.demo.dto.comment.CommentRequestDto;
+import com.example.demo.dto.ord_comment.CommentResponseDto;
+import com.example.demo.dto.ord_comment.CommentRequestDto;
 import com.example.demo.repository.mybatis.comment.CommentDaoImpl;
 import java.util.ArrayList;
 import java.util.List;

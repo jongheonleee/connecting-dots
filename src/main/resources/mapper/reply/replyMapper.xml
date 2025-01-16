@@ -14,7 +14,7 @@
     WHERE bno = #{bno}
   </select>
 
-  <insert id="insert" parameterType="com.example.demo.dto.reply.ReplyRequestDto">
+  <insert id="insert" parameterType="com.example.demo.dto.ord_reply.ReplyRequestDto">
     <selectKey keyProperty="rcno" resultType="int" order="AFTER">
       SELECT LAST_INSERT_ID()
     </selectKey>
@@ -29,7 +29,7 @@
      CURRENT_DATE, #{up_id})
   </insert>
 
-  <select id="selectByBnoAndCno" parameterType="map" resultType="com.example.demo.dto.reply.ReplyResponseDto">
+  <select id="selectByBnoAndCno" parameterType="map" resultType="com.example.demo.dto.ord_reply.ReplyResponseDto">
     SELECT
         rcno, bno, cno,
         writer, content, reg_date,
@@ -39,7 +39,7 @@
     AND cno = #{cno}
   </select>
 
-  <select id="selectByBno" parameterType="int" resultType="com.example.demo.dto.reply.ReplyResponseDto">
+  <select id="selectByBno" parameterType="int" resultType="com.example.demo.dto.ord_reply.ReplyResponseDto">
     SELECT
         rcno, bno, cno,
         writer, content, reg_date,
@@ -48,7 +48,7 @@
     WHERE bno = #{bno}
   </select>
 
-  <select id="selectByCno" parameterType="int" resultType="com.example.demo.dto.reply.ReplyResponseDto">
+  <select id="selectByCno" parameterType="int" resultType="com.example.demo.dto.ord_reply.ReplyResponseDto">
     SELECT
       rcno, bno, cno,
       writer, content, reg_date,
@@ -57,7 +57,7 @@
     WHERE cno = #{cno}
   </select>
 
-  <select id="selectByRcno" parameterType="int" resultType="com.example.demo.dto.reply.ReplyResponseDto">
+  <select id="selectByRcno" parameterType="int" resultType="com.example.demo.dto.ord_reply.ReplyResponseDto">
     SELECT
       rcno, bno, cno,
       writer, content, reg_date,
@@ -66,7 +66,7 @@
     WHERE rcno = #{rcno}
   </select>
 
-  <select id="selectAll" resultType="com.example.demo.dto.reply.ReplyResponseDto">
+  <select id="selectAll" resultType="com.example.demo.dto.ord_reply.ReplyResponseDto">
     SELECT
       rcno, bno, cno,
       writer, content, reg_date,
@@ -74,7 +74,7 @@
     FROM reply
   </select>
 
-  <update id="update" parameterType="com.example.demo.dto.reply.ReplyUpdateRequestDto">
+  <update id="update" parameterType="com.example.demo.dto.ord_reply.ReplyUpdateRequestDto">
     UPDATE reply
     SET
         content = #{content},

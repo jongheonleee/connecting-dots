@@ -1,10 +1,8 @@
 package com.example.demo.repository.mybatis.board;
 
-import com.example.demo.dto.board.BestCommentBoardDto;
-import com.example.demo.dto.board.BestCommentBoardUpdateDto;
-import com.example.demo.dto.board.BestLikeBoardDto;
-import com.example.demo.dto.board.BestLikeBoardUpdateDto;
-import com.example.demo.dto.board.BoardResponseDto;
+import com.example.demo.dto.ord_board.BestLikeBoardDto;
+import com.example.demo.dto.ord_board.BestLikeBoardUpdateDto;
+import com.example.demo.dto.ord_board.BoardResponseDto;
 import java.util.List;
 import java.util.Map;
 import org.apache.ibatis.session.SqlSession;

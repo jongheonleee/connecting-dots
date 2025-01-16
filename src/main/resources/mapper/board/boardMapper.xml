@@ -3,205 +3,119 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.example.demo.mapper.board.BoardMapper">
-
-  <!-- v2 : 게시글 조회 -->
-  <select id="selectV2" parameterType="map" resultType="com.example.demo.dto.board.BoardResponseDto">
-    SELECT
-      b.bno AS bno, b.title AS title, b.writer AS writer, b.cate_code AS cate_code,
-      b.reg_date AS reg_date, b.view_cnt AS view_cnt, b.reco_cnt AS reco_cnt,
-      (
-        SELECT img
-        FROM image AS i
-        WHERE b.bno = i.bno
-        AND i.thumb = 'Y'
-      ) AS thumb,
-      (
-        SELECT count(*)
-        FROM comment AS c
-        WHERE b.bno = c.bno
-      ) AS comment_cnt
-    FROM board AS b
-    ORDER BY reg_date DESC, view_cnt DESC, comment_cnt DESC
-    LIMIT #{offset}, #{pageSize};
-  </select>
-
-  <!-- v2 : 게시글 조회 - 카테고리 -->
-  <select id="selectV2ByCategory" parameterType="map" resultType="com.example.demo.dto.board.BoardResponseDto">
-    SELECT
-      b.bno AS bno, b.title AS title, b.writer AS writer, b.cate_code AS cate_code,
-      b.reg_date AS reg_date, b.view_cnt AS view_cnt, b.reco_cnt AS reco_cnt,
-      (
-        SELECT img
-        FROM image AS i
-        WHERE b.bno = i.bno
-        AND i.thumb = 'Y'
-      ) AS thumb,
-      (
-        SELECT count(*)
-        FROM comment AS c
-        WHERE b.bno = c.bno
-       ) AS comment_cnt
-    FROM board AS b
-    WHERE b.cate_code
-    LIKE CONCAT(#{cate_code}, '%')
-    ORDER BY reg_date DESC, view_cnt DESC, comment_cnt DESC
-    LIMIT #{offset}, #{pageSize};
-  </select>
-
-  <!-- v2 : 게시글 검색 & 정렬 조건 기반 조회 -->
-  <select id="selectV2BySearchCondition" parameterType="com.example.demo.dto.SearchCondition" resultType="com.example.demo.dto.board.BoardResponseDto">
-    SELECT
-      b.bno AS bno, b.title AS title, b.writer AS writer, b.cate_code AS cate_code,
-      b.reg_date AS reg_date, b.view_cnt AS view_cnt, b.reco_cnt AS reco_cnt,
-      (
-        SELECT img
-        FROM image AS i
-        WHERE b.bno = i.bno
-        AND i.thumb = 'Y'
-      ) AS thumb,
-      (
-        SELECT count(*)
-        FROM comment AS c
-        WHERE b.bno = c.bno
-       ) AS comment_cnt
-    FROM board AS b
-    WHERE TRUE
-      <!-- 검색 조건 -->
-      <choose>
-        <when test='searchOption=="T"'>
-          AND b.title LIKE CONCAT('%', #{searchKeyword}, '%')
-        </when>
-        <when test='searchOption=="W"'>
-          AND b.writer LIKE CONCAT('%', #{searchKeyword}, '%')
-        </when>
-        <otherwise>
-          AND b.title LIKE CONCAT('%', #{searchKeyword}, '%')
-          OR b.writer LIKE CONCAT('%', #{searchKeyword}, '%')
-        </otherwise>
-      </choose>
-      <!-- 정렬 조건 -->
-      <choose>
-        <when test='sortOption == "1"'> <!-- 최신순 -->
-          ORDER BY reg_date DESC, bno DESC
-        </when>
-        <when test='sortOption == "2"'> <!-- 조회수 -->
-          ORDER BY view_cnt DESC, bno DESC
-        </when>
-        <when test='sortOption == "3"'> <!-- 추천순 -->
-          ORDER BY reco_cnt DESC, bno DESC
-        </when>
-        <otherwise> <!-- 기본값, 최신순 -->
-          ORDER BY reg_date DESC, bno DESC
-        </otherwise>
-    </choose>
-    LIMIT #{offset}, #{pageSize};
-  </select>
-
-
-  <!-- v1 : 게시글 카운팅 -->
   <select id="count" resultType="int">
     SELECT COUNT(*)
     FROM board
   </select>
 
-  <!-- v1 : 게시글 등록 -->
-  <insert id="insert" parameterType="com.example.demo.dto.board.BoardFormDto">
-    <!-- 등록된 이후에 dto에 bno 저장 -->
-    <selectKey keyProperty="bno" resultType="int" order="AFTER">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
-
-    INSERT INTO board(
-    cate_code, id, title,
-    writer, content, comt,
-    reg_date, reg_id, up_date, up_id)
-    values (#{cate_code}, #{id}, #{title},
-    #{writer}, #{content}, #{comt},
-    now(), #{reg_id}, now(), #{up_id});
-  </insert>
-
-  <!-- v1 : 게시글 조회 -->
-  <select id="select" parameterType="int" resultType="com.example.demo.dto.board.BoardFormDto">
-    SELECT
-      bno, cate_code, title,
-      writer, view_cnt, reco_cnt,
-      not_reco_cnt, content, comt,
-      reg_date, reg_id, up_date, up_id
-    FROM board
-    WHERE bno = #{bno}
-  </select>
-
-  <!-- v1 : 게시글 카테고리 기반 조회 카운팅 -->
-  <select id="countByCategory" parameterType="String" resultType="int">
-    SELECT
-      COUNT(*)
-    FROM board
-    WHERE cate_code
-    LIKE CONCAT(#{cate_code}, '%')
-  </select>
-
-
-  <!-- v1 : 게시글 조회 - 카테고리 -->
-  <select id="selectByCategory" parameterType="String" resultType="com.example.demo.dto.board.BoardFormDto">
-    SELECT
-      bno, cate_code, id, title,
-      writer, view_cnt, reco_cnt,
-      not_reco_cnt, content, comt,
-      reg_date, reg_id, up_date, up_id
-    FROM board
-    WHERE cate_code
-    LIKE CONCAT(#{cate_code}, '%')
-    ORDER BY reg_date DESC, bno DESC
-  </select>
-
-
-  <!-- v1 : 게시글 검색 & 정렬 조건 기반 카운팅 -->
-  <select id="countBySearchCondition" parameterType="com.example.demo.dto.SearchCondition" resultType="int">
-    SELECT
-      COUNT(*)
+  <select id="countBySearchCondition" parameterType="SearchCondition" resultType="int" >
+    SELECT COUNT(*)
     FROM board
     WHERE TRUE
-
     <!-- 검색 조건 -->
     <choose>
-      <when test='searchOption=="T"'>
+      <when test='searchOption=="TT"'>
         AND title LIKE CONCAT('%', #{searchKeyword}, '%')
       </when>
-      <when test='searchOption=="W"'>
+      <when test='searchOption=="WR"'>
         AND writer LIKE CONCAT('%', #{searchKeyword}, '%')
+      </when>
+      <when test='searchOption=="CT"'>
+        AND cate_code LIKE CONCAT('%', #{searchKeyword}, '%')
       </when>
       <otherwise>
         AND title LIKE CONCAT('%', #{searchKeyword}, '%')
         OR writer LIKE CONCAT('%', #{searchKeyword}, '%')
+        OR cate_code LIKE CONCAT('%', #{searchKeyword}, '%')
       </otherwise>
     </choose>
   </select>
 
-  <!-- v1 : 게시글 검색 & 정렬 조건 기반 조회 -->
-  <select id="selectBySearchCondition" parameterType="com.example.demo.dto.SearchCondition" resultType="com.example.demo.dto.board.BoardFormDto">
+  <select id="existsByBno" parameterType="int" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM board
+    WHERE bno = #{bno}
+  </select>
+
+  <select id="existsByBnoForUpdate" parameterType="int" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM board
+    WHERE bno = #{bno}
+    FOR UPDATE
+  </select>
+
+  <delete id="deleteAll">
+    DELETE
+    FROM board
+  </delete>
+
+  <insert id="insert" parameterType="BoardDto">
+    <selectKey keyProperty="bno" resultType="int" order="AFTER">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+      INSERT INTO board(
+          cate_code, title, cont,
+          user_seq, reg_date, reg_user_seq,
+          up_date, up_user_seq, writer
+      )
+      VALUES(
+          #{cate_code}, #{title}, #{cont},
+          #{user_seq}, #{reg_date}, #{reg_user_seq},
+          #{up_date}, #{up_user_seq}, #{writer}
+      )
+  </insert>
+
+  <select id="selectByBno" parameterType="int" resultType="BoardDto">
     SELECT
-      bno, cate_code, id, title,
-      writer, view_cnt, reco_cnt,
-      not_reco_cnt, content, comt,
-      reg_date, reg_id, up_date, up_id
+      bno, cate_code, user_seq,
+      writer, title, view_cnt,
+      reco_cnt, not_reco_cnt, cont,
+      comt, reg_date, reg_user_seq,
+      up_date, up_user_seq
+    FROM board
+    WHERE bno = #{bno}
+  </select>
+
+  <select id="selectAll" resultType="BoardDto">
+    SELECT
+      bno, cate_code, user_seq,
+      writer, title, view_cnt,
+      reco_cnt, not_reco_cnt, cont,
+      comt, reg_date, reg_user_seq,
+      up_date, up_user_seq
+    FROM board
+    ORDER BY reg_date DESC, bno DESC
+  </select>
+
+  <!-- 게시글 검색 & 정렬 조건 기반 조회 -->
+  <select id="selectBySearchCondition" parameterType="SearchCondition" resultType="BoardDto">
+    SELECT
+      bno, cate_code, user_seq,
+      writer, title, view_cnt,
+      reco_cnt, not_reco_cnt, cont,
+      comt, reg_date, reg_user_seq,
+      up_date, up_user_seq
     FROM board
     WHERE TRUE
+    <!-- 검색 조건 -->
+    <choose>
+      <when test='searchOption=="TT"'>
+        AND title LIKE CONCAT('%', #{searchKeyword}, '%')
+      </when>
+      <when test='searchOption=="WR"'>
+        AND writer LIKE CONCAT('%', #{searchKeyword}, '%')
+      </when>
+      <when test='searchOption=="CT"'>
+        AND cate_code LIKE CONCAT('%', #{searchKeyword}, '%')
+      </when>
+      <otherwise>
+        AND title LIKE CONCAT('%', #{searchKeyword}, '%')
+        OR writer LIKE CONCAT('%', #{searchKeyword}, '%')
+        OR cate_code LIKE CONCAT('%', #{searchKeyword}, '%')
+      </otherwise>
+    </choose>
 
-      <!-- 검색 조건 -->
-      <choose>
-        <when test='searchOption=="T"'>
-          AND title LIKE CONCAT('%', #{searchKeyword}, '%')
-        </when>
-        <when test='searchOption=="W"'>
-          AND writer LIKE CONCAT('%', #{searchKeyword}, '%')
-        </when>
-        <otherwise>
-          AND title LIKE CONCAT('%', #{searchKeyword}, '%')
-          OR writer LIKE CONCAT('%', #{searchKeyword}, '%')
-        </otherwise>
-      </choose>
-
-     <!-- 정렬 조건 -->
+    <!-- 정렬 조건 -->
     <choose>
       <when test='sortOption == "1"'> <!-- 최신순 -->
         ORDER BY reg_date DESC, bno DESC
@@ -216,196 +130,329 @@
         ORDER BY reg_date DESC, bno DESC
       </otherwise>
     </choose>
-
     LIMIT #{offset}, #{pageSize};
   </select>
 
-  <!-- v1 : 게시글 상세 조회 - bno -->
-  <select id="selectByBno" parameterType="int" resultMap="BoardDetailResultMap">
-    SELECT
-      b.bno AS bno,
-      b.cate_code AS cate_code,
-      b.id AS id,
-      b.title AS title,
-      b.writer AS writer,
-      b.view_cnt AS view_cnt,
-      b.reco_cnt AS reco_cnt,
-      b.not_reco_cnt AS not_reco_cnt,
-      b.content AS content,
-      b.comt AS comt,
-      b.reg_date AS reg_date,
-      b.reg_id AS reg_id,
-      b.up_date AS up_date,
-      b.up_id AS up_id,
-      i.ino AS ino,
-      i.img AS img,
-      i.comt AS comt,
-      i.name AS name,
-      c.name AS cate_name
-    FROM board b
-    INNER JOIN image i
-    ON b.bno = i.bno
-    INNER JOIN category c
-    ON b.cate_code = c.cate_code
-    WHERE b.bno = #{bno};
-  </select>
-
-  <!-- v2 : 베스트 게시글 조회 - 댓글 -->
-  <select id="selectTopByComment" parameterType="int" resultType="com.example.demo.dto.board.BoardFormDto">
-    SELECT
-      b.bno AS bno,
-      b.cate_code AS cate_code,
-      b.id AS id,
-      b.title AS title,
-      b.writer AS writer,
-      b.view_cnt AS view_cnt,
-      b.reco_cnt AS reco_cnt,
-      b.not_reco_cnt AS not_reco_cnt,
-      b.content AS content,
-      b.comt AS comt,
-      b.reg_date AS reg_date,
-      b.reg_id AS reg_id,
-      b.up_date AS up_date,
-      b.up_id AS up_id
-    FROM (SELECT bno, COUNT(*) AS comment_cnt
-          FROM comment
-          GROUP BY bno) AS c, board AS b
-    WHERE c.bno = b.bno
-    ORDER BY c.comment_cnt DESC
-    LIMIT #{n};
-  </select>
-
-
-  <!-- v2 : 베스트 게시글 조회 - 조회수 -->
-  <select id="selectTopByView" parameterType="int" resultType="com.example.demo.dto.board.BoardFormDto">
-    SELECT
-      bno,
-      cate_code,
-      id,
-      title,
-      writer,
-      view_cnt,
-      reco_cnt,
-      not_reco_cnt,
-      content,
-      comt,
-      reg_date,
-      reg_id,
-      up_date,
-      up_id
-    FROM board
-    ORDER BY view_cnt DESC
-    LIMIT #{n};
-  </select>
-
-  <!-- v2 : 베스트 게시글 조회 - 좋아요 -->
-  <select id="selectTopByReco" parameterType="int" resultType="com.example.demo.dto.board.BoardFormDto">
-    SELECT
-      bno,
-      cate_code,
-      id,
-      title,
-      writer,
-      view_cnt,
-      reco_cnt,
-      not_reco_cnt,
-      content,
-      comt,
-      reg_date,
-      reg_id,
-      up_date,
-      up_id
-    FROM board
-    ORDER BY reco_cnt DESC
-    LIMIT #{n};
-  </select>
-
-  <!--v1 : 게시글 상세 조회 - bno 매핑 정보 -->
-  <resultMap id="BoardDetailResultMap" type="com.example.demo.dto.board.BoardDetailDto">
-    <id property="bno" column="bno" />
-    <result property="cate_code" column="cate_code" />
-    <result property="id" column="id" />
-    <result property="title" column="title" />
-    <result property="writer" column="writer" />
-    <result property="view_cnt" column="view_cnt" />
-    <result property="reco_cnt" column="reco_cnt" />
-    <result property="not_reco_cnt" column="not_reco_cnt" />
-    <result property="content" column="content" />
-    <result property="comt" column="comt" />
-    <result property="reg_date" column="reg_date" />
-    <result property="reg_id" column="reg_id" />
-    <result property="up_date" column="up_date" />
-    <result property="up_id" column="up_id" />
-
-    <!-- 카테고리 매핑 -->
-    <association property="category" javaType="com.example.demo.dto.board.BoardCategoryDto">
-      <result property="cate_code" column="cate_code" />
-      <result property="name" column="cate_name" />
-    </association>
-
-    <!-- 이미지 여러개 매핑 -->
-    <collection property="boardImgs" ofType="com.example.demo.dto.board.BoardImgDto">
-      <id property="ino" column="ino" />
-      <result property="img" column="img" />
-      <result property="comt" column="img_comt" />
-      <result property="name" column="name" />
-    </collection>
-  </resultMap>
-
-  <!-- v1 : 전체 게시글 조회 -->
-  <select id="selectAll" resultType="com.example.demo.dto.board.BoardFormDto">
-    SELECT
-      bno, cate_code, id, title,
-      writer, view_cnt, reco_cnt,
-      not_reco_cnt, content, comt,
-      reg_date, reg_id, up_date, up_id
-    FROM board
-    ORDER BY reg_date DESC, bno DESC
-  </select>
 
   <!-- v1 : 게시글 수정 -->
-  <update id="update" parameterType="com.example.demo.dto.board.BoardFormDto">
+  <update id="update" parameterType="BoardDto">
     UPDATE board
     SET
-        title = #{title}, content = #{content}, comt = #{comt},
-        up_date = now(), up_id = #{up_id}
+      cate_code = #{cate_code},
+      writer = #{writer},
+      title = #{title},
+      cont = #{cont},
+      comt = #{comt},
+      up_date = CURRENT_DATE,
+      up_user_seq = #{up_user_seq}
     WHERE bno = #{bno}
   </update>
 
   <!-- v1 : 게시글 조회수 증가 -->
-  <update id="increaseViewCnt" parameterType="int">
+  <update id="increaseViewCnt" parameterType="BoardDto">
     UPDATE board
-    SET
-        view_cnt = view_cnt + 1
+    SET view_cnt = view_cnt + 1,
+        up_date = CURRENT_DATE,
+        up_user_seq = #{up_user_seq}
     WHERE bno = #{bno};
   </update>
 
   <!-- v1 : 게시글 추천수 증가 -->
-  <update id="increaseRecoCnt" parameterType="int">
+  <update id="increaseRecoCnt" parameterType="BoardDto">
     UPDATE board
-    SET
-      reco_cnt = reco_cnt + 1
+    SET reco_cnt = reco_cnt + 1,
+        up_date = CURRENT_DATE,
+        up_user_seq = #{up_user_seq}
     WHERE bno = #{bno};
   </update>
 
   <!-- v1 : 게시글 비추천수 증가 -->
-  <update id="increaseNotRecoCnt" parameterType="int">
+  <update id="increaseNotRecoCnt" parameterType="BoardDto">
     UPDATE board
-    SET
-      not_reco_cnt = not_reco_cnt + 1
+    SET not_reco_cnt = not_reco_cnt + 1,
+        up_date = CURRENT_DATE,
+        up_user_seq = #{up_user_seq}
     WHERE bno = #{bno};
   </update>
 
-  <!-- v1 : 게시글 삭제 -->
-  <delete id="delete" parameterType="int">
-    DELETE
-    FROM board
-    WHERE bno = #{bno}
-  </delete>
 
-  <!-- v1 : 전체 게시글 삭제 -->
-  <delete id="deleteAll">
-    DELETE
-    FROM board
-  </delete>
+  <!--  &lt;!&ndash; v2 : 게시글 조회 &ndash;&gt;-->
+<!--  <select id="selectV2" parameterType="map" resultType="com.example.demo.dto.ord_board.BoardResponseDto">-->
+<!--    SELECT-->
+<!--      b.bno AS bno, b.title AS title, b.writer AS writer, b.cate_code AS cate_code,-->
+<!--      b.reg_date AS reg_date, b.view_cnt AS view_cnt, b.reco_cnt AS reco_cnt,-->
+<!--      (-->
+<!--        SELECT img-->
+<!--        FROM image AS i-->
+<!--        WHERE b.bno = i.bno-->
+<!--        AND i.thumb = 'Y'-->
+<!--      ) AS thumb,-->
+<!--      (-->
+<!--        SELECT count(*)-->
+<!--        FROM comment AS c-->
+<!--        WHERE b.bno = c.bno-->
+<!--      ) AS comment_cnt-->
+<!--    FROM board AS b-->
+<!--    ORDER BY reg_date DESC, view_cnt DESC, comment_cnt DESC-->
+<!--    LIMIT #{offset}, #{pageSize};-->
+<!--  </select>-->
+
+<!--  &lt;!&ndash; v2 : 게시글 조회 - 카테고리 &ndash;&gt;-->
+<!--  <select id="selectV2ByCategory" parameterType="map" resultType="com.example.demo.dto.ord_board.BoardResponseDto">-->
+<!--    SELECT-->
+<!--      b.bno AS bno, b.title AS title, b.writer AS writer, b.cate_code AS cate_code,-->
+<!--      b.reg_date AS reg_date, b.view_cnt AS view_cnt, b.reco_cnt AS reco_cnt,-->
+<!--      (-->
+<!--        SELECT img-->
+<!--        FROM image AS i-->
+<!--        WHERE b.bno = i.bno-->
+<!--        AND i.thumb = 'Y'-->
+<!--      ) AS thumb,-->
+<!--      (-->
+<!--        SELECT count(*)-->
+<!--        FROM comment AS c-->
+<!--        WHERE b.bno = c.bno-->
+<!--       ) AS comment_cnt-->
+<!--    FROM board AS b-->
+<!--    WHERE b.cate_code-->
+<!--    LIKE CONCAT(#{cate_code}, '%')-->
+<!--    ORDER BY reg_date DESC, view_cnt DESC, comment_cnt DESC-->
+<!--    LIMIT #{offset}, #{pageSize};-->
+<!--  </select>-->
+
+<!--  &lt;!&ndash; v2 : 게시글 검색 & 정렬 조건 기반 조회 &ndash;&gt;-->
+<!--  <select id="selectV2BySearchCondition" parameterType="com.example.demo.dto.SearchCondition" resultType="com.example.demo.dto.ord_board.BoardResponseDto">-->
+<!--    SELECT-->
+<!--      b.bno AS bno, b.title AS title, b.writer AS writer, b.cate_code AS cate_code,-->
+<!--      b.reg_date AS reg_date, b.view_cnt AS view_cnt, b.reco_cnt AS reco_cnt,-->
+<!--      (-->
+<!--        SELECT img-->
+<!--        FROM image AS i-->
+<!--        WHERE b.bno = i.bno-->
+<!--        AND i.thumb = 'Y'-->
+<!--      ) AS thumb,-->
+<!--      (-->
+<!--        SELECT count(*)-->
+<!--        FROM comment AS c-->
+<!--        WHERE b.bno = c.bno-->
+<!--       ) AS comment_cnt-->
+<!--    FROM board AS b-->
+<!--    WHERE TRUE-->
+<!--      &lt;!&ndash; 검색 조건 &ndash;&gt;-->
+<!--      <choose>-->
+<!--        <when test='searchOption=="T"'>-->
+<!--          AND b.title LIKE CONCAT('%', #{searchKeyword}, '%')-->
+<!--        </when>-->
+<!--        <when test='searchOption=="W"'>-->
+<!--          AND b.writer LIKE CONCAT('%', #{searchKeyword}, '%')-->
+<!--        </when>-->
+<!--        <otherwise>-->
+<!--          AND b.title LIKE CONCAT('%', #{searchKeyword}, '%')-->
+<!--          OR b.writer LIKE CONCAT('%', #{searchKeyword}, '%')-->
+<!--        </otherwise>-->
+<!--      </choose>-->
+<!--      &lt;!&ndash; 정렬 조건 &ndash;&gt;-->
+<!--      <choose>-->
+<!--        <when test='sortOption == "1"'> &lt;!&ndash; 최신순 &ndash;&gt;-->
+<!--          ORDER BY reg_date DESC, bno DESC-->
+<!--        </when>-->
+<!--        <when test='sortOption == "2"'> &lt;!&ndash; 조회수 &ndash;&gt;-->
+<!--          ORDER BY view_cnt DESC, bno DESC-->
+<!--        </when>-->
+<!--        <when test='sortOption == "3"'> &lt;!&ndash; 추천순 &ndash;&gt;-->
+<!--          ORDER BY reco_cnt DESC, bno DESC-->
+<!--        </when>-->
+<!--        <otherwise> &lt;!&ndash; 기본값, 최신순 &ndash;&gt;-->
+<!--          ORDER BY reg_date DESC, bno DESC-->
+<!--        </otherwise>-->
+<!--    </choose>-->
+<!--    LIMIT #{offset}, #{pageSize};-->
+<!--  </select>-->
+
+
+
+
+
+
+<!--  &lt;!&ndash; v1 : 게시글 조회 - 카테고리 &ndash;&gt;-->
+<!--  <select id="selectByCategory" parameterType="String" resultType="com.example.demo.dto.ord_board.BoardFormDto">-->
+<!--    SELECT-->
+<!--      bno, cate_code, id, title,-->
+<!--      writer, view_cnt, reco_cnt,-->
+<!--      not_reco_cnt, content, comt,-->
+<!--      reg_date, reg_id, up_date, up_id-->
+<!--    FROM board-->
+<!--    WHERE cate_code-->
+<!--    LIKE CONCAT(#{cate_code}, '%')-->
+<!--    ORDER BY reg_date DESC, bno DESC-->
+<!--  </select>-->
+
+
+<!--  &lt;!&ndash; v1 : 게시글 검색 & 정렬 조건 기반 카운팅 &ndash;&gt;-->
+<!--  <select id="countBySearchCondition" parameterType="com.example.demo.dto.SearchCondition" resultType="int">-->
+<!--    SELECT-->
+<!--      COUNT(*)-->
+<!--    FROM board-->
+<!--    WHERE TRUE-->
+
+<!--    &lt;!&ndash; 검색 조건 &ndash;&gt;-->
+<!--    <choose>-->
+<!--      <when test='searchOption=="T"'>-->
+<!--        AND title LIKE CONCAT('%', #{searchKeyword}, '%')-->
+<!--      </when>-->
+<!--      <when test='searchOption=="W"'>-->
+<!--        AND writer LIKE CONCAT('%', #{searchKeyword}, '%')-->
+<!--      </when>-->
+<!--      <otherwise>-->
+<!--        AND title LIKE CONCAT('%', #{searchKeyword}, '%')-->
+<!--        OR writer LIKE CONCAT('%', #{searchKeyword}, '%')-->
+<!--      </otherwise>-->
+<!--    </choose>-->
+<!--  </select>-->
+
+
+<!--  &lt;!&ndash; v1 : 게시글 상세 조회 - bno &ndash;&gt;-->
+<!--  <select id="selectByBno" parameterType="int" resultMap="BoardDetailResultMap">-->
+<!--    SELECT-->
+<!--      b.bno AS bno,-->
+<!--      b.cate_code AS cate_code,-->
+<!--      b.id AS id,-->
+<!--      b.title AS title,-->
+<!--      b.writer AS writer,-->
+<!--      b.view_cnt AS view_cnt,-->
+<!--      b.reco_cnt AS reco_cnt,-->
+<!--      b.not_reco_cnt AS not_reco_cnt,-->
+<!--      b.content AS content,-->
+<!--      b.comt AS comt,-->
+<!--      b.reg_date AS reg_date,-->
+<!--      b.reg_id AS reg_id,-->
+<!--      b.up_date AS up_date,-->
+<!--      b.up_id AS up_id,-->
+<!--      i.ino AS ino,-->
+<!--      i.img AS img,-->
+<!--      i.comt AS comt,-->
+<!--      i.name AS name,-->
+<!--      c.name AS cate_name-->
+<!--    FROM board b-->
+<!--    INNER JOIN image i-->
+<!--    ON b.bno = i.bno-->
+<!--    INNER JOIN category c-->
+<!--    ON b.cate_code = c.cate_code-->
+<!--    WHERE b.bno = #{bno};-->
+<!--  </select>-->
+
+<!--  &lt;!&ndash; v2 : 베스트 게시글 조회 - 댓글 &ndash;&gt;-->
+<!--  <select id="selectTopByComment" parameterType="int" resultType="com.example.demo.dto.ord_board.BoardFormDto">-->
+<!--    SELECT-->
+<!--      b.bno AS bno,-->
+<!--      b.cate_code AS cate_code,-->
+<!--      b.id AS id,-->
+<!--      b.title AS title,-->
+<!--      b.writer AS writer,-->
+<!--      b.view_cnt AS view_cnt,-->
+<!--      b.reco_cnt AS reco_cnt,-->
+<!--      b.not_reco_cnt AS not_reco_cnt,-->
+<!--      b.content AS content,-->
+<!--      b.comt AS comt,-->
+<!--      b.reg_date AS reg_date,-->
+<!--      b.reg_id AS reg_id,-->
+<!--      b.up_date AS up_date,-->
+<!--      b.up_id AS up_id-->
+<!--    FROM (SELECT bno, COUNT(*) AS comment_cnt-->
+<!--          FROM comment-->
+<!--          GROUP BY bno) AS c, board AS b-->
+<!--    WHERE c.bno = b.bno-->
+<!--    ORDER BY c.comment_cnt DESC-->
+<!--    LIMIT #{n};-->
+<!--  </select>-->
+
+
+<!--  &lt;!&ndash; v2 : 베스트 게시글 조회 - 조회수 &ndash;&gt;-->
+<!--  <select id="selectTopByView" parameterType="int" resultType="com.example.demo.dto.ord_board.BoardFormDto">-->
+<!--    SELECT-->
+<!--      bno,-->
+<!--      cate_code,-->
+<!--      id,-->
+<!--      title,-->
+<!--      writer,-->
+<!--      view_cnt,-->
+<!--      reco_cnt,-->
+<!--      not_reco_cnt,-->
+<!--      content,-->
+<!--      comt,-->
+<!--      reg_date,-->
+<!--      reg_id,-->
+<!--      up_date,-->
+<!--      up_id-->
+<!--    FROM board-->
+<!--    ORDER BY view_cnt DESC-->
+<!--    LIMIT #{n};-->
+<!--  </select>-->
+
+<!--  &lt;!&ndash; v2 : 베스트 게시글 조회 - 좋아요 &ndash;&gt;-->
+<!--  <select id="selectTopByReco" parameterType="int" resultType="com.example.demo.dto.ord_board.BoardFormDto">-->
+<!--    SELECT-->
+<!--      bno,-->
+<!--      cate_code,-->
+<!--      id,-->
+<!--      title,-->
+<!--      writer,-->
+<!--      view_cnt,-->
+<!--      reco_cnt,-->
+<!--      not_reco_cnt,-->
+<!--      content,-->
+<!--      comt,-->
+<!--      reg_date,-->
+<!--      reg_id,-->
+<!--      up_date,-->
+<!--      up_id-->
+<!--    FROM board-->
+<!--    ORDER BY reco_cnt DESC-->
+<!--    LIMIT #{n};-->
+<!--  </select>-->
+
+<!--  &lt;!&ndash;v1 : 게시글 상세 조회 - bno 매핑 정보 &ndash;&gt;-->
+<!--  <resultMap id="BoardDetailResultMap" type="com.example.demo.dto.ord_board.BoardDetailDto">-->
+<!--    <id property="bno" column="bno" />-->
+<!--    <result property="cate_code" column="cate_code" />-->
+<!--    <result property="id" column="id" />-->
+<!--    <result property="title" column="title" />-->
+<!--    <result property="writer" column="writer" />-->
+<!--    <result property="view_cnt" column="view_cnt" />-->
+<!--    <result property="reco_cnt" column="reco_cnt" />-->
+<!--    <result property="not_reco_cnt" column="not_reco_cnt" />-->
+<!--    <result property="content" column="content" />-->
+<!--    <result property="comt" column="comt" />-->
+<!--    <result property="reg_date" column="reg_date" />-->
+<!--    <result property="reg_id" column="reg_id" />-->
+<!--    <result property="up_date" column="up_date" />-->
+<!--    <result property="up_id" column="up_id" />-->
+
+<!--    &lt;!&ndash; 카테고리 매핑 &ndash;&gt;-->
+<!--    <association property="category" javaType="com.example.demo.dto.board.BoardCategoryDto">-->
+<!--      <result property="cate_code" column="cate_code" />-->
+<!--      <result property="name" column="cate_name" />-->
+<!--    </association>-->
+
+<!--    &lt;!&ndash; 이미지 여러개 매핑 &ndash;&gt;-->
+<!--    <collection property="boardImgs" ofType="com.example.demo.dto.ord_board.BoardImgDto">-->
+<!--      <id property="ino" column="ino" />-->
+<!--      <result property="img" column="img" />-->
+<!--      <result property="comt" column="img_comt" />-->
+<!--      <result property="name" column="name" />-->
+<!--    </collection>-->
+<!--  </resultMap>-->
+
+<!--  &lt;!&ndash; v1 : 게시글 삭제 &ndash;&gt;-->
+<!--  <delete id="delete" parameterType="int">-->
+<!--    DELETE-->
+<!--    FROM board-->
+<!--    WHERE bno = #{bno}-->
+<!--  </delete>-->
+
+<!--  &lt;!&ndash; v1 : 전체 게시글 삭제 &ndash;&gt;-->
+<!--  <delete id="deleteAll">-->
+<!--    DELETE-->
+<!--    FROM board-->
+<!--  </delete>-->
 </mapper>

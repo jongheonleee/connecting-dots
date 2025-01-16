@@ -1,6 +1,6 @@
 package com.example.demo.repository.mybatis.board;
 
-import com.example.demo.dto.board.BoardImgFormDto;
+import com.example.demo.dto.ord_board.BoardImgFormDto;
 import java.util.List;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;

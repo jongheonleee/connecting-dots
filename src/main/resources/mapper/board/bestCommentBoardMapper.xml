@@ -33,7 +33,7 @@ CRUD
     AND CURRENT_DATE > appl_end
   </select>
 
-  <insert id="insert" parameterType="com.example.demo.dto.board.BestCommentBoardDto">
+  <insert id="insert" parameterType="com.example.demo.dto.ord_board.BestCommentBoardDto">
     <!-- 등록된 이후에 dto에 bno 저장 -->
     <selectKey keyProperty="seq" resultType="int" order="AFTER">
       SELECT LAST_INSERT_ID()
@@ -45,7 +45,7 @@ CRUD
         (#{bno}, #{appl_begin}, #{appl_end}, #{comt}, CURRENT_DATE, #{reg_id}, CURRENT_DATE, #{up_id}, #{used});
   </insert>
 
-  <select id="selectForView" parameterType="map" resultType="com.example.demo.dto.board.BoardResponseDto">
+  <select id="selectForView" parameterType="map" resultType="com.example.demo.dto.ord_board.BoardResponseDto">
     -- 조회 - 허용된 기간 내의 베스트 게시글 조회
     SELECT
       b.bno AS bno,
@@ -74,7 +74,7 @@ CRUD
     LIMIT #{offset}, #{pageSize};
   </select>
 
-  <select id="selectAll" resultType="com.example.demo.dto.board.BestCommentBoardDto">
+  <select id="selectAll" resultType="com.example.demo.dto.ord_board.BestCommentBoardDto">
     SELECT
       seq,
       bno,
@@ -89,7 +89,7 @@ CRUD
     FROM best_comment_board
   </select>
 
-  <select id="select" parameterType="int" resultType="com.example.demo.dto.board.BestCommentBoardDto">
+  <select id="select" parameterType="int" resultType="com.example.demo.dto.ord_board.BestCommentBoardDto">
     SELECT
       seq,
       bno,
@@ -105,7 +105,7 @@ CRUD
     WHERE seq = #{seq}
   </select>
 
-  <update id="update" parameterType="com.example.demo.dto.board.BestCommentBoardUpdateDto">
+  <update id="update" parameterType="com.example.demo.dto.ord_board.BestCommentBoardUpdateDto">
     UPDATE best_comment_board
     SET
       appl_begin = #{appl_begin},

@@ -1,8 +1,8 @@
 package com.example.demo.repository.mybatis.reply;
 
-import com.example.demo.dto.reply.ReplyRequestDto;
-import com.example.demo.dto.reply.ReplyResponseDto;
-import com.example.demo.dto.reply.ReplyUpdateRequestDto;
+import com.example.demo.dto.ord_reply.ReplyRequestDto;
+import com.example.demo.dto.ord_reply.ReplyResponseDto;
+import com.example.demo.dto.ord_reply.ReplyUpdateRequestDto;
 import java.util.List;
 import java.util.Map;
 import org.apache.ibatis.session.SqlSession;

@@ -6,8 +6,8 @@ import com.example.demo.global.error.exception.business.comment.CommentFormInval
 import com.example.demo.global.error.exception.business.comment.CommentNotFoundException;
 import com.example.demo.application.comment.CommentServiceImpl;
 import com.example.demo.validator.comment.CommentValidator;
-import com.example.demo.dto.comment.CommentResponseDto;
-import com.example.demo.dto.comment.CommentRequestDto;
+import com.example.demo.dto.ord_comment.CommentResponseDto;
+import com.example.demo.dto.ord_comment.CommentRequestDto;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.ResponseEntity;

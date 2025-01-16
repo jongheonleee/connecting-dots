@@ -1,7 +1,7 @@
 package com.example.demo.repository.mybatis.comment;
 
-import com.example.demo.dto.comment.CommentRequestDto;
-import com.example.demo.dto.comment.CommentResponseDto;
+import com.example.demo.dto.ord_comment.CommentRequestDto;
+import com.example.demo.dto.ord_comment.CommentResponseDto;
 import java.util.List;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;

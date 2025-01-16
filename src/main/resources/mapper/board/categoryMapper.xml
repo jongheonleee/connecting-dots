@@ -7,7 +7,7 @@
     FROM category
   </select>
 
-  <insert id="insert" parameterType="com.example.demo.dto.category.CategoryDto">
+  <insert id="insert" parameterType="com.example.demo.dto.ord_category.CategoryDto">
     INSERT INTO category
         (cate_code, top_cate, name,
         comt, reg_date, reg_id,
@@ -18,7 +18,7 @@
          now(), #{up_id});
   </insert>
 
-  <select id="selectAll" resultType="com.example.demo.dto.category.CategoryDto">
+  <select id="selectAll" resultType="com.example.demo.dto.ord_category.CategoryDto">
     SELECT
         cate_code, top_cate, name,
         comt, reg_date, reg_id,
@@ -26,7 +26,7 @@
     FROM category
   </select>
 
-  <select id="selectAllTopCategory" resultType="com.example.demo.dto.category.CategoryDto">
+  <select id="selectAllTopCategory" resultType="com.example.demo.dto.ord_category.CategoryDto">
     SELECT
       cate_code, top_cate, name,
       comt, reg_date, reg_id,
@@ -35,7 +35,7 @@
     WHERE top_cate = '0'
   </select>
 
-  <select id="selectAllByTopCateCode" parameterType="String" resultType="com.example.demo.dto.category.CategoryDto">
+  <select id="selectAllByTopCateCode" parameterType="String" resultType="com.example.demo.dto.ord_category.CategoryDto">
     SELECT
       cate_code, top_cate, name,
       comt, reg_date, reg_id,
@@ -44,7 +44,7 @@
     WHERE top_cate = #{top_cate}
   </select>
 
-  <select id="selectByCode" parameterType="String" resultType="com.example.demo.dto.category.CategoryDto">
+  <select id="selectByCode" parameterType="String" resultType="com.example.demo.dto.ord_category.CategoryDto">
     SELECT
       cate_code, top_cate, name,
       comt, reg_date, reg_id,
@@ -53,7 +53,7 @@
     WHERE cate_code = #{cate_code}
   </select>
 
-  <update id="update" parameterType="com.example.demo.dto.category.CategoryDto">
+  <update id="update" parameterType="com.example.demo.dto.ord_category.CategoryDto">
     UPDATE category
     SET
         top_cate = #{top_cate}, name = #{name},
