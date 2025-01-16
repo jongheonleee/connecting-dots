@@ -40,6 +40,8 @@ public enum ErrorCode {
     // 게시판
     BOARD_CATEGORY_ALREADY_EXISTS(409, "EC2001", "해당 게시판 카테고리가 이미 존재합니다"),
     BOARD_CATEGORY_NOT_FOUND(404, "EC2002", "해당 게시판 카테고리를 찾을 수 없습니다"),
+    BOARD_INVALID_IMAGE_FILE_NAME(400, "EC2003", "이미지 파일 이름이 잘못되었습니다"),
+    BOARD_IMAGE_NOT_FOUND(404, "EC2004", "해당 이미지를 찾을 수 없습니다"),
 
     // 회원
 
@@ -52,6 +54,9 @@ public enum ErrorCode {
     // 인공지능
 
     // > 기술
+    // - 파일 업로드 처리
+    FILE_UPLOAD_ERROR(500, "EC2001", "파일 업로드에 실패하였습니다"),
+
     // - 네트워크
     RETRY_FAILED(500, "EC2001", "재시도에 실패하였습니다"),
 
