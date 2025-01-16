@@ -4,73 +4,121 @@
 <mapper namespace="com.example.demo.mapper.board.BoardImgMapper">
   <select id="count" resultType="int">
     SELECT COUNT(*)
-    FROM image
+    FROM board_image
+  </select>
+
+  <select id="existsByIno" parameterType="int" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM board_image
+    WHERE ino = #{ino}
+  </select>
+
+  <select id="existsByInoForUpdate" parameterType="int" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM board_image
+    WHERE ino = #{ino}
+    FOR UPDATE
   </select>
 
   <!-- 이미지 등록 -->
-  <insert id="insert" parameterType="com.example.demo.dto.ord_board.BoardImgFormDto">
-    INSERT INTO image
-    (bno, name, img, comt, reg_date, reg_id, up_date, up_id, thumb)
-    VALUES
-    (#{bno}, #{name}, #{img}, #{comt}, now(), #{reg_id}, now(), #{up_id}, #{thumb});
+  <insert id="insert" parameterType="BoardImgDto">
+    <selectKey keyProperty="ino" resultType="int" order="AFTER">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+
+    INSERT INTO board_image(
+        bno, img, comt,
+        reg_date, reg_user_seq, up_date,
+        up_user_seq, name, chk_thumb
+    )
+    VALUES(
+        #{bno}, #{img}, #{comt},
+        #{reg_date}, #{reg_user_seq}, #{up_date},
+        #{up_user_seq}, #{name}, #{chk_thumb}
+    )
   </insert>
 
-  <!-- 특정 게시글의 이미지 조회 -->
-  <select id="selectAllByBno" parameterType="int" resultType="com.example.demo.dto.ord_board.BoardImgFormDto">
+  <!-- 여러 이미지 등록 및 키 반환 -->
+  <insert id="insertAll" parameterType="List" useGeneratedKeys="true" keyProperty="ino">
+    INSERT INTO board_image (
+        bno, img, comt,
+        reg_date, reg_user_seq, up_date,
+        up_user_seq, name, chk_thumb
+    )
+    VALUES
+    <foreach collection="list" item="item" separator=",">
+    (
+        #{item.bno}, #{item.img}, #{item.comt},
+        #{item.reg_date}, #{item.reg_user_seq}, #{item.up_date},
+        #{item.up_user_seq}, #{item.name}, #{item.chk_thumb}
+    )
+    </foreach>
+  </insert>
+
+
+    <!-- 특정 게시글의 이미지 조회 -->
+  <select id="selectByBno" parameterType="int" resultType="BoardImgDto">
     SELECT
-        bno, ino, name,
-        img, comt, reg_date,
-        reg_id, up_date, up_id
-    FROM image
+      bno, ino, img,
+      comt, reg_date, reg_user_seq,
+      up_date, up_user_seq, name,
+      chk_thumb
+    FROM board_image
     WHERE bno = #{bno}
   </select>
 
   <!-- 특정 이미지 조회 -->
-  <select id="selectByIno" parameterType="int" resultType="com.example.demo.dto.ord_board.BoardImgFormDto">
+  <select id="selectByIno" parameterType="int" resultType="BoardImgDto">
     SELECT
-      bno, ino, name,
-      img, comt, reg_date, reg_id,
-      up_date, up_id
-    FROM image
+      bno, ino, img,
+      comt, reg_date, reg_user_seq,
+      up_date, up_user_seq, name,
+      chk_thumb
+    FROM board_image
     WHERE ino = #{ino}
   </select>
 
   <!-- 이미지 전체 조회 -->
-  <select id="selectAll" resultType="com.example.demo.dto.ord_board.BoardImgFormDto">
+  <select id="selectAll" resultType="BoardImgDto">
     SELECT
-        bno, ino, name,
-        img, comt, reg_date, reg_id,
-        up_date, up_id
-    FROM image
+      bno, ino, img,
+      comt, reg_date, reg_user_seq,
+      up_date, up_user_seq, name,
+      chk_thumb
+    FROM board_image
   </select>
 
   <!-- 이미지 수정 -->
-  <update id="update" parameterType="com.example.demo.dto.ord_board.BoardImgFormDto">
-    UPDATE image
+  <update id="update" parameterType="BoardImgDto">
+    UPDATE board_image
     SET
-        img = #{img}, name = #{name}, comt = #{comt},
-        up_date = now(), up_id = #{up_id}
+        img = #{img},
+        comt = #{comt},
+        up_date = #{up_date},
+        up_user_seq = #{up_user_seq},
+        name = #{name},
+        chk_thumb = #{chk_thumb}
     WHERE ino = #{ino}
   </update>
 
   <!-- 특정 이미지 삭제 -->
   <delete id="deleteByIno" parameterType="int">
     DELETE
-    FROM image
+    FROM board_image
     WHERE ino = #{ino}
   </delete>
 
   <!-- 특정 게시글의 이미지 삭제 -->
   <delete id="deleteByBno" parameterType="int">
     DELETE
-    FROM image
+    FROM board_image
     WHERE bno = #{bno}
   </delete>
 
   <!-- 이미지 전체 삭제 -->
   <delete id="deleteAll">
     DELETE
-    FROM image
+    FROM board_image
   </delete>
 
 </mapper>

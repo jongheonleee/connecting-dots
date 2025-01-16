@@ -7,6 +7,7 @@
   <typeAliases>
     <!-- 공통 -->
     <typeAlias alias="SearchCondition" type="com.example.demo.dto.SearchCondition"/>
+    <typeAlias alias="List" type="java.util.List"/>
 
     <!-- code -->
     <typeAlias alias="CodeDto" type="com.example.demo.dto.code.CodeDto"/>
@@ -24,6 +25,7 @@
     <!-- board -->
     <typeAlias alias="BoardCategoryDto" type="com.example.demo.dto.board.BoardCategoryDto"/>
     <typeAlias alias="BoardDto" type="com.example.demo.dto.board.BoardDto"/>
+    <typeAlias alias="BoardImgDto" type="com.example.demo.dto.board.BoardImgDto"/>
 
     <!-- comment -->
 

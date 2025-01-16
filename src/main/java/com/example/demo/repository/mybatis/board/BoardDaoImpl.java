@@ -70,11 +70,11 @@ public class BoardDaoImpl {
     public int increaseNotRecoCnt(BoardDto dto) {
         return session.update(namespace + "increaseNotRecoCnt", dto);
     }
-//
-//    public int delete(Integer bno) {
-//        return session.delete(namespace + "delete", bno);
-//    }
-//
+
+    public int delete(Integer bno) {
+        return session.delete(namespace + "deleteByBno", bno);
+    }
+
     public int deleteAll() {
         return session.delete(namespace + "deleteAll");
     }

@@ -443,16 +443,11 @@
 <!--    </collection>-->
 <!--  </resultMap>-->
 
-<!--  &lt;!&ndash; v1 : 게시글 삭제 &ndash;&gt;-->
-<!--  <delete id="delete" parameterType="int">-->
-<!--    DELETE-->
-<!--    FROM board-->
-<!--    WHERE bno = #{bno}-->
-<!--  </delete>-->
+  <!-- v1 : 게시글 삭제 -->
+  <delete id="deleteByBno" parameterType="int">
+    DELETE
+    FROM board
+    WHERE bno = #{bno}
+  </delete>
 
-<!--  &lt;!&ndash; v1 : 전체 게시글 삭제 &ndash;&gt;-->
-<!--  <delete id="deleteAll">-->
-<!--    DELETE-->
-<!--    FROM board-->
-<!--  </delete>-->
 </mapper>
