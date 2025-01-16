@@ -27,4 +27,9 @@ public class BoardImgDto {
     private Integer reg_user_seq;
     private String up_date;
     private Integer up_user_seq;
+
+    public void updateBoardImg(String imgName, String imgUrl) {
+        this.name = imgName;
+        this.img = imgUrl;
+    }
 }

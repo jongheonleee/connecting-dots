@@ -18,8 +18,8 @@ public class BoardServiceImpl {
     private final BoardCategoryServiceImpl boardCategoryService;
 
     // 추후에 추가되야 하는 것들
-    private final BoardImgDaoImpl boardImgDao; // -> 게시판 생성, 조회시 이미지 처리
-//    private final BoardStatusDaoImpl boardStatusDao; -> 게시판 상태 변경시 적용
+    private final BoardImgServiceImpl boardImgService; // -> 게시판 생성, 조회시 이미지 처리
+//    private final BoardStatusServiceImpl boardStatusService; -> 게시판 상태 변경시 적용
 //    private final BoardChangeHistoryDaoImpl boardChangeHistoryDao; -> 게시판 변경 이력 기록
 //    private final CommentServiceImpl commentService; -> 게시판과 관련된 댓글
 //    private final ReplyServiceImpl replyService; -> 게시판과 관련된 답글
