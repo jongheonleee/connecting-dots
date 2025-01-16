@@ -82,11 +82,10 @@ public class BoardCategoryServiceImpl {
     @Transactional(rollbackFor = Exception.class)
     public void removeAll() {
         int totalCnt = boardCategoryDao.count();
-        int rowCnt = 0;
-        for (int i= BoardCategory.MAX_LEVEL; i>0; i--)
-            rowCnt += boardCategoryDao.deleteByLevel(i);
+        int rowCnt = removeLevelByLevel();
         checkApplied(totalCnt, rowCnt);
     }
+
 
     private void checkDuplicated(BoardCategoryRequest request) {
         boolean exists = boardCategoryDao.existsByCateCode(request.getCate_code());
@@ -117,6 +116,13 @@ public class BoardCategoryServiceImpl {
             log.info("[BOARD_CATEGORY_SERVICE] 존재하지 않는 키 값입니다. : {}", cate_code);
             throw new BoardCategoryNotFoundException();
         }
+    }
+
+    private int removeLevelByLevel() {
+        int rowCnt = 0;
+        for (int i= BoardCategory.MAX_LEVEL; i>0; i--)
+            rowCnt += boardCategoryDao.deleteByLevel(i);
+        return rowCnt;
     }
 
 

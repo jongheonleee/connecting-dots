@@ -26,6 +26,7 @@
     <typeAlias alias="BoardCategoryDto" type="com.example.demo.dto.board.BoardCategoryDto"/>
     <typeAlias alias="BoardDto" type="com.example.demo.dto.board.BoardDto"/>
     <typeAlias alias="BoardImgDto" type="com.example.demo.dto.board.BoardImgDto"/>
+    <typeAlias alias="BoardStatusDto" type="com.example.demo.dto.board.BoardStatusDto"/>
 
     <!-- comment -->
 

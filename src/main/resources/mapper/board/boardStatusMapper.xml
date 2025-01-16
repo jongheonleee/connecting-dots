@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.board.BoardStatusMapper">
+
+  <select id="count" resultType="int">
+    SELECT COUNT(*)
+    FROM board_status
+  </select>
+
+  <select id="existsBySeq" parameterType="int" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM board_status
+    WHERE seq = #{seq}
+  </select>
+
+  <select id="existsBySeqForUpdate" parameterType="int" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM board_status
+    WHERE seq = #{seq}
+  </select>
+
+  <select id="existsByBno" parameterType="int" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM board_status
+    WHERE bno = #{bno}
+  </select>
+
+  <delete id="deleteAll">
+    DELETE
+    FROM board_status
+  </delete>
+
+  <select id="selectAll" resultType="BoardStatusDto">
+    SELECT
+        seq, bno, stat_code,
+        comt, appl_begin, appl_end,
+        reg_date, reg_user_seq, up_date,
+        up_user_seq
+    FROM board_status
+  </select>
+
+  <select id="selectByBno" parameterType="int" resultType="BoardStatusDto">
+    SELECT
+        seq, bno, stat_code,
+        comt, appl_begin, appl_end,
+        reg_date, reg_user_seq, up_date,
+        up_user_seq
+    FROM board_status
+    WHERE bno = #{bno}
+  </select>
+
+  <select id="selectByBnoAtPresent" parameterType="int" resultType="BoardStatusDto">
+    SELECT
+        seq, bno, stat_code,
+        comt, appl_begin, appl_end,
+        reg_date, reg_user_seq, up_date,
+        up_user_seq
+    FROM board_status
+    WHERE bno = #{bno}
+    AND CURRENT_DATE BETWEEN appl_begin AND appl_end
+  </select>
+
+  <select id="selectBySeq" parameterType="int" resultType="BoardStatusDto">
+    SELECT
+        seq, bno, stat_code,
+        comt, appl_begin, appl_end,
+        reg_date, reg_user_seq, up_date,
+        up_user_seq
+    FROM board_status
+    WHERE seq = #{seq}
+  </select>
+
+  <insert id="insert" parameterType="BoardStatusDto">
+    <selectKey keyProperty="seq" resultType="int" order="AFTER">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+
+    INSERT INTO board_status(
+        bno, stat_code, comt,
+        appl_begin, appl_end, reg_date,
+        reg_user_seq, up_date, up_user_seq
+    )
+    VALUES(
+        #{bno}, #{stat_code}, #{comt},
+        #{appl_begin}, #{appl_end}, #{reg_date},
+        #{reg_user_seq}, #{up_date}, #{up_user_seq}
+    )
+  </insert>
+
+  <update id="update" parameterType="BoardStatusDto">
+    UPDATE board_status
+    SET
+        stat_code = #{stat_code},
+        comt = #{comt},
+        appl_begin = #{appl_begin},
+        appl_end = #{appl_end},
+        up_date = #{up_date},
+        up_user_seq = #{up_user_seq}
+    WHERE seq = #{seq}
+  </update>
+
+  <delete id="deleteBySeq" parameterType="int">
+    DELETE
+    FROM board_status
+    WHERE seq = #{seq}
+  </delete>
+
+  <delete id="deleteByBno" parameterType="int">
+    DELETE
+    FROM board_status
+    WHERE bno = #{bno}
+  </delete>
+
+</mapper>
