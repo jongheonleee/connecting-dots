@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.board.BoardChangeHistoryMapper">
+  <select id="count" resultType="int">
+    SELECT COUNT(*)
+    FROM board_change_history
+  </select>
+
+  <select id="countByBno" parameterType="int" resultType="int">
+    SELECT COUNT(*)
+    FROM board_change_history
+    WHERE bno = #{bno}
+  </select>
+
+  <select id="existsBySeq" parameterType="int" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM board_change_history
+    WHERE seq = #{seq}
+  </select>
+
+  <select id="existsByBno" parameterType="int" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM board_change_history
+    WHERE bno = #{bno}
+  </select>
+
+  <select id="existsBySeqForUpdate" parameterType="int" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM board_change_history
+    WHERE seq = #{seq}
+    FOR UPDATE
+  </select>
+
+  <select id="existsByBnoForUpdate" parameterType="int" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM board_change_history
+    WHERE bno = #{bno}
+    FOR UPDATE
+  </select>
+
+  <insert id="insert" parameterType="BoardChangeHistoryDto">
+    <selectKey keyProperty="seq" resultType="int" order="AFTER">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+
+    INSERT INTO board_change_history(
+        bno, title, cont,
+        comt, appl_begin, appl_end,
+        reg_date, reg_user_seq, up_date,
+        up_user_seq
+    )
+    VALUES(
+        #{bno}, #{title}, #{cont},
+        #{comt}, #{appl_begin}, #{appl_end},
+        #{reg_date}, #{reg_user_seq}, #{up_date},
+        #{up_user_seq}
+    )
+  </insert>
+
+  <select id="selectBySeq" parameterType="int" resultType="BoardChangeHistoryDto">
+    SELECT
+      seq, bno, title,
+      cont, comt, appl_begin,
+      appl_end, reg_date, reg_user_seq,
+      up_date, up_user_seq
+    FROM board_change_history
+    WHERE seq = #{seq}
+  </select>
+
+  <select id="selectByBno" parameterType="int" resultType="BoardChangeHistoryDto">
+    SELECT
+      seq, bno, title,
+      cont, comt, appl_begin,
+      appl_end, reg_date, reg_user_seq,
+      up_date, up_user_seq
+    FROM board_change_history
+    WHERE bno = #{bno}
+  </select>
+
+  <select id="selectAll" resultType="BoardChangeHistoryDto">
+    SELECT
+      seq, bno, title,
+      cont, comt, appl_begin,
+      appl_end, reg_date, reg_user_seq,
+      up_date, up_user_seq
+    FROM board_change_history
+  </select>
+
+  <update id="update" parameterType="BoardChangeHistoryDto">
+    UPDATE board_change_history
+    SET
+      bno = #{bno},
+      title = #{title},
+      cont = #{cont},
+      comt = #{comt},
+      appl_begin = #{appl_begin},
+      appl_end = #{appl_end},
+      up_date = #{up_date},
+      up_user_seq = #{up_user_seq}
+    WHERE seq = #{seq}
+  </update>
+
+  <delete id="deleteBySeq" parameterType="int">
+    DELETE
+    FROM board_change_history
+    WHERE seq = #{seq}
+  </delete>
+
+  <delete id="deleteByBno" parameterType="int">
+    DELETE
+    FROM board_change_history
+    WHERE bno = #{bno}
+  </delete>
+
+  <delete id="deleteAll">
+    DELETE
+    FROM board_change_history
+  </delete>
+</mapper>
