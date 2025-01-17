@@ -27,90 +27,66 @@ public class BoardStatusServiceImpl {
 
 
     public BoardStatusResponse create(final BoardStatusRequest request) {
-        Code statCode = Code.of(request.getStat_code());
-
-        boolean exists = boardDao.existsByBno(request.getBno());
-        if (!exists) {
-            log.error("[BOARD_STATUS] 게시글이 존재하지 않습니다. bno: {}", request.getBno());
-            throw new BoardNotFoundException();
-        }
-
-        var dto = BoardStatusDto.builder()
-                                .bno(request.getBno())
-                                .stat_code(statCode.getCode())
-                                .appl_begin(formatter.getCurrentDateFormat())
-                                .appl_end(formatter.plusDateFormat(request.getDays()))
-                                .reg_date(formatter.getCurrentDateFormat())
-                                .reg_user_seq(formatter.getManagerSeq())
-                                .up_date(formatter.getCurrentDateFormat())
-                                .up_user_seq(formatter.getManagerSeq())
-                                .build();
-
-        int rowCnt = boardStatusDao.insert(dto);
-
-        if (rowCnt != 1) {
-            log.error("[BOARD_STATUS] 게시글 상태 등록에 실패하였습니다. bno: {}", request.getBno());
-            throw new NotApplyOnDbmsException();
-        }
-
-        return BoardStatusResponse.builder()
-                                  .seq(dto.getSeq())
-                                  .bno(dto.getBno())
-                                  .stat_code(dto.getStat_code())
-                                  .comt(dto.getComt())
-                                  .appl_begin(dto.getAppl_begin())
-                                  .appl_end(dto.getAppl_end())
-                                  .build();
+        var statCode = Code.of(request.getStat_code());
+        checkBoardExists(request.getBno());
+        var dto = createDto(request, statCode);
+        checkApplied(1, boardStatusDao.insert(dto));
+        return createResponse(dto);
     }
+
 
     @Transactional(rollbackFor = Exception.class)
     public void renewState(final BoardStatusRequest request) {
-        boolean exists = boardStatusDao.existsByBnoForUpdate(request.getBno());
-
-        if (!exists) {
-            log.error("[BOARD_STATUS] 게시글 상태가 존재하지 않습니다. bno: {}", request.getBno());
-            throw new BoardNotFoundException();
-        }
+        checkBoardStatusExists(request);
 
         var currStatDto = boardStatusDao.selectByBnoAtPresent(request.getBno());
         currStatDto.updateApplTime(formatter.minusDateFormat(1), formatter.getCurrentDateFormat(), formatter.getManagerSeq());
+        checkApplied(1, boardStatusDao.update(currStatDto));
 
-        int rowCnt = boardStatusDao.update(currStatDto);
-        if (rowCnt != 1) {
-            log.error("[BOARD_STATUS] 게시글 상태 수정에 실패하였습니다. bno: {}", request.getBno());
-            throw new NotApplyOnDbmsException();
-        }
-
-        Code statCode = Code.of(currStatDto.getStat_code());
-        var newStatDto = BoardStatusDto.builder()
-                                       .bno(request.getBno())
-                                       .stat_code(statCode.getCode())
-                                       .appl_begin(formatter.getCurrentDateFormat())
-                                       .appl_end(formatter.plusDateFormat(request.getDays()))
-                                       .reg_date(formatter.getCurrentDateFormat())
-                                       .reg_user_seq(formatter.getManagerSeq())
-                                       .up_date(formatter.getCurrentDateFormat())
-                                       .up_user_seq(formatter.getManagerSeq())
-                                       .build();
-
-        rowCnt = boardStatusDao.insert(newStatDto);
-        if (rowCnt != 1) {
-            log.error("[BOARD_STATUS] 게시글 상태 등록에 실패하였습니다. bno: {}", request.getBno());
-            throw new NotApplyOnDbmsException();
-        }
+        var statCode = Code.of(currStatDto.getStat_code());
+        var newStatDto = createDto(request, statCode);
+        checkApplied(1, boardStatusDao.insert(newStatDto));
 
     }
 
-    public void removeBySeq(Integer seq) {
+
+    public void removeBySeq(final Integer seq) {
         int rowCnt = boardStatusDao.deleteBySeq(seq);
-
-        if (rowCnt != 1) {
-            log.error("[BOARD_STATUS] 게시글 상태 삭제에 실패하였습니다. seq: {}", seq);
-            throw new NotApplyOnDbmsException();
-        }
+        checkApplied(1, rowCnt);
     }
 
-    public BoardStatusResponse readBySeq(Integer seq) {
+
+    public List<BoardStatusResponse> readByBno(final Integer bno) {
+        checkBoardExists(bno);
+        List<BoardStatusDto> found = boardStatusDao.selectByBno(bno);
+        return found.stream()
+                    .map(this::createResponse)
+                    .toList();
+    }
+
+    public List<BoardStatusResponse> readAll() {
+        List<BoardStatusDto> found = boardStatusDao.selectAll();
+        return found.stream()
+                    .map(this::createResponse)
+                    .toList();
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void removeByBno(final Integer bno) {
+        checkBoardExists(bno);
+        int totalCnt = boardStatusDao.countByBno(bno);
+        int rowCnt = boardStatusDao.deleteByBno(bno);
+        checkApplied(totalCnt, rowCnt);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void removeAll() {
+        int totalCnt = boardStatusDao.count();
+        int rowCnt = boardStatusDao.deleteAll();
+        checkApplied(totalCnt, rowCnt);
+    }
+
+    public BoardStatusResponse readBySeq(final Integer seq) {
         boolean exists = boardStatusDao.existsBySeq(seq);
 
         if (!exists) {
@@ -118,81 +94,59 @@ public class BoardStatusServiceImpl {
             throw new BoardStatusNotFoundException();
         }
 
-        BoardStatusDto found = boardStatusDao.selectBySeq(seq);
-
-        return BoardStatusResponse.builder()
-                                  .seq(found.getSeq())
-                                  .bno(found.getBno())
-                                  .stat_code(found.getStat_code())
-                                  .comt(found.getComt())
-                                  .appl_begin(found.getAppl_begin())
-                                  .appl_end(found.getAppl_end())
-                                  .build();
+        var found = boardStatusDao.selectBySeq(seq);
+        return createResponse(found);
     }
 
-    public List<BoardStatusResponse> readByBno(Integer bno) {
-        boolean exists = boardDao.existsByBno(bno);
 
+
+    private void checkBoardExists(Integer bno) {
+        boolean exists = boardDao.existsByBno(bno);
         if (!exists) {
             log.error("[BOARD_STATUS] 게시글이 존재하지 않습니다. bno: {}", bno);
             throw new BoardNotFoundException();
         }
-
-        List<BoardStatusDto> found = boardStatusDao.selectByBno(bno);
-        return found.stream()
-                    .map(dto -> BoardStatusResponse.builder()
-                                                   .seq(dto.getSeq())
-                                                   .bno(dto.getBno())
-                                                   .stat_code(dto.getStat_code())
-                                                   .comt(dto.getComt())
-                                                   .appl_begin(dto.getAppl_begin())
-                                                   .appl_end(dto.getAppl_end())
-                                                   .build())
-                    .toList();
     }
 
-    public List<BoardStatusResponse> readAll() {
-        List<BoardStatusDto> found = boardStatusDao.selectAll();
-        return found.stream()
-                    .map(dto -> BoardStatusResponse.builder()
-                                                   .seq(dto.getSeq())
-                                                   .bno(dto.getBno())
-                                                   .stat_code(dto.getStat_code())
-                                                   .comt(dto.getComt())
-                                                   .appl_begin(dto.getAppl_begin())
-                                                   .appl_end(dto.getAppl_end())
-                                                   .build())
-                    .toList();
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void removeByBno(Integer bno) {
-        boolean exists = boardDao.existsByBnoForUpdate(bno);
+    private void checkBoardStatusExists(BoardStatusRequest request) {
+        boolean exists = boardStatusDao.existsByBnoForUpdate(request.getBno());
 
         if (!exists) {
-            log.error("[BOARD_STATUS] 게시글 상태가 존재하지 않습니다. bno: {}", bno);
-            throw new BoardNotFoundException();
+            log.error("[BOARD_STATUS] 게시글 상태가 존재하지 않습니다. bno: {}", request.getBno());
+            throw new BoardStatusNotFoundException();
         }
+    }
 
-        int totalCnt = boardStatusDao.countByBno(bno);
-        int rowCnt = boardStatusDao.deleteByBno(bno);
+    private BoardStatusDto createDto(BoardStatusRequest request, Code statCode) {
+        var dto = BoardStatusDto.builder()
+                .bno(request.getBno())
+                .stat_code(statCode.getCode())
+                .appl_begin(formatter.getCurrentDateFormat())
+                .appl_end(formatter.plusDateFormat(request.getDays()))
+                .reg_date(formatter.getCurrentDateFormat())
+                .reg_user_seq(formatter.getManagerSeq())
+                .up_date(formatter.getCurrentDateFormat())
+                .up_user_seq(formatter.getManagerSeq())
+                .build();
+        return dto;
+    }
 
-        if (rowCnt != totalCnt) {
-            log.error("[BOARD_STATUS] 게시글 상태 삭제에 실패하였습니다. bno: {}", bno);
+    private void checkApplied(Integer expected, Integer actual) {
+        if (!expected.equals(actual)) {
+            log.error("[BOARD_STATUS] 게시글 상태 적용에 실패하였습니다. expected: {}, actual: {}", expected, actual);
             throw new NotApplyOnDbmsException();
         }
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public void removeAll() {
-        int totalCnt = boardStatusDao.count();
-        int rowCnt = boardStatusDao.deleteAll();
 
-        if (rowCnt != totalCnt) {
-            log.error("[BOARD_STATUS] 게시글 상태 전체 삭제에 실패하였습니다.");
-            throw new NotApplyOnDbmsException();
-        }
+    private BoardStatusResponse createResponse(BoardStatusDto dto) {
+        return BoardStatusResponse.builder()
+                .seq(dto.getSeq())
+                .bno(dto.getBno())
+                .stat_code(dto.getStat_code())
+                .comt(dto.getComt())
+                .appl_begin(dto.getAppl_begin())
+                .appl_end(dto.getAppl_end())
+                .build();
     }
-
-
 }

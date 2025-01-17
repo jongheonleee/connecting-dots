@@ -180,7 +180,7 @@ class BoardStatusServiceImplTest {
             when(boardStatusDao.existsByBnoForUpdate(request.getBno())).thenReturn(false);
             // When
             // Then
-            assertThrows(BoardNotFoundException.class, () -> boardStatusService.renewState(request));
+            assertThrows(BoardStatusNotFoundException.class, () -> boardStatusService.renewState(request));
         }
 
         @DisplayName("게시판 상태 수정 처리 실패 테스트 - DBMS 적용 불가")
@@ -289,7 +289,7 @@ class BoardStatusServiceImplTest {
             // Given
             Integer bno = 1;
             // When
-            when(boardDao.existsByBnoForUpdate(bno)).thenReturn(true);
+            when(boardDao.existsByBno(bno)).thenReturn(true);
             when(boardStatusDao.countByBno(bno)).thenReturn(1);
             when(boardStatusDao.deleteByBno(bno)).thenReturn(1);
             // Then
@@ -302,7 +302,7 @@ class BoardStatusServiceImplTest {
             // Given
             Integer bno = 1;
             // When
-            when(boardDao.existsByBnoForUpdate(bno)).thenReturn(true);
+            when(boardDao.existsByBno(bno)).thenReturn(true);
             when(boardStatusDao.countByBno(bno)).thenReturn(1);
             when(boardStatusDao.deleteByBno(bno)).thenReturn(0);
             // Then
