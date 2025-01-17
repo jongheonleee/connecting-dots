@@ -1,9 +1,11 @@
 package com.example.demo.application.board;
 
+import static com.example.demo.global.error.exception.ErrorCode.*;
 import static com.example.demo.global.error.exception.ErrorCode.FILE_UPLOAD_ERROR;
 
 import com.example.demo.dto.board.BoardImgDto;
 import com.example.demo.dto.board.BoardImgRequest;
+import com.example.demo.global.error.exception.ErrorCode;
 import com.example.demo.global.error.exception.business.board.BoardImageNotFoundException;
 import com.example.demo.global.error.exception.business.board.InvalidBoardImageException;
 import com.example.demo.global.error.exception.technology.InternalServerException;
@@ -24,6 +26,7 @@ public class BoardImgServiceImpl {
 
     @Value("${boardImgLocation}")
     private String boardImgLocation;
+
     @Value("${boardImgUrlLocation}")
     private String boardImgUrlLocation;
 
@@ -33,104 +36,100 @@ public class BoardImgServiceImpl {
     private final CustomFormatter customFormatter;
 
 
-    public void saveBoardImage(BoardImgRequest request, MultipartFile boardImgFile) {
-        String imageFileName = uploadImageFile(boardImgFile);
+    public void saveBoardImage(final BoardImgRequest request, final MultipartFile boardImgFile) {
+        checkValidImageFile(boardImgFile);
+        String imageFileName = uploadFile(boardImgFile);
         String imageUrl = createImageUrl(imageFileName);
         var dto = createDto(request, imageFileName, imageUrl);
         checkApplied(1, boardImgDao.insert(dto));
     }
 
 
-    public void modifyBoardImg(Integer ino, MultipartFile boardImgFile) {
-        try {
-            if (!boardImgFile.isEmpty()) {
-                var exists = boardImgDao.existsByInoForUpdate(ino);
-                if (exists) {
-                    log.error("[BOARD_IMAGE] 이미지 정보가 존재하지 않습니다. ino: {}", ino);
-                    throw new BoardImageNotFoundException();
-                }
+    public void modifyBoardImg(final Integer ino, final MultipartFile boardImgFile) {
+        checkValidImageFile(boardImgFile);
+        checkExistsByIno(ino);
+        BoardImgDto foundBoardImage = removeByIno(ino);
 
-                BoardImgDto foundBoardImage = boardImgDao.selectByIno(ino);
-                if (!StringUtils.isEmpty(foundBoardImage.getName())) {
-                    fileService.deleteFile(boardImgLocation + "/" + foundBoardImage.getName());
-                }
-
-                String oriBoardImgName = boardImgFile.getOriginalFilename();
-                String imgName = fileService.uploadFile(boardImgLocation, oriBoardImgName, boardImgFile.getBytes());
-                String imgUrl = "/images/board/"  + imgName;
-                foundBoardImage.updateBoardImg(imgName, imgUrl);
-                checkApplied(1, boardImgDao.update(foundBoardImage));
-            }
-
-        } catch (Exception e) {
-            throw new InternalServerException(FILE_UPLOAD_ERROR);
-        }
+        String imageFileName = uploadFile(boardImgFile);
+        String imageUrl = createImageUrl(imageFileName);
+        foundBoardImage.updateBoardImg(imageFileName, imageUrl);
+        checkApplied(1, boardImgDao.update(foundBoardImage));
     }
 
-    public void removeBoardImg(Integer ino) {
-        var exists = boardImgDao.existsByInoForUpdate(ino);
-        if (exists) {
-            log.error("[BOARD_IMAGE] 이미지 정보가 존재하지 않습니다. ino: {}", ino);
-            throw new BoardImageNotFoundException();
-        }
-
-        BoardImgDto foundBoardImage = boardImgDao.selectByIno(ino);
-        if (!StringUtils.isEmpty(foundBoardImage.getName())) {
-            fileService.deleteFile(boardImgLocation + "/" + foundBoardImage.getName());
-        }
-
+    public void removeBoardImg(final Integer ino) {
+        checkExistsByIno(ino);
+        removeByIno(ino);
         checkApplied(1, boardImgDao.deleteByIno(ino));
     }
 
-    private String uploadImageFile(MultipartFile boardImgFile) {
-        boolean checkValidFileName = isValidImageFileName(boardImgFile.getOriginalFilename());
-        if (!checkValidFileName) {
-            log.error("[BOARD_IMAGE] 잘못된 파일 이름 형식입니다. {}", boardImgFile.getOriginalFilename());
-            throw new InvalidBoardImageException();
-        }
+
+    private String uploadFile(final MultipartFile boardImgFile) {
+        String oriBoardImgName = boardImgFile.getOriginalFilename();
+        String imgName = "";
 
         try {
-            String imageFileName = fileService.uploadFile(boardImgLocation, boardImgFile.getOriginalFilename(), boardImgFile.getBytes());
-            return imageFileName;
+            imgName = fileService.uploadFile(boardImgLocation, oriBoardImgName, boardImgFile.getBytes());
         } catch (Exception e) {
             log.error("[BOARD_IMAGE] 파일 업로드 중 오류가 발생했습니다. {}", e.getMessage());
             throw new InternalServerException(FILE_UPLOAD_ERROR);
         }
+
+        return imgName;
     }
 
-    private String createImageUrl(String imageFileName) {
+    private BoardImgDto removeByIno(final Integer ino) {
+        var foundBoardImage = boardImgDao.selectByIno(ino);
+        if (!StringUtils.isEmpty(foundBoardImage.getName())) {
+            fileService.deleteFile(boardImgLocation + "/" + foundBoardImage.getName());
+        }
+        return foundBoardImage;
+    }
+
+    private void checkExistsByIno(final Integer ino) {
+        var exists = boardImgDao.existsByInoForUpdate(ino);
+        if (!exists) {
+            log.error("[BOARD_IMAGE] 이미지 정보가 존재하지 않습니다. ino: {}", ino);
+            throw new BoardImageNotFoundException();
+        }
+    }
+
+    private void checkValidImageFile(final MultipartFile boardImgFile) {
+        checkExistsFile(boardImgFile);
+        checkValidFileName(boardImgFile);
+    }
+
+    private void checkValidFileName(final MultipartFile boardImgFile) {
+        // 파일 이름 존재 여부 확인
+        boolean isEmptyFileName = StringUtils.isEmpty(boardImgFile.getOriginalFilename());
+        if (isEmptyFileName) {
+            log.error("[BOARD_IMAGE] 잘못된 파일 이름 형식입니다. {}", boardImgFile.getOriginalFilename());
+            throw new InvalidBoardImageException(BOARD_INVALID_IMAGE_FILE_NAME);
+        }
+    }
+
+    private void checkExistsFile(final MultipartFile boardImgFile) {
+        // 파일 존재 여부 확인
+        if (boardImgFile == null || boardImgFile.isEmpty()) {
+            log.error("[BOARD_IMAGE] 이미지 파일이 존재하지 않습니다.");
+            throw new InvalidBoardImageException(BOARD_IMAGE_FILE_NOT_EXIST);
+        }
+    }
+
+
+    private String createImageUrl(final String imageFileName) {
+        log.info("[BOARD_IMAGE] boardImgUrlLocation + imageFileName: {}", boardImgUrlLocation + imageFileName);
         return boardImgUrlLocation + imageFileName;
     }
 
-    private boolean isValidImageFileName(String fileName) {
-        return StringUtils.isEmpty(fileName) != false;
-    }
 
-
-    private void checkApplied(Integer expected, Integer rowCnt) {
+    private void checkApplied(final Integer expected, final Integer rowCnt) {
         if (!expected.equals(rowCnt)) {
             throw new NotApplyOnDbmsException();
         }
     }
 
-//    private void checkExists(Integer ino) {
-//        var exists = boardImgDao.existsByInoForUpdate(ino);
-//        if (!exists) {
-//            log.error("[BOARD_IMAGE] 이미지 정보가 존재하지 않습니다. ino: {}", ino);
-//            throw new BoardImageNotFoundException();
-//        }
-//    }
-//
-//    private void checkExistsImageFile(MultipartFile boardImgFile) {
-//        boolean isNotExists = boardImgFile.isEmpty();
-//
-//        if (isNotExists) {
-//            log.error("[BOARD_IMAGE] 이미지 파일이 존재하지 않습니다.");
-//            throw new NotExistsBoardImageFileException();
-//        }
-//    }
 
-    private BoardImgDto createDto(BoardImgRequest request, String imageFileName, String imageUrl) {
+    private BoardImgDto createDto(final BoardImgRequest request, final String imageFileName, final String imageUrl) {
         return BoardImgDto.builder()
                 .bno(request.getBno())
                 .name(imageFileName)

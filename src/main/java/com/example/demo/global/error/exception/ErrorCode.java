@@ -42,6 +42,7 @@ public enum ErrorCode {
     BOARD_CATEGORY_NOT_FOUND(404, "EC2002", "해당 게시판 카테고리를 찾을 수 없습니다"),
     BOARD_INVALID_IMAGE_FILE_NAME(400, "EC2003", "이미지 파일 이름이 잘못되었습니다"),
     BOARD_IMAGE_NOT_FOUND(404, "EC2004", "해당 이미지를 찾을 수 없습니다"),
+    BOARD_IMAGE_FILE_NOT_EXIST(404, "EC2005", "해당 이미지 파일이 존재하지 않습니다"),
 
     // 회원
 

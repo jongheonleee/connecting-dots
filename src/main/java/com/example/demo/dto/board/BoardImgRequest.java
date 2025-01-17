@@ -21,11 +21,13 @@ import lombok.ToString;
 public class BoardImgRequest {
     @NotNull(message = "bno 필수값입니다.")
     private Integer bno;
+
     private String name;
+
     @NotBlank(message = "chk_thumb 필수값입니다.")
     @Pattern(regexp = "^[YN]$", message = "chk_thumb은 Y, N만 허용됩니다.")
     private String chk_thumb;
-    @NotBlank(message = "img 필수값입니다.")
+
     private String img;
     private String comt;
 }
