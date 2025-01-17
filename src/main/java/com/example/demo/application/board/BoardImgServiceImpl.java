@@ -5,7 +5,6 @@ import static com.example.demo.global.error.exception.ErrorCode.FILE_UPLOAD_ERRO
 
 import com.example.demo.dto.board.BoardImgDto;
 import com.example.demo.dto.board.BoardImgRequest;
-import com.example.demo.global.error.exception.ErrorCode;
 import com.example.demo.global.error.exception.business.board.BoardImageNotFoundException;
 import com.example.demo.global.error.exception.business.board.InvalidBoardImageException;
 import com.example.demo.global.error.exception.technology.InternalServerException;
@@ -48,17 +47,18 @@ public class BoardImgServiceImpl {
     public void modifyBoardImg(final Integer ino, final MultipartFile boardImgFile) {
         checkValidImageFile(boardImgFile);
         checkExistsByIno(ino);
-        BoardImgDto foundBoardImage = removeByIno(ino);
 
-        String imageFileName = uploadFile(boardImgFile);
-        String imageUrl = createImageUrl(imageFileName);
-        foundBoardImage.updateBoardImg(imageFileName, imageUrl);
-        checkApplied(1, boardImgDao.update(foundBoardImage));
+        var found = removeFileByIno(ino);
+        String newImageFileName = uploadFile(boardImgFile);
+        String newImageUrl = createImageUrl(newImageFileName);
+        found.updateBoardImg(newImageFileName, newImageUrl);
+
+        checkApplied(1, boardImgDao.update(found));
     }
 
     public void removeBoardImg(final Integer ino) {
         checkExistsByIno(ino);
-        removeByIno(ino);
+        removeFileByIno(ino);
         checkApplied(1, boardImgDao.deleteByIno(ino));
     }
 
@@ -69,15 +69,14 @@ public class BoardImgServiceImpl {
 
         try {
             imgName = fileService.uploadFile(boardImgLocation, oriBoardImgName, boardImgFile.getBytes());
+            return imgName;
         } catch (Exception e) {
             log.error("[BOARD_IMAGE] 파일 업로드 중 오류가 발생했습니다. {}", e.getMessage());
             throw new InternalServerException(FILE_UPLOAD_ERROR);
         }
-
-        return imgName;
     }
 
-    private BoardImgDto removeByIno(final Integer ino) {
+    private BoardImgDto removeFileByIno(final Integer ino) {
         var foundBoardImage = boardImgDao.selectByIno(ino);
         if (!StringUtils.isEmpty(foundBoardImage.getName())) {
             fileService.deleteFile(boardImgLocation + "/" + foundBoardImage.getName());
@@ -99,7 +98,6 @@ public class BoardImgServiceImpl {
     }
 
     private void checkValidFileName(final MultipartFile boardImgFile) {
-        // 파일 이름 존재 여부 확인
         boolean isEmptyFileName = StringUtils.isEmpty(boardImgFile.getOriginalFilename());
         if (isEmptyFileName) {
             log.error("[BOARD_IMAGE] 잘못된 파일 이름 형식입니다. {}", boardImgFile.getOriginalFilename());
@@ -108,7 +106,6 @@ public class BoardImgServiceImpl {
     }
 
     private void checkExistsFile(final MultipartFile boardImgFile) {
-        // 파일 존재 여부 확인
         if (boardImgFile == null || boardImgFile.isEmpty()) {
             log.error("[BOARD_IMAGE] 이미지 파일이 존재하지 않습니다.");
             throw new InvalidBoardImageException(BOARD_IMAGE_FILE_NOT_EXIST);

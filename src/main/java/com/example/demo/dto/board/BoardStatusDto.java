@@ -7,7 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Getter
 @Setter
 @Builder
@@ -27,4 +29,11 @@ public class BoardStatusDto {
     private Integer reg_user_seq;
     private String up_date;
     private Integer up_user_seq;
+
+    public void updateApplTime(final String appl_end, final String up_date, final Integer up_user_seq) {
+        this.appl_end = appl_end;
+        this.up_date = up_date;
+        this.up_user_seq = up_user_seq;
+    }
+
 }

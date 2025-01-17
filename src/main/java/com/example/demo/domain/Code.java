@@ -1,6 +1,7 @@
 package com.example.demo.domain;
 
 import com.example.demo.dto.code.CodeDto;
+import com.example.demo.global.error.exception.business.code.CodeNotFoundException;
 import java.util.Arrays;
 import lombok.Getter;
 
@@ -102,7 +103,8 @@ public enum Code {
     public static Code of(String code) {
         return Arrays.stream(Code.values())
                      .filter(c -> c.getCode().equals(code))
-                     .findFirst().orElseThrow(IllegalArgumentException::new); // 추후에 CodeInvalidException 비즈니스 예외 정의해서 던질 계획
+                     .findFirst()
+                     .orElseThrow(CodeNotFoundException::new);
     }
 
     public Integer getLevel() {

@@ -25,7 +25,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 @ExtendWith(MockitoExtension.class)
-class BoardImgServiceImplTest {
+class BoardImgSrviceImplTest {
 
     @InjectMocks
     private BoardImgServiceImpl boardImgService;

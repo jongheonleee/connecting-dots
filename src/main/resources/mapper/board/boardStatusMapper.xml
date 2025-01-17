@@ -8,6 +8,12 @@
     FROM board_status
   </select>
 
+  <select id="countByBno" parameterType="int" resultType="int">
+    SELECT COUNT(*)
+    FROM board_status
+    WHERE bno = #{bno}
+  </select>
+
   <select id="existsBySeq" parameterType="int" resultType="boolean">
     SELECT COUNT(*) > 0
     FROM board_status
@@ -21,6 +27,12 @@
   </select>
 
   <select id="existsByBno" parameterType="int" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM board_status
+    WHERE bno = #{bno}
+  </select>
+
+  <select id="existsByBnoForUpdate" parameterType="int" resultType="boolean">
     SELECT COUNT(*) > 0
     FROM board_status
     WHERE bno = #{bno}

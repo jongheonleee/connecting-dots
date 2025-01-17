@@ -19,6 +19,10 @@ public class BoardStatusDaoImpl {
         return session.selectOne(namespace + "count");
     }
 
+    public int countByBno(Integer bno) {
+        return session.selectOne(namespace + "countByBno", bno);
+    }
+
     public boolean existsBySeq(Integer seq) {
         return session.selectOne(namespace + "existsBySeq", seq);
     }
@@ -29,6 +33,10 @@ public class BoardStatusDaoImpl {
 
     public boolean existsByBno(Integer bno) {
         return session.selectOne(namespace + "existsByBno", bno);
+    }
+
+    public boolean existsByBnoForUpdate(Integer bno) {
+        return session.selectOne(namespace + "existsByBnoForUpdate", bno);
     }
 
     public int deleteAll() {

@@ -43,6 +43,8 @@ public enum ErrorCode {
     BOARD_INVALID_IMAGE_FILE_NAME(400, "EC2003", "이미지 파일 이름이 잘못되었습니다"),
     BOARD_IMAGE_NOT_FOUND(404, "EC2004", "해당 이미지를 찾을 수 없습니다"),
     BOARD_IMAGE_FILE_NOT_EXIST(404, "EC2005", "해당 이미지 파일이 존재하지 않습니다"),
+    BOARD_NOT_FOUND(404, "EC2006", "해당 게시글을 찾을 수 없습니다"),
+    BOARD_STATUS_NOT_FOUND(404, "EC2007", "해당 게시글 상태를 찾을 수 없습니다"),
 
     // 회원
 
@@ -53,6 +55,9 @@ public enum ErrorCode {
     // 관리자
 
     // 인공지능
+
+    // 공통 코드
+    CODE_NOT_FOUND(404, "EC2001", "해당 코드를 찾을 수 없습니다"),
 
     // > 기술
     // - 파일 업로드 처리
