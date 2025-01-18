@@ -247,7 +247,6 @@ class BoardChangeHistoryServiceImplTest {
             BoardChangeHistoryRequest request = createBoardChangeHistoryRequest();
 
             // when
-            when(customFormatter.getCurrentDateFormat()).thenReturn(APPL_BEGIN);
             when(customFormatter.minusDateFormat(1)).thenReturn(END_APPL);
             when(customFormatter.getManagerSeq()).thenReturn(1);
 

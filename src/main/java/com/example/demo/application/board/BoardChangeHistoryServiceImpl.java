@@ -28,218 +28,146 @@ public class BoardChangeHistoryServiceImpl {
         return boardChangeHistoryDao.count();
     }
 
-    public BoardChangeHistoryResponse readBySeq(Integer seq) {
-        boolean exists = boardChangeHistoryDao.existsBySeq(seq);
-
-        if (!exists) {
-            log.error("[BOARD_CHANGE_HISTORY] 해당 게시글 변경 이력이 존재하지 않습니다. seq: {}", seq);
-            throw new BoardChangeHistoryNotFoundException();
-        }
-
+    public BoardChangeHistoryResponse readBySeq(final Integer seq) {
+        checkBoardChangeHistoryExists(seq);
         var found = boardChangeHistoryDao.selectBySeq(seq);
-        return BoardChangeHistoryResponse.builder()
-            .seq(found.getSeq())
-            .bno(found.getBno())
-            .title(found.getTitle())
-            .cont(found.getCont())
-            .comt(found.getComt())
-            .appl_begin(found.getAppl_begin())
-            .appl_end(found.getAppl_end())
-            .build();
+        return createResponse(found);
     }
 
-    public List<BoardChangeHistoryResponse> readByBno(Integer bno) {
-        boolean exists = boardDao.existsByBno(bno);
-
-        if (!exists) {
-            log.error("[BOARD_CHANGE_HISTORY] 해당 게시글이 존재하지 않습니다. bno: {}", bno);
-            throw new BoardNotFoundException();
-        }
-
-        List<BoardChangeHistoryDto> founds = boardChangeHistoryDao.selectByBno(bno);
-        return founds.stream()
-            .map(found -> BoardChangeHistoryResponse.builder()
-                .seq(found.getSeq())
-                .bno(found.getBno())
-                .title(found.getTitle())
-                .cont(found.getCont())
-                .comt(found.getComt())
-                .appl_begin(found.getAppl_begin())
-                .appl_end(found.getAppl_end())
-                .build())
-            .toList();
+    public List<BoardChangeHistoryResponse> readByBno(final Integer bno) {
+        checkBoardExists(bno);
+        return boardChangeHistoryDao.selectByBno(bno)
+                                    .stream()
+                                    .map(this::createResponse)
+                                    .toList();
     }
+
 
     public List<BoardChangeHistoryResponse> readAll() {
-        List<BoardChangeHistoryDto> founds = boardChangeHistoryDao.selectAll();
-        return founds.stream()
-            .map(found -> BoardChangeHistoryResponse.builder()
-                .seq(found.getSeq())
-                .bno(found.getBno())
-                .title(found.getTitle())
-                .cont(found.getCont())
-                .comt(found.getComt())
-                .appl_begin(found.getAppl_begin())
-                .appl_end(found.getAppl_end())
-                .build())
-            .toList();
+        return boardChangeHistoryDao.selectAll()
+                                    .stream()
+                                    .map(this::createResponse)
+                                    .toList();
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public BoardChangeHistoryResponse renewBoardChangeHistory(Integer bno, BoardChangeHistoryRequest request) {
-        boolean existsBoard = boardDao.existsByBno(bno);
+    public BoardChangeHistoryResponse renewBoardChangeHistory(final Integer bno, final BoardChangeHistoryRequest request) {
+        checkBoardExists(bno);
+        checkBoardChangeHistoryExistsByBnoForUpdate(bno);
 
-        if (!existsBoard) {
-            log.error("[BOARD_CHANGE_HISTORY] 해당 게시글이 존재하지 않습니다. bno: {}", bno);
-            throw new BoardNotFoundException();
-        }
+        var found = boardChangeHistoryDao.selectLatestByBno(bno);
+        found.updateApplEnd(customFormatter.minusDateFormat(1), customFormatter.getLastDateFormat(), customFormatter.getManagerSeq());
+        var newDto = createDto(bno, request);
 
-        boolean existsBoardChangeHistory = boardChangeHistoryDao.existsByBnoForUpdate(bno);
+        checkApplied(2, boardChangeHistoryDao.update(found) + boardChangeHistoryDao.insert(newDto));
+        return createResponse(newDto);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public BoardChangeHistoryResponse createInit(final Integer bno, final BoardChangeHistoryRequest request) {
+        checkBoardExists(bno);
+        checkBoardChangeHistoryAlreadyExists(bno);
+        var newDto = createDto(bno, request);
+        checkApplied(1, boardChangeHistoryDao.insert(newDto));
+        return createResponse(newDto);
+    }
+
+
+    public void removeBySeq(final Integer seq) {
+        checkBoardChangeHistoryExists(seq);
+        checkApplied(1, boardChangeHistoryDao.deleteBySeq(seq));
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void removeByBno(final Integer bno) {
+        checkBoardExists(bno);
+        checkBoardChangeHistoryExistsByBno(bno);
+        checkApplied(boardChangeHistoryDao.countByBno(bno), boardChangeHistoryDao.deleteByBno(bno));
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void removeAll() {
+        checkApplied(boardChangeHistoryDao.count(), boardChangeHistoryDao.deleteAll());
+    }
+
+    private void checkBoardChangeHistoryExistsByBno(final Integer bno) {
+        boolean existsBoardChangeHistory = boardChangeHistoryDao.existsByBno(bno);
 
         if (!existsBoardChangeHistory) {
             log.error("[BOARD_CHANGE_HISTORY] 해당 게시글 변경 이력이 존재하지 않습니다. bno: {}", bno);
             throw new BoardChangeHistoryNotFoundException();
         }
-
-        var found = boardChangeHistoryDao.selectLatestByBno(bno);
-        found.setAppl_end(customFormatter.minusDateFormat(1));
-        found.setUp_date(customFormatter.getCurrentDateFormat());
-        found.setUp_user_seq(customFormatter.getManagerSeq());
-
-        int rowCnt = boardChangeHistoryDao.update(found);
-
-        if (rowCnt != 1) {
-            log.error("[BOARD_CHANGE_HISTORY] 게시글 변경 이력 시간 업데이트 처리에 실패하였습니다. bno: {}", bno);
-            throw new NotApplyOnDbmsException();
-        }
-
-        var newDto = BoardChangeHistoryDto.builder()
-            .bno(bno)
-            .title(request.getTitle())
-            .cont(request.getCont())
-            .comt(request.getComt())
-            .appl_begin(customFormatter.getCurrentDateFormat())
-            .appl_end(customFormatter.getLastDateFormat())
-            .reg_date(customFormatter.getCurrentDateFormat())
-            .reg_user_seq(customFormatter.getManagerSeq())
-            .up_date(customFormatter.getLastDateFormat())
-            .up_user_seq(customFormatter.getManagerSeq())
-            .build();
-
-        rowCnt = boardChangeHistoryDao.insert(newDto);
-
-        if (rowCnt != 1) {
-            log.error("[BOARD_CHANGE_HISTORY] 게시글 변경 이력 시간 업데이트 및 새로운 변경 이력 추가 처리에 실패하였습니다. bno: {}", bno);
-            throw new NotApplyOnDbmsException();
-        }
-
-        return BoardChangeHistoryResponse.builder()
-            .seq(newDto.getSeq())
-            .bno(newDto.getBno())
-            .title(newDto.getTitle())
-            .cont(newDto.getCont())
-            .comt(newDto.getComt())
-            .appl_begin(newDto.getAppl_begin())
-            .appl_end(newDto.getAppl_end())
-            .build();
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public BoardChangeHistoryResponse createInit(Integer bno, BoardChangeHistoryRequest request) {
-        boolean existsBoard = boardDao.existsByBno(bno);
 
-        if (!existsBoard) {
-            log.error("[BOARD_CHANGE_HISTORY] 해당 게시글이 존재하지 않습니다. bno: {}", bno);
-            throw new BoardNotFoundException();
-        }
 
+    private void checkBoardChangeHistoryAlreadyExists(final Integer bno) {
         boolean existsBoardChangeHistory = boardChangeHistoryDao.existsByBno(bno);
 
         if (existsBoardChangeHistory) {
             log.error("[BOARD_CHANGE_HISTORY] 해당 게시글 변경 이력이 이미 존재합니다. bno: {}", bno);
             throw new BoardChangeHistoryNotFoundException();
         }
-
-        var newDto = BoardChangeHistoryDto.builder()
-            .bno(bno)
-            .title(request.getTitle())
-            .cont(request.getCont())
-            .comt(request.getComt())
-            .appl_begin(customFormatter.getCurrentDateFormat())
-            .appl_end(customFormatter.getLastDateFormat())
-            .reg_date(customFormatter.getCurrentDateFormat())
-            .reg_user_seq(customFormatter.getManagerSeq())
-            .up_date(customFormatter.getLastDateFormat())
-            .up_user_seq(customFormatter.getManagerSeq())
-            .build();
-
-        int rowCnt = boardChangeHistoryDao.insert(newDto);
-
-        if (rowCnt != 1) {
-            log.error("[BOARD_CHANGE_HISTORY] 게시글 변경 이력 추가 처리에 실패하였습니다. bno: {}", bno);
-            throw new NotApplyOnDbmsException();
-        }
-
-        return BoardChangeHistoryResponse.builder()
-            .seq(newDto.getSeq())
-            .bno(newDto.getBno())
-            .title(newDto.getTitle())
-            .cont(newDto.getCont())
-            .comt(newDto.getComt())
-            .appl_begin(newDto.getAppl_begin())
-            .appl_end(newDto.getAppl_end())
-            .build();
     }
 
-    public void removeBySeq(Integer seq) {
+    private BoardChangeHistoryResponse createResponse(final BoardChangeHistoryDto found) {
+        return BoardChangeHistoryResponse.builder()
+                .seq(found.getSeq())
+                .bno(found.getBno())
+                .title(found.getTitle())
+                .cont(found.getCont())
+                .comt(found.getComt())
+                .appl_begin(found.getAppl_begin())
+                .appl_end(found.getAppl_end())
+                .build();
+    }
+
+    private void checkBoardChangeHistoryExists(final Integer seq) {
         boolean exists = boardChangeHistoryDao.existsBySeq(seq);
 
         if (!exists) {
             log.error("[BOARD_CHANGE_HISTORY] 해당 게시글 변경 이력이 존재하지 않습니다. seq: {}", seq);
             throw new BoardChangeHistoryNotFoundException();
         }
-
-        int rowCnt = boardChangeHistoryDao.deleteBySeq(seq);
-
-        if (rowCnt != 1) {
-            log.error("[BOARD_CHANGE_HISTORY] 게시글 변경 이력 삭제 처리에 실패하였습니다. seq: {}", seq);
-            throw new NotApplyOnDbmsException();
-        }
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public void removeByBno(Integer bno) {
-        boolean existsBoard = boardDao.existsByBno(bno);
+    private void checkBoardExists(final Integer bno) {
+        boolean exists = boardDao.existsByBno(bno);
 
-        if (!existsBoard) {
+        if (!exists) {
             log.error("[BOARD_CHANGE_HISTORY] 해당 게시글이 존재하지 않습니다. bno: {}", bno);
             throw new BoardNotFoundException();
         }
+    }
 
-        boolean existsBoardChangeHistory = boardChangeHistoryDao.existsByBno(bno);
+    private void checkBoardChangeHistoryExistsByBnoForUpdate(final Integer bno) {
+        boolean existsBoardChangeHistory = boardChangeHistoryDao.existsByBnoForUpdate(bno);
 
         if (!existsBoardChangeHistory) {
             log.error("[BOARD_CHANGE_HISTORY] 해당 게시글 변경 이력이 존재하지 않습니다. bno: {}", bno);
             throw new BoardChangeHistoryNotFoundException();
         }
+    }
 
-        int totalCnt = boardChangeHistoryDao.countByBno(bno);
-        int rowCnt = boardChangeHistoryDao.deleteByBno(bno);
-
-        if (rowCnt != totalCnt) {
-            log.error("[BOARD_CHANGE_HISTORY] 게시글 변경 이력 삭제 처리에 실패하였습니다. bno: {}", bno);
+    private void checkApplied(final Integer expected, final Integer actual) {
+        if (expected != actual) {
+            log.error("[BOARD_CHANGE_HISTORY] 게시글 변경 이력 처리에 실패하였습니다. expected: {}, actual: {}", expected, actual);
             throw new NotApplyOnDbmsException();
         }
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public void removeAll() {
-        int totalCnt = boardChangeHistoryDao.count();
-        int rowCnt = boardChangeHistoryDao.deleteAll();
-
-        if (rowCnt != totalCnt) {
-            log.error("[BOARD_CHANGE_HISTORY] 게시글 변경 이력 전체 삭제 처리에 실패하였습니다.");
-            throw new NotApplyOnDbmsException();
-        }
+    private BoardChangeHistoryDto createDto(final Integer bno, final BoardChangeHistoryRequest request) {
+        return BoardChangeHistoryDto.builder()
+                .bno(bno)
+                .title(request.getTitle())
+                .cont(request.getCont())
+                .comt(request.getComt())
+                .appl_begin(customFormatter.getCurrentDateFormat())
+                .appl_end(customFormatter.getLastDateFormat())
+                .reg_date(customFormatter.getCurrentDateFormat())
+                .reg_user_seq(customFormatter.getManagerSeq())
+                .up_date(customFormatter.getLastDateFormat())
+                .up_user_seq(customFormatter.getManagerSeq())
+                .build();
     }
 }
