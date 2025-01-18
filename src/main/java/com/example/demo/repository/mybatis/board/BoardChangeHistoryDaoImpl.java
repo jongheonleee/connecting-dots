@@ -58,6 +58,10 @@ public class BoardChangeHistoryDaoImpl {
         return session.selectList(namespace + "selectAll");
     }
 
+    public BoardChangeHistoryDto selectLatestByBno(Integer bno) {
+        return session.selectOne(namespace + "selectLatestByBno", bno);
+    }
+
     public int deleteBySeq(Integer seq) {
         return session.delete(namespace + "deleteBySeq", seq);
     }

@@ -87,6 +87,21 @@
     FROM board_change_history
   </select>
 
+  <select id="selectLatestByBno" parameterType="int" resultType="BoardChangeHistoryDto">
+    SELECT
+      b1.seq AS seq, b1.bno AS bno, b1.title AS title,
+      b1.cont AS cont, b1.comt AS comt, b1.appl_begin AS appl_begin,
+      b1.appl_end AS appl_end, b1.reg_date AS reg_date, b1.reg_user_seq AS reg_user_seq,
+      b1.up_date AS up_date, b1.up_user_seq AS up_user_seq
+    FROM board_change_history AS b1
+    INNER JOIN (
+      SELECT MAX(seq) AS seq
+      FROM board_change_history
+      WHERE bno = #{bno}
+    ) AS b2
+    ON b1.seq = b2.seq
+  </select>
+
   <update id="update" parameterType="BoardChangeHistoryDto">
     UPDATE board_change_history
     SET

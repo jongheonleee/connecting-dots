@@ -15,6 +15,11 @@ public class CustomFormatter {
         return now.format(formatter);
     }
 
+    // 선분 이력 마지막 시간
+    public String getLastDateFormat() {
+        return "9999-12-31 23:59:59";
+    }
+
     // 관리자 정보 조회
     public Integer getManagerSeq() {
         return 1;
