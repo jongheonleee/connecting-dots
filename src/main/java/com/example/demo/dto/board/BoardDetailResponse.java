@@ -13,14 +13,6 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class BoardImgResponse {
-    private Integer bno;
-    private Integer ino;
-    private String name;
-    private String chk_thumb;
-    private String img;
-    private String comt;
+public class BoardDetailResponse {
 
-    public BoardImgResponse(BoardImgDto boardImgDto) {
-    }
 }

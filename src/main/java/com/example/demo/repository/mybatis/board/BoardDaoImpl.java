@@ -2,7 +2,9 @@ package com.example.demo.repository.mybatis.board;
 
 import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.board.BoardDto;
+import com.example.demo.dto.board.BoardMainDto;
 import java.util.List;
+import java.util.Map;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -23,6 +25,10 @@ public class BoardDaoImpl {
     // 게시글 제목(TT), 작성자(WR), 카테고리(CT) 기반으로 검색
     public int countBySearchCondition(SearchCondition sc) {
         return session.selectOne(namespace + "countBySearchCondition", sc);
+    }
+
+    public int countByCategory(String cate_code) {
+        return session.selectOne(namespace + "countByCategory", cate_code);
     }
 
     public boolean existsByBno(Integer bno) {
@@ -50,11 +56,19 @@ public class BoardDaoImpl {
         return session.selectList(namespace + "selectBySearchCondition", sc);
     }
 
-//    public BoardDetailDto selectDetailByBno(Integer bno) {
-//        return session.selectOne(namespace + "selectByBno", bno);
-//    }
-//
-//
+
+    public List<BoardMainDto> selectForMain(Map map) {
+        return session.selectList(namespace + "selectForMain", map);
+    }
+
+    public List<BoardMainDto> selectForMainByCategory(Map map) {
+        return session.selectList(namespace + "selectForMainByCategory", map);
+    }
+
+    public List<BoardMainDto> selectForMainBySearchCondition(SearchCondition sc) {
+        return session.selectList(namespace + "selectForMainBySearchCondition", sc);
+    }
+
     public int update(BoardDto dto) {
         return session.update(namespace + "update", dto);
     }

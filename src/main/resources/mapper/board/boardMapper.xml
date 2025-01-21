@@ -31,6 +31,12 @@
     </choose>
   </select>
 
+  <select id="countByCategory" parameterType="string" resultType="int">
+    SELECT COUNT(*)
+    FROM board
+    WHERE cate_code LIKE CONCAT('%', #{cate_code}, '%')
+  </select>
+
   <select id="existsByBno" parameterType="int" resultType="boolean">
     SELECT COUNT(*) > 0
     FROM board
@@ -176,98 +182,124 @@
   </update>
 
 
-  <!--  &lt;!&ndash; v2 : 게시글 조회 &ndash;&gt;-->
-<!--  <select id="selectV2" parameterType="map" resultType="com.example.demo.dto.ord_board.BoardResponseDto">-->
-<!--    SELECT-->
-<!--      b.bno AS bno, b.title AS title, b.writer AS writer, b.cate_code AS cate_code,-->
-<!--      b.reg_date AS reg_date, b.view_cnt AS view_cnt, b.reco_cnt AS reco_cnt,-->
-<!--      (-->
-<!--        SELECT img-->
-<!--        FROM image AS i-->
-<!--        WHERE b.bno = i.bno-->
-<!--        AND i.thumb = 'Y'-->
-<!--      ) AS thumb,-->
-<!--      (-->
-<!--        SELECT count(*)-->
-<!--        FROM comment AS c-->
-<!--        WHERE b.bno = c.bno-->
-<!--      ) AS comment_cnt-->
-<!--    FROM board AS b-->
-<!--    ORDER BY reg_date DESC, view_cnt DESC, comment_cnt DESC-->
-<!--    LIMIT #{offset}, #{pageSize};-->
-<!--  </select>-->
+    <!-- v2 : 게시글 조회 -->
+  <select id="selectForMain" parameterType="map" resultType="BoardMainDto">
+    SELECT
+      b.bno                    AS bno,
+      b.title                  AS title,
+      b.writer                 AS writer,
+      (
+        SELECT name
+        FROM board_category AS bc
+        WHERE b.cate_code = bc.cate_code
+      )                        AS cate_name,
+      b.reg_date               AS reg_date,
+      b.view_cnt               AS view_cnt,
+      b.reco_cnt               AS reco_cnt,
+      (
+        SELECT img
+        FROM image AS i
+        WHERE b.bno = i.bno
+        AND i.thumb = 'Y'
+      )                        AS thumb,
+      (
+        SELECT count(*)
+        FROM comment AS c
+        WHERE b.bno = c.bno
+      )                        AS comment_cnt
+    FROM board AS b
+    ORDER BY reg_date DESC, view_cnt DESC, comment_cnt DESC
+    LIMIT #{offset}, #{pageSize};
+  </select>
 
-<!--  &lt;!&ndash; v2 : 게시글 조회 - 카테고리 &ndash;&gt;-->
-<!--  <select id="selectV2ByCategory" parameterType="map" resultType="com.example.demo.dto.ord_board.BoardResponseDto">-->
-<!--    SELECT-->
-<!--      b.bno AS bno, b.title AS title, b.writer AS writer, b.cate_code AS cate_code,-->
-<!--      b.reg_date AS reg_date, b.view_cnt AS view_cnt, b.reco_cnt AS reco_cnt,-->
-<!--      (-->
-<!--        SELECT img-->
-<!--        FROM image AS i-->
-<!--        WHERE b.bno = i.bno-->
-<!--        AND i.thumb = 'Y'-->
-<!--      ) AS thumb,-->
-<!--      (-->
-<!--        SELECT count(*)-->
-<!--        FROM comment AS c-->
-<!--        WHERE b.bno = c.bno-->
-<!--       ) AS comment_cnt-->
-<!--    FROM board AS b-->
-<!--    WHERE b.cate_code-->
-<!--    LIKE CONCAT(#{cate_code}, '%')-->
-<!--    ORDER BY reg_date DESC, view_cnt DESC, comment_cnt DESC-->
-<!--    LIMIT #{offset}, #{pageSize};-->
-<!--  </select>-->
+  <!-- v2 : 게시글 조회 - 카테고리 -->
+  <select id="selectForMainByCategory" parameterType="map" resultType="BoardMainDto">
+    SELECT
+      b.bno                    AS bno,
+      b.title                  AS title,
+      b.writer                 AS writer,
+      (
+        SELECT name
+        FROM board_category AS c
+        WHERE b.cate_code = c.cate_code
+      )                        AS cate_name,
+      b.reg_date               AS reg_date,
+      b.view_cnt               AS view_cnt,
+      b.reco_cnt               AS reco_cnt,
+      (
+        SELECT img
+        FROM board_image AS i
+        WHERE b.bno = i.bno
+        AND i.thumb = 'Y'
+      )                        AS thumb,
+      (
+        SELECT count(*)
+        FROM comment AS c
+        WHERE b.bno = c.bno
+      )                        AS comment_cnt
+    FROM board AS b
+    WHERE b.cate_code LIKE CONCAT('%', #{cate_code}, '%')
+    ORDER BY reg_date DESC, view_cnt DESC, comment_cnt DESC
+    LIMIT #{offset}, #{pageSize};
+  </select>
 
-<!--  &lt;!&ndash; v2 : 게시글 검색 & 정렬 조건 기반 조회 &ndash;&gt;-->
-<!--  <select id="selectV2BySearchCondition" parameterType="com.example.demo.dto.SearchCondition" resultType="com.example.demo.dto.ord_board.BoardResponseDto">-->
-<!--    SELECT-->
-<!--      b.bno AS bno, b.title AS title, b.writer AS writer, b.cate_code AS cate_code,-->
-<!--      b.reg_date AS reg_date, b.view_cnt AS view_cnt, b.reco_cnt AS reco_cnt,-->
-<!--      (-->
-<!--        SELECT img-->
-<!--        FROM image AS i-->
-<!--        WHERE b.bno = i.bno-->
-<!--        AND i.thumb = 'Y'-->
-<!--      ) AS thumb,-->
-<!--      (-->
-<!--        SELECT count(*)-->
-<!--        FROM comment AS c-->
-<!--        WHERE b.bno = c.bno-->
-<!--       ) AS comment_cnt-->
-<!--    FROM board AS b-->
-<!--    WHERE TRUE-->
-<!--      &lt;!&ndash; 검색 조건 &ndash;&gt;-->
-<!--      <choose>-->
-<!--        <when test='searchOption=="T"'>-->
-<!--          AND b.title LIKE CONCAT('%', #{searchKeyword}, '%')-->
-<!--        </when>-->
-<!--        <when test='searchOption=="W"'>-->
-<!--          AND b.writer LIKE CONCAT('%', #{searchKeyword}, '%')-->
-<!--        </when>-->
-<!--        <otherwise>-->
-<!--          AND b.title LIKE CONCAT('%', #{searchKeyword}, '%')-->
-<!--          OR b.writer LIKE CONCAT('%', #{searchKeyword}, '%')-->
-<!--        </otherwise>-->
-<!--      </choose>-->
-<!--      &lt;!&ndash; 정렬 조건 &ndash;&gt;-->
-<!--      <choose>-->
-<!--        <when test='sortOption == "1"'> &lt;!&ndash; 최신순 &ndash;&gt;-->
-<!--          ORDER BY reg_date DESC, bno DESC-->
-<!--        </when>-->
-<!--        <when test='sortOption == "2"'> &lt;!&ndash; 조회수 &ndash;&gt;-->
-<!--          ORDER BY view_cnt DESC, bno DESC-->
-<!--        </when>-->
-<!--        <when test='sortOption == "3"'> &lt;!&ndash; 추천순 &ndash;&gt;-->
-<!--          ORDER BY reco_cnt DESC, bno DESC-->
-<!--        </when>-->
-<!--        <otherwise> &lt;!&ndash; 기본값, 최신순 &ndash;&gt;-->
-<!--          ORDER BY reg_date DESC, bno DESC-->
-<!--        </otherwise>-->
-<!--    </choose>-->
-<!--    LIMIT #{offset}, #{pageSize};-->
-<!--  </select>-->
+  <!-- v2 : 게시글 검색 & 정렬 조건 기반 조회 -->
+  <select id="selectForMainBySearchCondition" parameterType="SearchCondition" resultType="BoardMainDto">
+    SELECT
+      b.bno                    AS bno,
+      b.title                  AS title,
+      b.writer                 AS writer,
+      (
+        SELECT name
+        FROM board_category AS c
+        WHERE b.cate_code = c.cate_code
+      )                        AS cate_name,
+      b.reg_date               AS reg_date,
+      b.view_cnt               AS view_cnt,
+      b.reco_cnt               AS reco_cnt,
+      (
+        SELECT img
+        FROM board_image AS i
+        WHERE b.bno = i.bno
+        AND i.thumb = 'Y'
+      )                        AS thumb,
+      (
+        SELECT count(*)
+        FROM comment AS c
+        WHERE b.bno = c.bno
+      )                        AS comment_cnt
+    FROM board AS b
+    WHERE TRUE
+      <!-- 검색 조건 -->
+      <choose>
+        <when test='searchOption=="TT"'>
+          AND b.title LIKE CONCAT('%', #{searchKeyword}, '%')
+        </when>
+        <when test='searchOption=="WR"'>
+          AND b.writer LIKE CONCAT('%', #{searchKeyword}, '%')
+        </when>
+        <otherwise>
+          AND b.title LIKE CONCAT('%', #{searchKeyword}, '%')
+          OR b.writer LIKE CONCAT('%', #{searchKeyword}, '%')
+        </otherwise>
+      </choose>
+      <!-- 정렬 조건 -->
+      <choose>
+        <when test='sortOption == "1"'> <!-- 최신순 -->
+          ORDER BY reg_date DESC, bno DESC
+        </when>
+        <when test='sortOption == "2"'> <!-- 조회수 -->
+          ORDER BY view_cnt DESC, bno DESC
+        </when>
+        <when test='sortOption == "3"'> <!-- 추천순 -->
+          ORDER BY reco_cnt DESC, bno DESC
+        </when>
+        <otherwise> <!-- 기본값, 최신순 -->
+          ORDER BY reg_date DESC, bno DESC
+        </otherwise>
+    </choose>
+    LIMIT #{offset}, #{pageSize};
+  </select>
 
 
 

@@ -5,6 +5,7 @@ import static com.example.demo.global.error.exception.ErrorCode.FILE_UPLOAD_ERRO
 
 import com.example.demo.dto.board.BoardImgDto;
 import com.example.demo.dto.board.BoardImgRequest;
+import com.example.demo.dto.board.BoardImgResponse;
 import com.example.demo.global.error.exception.business.board.BoardImageNotFoundException;
 import com.example.demo.global.error.exception.business.board.InvalidBoardImageException;
 import com.example.demo.global.error.exception.technology.InternalServerException;
@@ -12,6 +13,7 @@ import com.example.demo.global.error.exception.technology.database.NotApplyOnDbm
 import com.example.demo.repository.mybatis.board.BoardImgDaoImpl;
 import com.example.demo.utils.CustomFormatter;
 import io.micrometer.common.util.StringUtils;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,6 +43,13 @@ public class BoardImgServiceImpl {
         String imageUrl = createImageUrl(imageFileName);
         var dto = createDto(request, imageFileName, imageUrl);
         checkApplied(1, boardImgDao.insert(dto));
+    }
+
+    public List<BoardImgResponse> readByBno(final Integer bno) {
+        return boardImgDao.selectByBno(bno)
+                          .stream()
+                          .map(this::createResponse)
+                          .toList();
     }
 
 
@@ -138,6 +147,17 @@ public class BoardImgServiceImpl {
                         .up_date(customFormatter.getCurrentDateFormat())
                         .chk_thumb(request.getChk_thumb())
                         .build();
+    }
+
+    private BoardImgResponse createResponse(final BoardImgDto dto) {
+        return BoardImgResponse.builder()
+                               .bno(dto.getBno())
+                               .ino(dto.getIno())
+                               .name(dto.getName())
+                               .chk_thumb(dto.getChk_thumb())
+                               .img(dto.getImg())
+                               .comt(dto.getComt())
+                               .build();
     }
 
 }

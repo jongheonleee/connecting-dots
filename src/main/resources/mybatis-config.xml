@@ -28,7 +28,7 @@
     <typeAlias alias="BoardImgDto" type="com.example.demo.dto.board.BoardImgDto"/>
     <typeAlias alias="BoardStatusDto" type="com.example.demo.dto.board.BoardStatusDto"/>
     <typeAlias alias="BoardChangeHistoryDto" type="com.example.demo.dto.board.BoardChangeHistoryDto"/>
-
+    <typeAlias alias="BoardMainDto" type="com.example.demo.dto.board.BoardMainDto"/>
     <!-- comment -->
 
     <!-- reply -->

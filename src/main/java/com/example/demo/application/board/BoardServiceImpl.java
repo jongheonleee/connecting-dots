@@ -5,23 +5,37 @@ import static com.example.demo.domain.Code.BOARD_CREATE;
 import com.example.demo.application.code.CommonCodeServiceImpl;
 import com.example.demo.domain.BoardCategory;
 import com.example.demo.domain.Code;
+import com.example.demo.dto.PageResponse;
+import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.board.BoardChangeHistoryRequest;
+import com.example.demo.dto.board.BoardDetailResponse;
 import com.example.demo.dto.board.BoardDto;
 import com.example.demo.dto.board.BoardImgRequest;
+import com.example.demo.dto.board.BoardImgResponse;
+import com.example.demo.dto.board.BoardMainDto;
+import com.example.demo.dto.board.BoardMainResponse;
 import com.example.demo.dto.board.BoardRequest;
 import com.example.demo.dto.board.BoardResponse;
 import com.example.demo.dto.board.BoardStatusDto;
 import com.example.demo.dto.board.BoardStatusRequest;
+import com.example.demo.dto.board.BoardStatusResponse;
+import com.example.demo.dto.comment.CommentDetailResponse;
 import com.example.demo.global.error.exception.business.BusinessException;
 import com.example.demo.global.error.exception.business.InvalidValueException;
+import com.example.demo.global.error.exception.business.board.BoardCategoryNotFoundException;
+import com.example.demo.global.error.exception.business.board.BoardInvalidContentException;
+import com.example.demo.global.error.exception.business.board.BoardNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
 import com.example.demo.global.error.exception.technology.network.RetryFailedException;
+import com.example.demo.repository.mybatis.board.BoardCategoryDaoImpl;
 import com.example.demo.repository.mybatis.board.BoardDaoImpl;
 import com.example.demo.repository.mybatis.board.BoardImgDaoImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.sql.SQLException;
 import java.sql.SQLSyntaxErrorException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
@@ -42,7 +56,8 @@ public class BoardServiceImpl {
     private static final int RETRY_DELAY = 5_000;
 
     private final BoardDaoImpl boardDao;// [✅]
-    private final BoardCategoryServiceImpl boardCategoryService;// [✅]
+//    private final BoardCategoryServiceImpl boardCategoryService;// [✅]
+    private final BoardCategoryDaoImpl boardCategoryDao;// [✅]
     private final BoardImgServiceImpl boardImgService; // -> 게시판 생성, 조회시 이미지 처리[✅]
     private final BoardStatusServiceImpl boardStatusService; // -> 게시판 상태 변경시 적용[✅]
     private final BoardChangeHistoryServiceImpl boardChangeHistoryService; // -> 게시판 변경 이력 기록[✅]
@@ -87,6 +102,124 @@ public class BoardServiceImpl {
         throw new RetryFailedException();
     }
 
+    @Transactional(readOnly = true)
+    public BoardDetailResponse readByBno(final Integer bno) {
+        boolean exists = boardDao.existsByBno(bno);
+        if (!exists) {
+            log.error("[BOARD] 해당 게시글이 존재하지 않습니다. bno: {}", bno);
+            throw new BoardNotFoundException();
+        }
+
+        // 게시글 상태 조회
+            // 게시글 상태에서 제재 대상이나 삭제된 게시글은 조회하지 않음
+        var boardStatusResponse = boardStatusService.readByBnoAtPresent(bno);
+        Code code = Code.of(boardStatusResponse.getStat_code());
+        if (code.equals(Code.BOARD_REMOVE) || code.equals(Code.BOARD_SANCTION) || code.equals(Code.BOARD_NOT_SHOW)) {
+            log.error("[BOARD] 해당 게시글은 삭제 되었거나 제재된 게시글이거나 비공개 게시글입니다. bno: {}", bno);
+            throw new BoardInvalidContentException();
+        }
+
+        // 게시글 조회
+        var foundBoard = boardDao.select(bno);
+
+        // 해당 게시글 이미지 조회
+        var boardImgResponses = boardImgService.readByBno(bno);
+
+        // 해당 게시글 댓글 조회 - 대댓글도 같이 조회 시키기
+        List<CommentDetailResponse> commentDetailResponses = null;
+//                commentService.readByBnoForDetail(bno);
+
+        return createBoardDetailResponse(foundBoard, boardImgResponses, commentDetailResponses);
+    }
+
+    @Transactional(readOnly = true)
+    public PageResponse read(Integer page, Integer pageSize) {
+        int totalCnt = boardDao.count();
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("page", page);
+        map.put("pageSize", pageSize);
+
+        List<BoardMainResponse> responses = boardDao.selectForMain(map)
+                                                    .stream()
+                                                    .map(this::createMainResponse)
+                                                    .toList();
+
+        SearchCondition sc = new SearchCondition(page, pageSize);
+        return new PageResponse<BoardMainResponse>(totalCnt, sc, responses);
+    }
+
+    @Transactional(readOnly = true)
+    public PageResponse readByCategory(String cateCode, Integer page, Integer pageSize) {
+        boolean exists = boardCategoryDao.existsByCateCode(cateCode);
+        if (!exists) {
+            log.error("[BOARD] 해당 카테고리가 존재하지 않습니다. cateCode: {}", cateCode);
+            throw new BoardCategoryNotFoundException();
+        }
+
+        int totalCnt = boardDao.countByCategory(cateCode);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("cate_code", cateCode);
+        map.put("page", page);
+        map.put("pageSize", pageSize);
+
+        List<BoardMainResponse> responses = boardDao.selectForMainByCategory(map)
+                                                    .stream()
+                                                    .map(this::createMainResponse)
+                                                    .toList();
+
+        SearchCondition sc = new SearchCondition(page, pageSize);
+        return new PageResponse<BoardMainResponse>(totalCnt, sc, responses);
+    }
+
+    @Transactional(readOnly = true)
+    public PageResponse readBySearchCondition(SearchCondition sc) {
+        int totalCnt = boardDao.countBySearchCondition(sc);
+        List<BoardMainDto> found = boardDao.selectForMainBySearchCondition(sc);
+        List<BoardMainResponse> responses = found.stream()
+                                                  .map(this::createMainResponse)
+                                                  .toList();
+
+        return new PageResponse<BoardMainResponse>(totalCnt, sc, responses);
+    }
+
+    @Transactional(readOnly = true)
+    public BoardDetailResponse readDetailByBno(Integer bno) {
+        BoardDto boardDto = boardDao.select(bno);
+        if (boardDto == null) {
+            log.error("[BOARD] 해당 게시글이 존재하지 않습니다. bno: {}", bno);
+            throw new BoardNotFoundException();
+        }
+
+        List<BoardImgResponse> boardImgResponses = boardImgService.readByBno(bno);
+        List<CommentDetailResponse> commentDetailResponses = null; // =  commentService.readByBnoForDetail(bno);
+
+        return createBoardDetailResponse(boardDto, boardImgResponses, commentDetailResponses);
+    }
+
+
+    @Retryable(
+            value = {RuntimeException.class},
+            exclude = {BusinessException.class, DuplicateKeyException.class, InvalidValueException.class, SQLSyntaxErrorException.class}, // 작성된 예외는 재시도 대상에서 제외
+            maxAttempts = MAX_RETRY,
+            backoff = @Backoff(delay = RETRY_DELAY)
+    )
+    @Transactional(rollbackFor = Exception.class)
+    public void modify() {
+        // 게시글을 수정한다
+        // 이미지를 수정한다
+        // 상태를 수정한다
+        // 변경 이력에 수정값을 등록한다
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void remove(final Integer bno) {
+        // 게시글을 삭제한다
+        // 이미지를 삭제한다
+        // 상태를 삭제한다
+        // 변경 이력에 삭제값을 등록한다
+    }
 
     private void checkApplied(final Integer expected, final Integer actual) {
         if (expected != actual) {
@@ -151,6 +284,26 @@ public class BoardServiceImpl {
                             .cont(dto.getCont())
                             .comt(dto.getComt())
                             .build();
+    }
+
+    private BoardMainResponse createMainResponse(BoardMainDto dto) {
+        return BoardMainResponse.builder()
+                                .bno(dto.getBno())
+                                .title(dto.getTitle())
+                                .writer(dto.getWriter())
+                                .cate_name(dto.getCate_name())
+                                .reg_date(dto.getReg_date())
+                                .view_cnt(dto.getView_cnt())
+                                .reco_cnt(dto.getReco_cnt())
+                                .thumb(dto.getThumb())
+                                .comment_cnt(dto.getComment_cnt())
+                                .build();
+    }
+
+    private BoardDetailResponse createBoardDetailResponse(BoardDto boardDto, List<BoardImgResponse> boardImgResponses, List<CommentDetailResponse> commentDetailResponses) {
+        return BoardDetailResponse.builder()
+
+                                  .build();
     }
 
 }

@@ -46,7 +46,7 @@ public enum ErrorCode {
     BOARD_NOT_FOUND(404, "EC2006", "해당 게시글을 찾을 수 없습니다"),
     BOARD_STATUS_NOT_FOUND(404, "EC2007", "해당 게시글 상태를 찾을 수 없습니다"),
     BOARD_CHANGE_HISTORY_NOT_FOUND(404, "EC2008", "해당 게시글 변경 이력을 찾을 수 없습니다"),
-
+    BOARD_INVALID_CONTENT(403, "EC2009", "게시글 내용이 잘못되었습니다"),
     // 회원
 
     // 리포트

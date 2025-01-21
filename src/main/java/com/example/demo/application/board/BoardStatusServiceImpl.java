@@ -64,6 +64,12 @@ public class BoardStatusServiceImpl {
                     .toList();
     }
 
+    public BoardStatusResponse readByBnoAtPresent(final Integer bno) {
+        checkBoardExists(bno);
+        var found = boardStatusDao.selectByBnoAtPresent(bno);
+        return createResponse(found);
+    }
+
     public List<BoardStatusResponse> readAll() {
         List<BoardStatusDto> found = boardStatusDao.selectAll();
         return found.stream()
