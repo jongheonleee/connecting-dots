@@ -43,10 +43,10 @@
 //    }
 //
 //    public int count(SearchCondition sc) {
-//        return boardDao.count(sc);
+//        return boardDao.count(sc);sc
 //    }
 //
-//    public int count(String cateCode) {
+//    public int count(String cateCode) {å
 //        return boardDao.count(cateCode);
 //    }
 //

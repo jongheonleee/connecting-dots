@@ -164,27 +164,8 @@ INSERT INTO common_code(level, code, name, chk_use, reg_date, reg_user_seq, up_d
 VALUES(2, '3002', '변경', 'Y', CURRENT_DATE, 1, CURRENT_DATE, 1, '3000');
 
 -- 게시판 비정상 신고
-INSERT INTO common_code(level, code, name, chk_use, reg_date, reg_user_seq, up_date, up_user_seq, top_code)
-VALUES(2, '3003', '비정상 신고', 'Y', CURRENT_DATE, 1, CURRENT_DATE, 1, '3000');
-
--- 게시판 분석중
-INSERT INTO common_code(level, code, name, chk_use, reg_date, reg_user_seq, up_date, up_user_seq, top_code)
-VALUES(2, '3004', '분석중', 'Y', CURRENT_DATE, 1, CURRENT_DATE, 1, '3000');
-
--- 게시판 분석완료
-INSERT INTO common_code(level, code, name, chk_use, reg_date, reg_user_seq, up_date, up_user_seq, top_code)
-VALUES(2, '3005', '분석완료', 'Y', CURRENT_DATE, 1, CURRENT_DATE, 1, '3000');
-
--- 게시판 제재대상
-INSERT INTO common_code(level, code, name, chk_use, reg_date, reg_user_seq, up_date, up_user_seq, top_code)
-VALUES(2, '3006', '제재대상', 'Y', CURRENT_DATE, 1, CURRENT_DATE, 1, '3000');
-
--- 게시판 정상
-INSERT INTO common_code(level, code, name, chk_use, reg_date, reg_user_seq, up_date, up_user_seq, top_code)
-VALUES(2, '3007', '정상', 'Y', CURRENT_DATE, 1, CURRENT_DATE, 1, '3000');
-
 -- 게시판 비정상
-INSERT INTO common_code(level, code, name, chk_use, reg_date, reg_user_seq, up_date, reg_user_seq, up_date, up_user_seq, top_code)
+INSERT INTO common_code(level, code, name, chk_use, reg_date, reg_user_seq, up_date, up_user_seq, top_code)
 VALUES(2, '3008', '비정상', 'Y', CURRENT_DATE, 1, CURRENT_DATE, 1, '3000');
 
 -- 게시판 비공개
@@ -242,6 +223,11 @@ VALUES(2, '5006', '처리보류', 'Y', CURRENT_DATE, 1, CURRENT_DATE, 1, '5000')
 -- 리포트 처리불가
 INSERT INTO common_code(level, code, name, chk_use, reg_date, reg_user_seq, up_date, up_user_seq, top_code)
 VALUES(2, '5007', '처리불가', 'Y', CURRENT_DATE, 1, CURRENT_DATE, 1, '5000');
+
+-- 리포트 기타
+INSERT INTO common_code(level, code, name, chk_use, reg_date, reg_user_seq, up_date, up_user_seq, top_code)
+VALUES(2, '5008', '기타', 'Y', CURRENT_DATE, 1, CURRENT_DATE, 1, '5000');
+
 
 -- 리포트 기타
 INSERT INTO common_code(level, code, name, chk_use, reg_date, reg_user_seq, up_date, up_user_seq, top_code)

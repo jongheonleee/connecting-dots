@@ -128,16 +128,16 @@ public class BoardImgServiceImpl {
 
     private BoardImgDto createDto(final BoardImgRequest request, final String imageFileName, final String imageUrl) {
         return BoardImgDto.builder()
-                .bno(request.getBno())
-                .name(imageFileName)
-                .img(imageUrl)
-                .comt(request.getComt())
-                .reg_user_seq(customFormatter.getManagerSeq())
-                .up_user_seq(customFormatter.getManagerSeq())
-                .reg_date(customFormatter.getCurrentDateFormat())
-                .up_date(customFormatter.getCurrentDateFormat())
-                .chk_thumb(request.getChk_thumb())
-                .build();
+                        .bno(request.getBno())
+                        .name(imageFileName)
+                        .img(imageUrl)
+                        .comt(request.getComt())
+                        .reg_user_seq(customFormatter.getManagerSeq())
+                        .up_user_seq(customFormatter.getManagerSeq())
+                        .reg_date(customFormatter.getCurrentDateFormat())
+                        .up_date(customFormatter.getCurrentDateFormat())
+                        .chk_thumb(request.getChk_thumb())
+                        .build();
     }
 
 }
