@@ -3,9 +3,8 @@ package com.example.demo.application.board;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.will;
-import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.example.demo.application.code.CommonCodeServiceImpl;
@@ -13,10 +12,8 @@ import com.example.demo.dto.board.BoardCategoryResponse;
 import com.example.demo.dto.board.BoardChangeHistoryRequest;
 import com.example.demo.dto.board.BoardChangeHistoryResponse;
 import com.example.demo.dto.board.BoardDto;
-import com.example.demo.dto.board.BoardImgDto;
 import com.example.demo.dto.board.BoardImgRequest;
 import com.example.demo.dto.board.BoardRequest;
-import com.example.demo.dto.board.BoardResponse;
 import com.example.demo.dto.board.BoardStatusRequest;
 import com.example.demo.dto.board.BoardStatusResponse;
 import com.example.demo.dto.code.CodeResponse;
@@ -140,8 +137,8 @@ class BoardServiceImplTest {
             }
 
 
-            BoardStatusRequest boardStatusRequest = createBoardStatusRequest();
-            BoardStatusResponse boardStatusResponse = createBoardStatusResponse(boardStatusRequest);
+            BoardStatusRequest boardStatusRequest = createBoardStatusRequestRequest();
+            BoardStatusResponse boardStatusResponse = createBoardStatusRequestResponse(boardStatusRequest);
             when(boardStatusService.create(any())).thenReturn(boardStatusResponse);
 
             BoardChangeHistoryRequest boardChangeHistoryRequest = createBoardChangeHistoryRequest();
@@ -154,6 +151,7 @@ class BoardServiceImplTest {
             // 게시글 생성 결과 확인
             assertDoesNotThrow(() -> sut.create(request, files));
         }
+
     }
 
     @Nested
@@ -285,7 +283,7 @@ class BoardServiceImplTest {
     }
 
 
-    private BoardStatusResponse createBoardStatusResponse(BoardStatusRequest request) {
+    private BoardStatusResponse createBoardStatusRequestResponse(BoardStatusRequest request) {
         return BoardStatusResponse.builder()
                                   .seq(1)
                                   .bno(request.getBno())
@@ -313,7 +311,7 @@ class BoardServiceImplTest {
     }
 
 
-    private BoardStatusRequest createBoardStatusRequest() {
+    private BoardStatusRequest createBoardStatusRequestRequest() {
         return BoardStatusRequest.builder()
                                  .stat_code("3001")
                                  .bno(1)

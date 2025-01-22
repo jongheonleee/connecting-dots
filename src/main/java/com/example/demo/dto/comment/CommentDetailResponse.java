@@ -7,12 +7,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@Getter
-@Builder
-@ToString
-@AllArgsConstructor
-@NoArgsConstructor
-@EqualsAndHashCode
+//@Getter
+//@Builder
+//@ToString
+//@AllArgsConstructor
+//@NoArgsConstructor
+//@EqualsAndHashCode
 public class CommentDetailResponse {
 
 }

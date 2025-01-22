@@ -2,8 +2,6 @@ package com.example.demo.application.board;
 
 import static com.example.demo.domain.Code.BOARD_CREATE;
 
-import com.example.demo.application.code.CommonCodeServiceImpl;
-import com.example.demo.domain.BoardCategory;
 import com.example.demo.domain.Code;
 import com.example.demo.dto.PageResponse;
 import com.example.demo.dto.SearchCondition;
@@ -16,9 +14,7 @@ import com.example.demo.dto.board.BoardMainDto;
 import com.example.demo.dto.board.BoardMainResponse;
 import com.example.demo.dto.board.BoardRequest;
 import com.example.demo.dto.board.BoardResponse;
-import com.example.demo.dto.board.BoardStatusDto;
 import com.example.demo.dto.board.BoardStatusRequest;
-import com.example.demo.dto.board.BoardStatusResponse;
 import com.example.demo.dto.comment.CommentDetailResponse;
 import com.example.demo.global.error.exception.business.BusinessException;
 import com.example.demo.global.error.exception.business.InvalidValueException;
@@ -29,16 +25,19 @@ import com.example.demo.global.error.exception.technology.database.NotApplyOnDbm
 import com.example.demo.global.error.exception.technology.network.RetryFailedException;
 import com.example.demo.repository.mybatis.board.BoardCategoryDaoImpl;
 import com.example.demo.repository.mybatis.board.BoardDaoImpl;
-import com.example.demo.repository.mybatis.board.BoardImgDaoImpl;
 import com.example.demo.utils.CustomFormatter;
-import java.sql.SQLException;
 import java.sql.SQLSyntaxErrorException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.dao.InvalidDataAccessResourceUsageException;
+import org.springframework.dao.TypeMismatchDataAccessException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
@@ -52,8 +51,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class BoardServiceImpl {
 
-    private static final int MAX_RETRY = 10;
-    private static final int RETRY_DELAY = 5_000;
+    private final int MAX_RETRY = 10;
+    private final int RETRY_DELAY = 5_000;
 
     private final BoardDaoImpl boardDao;// [✅]
 //    private final BoardCategoryServiceImpl boardCategoryService;// [✅]
@@ -73,25 +72,26 @@ public class BoardServiceImpl {
 
     // 핵심 데이터는 재시도 복구 처리 대상
     @Retryable(
-            value = {RuntimeException.class},
-            exclude = {BusinessException.class, DuplicateKeyException.class, InvalidValueException.class, SQLSyntaxErrorException.class}, // 작성된 예외는 재시도 대상에서 제외
+            value = { // exclude 외의 런타임 예외는 재시도 복구 처리
+                    RuntimeException.class
+            },
+            exclude = { // 작성된 예외는 재시도 처리를 해도 의미가 없는 예외이므로 예외 처리에서 제외
+                    BusinessException.class, InvalidValueException.class, DataIntegrityViolationException.class,
+                    SQLSyntaxErrorException.class, InvalidDataAccessApiUsageException.class, InvalidDataAccessResourceUsageException.class,
+                    EmptyResultDataAccessException.class, TypeMismatchDataAccessException.class
+            },
             maxAttempts = MAX_RETRY,
-            backoff = @Backoff(delay = RETRY_DELAY)
+            backoff = @Backoff(delay = RETRY_DELAY),
+            recover = "recoverCreate"
     )
     @Transactional(rollbackFor = Exception.class)
     public BoardResponse create(final BoardRequest request, final List<MultipartFile> files) {
-        // 게시글을 등록한다
-        var dto = createDto(request);
-        checkApplied(1, boardDao.insert(dto));
-        // 이미지를 등록한다
-        createBoardImages(dto, files);
-        // 상태를 등록한다
-        var boardStatusRequest = createBoardStatus(dto);
-        boardStatusService.create(boardStatusRequest);
-        // 변경 이력에 초기값을 등록한다
-        var boardChangeHistoryRequest = createBoardInitHistory(dto);
-        boardChangeHistoryService.createInit(dto.getBno(), boardChangeHistoryRequest);
-        return createResponse(dto);
+        var boardDto = createBoardDto(request);
+        checkApplied(1, boardDao.insert(boardDto));
+        createBoardImages(boardDto, files);
+        boardStatusService.create(createBoardStatusRequest(boardDto));
+        boardChangeHistoryService.createInit(boardDto.getBno(), createBoardInitHistoryRequest(boardDto));
+        return createResponse(boardDto);
     }
 
 
@@ -240,7 +240,7 @@ public class BoardServiceImpl {
     }
 
 
-    private BoardStatusRequest createBoardStatus(final BoardDto dto) {
+    private BoardStatusRequest createBoardStatusRequest(final BoardDto dto) {
         return BoardStatusRequest.builder()
                                  .bno(dto.getBno())
                                  .stat_code(BOARD_CREATE.getCode())
@@ -248,7 +248,7 @@ public class BoardServiceImpl {
                                  .build();
     }
 
-    private BoardChangeHistoryRequest createBoardInitHistory(final BoardDto dto) {
+    private BoardChangeHistoryRequest createBoardInitHistoryRequest(final BoardDto dto) {
         return BoardChangeHistoryRequest.builder()
                                         .bno(dto.getBno())
                                         .title(dto.getTitle())
@@ -256,7 +256,7 @@ public class BoardServiceImpl {
                                         .build();
     }
 
-    private BoardDto createDto(final BoardRequest request) {
+    private BoardDto createBoardDto(final BoardRequest request) {
         return BoardDto.builder()
                         .cate_code(request.getCate_code())
                         .user_seq(request.getUser_seq())
@@ -301,9 +301,7 @@ public class BoardServiceImpl {
     }
 
     private BoardDetailResponse createBoardDetailResponse(BoardDto boardDto, List<BoardImgResponse> boardImgResponses, List<CommentDetailResponse> commentDetailResponses) {
-        return BoardDetailResponse.builder()
-
-                                  .build();
+        return null;
     }
 
 }
