@@ -65,7 +65,7 @@ public class BoardImgServiceImpl {
         checkApplied(1, boardImgDao.update(found));
     }
 
-    public void removeBoardImg(final Integer ino) {
+    public void removeByIno(final Integer ino) {
         checkExistsByIno(ino);
         removeFileByIno(ino);
         checkApplied(1, boardImgDao.deleteByIno(ino));

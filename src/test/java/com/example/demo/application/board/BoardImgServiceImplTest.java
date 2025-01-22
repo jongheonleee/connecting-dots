@@ -220,7 +220,7 @@ class BoardImgServiceImplTest {
             when(boardImgDao.deleteByIno(ino)).thenReturn(1);
 
             // then
-            assertDoesNotThrow(() -> boardImgService.removeBoardImg(ino));
+            assertDoesNotThrow(() -> boardImgService.removeByIno(ino));
         }
 
         @DisplayName("이미지 삭제 처리 실패 테스트, ino가 존재하지 않는 경우")
@@ -233,7 +233,7 @@ class BoardImgServiceImplTest {
             when(boardImgDao.existsByInoForUpdate(ino)).thenReturn(false);
 
             // then
-            assertThrows(BoardImageNotFoundException.class, () -> boardImgService.removeBoardImg(ino));
+            assertThrows(BoardImageNotFoundException.class, () -> boardImgService.removeByIno(ino));
         }
 
         @DisplayName("이미지 삭제 처리 실패 테스트")
@@ -250,7 +250,7 @@ class BoardImgServiceImplTest {
             when(boardImgDao.deleteByIno(ino)).thenReturn(0);
 
             // then
-            assertThrows(NotApplyOnDbmsException.class, () -> boardImgService.removeBoardImg(ino));
+            assertThrows(NotApplyOnDbmsException.class, () -> boardImgService.removeByIno(ino));
         }
     }
 
