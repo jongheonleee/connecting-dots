@@ -14,13 +14,13 @@
     FROM comment_change_history
   </select>
 
-  <select id="countByCno" resultType="int">
+  <select id="countByCno" parameterType="int" resultType="int">
     SELECT COUNT(*)
     FROM comment_change_history
     WHERE cno = #{cno}
   </select>
 
-  <select id="existByCno" resultType="boolean">
+  <select id="existsByCno" parameterType="int" resultType="boolean">
     SELECT COUNT(*) > 0
     FROM comment_change_history
     WHERE cno = #{cno}
@@ -63,6 +63,10 @@
 
 
   <insert id="insert" parameterType="CommentChangeHistoryDto">
+    <selectKey keyProperty="seq" resultType="int" order="AFTER">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+
     INSERT INTO comment_change_history (
       bef_cont, aft_cont,
       appl_time, comt, reg_date,
