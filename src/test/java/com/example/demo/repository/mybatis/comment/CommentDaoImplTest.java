@@ -5,12 +5,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.example.demo.domain.BoardCategory;
 import com.example.demo.dto.board.BoardCategoryDto;
 import com.example.demo.dto.board.BoardDto;
+import com.example.demo.dto.comment.CommentDto;
 import com.example.demo.repository.mybatis.board.BoardCategoryDaoImpl;
 import com.example.demo.repository.mybatis.board.BoardDaoImpl;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,45 +80,91 @@ class CommentDaoImplTest {
         @DisplayName("댓글 전체 조회")
         @ParameterizedTest
         @ValueSource(ints = {1, 5, 10, 15, 20})
-        void 댓글_전체_조회(int n) {
-            // given
-            for (int i=0; i<n; i++) {
-                // when
-                // then
+        void 댓글_전체_조회(int cnt) {
+            List<CommentDto> expected = new ArrayList<>();
+            Integer bno = boardDto.getBno();
+
+            for (int i=0; i<cnt; i++) {
+                CommentDto dto = createCommentDto(bno, i);
+                assertEquals(1, sut.insert(dto));
+                expected.add(dto);
+            }
+
+            List<CommentDto> actual = sut.selectAll();
+            assertEquals(expected.size(), actual.size());
+
+            expected.sort((a, b) -> a.getCno().compareTo(b.getCno()));
+            actual.sort((a, b) -> a.getCno().compareTo(b.getCno()));
+
+            for (int i=0; i<expected.size(); i++) {
+                CommentDto e = expected.get(i);
+                CommentDto a = actual.get(i);
+
+                assertEquals(e.getCno(), a.getCno());
+                assertEquals(e.getBno(), a.getBno());
+                assertEquals(e.getCont(), a.getCont());
+                assertEquals(e.getUser_seq(), a.getUser_seq());
+                assertEquals(e.getWriter(), a.getWriter());
             }
         }
 
         @DisplayName("댓글 전체 카운트")
         @ParameterizedTest
         @ValueSource(ints = {1, 5, 10, 15, 20})
-        void 댓글_전체_카운트(int n) {
-            // given
-            for (int i=0; i<n; i++) {
-                // when
-                // then
+        void 댓글_전체_카운트(int cnt) {
+            Integer bno = boardDto.getBno();
+
+            for (int i=0; i<cnt; i++) {
+                CommentDto dto = createCommentDto(bno, i);
+                assertEquals(1, sut.insert(dto));
             }
+
+            assertEquals(cnt, sut.count());
         }
 
         @DisplayName("게시글별 댓글 조회")
         @ParameterizedTest
         @ValueSource(ints = {1, 5, 10, 15, 20})
-        void 게시글별_댓글_조회(int n) {
-            // given
-            for (int i=0; i<n; i++) {
-                // when
-                // then
+        void 게시글별_댓글_조회(int cnt) {
+            List<CommentDto> expected = new ArrayList<>();
+            Integer bno = boardDto.getBno();
+
+            for (int i=0; i<cnt; i++) {
+                CommentDto dto = createCommentDto(bno, i);
+                assertEquals(1, sut.insert(dto));
+                expected.add(dto);
+            }
+
+            List<CommentDto> actual = sut.selectByBno(bno);
+            assertEquals(expected.size(), actual.size());
+
+            expected.sort((a, b) -> a.getCno().compareTo(b.getCno()));
+            actual.sort((a, b) -> a.getCno().compareTo(b.getCno()));
+
+            for (int i=0; i<expected.size(); i++) {
+                CommentDto e = expected.get(i);
+                CommentDto a = actual.get(i);
+
+                assertEquals(e.getCno(), a.getCno());
+                assertEquals(e.getBno(), a.getBno());
+                assertEquals(e.getCont(), a.getCont());
+                assertEquals(e.getUser_seq(), a.getUser_seq());
+                assertEquals(e.getWriter(), a.getWriter());
             }
         }
 
         @DisplayName("게시글별 댓글 카운트")
         @ParameterizedTest
         @ValueSource(ints = {1, 5, 10, 15, 20})
-        void 게시글별_댓글_카운트(int n) {
-            // given
-            for (int i=0; i<n; i++) {
-                // when
-                // then
+        void 게시글별_댓글_카운트(int cnt) {
+            Integer bno = boardDto.getBno();
+
+            for (int i=0; i<cnt; i++) {
+                CommentDto dto = createCommentDto(bno, i);
+                assertEquals(1, sut.insert(dto));
             }
+
+            assertEquals(cnt, sut.countByBno(bno));
         }
 
 
@@ -131,10 +179,10 @@ class CommentDaoImplTest {
         @ParameterizedTest
         @ValueSource(ints = {1, 5, 10, 15, 20})
         void 댓글_n개_정상_등록(int n) {
-            // given
+            Integer bno = boardDto.getBno();
             for (int i=0; i<n; i++) {
-                // when
-                // then
+                CommentDto dto = createCommentDto(bno, i);
+                assertEquals(1, sut.insert(dto));
             }
         }
 
@@ -145,11 +193,70 @@ class CommentDaoImplTest {
     @DisplayName("댓글 수정 관련 작업 처리")
     class UpdateTest {
 
+        @DisplayName("댓글 n개 등록하고 n개 수정")
+        @ParameterizedTest
+        @ValueSource(ints = {1, 5, 10, 15, 20})
+        void 댓글_n개_등록하고_n개_수정(int cnt) {
+            Integer bno = boardDto.getBno();
+            List<CommentDto> expected = new ArrayList<>();
+
+            for (int i=0; i<cnt; i++) {
+                CommentDto dto = createCommentDto(bno, i);
+                assertEquals(1, sut.insert(dto));
+                expected.add(dto);
+            }
+
+            List<CommentDto> actual = sut.selectAll();
+
+            for (int i=0; i<cnt; i++) {
+                CommentDto dto = actual.get(i);
+                dto.setCont("수정된 댓글입니다." + i);
+                assertEquals(1, sut.update(dto));
+            }
+
+            List<CommentDto> updated = sut.selectAll();
+            assertEquals(expected.size(), updated.size());
+
+            expected.sort((a, b) -> a.getCno().compareTo(b.getCno()));
+            updated.sort((a, b) -> a.getCno().compareTo(b.getCno()));
+
+            for (int i=0; i<expected.size(); i++) {
+                CommentDto e = expected.get(i);
+                CommentDto a = updated.get(i);
+
+                assertEquals(e.getCno(), a.getCno());
+                assertEquals(e.getBno(), a.getBno());
+                assertNotEquals(e.getCont(), a.getCont());
+                assertEquals(e.getUser_seq(), a.getUser_seq());
+                assertEquals(e.getWriter(), a.getWriter());
+            }
+        }
     }
 
     @Nested
     @DisplayName("댓글 삭제 관련 작업 처리")
     class DeleteTest {
+
+        @DisplayName("댓글 n개 등록하고 n개 삭제")
+        @ParameterizedTest
+        @ValueSource(ints = {1, 5, 10, 15, 20})
+        void 댓글_n개_등록하고_n개_삭제(int cnt) {
+            Integer bno = boardDto.getBno();
+            List<CommentDto> expected = new ArrayList<>();
+
+            for (int i=0; i<cnt; i++) {
+                CommentDto dto = createCommentDto(bno, i);
+                assertEquals(1, sut.insert(dto));
+                expected.add(dto);
+            }
+
+            for (CommentDto commentDto : expected) {
+                assertEquals(1, sut.deleteByCno(commentDto.getCno()));
+            }
+
+            assertEquals(0, sut.count());
+        }
+
 
     }
 
@@ -184,6 +291,19 @@ class CommentDaoImplTest {
                 .up_user_seq(UP_USER_SEQ)
                 .up_date(UP_DATE)
                 .build();
+    }
+
+    private CommentDto createCommentDto(Integer bno, int i) {
+        return CommentDto.builder()
+                        .bno(bno)
+                        .cont("테스트용 댓글입니다." + i)
+                        .user_seq(REG_USER_SEQ)
+                        .writer("홍길동")
+                        .reg_user_seq(REG_USER_SEQ)
+                        .reg_date(REG_DATE)
+                        .up_user_seq(UP_USER_SEQ)
+                        .up_date(UP_DATE)
+                        .build();
     }
 
 }

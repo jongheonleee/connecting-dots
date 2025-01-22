@@ -7,7 +7,7 @@
     FROM comment
   </select>
 
-  <select id="countByBno" parameterType="int">
+  <select id="countByBno" resultType="int">
     SELECT COUNT(*)
     FROM comment
     WHERE bno = #{bno}
