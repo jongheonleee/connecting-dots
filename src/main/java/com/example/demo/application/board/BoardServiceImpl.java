@@ -51,16 +51,15 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class BoardServiceImpl {
 
-    private final int MAX_RETRY = 10;
-    private final int RETRY_DELAY = 5_000;
+    private static final int MAX_RETRY = 10;
+    private static final int RETRY_DELAY = 5_000;
 
     private final BoardDaoImpl boardDao;// [✅]
-//    private final BoardCategoryServiceImpl boardCategoryService;// [✅]
     private final BoardCategoryDaoImpl boardCategoryDao;// [✅]
     private final BoardImgServiceImpl boardImgService; // -> 게시판 생성, 조회시 이미지 처리[✅]
     private final BoardStatusServiceImpl boardStatusService; // -> 게시판 상태 변경시 적용[✅]
     private final BoardChangeHistoryServiceImpl boardChangeHistoryService; // -> 게시판 변경 이력 기록[✅]
-//    private final UserServiceImpl userService; -> 게시판과 관련된 사용자 정보[]
+    //    private final UserServiceImpl userService; -> 게시판과 관련된 사용자 정보[]
 //    private final CommentServiceImpl commentService; // -> 게시판과 관련된 댓글 정보[]
 //    private final ReplyServiceImpl replyService; // -> 게시판과 관련된 답글 정보[]
     private final CustomFormatter formatter;
@@ -75,14 +74,14 @@ public class BoardServiceImpl {
             value = { // exclude 외의 런타임 예외는 재시도 복구 처리
                     RuntimeException.class
             },
-            exclude = { // 작성된 예외는 재시도 처리를 해도 의미가 없는 예외이므로 재시도 처리에서 제외
+            exclude = { // 작성된 예외는 재시도 처리를 해도 의미가 없는 예외이므로 예외 처리에서 제외
                     BusinessException.class, InvalidValueException.class, DataIntegrityViolationException.class,
                     SQLSyntaxErrorException.class, InvalidDataAccessApiUsageException.class, InvalidDataAccessResourceUsageException.class,
                     EmptyResultDataAccessException.class, TypeMismatchDataAccessException.class
             },
             maxAttempts = MAX_RETRY,
             backoff = @Backoff(delay = RETRY_DELAY),
-            recover = "recoverCreate"
+            recover = "recover"
     )
     @Transactional(rollbackFor = Exception.class)
     public BoardResponse create(final BoardRequest request, final List<MultipartFile> files) {
@@ -96,7 +95,7 @@ public class BoardServiceImpl {
 
 
     @Recover
-    public BoardResponse recoverCreate(RuntimeException e) {
+    public BoardResponse recover(RuntimeException e) {
         log.error("[BOARD] 게시글 예외 복구를 위해 재시도를 했지만 실패했습니다. 최대 재시도 횟수 : {}, 재시도 간격 : {}ms", MAX_RETRY, RETRY_DELAY);
         log.error("[BOARD] 예외 내용 : {}", e.getMessage());
         throw new RetryFailedException();
@@ -111,7 +110,7 @@ public class BoardServiceImpl {
         }
 
         // 게시글 상태 조회
-            // 게시글 상태에서 제재 대상이나 삭제된 게시글은 조회하지 않음
+        // 게시글 상태에서 제재 대상이나 삭제된 게시글은 조회하지 않음
         var boardStatusResponse = boardStatusService.readByBnoAtPresent(bno);
         Code code = Code.of(boardStatusResponse.getStat_code());
         if (code.equals(Code.BOARD_REMOVE) || code.equals(Code.BOARD_SANCTION) || code.equals(Code.BOARD_NOT_SHOW)) {
@@ -141,9 +140,9 @@ public class BoardServiceImpl {
         map.put("pageSize", pageSize);
 
         List<BoardMainResponse> responses = boardDao.selectForMain(map)
-                                                    .stream()
-                                                    .map(this::createMainResponse)
-                                                    .toList();
+                .stream()
+                .map(this::createMainResponse)
+                .toList();
 
         SearchCondition sc = new SearchCondition(page, pageSize);
         return new PageResponse<BoardMainResponse>(totalCnt, sc, responses);
@@ -165,9 +164,9 @@ public class BoardServiceImpl {
         map.put("pageSize", pageSize);
 
         List<BoardMainResponse> responses = boardDao.selectForMainByCategory(map)
-                                                    .stream()
-                                                    .map(this::createMainResponse)
-                                                    .toList();
+                .stream()
+                .map(this::createMainResponse)
+                .toList();
 
         SearchCondition sc = new SearchCondition(page, pageSize);
         return new PageResponse<BoardMainResponse>(totalCnt, sc, responses);
@@ -178,8 +177,8 @@ public class BoardServiceImpl {
         int totalCnt = boardDao.countBySearchCondition(sc);
         List<BoardMainDto> found = boardDao.selectForMainBySearchCondition(sc);
         List<BoardMainResponse> responses = found.stream()
-                                                  .map(this::createMainResponse)
-                                                  .toList();
+                .map(this::createMainResponse)
+                .toList();
 
         return new PageResponse<BoardMainResponse>(totalCnt, sc, responses);
     }
@@ -200,10 +199,17 @@ public class BoardServiceImpl {
 
 
     @Retryable(
-            value = {RuntimeException.class},
-            exclude = {BusinessException.class, DuplicateKeyException.class, InvalidValueException.class, SQLSyntaxErrorException.class}, // 작성된 예외는 재시도 대상에서 제외
+            value = { // exclude 외의 런타임 예외는 재시도 복구 처리
+                    RuntimeException.class
+            },
+            exclude = { // 작성된 예외는 재시도 처리를 해도 의미가 없는 예외이므로 예외 처리에서 제외
+                    BusinessException.class, InvalidValueException.class, DataIntegrityViolationException.class,
+                    SQLSyntaxErrorException.class, InvalidDataAccessApiUsageException.class, InvalidDataAccessResourceUsageException.class,
+                    EmptyResultDataAccessException.class, TypeMismatchDataAccessException.class
+            },
             maxAttempts = MAX_RETRY,
-            backoff = @Backoff(delay = RETRY_DELAY)
+            backoff = @Backoff(delay = RETRY_DELAY),
+            recover = "recover"
     )
     @Transactional(rollbackFor = Exception.class)
     public void modify() {
@@ -232,9 +238,9 @@ public class BoardServiceImpl {
         for (int i=0; i< files.size(); i++) {
             MultipartFile file = files.get(i);
             BoardImgRequest imgRequest = BoardImgRequest.builder()
-                                                        .bno(dto.getBno())
-                                                        .chk_thumb(i == 0 ? "Y" : "N") // 첫 번째 사진은 항상 썸네일로 설정
-                                                        .build();
+                    .bno(dto.getBno())
+                    .chk_thumb(i == 0 ? "Y" : "N") // 첫 번째 사진은 항상 썸네일로 설정
+                    .build();
             boardImgService.saveBoardImage(imgRequest, file);
         }
     }
@@ -242,62 +248,62 @@ public class BoardServiceImpl {
 
     private BoardStatusRequest createBoardStatusRequest(final BoardDto dto) {
         return BoardStatusRequest.builder()
-                                 .bno(dto.getBno())
-                                 .stat_code(BOARD_CREATE.getCode())
-                                 .days(0)
-                                 .build();
+                .bno(dto.getBno())
+                .stat_code(BOARD_CREATE.getCode())
+                .days(0)
+                .build();
     }
 
     private BoardChangeHistoryRequest createBoardInitHistoryRequest(final BoardDto dto) {
         return BoardChangeHistoryRequest.builder()
-                                        .bno(dto.getBno())
-                                        .title(dto.getTitle())
-                                        .cont(dto.getCont())
-                                        .build();
+                .bno(dto.getBno())
+                .title(dto.getTitle())
+                .cont(dto.getCont())
+                .build();
     }
 
     private BoardDto createBoardDto(final BoardRequest request) {
         return BoardDto.builder()
-                        .cate_code(request.getCate_code())
-                        .user_seq(request.getUser_seq())
-                        .writer(request.getWriter())
-                        .title(request.getTitle())
-                        .cont(request.getCont())
-                        .comt(request.getComt())
-                        .reg_user_seq(formatter.getManagerSeq())
-                        .up_user_seq(formatter.getManagerSeq())
-                        .reg_date(formatter.getCurrentDateFormat())
-                        .up_date(formatter.getCurrentDateFormat())
-                        .build();
+                .cate_code(request.getCate_code())
+                .user_seq(request.getUser_seq())
+                .writer(request.getWriter())
+                .title(request.getTitle())
+                .cont(request.getCont())
+                .comt(request.getComt())
+                .reg_user_seq(formatter.getManagerSeq())
+                .up_user_seq(formatter.getManagerSeq())
+                .reg_date(formatter.getCurrentDateFormat())
+                .up_date(formatter.getCurrentDateFormat())
+                .build();
     }
 
     private BoardResponse createResponse(final BoardDto dto) {
         return BoardResponse.builder()
-                            .user_seq(dto.getUser_seq())
-                            .bno(dto.getBno())
-                            .cate_code(dto.getCate_code())
-                            .writer(dto.getWriter())
-                            .title(dto.getTitle())
-                            .view_cnt(dto.getView_cnt())
-                            .reco_cnt(dto.getReco_cnt())
-                            .not_reco_cnt(dto.getNot_reco_cnt())
-                            .cont(dto.getCont())
-                            .comt(dto.getComt())
-                            .build();
+                .user_seq(dto.getUser_seq())
+                .bno(dto.getBno())
+                .cate_code(dto.getCate_code())
+                .writer(dto.getWriter())
+                .title(dto.getTitle())
+                .view_cnt(dto.getView_cnt())
+                .reco_cnt(dto.getReco_cnt())
+                .not_reco_cnt(dto.getNot_reco_cnt())
+                .cont(dto.getCont())
+                .comt(dto.getComt())
+                .build();
     }
 
     private BoardMainResponse createMainResponse(BoardMainDto dto) {
         return BoardMainResponse.builder()
-                                .bno(dto.getBno())
-                                .title(dto.getTitle())
-                                .writer(dto.getWriter())
-                                .cate_name(dto.getCate_name())
-                                .reg_date(dto.getReg_date())
-                                .view_cnt(dto.getView_cnt())
-                                .reco_cnt(dto.getReco_cnt())
-                                .thumb(dto.getThumb())
-                                .comment_cnt(dto.getComment_cnt())
-                                .build();
+                .bno(dto.getBno())
+                .title(dto.getTitle())
+                .writer(dto.getWriter())
+                .cate_name(dto.getCate_name())
+                .reg_date(dto.getReg_date())
+                .view_cnt(dto.getView_cnt())
+                .reco_cnt(dto.getReco_cnt())
+                .thumb(dto.getThumb())
+                .comment_cnt(dto.getComment_cnt())
+                .build();
     }
 
     private BoardDetailResponse createBoardDetailResponse(BoardDto boardDto, List<BoardImgResponse> boardImgResponses, List<CommentDetailResponse> commentDetailResponses) {

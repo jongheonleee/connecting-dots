@@ -45,7 +45,7 @@
     WHERE bno = #{bno}
   </select>
 
-  <select id="selectByCno" parameterType="int" resultType="CommentDto">
+  <select id="selectByCno" parameterType="map" resultType="CommentDto">
     SELECT
       cno, bno, cont,
       like_cnt, dislike_cnt, reg_date,
@@ -53,6 +53,8 @@
       user_seq, writer
     FROM comment
     WHERE cno = #{cno}
+    ORDER BY cno DESC
+    LIMIT #{offset}, #{pageSize};
   </select>
 
   <select id="selectAll" resultType="CommentDto">
@@ -68,7 +70,7 @@
   <update id="update" parameterType="CommentDto">
     UPDATE comment
     SET
-        content = #{comment},
+        cont = #{cont},
         up_date = CURRENT_DATE,
         up_user_seq = #{user_seq}
     WHERE cno = #{cno}

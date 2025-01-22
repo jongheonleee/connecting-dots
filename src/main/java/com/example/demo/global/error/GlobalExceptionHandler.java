@@ -7,6 +7,7 @@ import java.nio.file.AccessDeniedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.retry.ExhaustedRetryException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -78,7 +79,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BusinessException.class)
     protected ResponseEntity<ErrorResponse> handleBusinessException(final BusinessException e) {
-        log.error("handleEntityNotFoundException", e);
+        log.error("handleBusinessException", e);
         ErrorCode errorCode = e.getErrorCode();
         ErrorResponse response = ErrorResponse.of(errorCode);
         return new ResponseEntity<>(response, HttpStatus.valueOf(errorCode.getStatus()));
@@ -88,9 +89,9 @@ public class GlobalExceptionHandler {
     /**
      * - 기술적인 예외를 처리
      */
-    @ExceptionHandler(TechnicalException.class)
+    @ExceptionHandler({TechnicalException.class, ExhaustedRetryException.class})
     protected ResponseEntity<ErrorResponse> handleTechnicalException(final TechnicalException e) {
-        log.error("handleEntityNotFoundException", e);
+        log.error("handleTechnicalException", e);
         ErrorCode errorCode = e.getErrorCode();
         ErrorResponse response = ErrorResponse.of(errorCode);
         return new ResponseEntity<>(response, HttpStatus.valueOf(errorCode.getStatus()));
@@ -102,7 +103,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<ErrorResponse> handleException(Exception e) {
-        log.error("handleEntityNotFoundException", e);
+        log.error("handleException", e);
         ErrorResponse response = ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR);
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
