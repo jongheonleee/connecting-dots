@@ -14,56 +14,63 @@
   </select>
 
   <!-- 댓글 등록 -->
-  <insert id="insert" parameterType="com.example.demo.dto.ord_comment.CommentRequestDto" >
+  <insert id="insert" parameterType="CommentDto" >
     <!-- 등록된 이후에 dto에 cno 저장 -->
     <selectKey keyProperty="cno" resultType="int" order="AFTER">
       SELECT LAST_INSERT_ID()
     </selectKey>
 
-    INSERT INTO comment
-    (bno, writer, content,
-     reg_date, reg_id, up_date,
-     up_id)
-    VALUES
-    (#{bno}, #{writer}, #{comment},
-     now(), 'admin1234', now(), 'admin1234')
+    INSERT INTO comment(
+        cno, bno, cont,
+        like_cnt, dislike_cnt, reg_date,
+        reg_user_seq, up_date, up_user_seq,
+        user_seq, writer
+    ) VALUES(
+        #{cno}, #{bno}, #{cont},
+        0, 0, CURRENT_DATE,
+        #{user_seq}, CURRENT_DATE, #{user_seq},
+        #{user_seq}, #{writer}
+    )
   </insert>
 
   <!-- 댓글 조회 -->
   <!-- 특정 게시글과 과련된 댓글 조회 -->
-  <select id="selectByBno" parameterType="int" resultType="com.example.demo.dto.ord_comment.CommentResponseDto">
+  <select id="selectByBno" parameterType="int" resultType="CommentDto">
     SELECT
-        cno, bno, writer,
-        content, like_cnt, dislike_cnt
+      cno, bno, cont,
+      like_cnt, dislike_cnt, reg_date,
+      reg_user_seq, up_date, up_user_seq,
+      user_seq, writer
     FROM comment
     WHERE bno = #{bno}
   </select>
 
-  <select id="selectByCno" parameterType="int" resultType="com.example.demo.dto.ord_comment.CommentResponseDto">
+  <select id="selectByCno" parameterType="int" resultType="CommentDto">
     SELECT
-      cno, bno, writer,
-      content, like_cnt, dislike_cnt,
-      reg_date, reg_id, up_date,
-      up_id
+      cno, bno, cont,
+      like_cnt, dislike_cnt, reg_date,
+      reg_user_seq, up_date, up_user_seq,
+      user_seq, writer
     FROM comment
     WHERE cno = #{cno}
   </select>
 
-  <select id="selectAll" resultType="com.example.demo.dto.ord_comment.CommentResponseDto">
+  <select id="selectAll" resultType="CommentDto">
     SELECT
-      cno, bno, writer,
-      content, like_cnt, dislike_cnt,
-      reg_date, reg_id, up_date,
-      up_id
+      cno, bno, cont,
+      like_cnt, dislike_cnt, reg_date,
+      reg_user_seq, up_date, up_user_seq,
+      user_seq, writer
     FROM comment
   </select>
 
   <!-- 댓글 수정 -->
-  <update id="update" parameterType="com.example.demo.dto.ord_comment.CommentRequestDto">
+  <update id="update" parameterType="CommentDto">
     UPDATE comment
     SET
         content = #{comment},
-        up_date = now(), up_id = #{writer}
+        up_date = CURRENT_DATE,
+        up_user_seq = #{user_seq}
     WHERE cno = #{cno}
   </update>
 

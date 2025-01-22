@@ -75,7 +75,7 @@ public class BoardServiceImpl {
             value = { // exclude 외의 런타임 예외는 재시도 복구 처리
                     RuntimeException.class
             },
-            exclude = { // 작성된 예외는 재시도 처리를 해도 의미가 없는 예외이므로 예외 처리에서 제외
+            exclude = { // 작성된 예외는 재시도 처리를 해도 의미가 없는 예외이므로 재시도 처리에서 제외
                     BusinessException.class, InvalidValueException.class, DataIntegrityViolationException.class,
                     SQLSyntaxErrorException.class, InvalidDataAccessApiUsageException.class, InvalidDataAccessResourceUsageException.class,
                     EmptyResultDataAccessException.class, TypeMismatchDataAccessException.class
