@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.comment.CommentChangeHistoryMapper">
+
+  <!--
+  seq, bef_cont, aft_cont,
+  appl_time, comt, reg_date,
+  reg_user_seq, up_date, up_user_seq,
+  cno, bno
+  -->
+  <select id="count" resultType="int">
+    SELECT COUNT(*)
+    FROM comment_change_history
+  </select>
+
+  <select id="countByCno" resultType="int">
+    SELECT COUNT(*)
+    FROM comment_change_history
+    WHERE cno = #{cno}
+  </select>
+
+  <select id="existByCno" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM comment_change_history
+    WHERE cno = #{cno}
+  </select>
+
+  <select id="select" parameterType="int" resultType="CommentChangeHistoryDto">
+    SELECT
+      seq, bef_cont, aft_cont,
+      appl_time, comt, reg_date,
+      reg_user_seq, up_date, up_user_seq,
+      cno, bno
+    FROM comment_change_history
+    WHERE seq = #{seq}
+  </select>
+
+  <select id="selectByCno" parameterType="int" resultType="CommentChangeHistoryDto">
+    SELECT
+      seq, bef_cont, aft_cont,
+      appl_time, comt, reg_date,
+      reg_user_seq, up_date, up_user_seq,
+      cno, bno
+    FROM comment_change_history
+    WHERE cno = #{cno}
+  </select>
+
+  <select id="selectLatestByCno" parameterType="int" resultType="CommentChangeHistoryDto">
+    SELECT
+      c1.seq AS seq, c1.bef_cont AS bef_cont, c1.aft_cont AS aft_cont,
+      c1.appl_time AS appl_time, c1.comt AS comt, c1.reg_date AS reg_date,
+      c1.reg_user_seq AS reg_user_seq, c1.up_date AS up_date, c1.up_user_seq AS up_user_seq,
+      c1.cno AS cno, c1.bno AS bno
+    FROM comment_change_history AS c1
+    INNER JOIN (
+        SELECT MAX(seq) AS seq
+        FROM comment_change_history
+        WHERE cno = #{cno}
+    ) AS c2
+    ON c1.seq = c2.seq
+  </select>
+
+
+  <insert id="insert" parameterType="CommentChangeHistoryDto">
+    INSERT INTO comment_change_history (
+      bef_cont, aft_cont,
+      appl_time, comt, reg_date,
+      reg_user_seq, up_date, up_user_seq,
+      cno, bno
+    ) VALUES (
+      #{bef_cont}, #{aft_cont},
+      #{appl_time}, #{comt}, #{reg_date},
+      #{reg_user_seq}, #{up_date}, #{up_user_seq},
+      #{cno}, #{bno}
+    )
+  </insert>
+
+  <update id="update" parameterType="CommentChangeHistoryDto">
+    UPDATE comment_change_history
+    SET
+      bef_cont = #{bef_cont},
+      aft_cont = #{aft_cont},
+      appl_time = #{appl_time},
+      comt = #{comt},
+      reg_date = #{reg_date},
+      reg_user_seq = #{reg_user_seq},
+      up_date = #{up_date},
+      up_user_seq = #{up_user_seq},
+      cno = #{cno},
+      bno = #{bno}
+    WHERE seq = #{seq}
+  </update>
+
+  <delete id="delete" parameterType="int">
+    DELETE FROM comment_change_history
+    WHERE seq = #{seq}
+  </delete>
+
+  <delete id="deleteByCno" parameterType="int">
+    DELETE FROM comment_change_history
+    WHERE cno = #{cno}
+  </delete>
+
+  <delete id="deleteAll">
+    DELETE
+    FROM comment_change_history
+  </delete>
+</mapper>
