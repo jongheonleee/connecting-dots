@@ -3,10 +3,12 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.reply.ReplyMapper">
 
+  <!-- rcno, cno, bno, cont, like_cnt, dislike_cnt, reg_date, reg_user_seq, up_date, user_seq, writer-->
   <select id="count" resultType="int">
     SELECT COUNT(*)
     FROM reply
   </select>
+
 
   <select id="countByBno" parameterType="int" resultType="int">
     SELECT COUNT(*)
@@ -14,86 +16,111 @@
     WHERE bno = #{bno}
   </select>
 
-  <insert id="insert" parameterType="com.example.demo.dto.ord_reply.ReplyRequestDto">
+  <select id="existsByRcno" parameterType="int" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM reply
+    WHERE rcno = #{rcno}
+  </select>
+
+  <select id="existsByRcnoForUpdate" parameterType="int" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM reply
+    WHERE rcno = #{rcno}
+    FOR UPDATE
+  </select>
+
+  <insert id="insert" parameterType="ReplyDto">
     <selectKey keyProperty="rcno" resultType="int" order="AFTER">
       SELECT LAST_INSERT_ID()
     </selectKey>
 
     INSERT INTO reply
-    (bno, cno, writer,
-     content, reg_date, reg_id,
-     up_date, up_id)
+    (
+        cno, bno,
+        cont, like_cnt, dislike_cnt,
+        reg_date, reg_user_seq, up_date,
+        up_user_seq, user_seq, writer
+    )
     VALUES
-    (#{bno}, #{cno}, #{writer},
-     #{content}, CURRENT_DATE, #{reg_id},
-     CURRENT_DATE, #{up_id})
+    (
+        #{cno}, #{bno},
+        #{cont}, 0, 0,
+        CURRENT_DATE, #{reg_user_seq}, CURRENT_DATE,
+        #{up_user_seq}, #{user_seq}, #{writer}
+    )
   </insert>
 
-  <select id="selectByBnoAndCno" parameterType="map" resultType="com.example.demo.dto.ord_reply.ReplyResponseDto">
+  <select id="selectByBnoAndCno" parameterType="map" resultType="ReplyDto">
     SELECT
-        rcno, bno, cno,
-        writer, content, reg_date,
-        reg_id, up_date, up_id
+      rcno, cno, bno,
+      cont, like_cnt, dislike_cnt,
+      reg_date, reg_user_seq, up_date,
+      up_user_seq, user_seq, writer
     FROM reply
     WHERE bno = #{bno}
     AND cno = #{cno}
   </select>
 
-  <select id="selectByBno" parameterType="int" resultType="com.example.demo.dto.ord_reply.ReplyResponseDto">
+  <select id="selectByBno" parameterType="int" resultType="ReplyDto">
     SELECT
-        rcno, bno, cno,
-        writer, content, reg_date,
-        reg_id, up_date, up_id
+      rcno, cno, bno,
+      cont, like_cnt, dislike_cnt,
+      reg_date, reg_user_seq, up_date,
+      up_user_seq, user_seq, writer
     FROM reply
     WHERE bno = #{bno}
   </select>
 
-  <select id="selectByCno" parameterType="int" resultType="com.example.demo.dto.ord_reply.ReplyResponseDto">
+  <select id="selectByCno" parameterType="int" resultType="ReplyDto">
     SELECT
-      rcno, bno, cno,
-      writer, content, reg_date,
-      reg_id, up_date, up_id
+      rcno, cno, bno,
+      cont, like_cnt, dislike_cnt,
+      reg_date, reg_user_seq, up_date,
+      up_user_seq, user_seq, writer
     FROM reply
     WHERE cno = #{cno}
   </select>
 
-  <select id="selectByRcno" parameterType="int" resultType="com.example.demo.dto.ord_reply.ReplyResponseDto">
+  <select id="selectByRcno" parameterType="int" resultType="ReplyDto">
     SELECT
-      rcno, bno, cno,
-      writer, content, reg_date,
-      reg_id, up_date, up_id
+      rcno, cno, bno,
+      cont, like_cnt, dislike_cnt,
+      reg_date, reg_user_seq, up_date,
+      up_user_seq, user_seq, writer
     FROM reply
     WHERE rcno = #{rcno}
   </select>
 
-  <select id="selectAll" resultType="com.example.demo.dto.ord_reply.ReplyResponseDto">
+  <select id="selectAll" resultType="ReplyDto">
     SELECT
-      rcno, bno, cno,
-      writer, content, reg_date,
-      reg_id, up_date, up_id
+      rcno, cno, bno,
+      cont, like_cnt, dislike_cnt,
+      reg_date, reg_user_seq, up_date,
+      up_user_seq, user_seq, writer
     FROM reply
   </select>
 
-  <update id="update" parameterType="com.example.demo.dto.ord_reply.ReplyUpdateRequestDto">
+  <update id="update" parameterType="ReplyDto">
     UPDATE reply
     SET
-        content = #{content},
+        cont = #{cont},
+        writer = #{writer},
         up_date = CURRENT_DATE,
-        up_id = #{up_id}
+        up_user_seq = #{up_user_seq}
     WHERE rcno = #{rcno}
   </update>
 
   <update id="increaseRecoCnt" parameterType="int">
     UPDATE reply
     SET
-        reco_cnt = reco_cnt + 1
+        like_cnt = like_cnt + 1
     WHERE rcno = #{rcno}
   </update>
 
   <update id="increaseNotRecoCnt" parameterType="int">
     UPDATE reply
     SET
-        reco_cnt = reco_cnt + 1
+        dislike_cnt = dislike_cnt + 1
     WHERE rcno = #{rcno}
   </update>
 

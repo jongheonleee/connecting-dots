@@ -35,6 +35,8 @@
     <typeAlias alias="CommentChangeHistoryDto" type="com.example.demo.dto.comment.CommentChangeHistoryDto"/>
 
     <!-- reply -->
+    <typeAlias alias="ReplyDto" type="com.example.demo.dto.reply.ReplyDto"/>
+    <typeAlias alias="ReplyChangeHistoryDto" type="com.example.demo.dto.reply.ReplyChangeHistoryDto"/>
 
 
 

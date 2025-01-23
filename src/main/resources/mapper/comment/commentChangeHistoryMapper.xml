@@ -65,7 +65,7 @@
   <insert id="insert" parameterType="CommentChangeHistoryDto">
     <selectKey keyProperty="seq" resultType="int" order="AFTER">
       SELECT LAST_INSERT_ID()
-    </selectKey>
+     </selectKey>
 
     INSERT INTO comment_change_history (
       bef_cont, aft_cont,

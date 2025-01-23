@@ -3,6 +3,7 @@ package com.example.demo.repository.mybatis.reply;
 import com.example.demo.dto.ord_reply.ReplyRequestDto;
 import com.example.demo.dto.ord_reply.ReplyResponseDto;
 import com.example.demo.dto.ord_reply.ReplyUpdateRequestDto;
+import com.example.demo.dto.reply.ReplyDto;
 import java.util.List;
 import java.util.Map;
 import org.apache.ibatis.session.SqlSession;
@@ -25,31 +26,39 @@ public class ReplyDaoImpl {
         return session.selectOne(namespace + "countByBno", bno);
     }
 
-    public int insert(ReplyRequestDto dto) {
+    public boolean existsByRcno(Integer rcno) {
+        return session.selectOne(namespace + "existsByRcno", rcno);
+    }
+
+    public boolean existsByRcnoForUpdate(Integer rcno) {
+        return session.selectOne(namespace + "existsByRcnoForUpdate", rcno);
+    }
+
+    public int insert(ReplyDto dto) {
         return session.insert(namespace + "insert", dto);
     }
 
-    public List<ReplyResponseDto> selectByBnoAndCno(Map<String, Object> map) {
+    public List<ReplyDto> selectByBnoAndCno(Map<String, Object> map) {
         return session.selectList(namespace + "selectByBnoAndCno", map);
     }
 
-    public List<ReplyResponseDto> selectByBno(Integer bno) {
+    public List<ReplyDto> selectByBno(Integer bno) {
         return session.selectList(namespace + "selectByBno", bno);
     }
 
-    public List<ReplyResponseDto> selectByCno(Integer cno) {
+    public List<ReplyDto> selectByCno(Integer cno) {
         return session.selectList(namespace + "selectByCno", cno);
     }
 
-    public ReplyResponseDto select(Integer rcno) {
+    public ReplyDto select(Integer rcno) {
         return session.selectOne(namespace + "selectByRcno", rcno);
     }
 
-    public List<ReplyResponseDto> selectAll() {
+    public List<ReplyDto> selectAll() {
         return session.selectList(namespace + "selectAll");
     }
 
-    public int update(ReplyUpdateRequestDto dto) {
+    public int update(ReplyDto dto) {
         return session.update(namespace + "update", dto);
     }
 
