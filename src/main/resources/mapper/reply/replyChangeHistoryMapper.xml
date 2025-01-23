@@ -15,16 +15,16 @@
     FROM reply_change_history
   </select>
 
-  <select id="existsByRcno" parameterType="int" resultType="boolean">
+  <select id="existsBySeq" parameterType="int" resultType="boolean">
     SELECT COUNT(*) > 0
     FROM reply_change_history
-    WHERE rcno = #{rcno}
+    WHERE seq = #{seq}
   </select>
 
-  <select id="existsByRcnoForUpdate" parameterType="int" resultType="boolean">
+  <select id="existsBySeqForUpdate" parameterType="int" resultType="boolean">
     SELECT COUNT(*) > 0
     FROM reply_change_history
-    WHERE rcno = #{rcno}
+    WHERE seq = #{seq}
     FOR UPDATE
   </select>
 
@@ -55,6 +55,16 @@
       cno, bno
     FROM reply_change_history
     WHERE rcno = #{rcno}
+  </select>
+
+  <select id="selectBySeq" parameterType="int" resultType="ReplyChangeHistoryDto">
+    SELECT
+      seq, rcno, bef_cont, aft_cont,
+      appl_time, comt, reg_date,
+      reg_user_seq, up_date, up_user_seq,
+      cno, bno
+    FROM reply_change_history
+    WHERE seq = #{seq}
   </select>
 
   <select id="selectLatestByRcno" parameterType="int" resultType="ReplyChangeHistoryDto">
