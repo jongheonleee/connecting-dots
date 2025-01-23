@@ -11,6 +11,7 @@ import com.example.demo.dto.code.CodeDto;
 import com.example.demo.repository.mybatis.code.CommonCodeDaoImpl;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -87,6 +88,23 @@ class BoardStatusDaoImplTest {
         // 임시 게시글 생성
         createBoardDto();
         assertEquals(1, boardDao.insert(boardDto));
+    }
+
+    @AfterEach
+    void clean() {
+        boardStatusDao.deleteAll();
+        boardDao.deleteAll();
+        for (int i= BoardCategory.MAX_LEVEL; i>=0; i--) {
+            boardCategoryDao.deleteByLevel(i);
+        }
+
+        for (int i= Code.MAX_LEVEL; i>=0; i--) {
+            commonCodeDao.deleteByLevel(i);
+        }
+
+        assertEquals(0, boardStatusDao.count());
+        assertEquals(0, boardDao.count());
+        assertEquals(0, boardCategoryDao.count());
     }
 
     @Nested

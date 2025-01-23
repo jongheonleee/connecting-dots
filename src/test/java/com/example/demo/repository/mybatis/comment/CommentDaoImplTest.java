@@ -10,6 +10,7 @@ import com.example.demo.repository.mybatis.board.BoardCategoryDaoImpl;
 import com.example.demo.repository.mybatis.board.BoardDaoImpl;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -70,6 +71,19 @@ class CommentDaoImplTest {
         // 임시 게시글 등록
         createBoardDto();
         assertEquals(1, boardDao.insert(boardDto));
+    }
+
+    @AfterEach
+    void clean() {
+        sut.deleteAll();
+        boardDao.deleteAll();
+        for (int i= BoardCategory.MAX_LEVEL; i>=0; i--) {
+            boardCategoryDao.deleteByLevel(i);
+        }
+
+        assertEquals(0, sut.count());
+        assertEquals(0, boardDao.count());
+        assertEquals(0, boardCategoryDao.count());
     }
     
 

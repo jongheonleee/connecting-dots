@@ -12,6 +12,7 @@ import com.example.demo.dto.service.ServiceTermsDto;
 import com.example.demo.repository.mybatis.code.CommonCodeDaoImpl;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -63,6 +64,19 @@ class ServiceTermsDaoImplTest {
             assertEquals(1, serviceRuleUseDao.insert(serviceRuleUseDto));
         }
 
+    }
+
+    @AfterEach
+    void clean() {
+        serviceTermsDao.deleteAll();
+        serviceRuleUseDao.deleteAll();
+        for (int i= Code.MAX_LEVEL; i>=0; i--) {
+            commonCodeDao.deleteByLevel(i);
+        }
+
+        assertEquals(0, serviceTermsDao.count());
+        assertEquals(0, serviceRuleUseDao.count());
+        assertEquals(0, commonCodeDao.count());
     }
 
     @DisplayName("카운팅 테스트")

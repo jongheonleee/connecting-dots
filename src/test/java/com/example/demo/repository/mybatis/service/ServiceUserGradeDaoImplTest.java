@@ -11,6 +11,7 @@ import com.example.demo.dto.service.ServiceUserGradeDto;
 import com.example.demo.repository.mybatis.code.CommonCodeDaoImpl;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -88,6 +89,21 @@ class ServiceUserGradeDaoImplTest {
         // 3. 정책 데이터 - 회원 등급 정책
         ServiceTermsDto serviceTermsDto = createServiceTermsDto(code);
         assertEquals(1, serviceTermsDao.insert(serviceTermsDto));
+    }
+
+    @AfterEach
+    void clean() {
+        serviceUserGradeDao.deleteAll();
+        serviceTermsDao.deleteAll();
+        serviceRuleUseDao.deleteAll();
+        for (int i = Code.MAX_LEVEL; i>=0; i--) {
+            codeDao.deleteByLevel(i);
+        }
+
+        assertEquals(0, serviceUserGradeDao.count());
+        assertEquals(0, serviceTermsDao.count());
+        assertEquals(0, serviceRuleUseDao.count());
+        assertEquals(0, codeDao.count());
     }
 
     @DisplayName("카운팅 테스트")

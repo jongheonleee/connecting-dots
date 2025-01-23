@@ -11,6 +11,7 @@ import com.example.demo.dto.service.ServiceTermsDto;
 import com.example.demo.repository.mybatis.code.CommonCodeDaoImpl;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -85,6 +86,23 @@ class ServiceSanctionHistoryDaoImplTest {
         // 서비스 정책 테스트용 데이터 1개 추가
         ServiceTermsDto serviceTermsDto = createServiceTermsDto(code);
         assertEquals(1, serviceTermsDao.insert(serviceTermsDto));
+    }
+
+    @AfterEach
+    void clean() {
+        // 테스트용 데이터 삭제, DB 초기화
+        serviceSanctionHistoryDao.deleteAll();
+        serviceTermsDao.deleteAll();
+        serviceRuleUseDao.deleteAll();
+
+        for (int i= Code.MAX_LEVEL; i>=0; i--) {
+            commonCodeDao.deleteByLevel(i);
+        }
+
+        assertEquals(0, serviceSanctionHistoryDao.count());
+        assertEquals(0, serviceTermsDao.count());
+        assertEquals(0, serviceRuleUseDao.count());
+
     }
 
     // 카운팅 테스트

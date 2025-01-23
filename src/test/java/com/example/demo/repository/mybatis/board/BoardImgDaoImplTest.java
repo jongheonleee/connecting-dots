@@ -8,6 +8,7 @@ import com.example.demo.dto.board.BoardDto;
 import com.example.demo.dto.board.BoardImgDto;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -65,6 +66,19 @@ class BoardImgDaoImplTest {
         // 임시 게시글 생성
         createBoardDto();
         assertEquals(1, boardDao.insert(boardDto));
+    }
+
+    @AfterEach
+    void clean() {
+        boardImgDao.deleteAll();
+        boardDao.deleteAll();
+        for (int i= BoardCategory.MAX_LEVEL; i>=0; i--) {
+            boardCategoryDao.deleteByLevel(i);
+        }
+
+        assertEquals(0, boardImgDao.count());
+        assertEquals(0, boardDao.count());
+        assertEquals(0, boardCategoryDao.count());
     }
 
     @Nested

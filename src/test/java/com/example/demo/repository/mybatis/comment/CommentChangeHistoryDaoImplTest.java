@@ -9,8 +9,11 @@ import com.example.demo.dto.comment.CommentChangeHistoryDto;
 import com.example.demo.dto.comment.CommentDto;
 import com.example.demo.repository.mybatis.board.BoardCategoryDaoImpl;
 import com.example.demo.repository.mybatis.board.BoardDaoImpl;
+import com.example.demo.repository.mybatis.reply.ReplyChangeHistoryDaoImpl;
+import com.example.demo.repository.mybatis.reply.ReplyDaoImpl;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -37,6 +40,12 @@ class CommentChangeHistoryDaoImplTest {
     @Autowired
     private BoardCategoryDaoImpl boardCategoryDao;
 
+    @Autowired
+    private ReplyChangeHistoryDaoImpl replyChangeHistoryDao;
+
+    @Autowired
+    private ReplyDaoImpl replyDao;
+
     private BoardDto boardDto;
     private BoardCategoryDto boardCategoryDto;
     private CommentDto commentDto;
@@ -47,8 +56,6 @@ class CommentChangeHistoryDaoImplTest {
     private final String UP_DATE = "2025-01-14";
     private final String CATE_CODE = "BC101001";
 
-    private final Integer page = 1;
-    private final Integer pageSize = 10;
 
     private final Integer TEST_USER_SEQ = 1;
 
@@ -59,6 +66,11 @@ class CommentChangeHistoryDaoImplTest {
         assertNotNull(commentDao);
         assertNotNull(boardDao);
         assertNotNull(boardCategoryDao);
+        assertNotNull(replyChangeHistoryDao);
+        assertNotNull(replyDao);
+
+        replyChangeHistoryDao.deleteAll();
+        replyDao.deleteAll();
 
         commentDao.deleteAll();
         boardDao.deleteAll();
@@ -85,6 +97,25 @@ class CommentChangeHistoryDaoImplTest {
         createCommentDto(boardDto.getBno());
         assertEquals(1, commentDao.insert(commentDto));
 
+    }
+
+    @AfterEach
+    public void tearDown() {
+        replyChangeHistoryDao.deleteAll();
+        replyDao.deleteAll();
+
+        commentDao.deleteAll();
+        boardDao.deleteAll();
+        sut.deleteAll();
+
+        for (int i= BoardCategory.MAX_LEVEL; i>=0; i--) {
+            boardCategoryDao.deleteByLevel(i);
+        }
+
+        assertEquals(0, boardCategoryDao.count());
+        assertEquals(0, boardDao.count());
+        assertEquals(0, commentDao.count());
+        assertEquals(0, sut.count());
     }
 
     @Nested

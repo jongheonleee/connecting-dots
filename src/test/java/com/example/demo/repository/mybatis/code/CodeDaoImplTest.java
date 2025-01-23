@@ -6,6 +6,7 @@ import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.code.CodeDto;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,15 @@ class CodeDaoImplTest {
         for (int i=MAX_LEVEL; i>=0; i--) {
             commonCodeDaoImpl.deleteByLevel(i);
         }
+    }
+
+    @AfterEach
+    void tearDown() {
+        for (int i=MAX_LEVEL; i>=0; i--) {
+            commonCodeDaoImpl.deleteByLevel(i);
+        }
+
+        assertEquals(0, commonCodeDaoImpl.count());
     }
 
 

@@ -9,6 +9,7 @@ import com.example.demo.dto.service.ServiceUserConditionsDto;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -51,6 +52,17 @@ class ServiceUserConditionsDaoImplTest {
             assertEquals(1, serviceUserConditionDao.insert(dto));
             dummy.add(dto);
         }
+    }
+
+    @AfterEach
+    void clean() {
+        serviceUserConditionDao.deleteAll();
+        serviceUserConditionsDao.deleteAll();
+
+        dummy.clear();
+
+        assertEquals(0, serviceUserConditionDao.count());
+        assertEquals(0, serviceUserConditionsDao.count());
     }
 
     @DisplayName("카운팅 테스트")

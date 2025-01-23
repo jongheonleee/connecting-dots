@@ -12,4 +12,13 @@ public class ReplyChangeHistoryDaoImpl {
 
     private static final String namespace = "com.example.demo.mapper.reply.ReplyChangeHistoryMapper.";
 
+
+    public int count() {
+        return session.selectOne(namespace + "count");
+    }
+
+
+    public int deleteAll() {
+        return session.delete(namespace + "deleteAll");
+    }
 }

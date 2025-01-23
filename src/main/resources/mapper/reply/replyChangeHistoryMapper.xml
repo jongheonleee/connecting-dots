@@ -3,5 +3,115 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.reply.ReplyChangeHistoryMapper">
 
+  <!--
+  seq, rcno, bef_cont, aft_cont,
+  appl_time, comt, reg_date,
+  reg_user_seq, up_date, up_user_seq,
+  cno, bno
+  -->
+
+  <select id="count" resultType="int">
+    SELECT COUNT(*)
+    FROM reply_change_history
+  </select>
+
+  <select id="existsByRcno" parameterType="int" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM reply_change_history
+    WHERE rcno = #{rcno}
+  </select>
+
+  <select id="existsByRcnoForUpdate" parameterType="int" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM reply_change_history
+    WHERE rcno = #{rcno}
+    FOR UPDATE
+  </select>
+
+  <insert id="insert" parameterType="ReplyChangeHistoryDto">
+    <selectKey keyProperty="seq" resultType="int" order="AFTER">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+
+    INSERT INTO reply_change_history(
+        rcno, bef_cont, aft_cont,
+        appl_time, comt, reg_date,
+        reg_user_seq, up_date, up_user_seq,
+        cno, bno
+    )
+    VALUES(
+        #{rcno}, #{bef_cont}, #{aft_cont},
+        #{appl_time}, #{comt}, #{reg_date},
+        #{reg_user_seq}, #{up_date}, #{up_user_seq},
+        #{cno}, #{bno}
+    )
+  </insert>
+
+  <select id="selectByRcno" parameterType="int" resultType="ReplyChangeHistoryDto">
+    SELECT
+      seq, rcno, bef_cont, aft_cont,
+      appl_time, comt, reg_date,
+      reg_user_seq, up_date, up_user_seq,
+      cno, bno
+    FROM reply_change_history
+    WHERE rcno = #{rcno}
+  </select>
+
+  <select id="selectLatestByRcno" parameterType="int" resultType="ReplyChangeHistoryDto">
+    SELECT
+      r1.seq AS seq, r1.rcno AS rcno, r1.bef_cont AS bef_cont, r1.aft_cont AS aft_cont,
+      r1.appl_time AS appl_time, r1.comt AS comt, r1.reg_date AS reg_date,
+      r1.reg_user_seq AS reg_user_seq, r1.up_date AS up_date, r1.up_user_seq AS up_user_seq,
+      r1.cno AS cno, r1.bno AS bno
+    FROM reply_change_history AS r1
+    INNER JOIN (
+        SELECT MAX(seq) AS seq
+        FROM reply_change_history
+        WHERE rcno = #{rcno}
+    ) AS r2
+    ON r1.seq = r2.seq
+  </select>
+
+  <select id="selectAll" resultType="ReplyChangeHistoryDto">
+    SELECT
+      seq, rcno, bef_cont, aft_cont,
+      appl_time, comt, reg_date,
+      reg_user_seq, up_date, up_user_seq,
+      cno, bno
+    FROM reply_change_history
+  </select>
+
+  <update id="update" parameterType="ReplyChangeHistoryDto">
+    UPDATE reply_change_history
+    SET
+      bef_cont = #{bef_cont},
+      aft_cont = #{aft_cont},
+      appl_time = #{appl_time},
+      comt = #{comt},
+      reg_date = #{reg_date},
+      reg_user_seq = #{reg_user_seq},
+      up_date = #{up_date},
+      up_user_seq = #{up_user_seq},
+      cno = #{cno},
+      bno = #{bno}
+    WHERE seq = #{seq}
+  </update>
+
+  <delete id="deleteByRcno" parameterType="int">
+    DELETE
+    FROM reply_change_history
+    WHERE rcno = #{rcno}
+  </delete>
+
+  <delete id="deleteBySeq" parameterType="int">
+    DELETE
+    FROM reply_change_history
+    WHERE seq = #{seq}
+  </delete>
+
+  <delete id="deleteAll">
+    DELETE
+    FROM reply_change_history
+  </delete>
 
 </mapper>

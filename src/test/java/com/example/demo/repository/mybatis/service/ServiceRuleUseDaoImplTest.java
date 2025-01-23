@@ -10,6 +10,7 @@ import com.example.demo.dto.service.ServiceRuleUseRequest;
 import com.example.demo.repository.mybatis.code.CommonCodeDaoImpl;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -49,6 +50,17 @@ class ServiceRuleUseDaoImplTest {
         Code code3 = Code.of("2002");
         CodeDto dto3 = new CodeDto(code3, "Y", "2021-01-01", 1, "2021-01-01", 1);
         assertEquals(1, commonCodeDao.insert(dto3));
+    }
+
+    @AfterEach
+    void clean() {
+        for (int level = Code.MAX_LEVEL; level > 0; level--) {
+            commonCodeDao.deleteByLevel(level);
+        }
+        serviceRuleUseDao.deleteAll();
+
+        assertEquals(0, serviceRuleUseDao.count());
+        assertEquals(0, commonCodeDao.count());
     }
 
     @DisplayName("카운팅 테스트")

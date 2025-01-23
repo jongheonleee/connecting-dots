@@ -12,6 +12,7 @@ import com.example.demo.dto.board.BoardCategoryDto;
 import com.example.demo.dto.board.BoardDto;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -63,6 +64,19 @@ class BoardDaoImplTest {
         // 임시 카테고리 생성 및 등록
         BoardCategoryDto dto = createCategoryDto();
         assertEquals(1, boardCategoryDao.insert(dto));
+    }
+
+    @AfterEach
+    public void tearDown() {
+        // 테스트 서버 초기화
+        boardDao.deleteAll();
+
+        for (int i= BoardCategory.MAX_LEVEL; i>=0; i--) {
+            boardCategoryDao.deleteByLevel(i);
+        }
+
+        assertEquals(0, boardDao.count());
+        assertEquals(0, boardCategoryDao.count());
     }
 
     @Nested

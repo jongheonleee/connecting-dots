@@ -9,6 +9,7 @@ import com.example.demo.dto.board.BoardDto;
 import com.example.demo.dto.ord_category.CategoryDto;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -70,6 +71,19 @@ class BoardChangeHistoryDaoImplTest {
 
         boardDto = createBoardDto();
         assertEquals(1, boardDao.insert(boardDto));
+    }
+
+    @AfterEach
+    void tearDown() {
+        boardChangeHistoryDao.deleteAll();
+        boardDao.deleteAll();
+        for (int i= BoardCategory.MAX_LEVEL; i>=0; i--) {
+            boardCategoryDao.deleteByLevel(i);
+        }
+
+        assertEquals(0, boardChangeHistoryDao.count());
+        assertEquals(0, boardDao.count());
+        assertEquals(0, boardCategoryDao.count());
     }
 
     @Nested

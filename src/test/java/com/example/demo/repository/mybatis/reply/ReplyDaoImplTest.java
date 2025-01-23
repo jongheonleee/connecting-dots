@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -49,8 +50,6 @@ class ReplyDaoImplTest {
     private final String UP_DATE = "2025-01-14";
     private final String CATE_CODE = "BC101001";
 
-    private final Integer page = 1;
-    private final Integer pageSize = 10;
 
     private final Integer TEST_USER_SEQ = 1;
 
@@ -86,6 +85,21 @@ class ReplyDaoImplTest {
         createCommentDto(boardDto.getBno());
         assertEquals(1, commentDao.insert(commentDto));
 
+    }
+
+    @AfterEach
+    void clean() {
+        sut.deleteAll();
+        commentDao.deleteAll();
+        boardDao.deleteAll();
+        for (int i= BoardCategory.MAX_LEVEL; i>=0; i--) {
+            boardCategoryDao.deleteByLevel(i);
+        }
+
+        assertEquals(0, sut.count());
+        assertEquals(0, commentDao.count());
+        assertEquals(0, boardDao.count());
+        assertEquals(0, boardCategoryDao.count());
     }
 
 

@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.example.demo.dto.board.BoardCategoryDto;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -35,6 +36,15 @@ class BoardCategoryDaoImplTest {
         }
 
        assertEquals(0, boardCategoryDao.count());
+    }
+
+    @AfterEach
+    void clean() {
+        for (int i=MAX_LEVEL; i>=0; i--) {
+            boardCategoryDao.deleteByLevel(i);
+        }
+
+        assertEquals(0, boardCategoryDao.count());
     }
 
     @DisplayName("카운팅 테스트")

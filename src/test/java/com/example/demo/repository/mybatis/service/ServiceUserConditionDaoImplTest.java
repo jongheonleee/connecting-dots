@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.example.demo.dto.service.ServiceUserConditionDto;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -28,6 +29,12 @@ class ServiceUserConditionDaoImplTest {
     void setUp() {
         assertNotNull(serviceUserConditionDao);
         serviceUserConditionDao.deleteAll();
+    }
+
+    @AfterEach
+    void clean() {
+        serviceUserConditionDao.deleteAll();
+        assertEquals(0, serviceUserConditionDao.count());
     }
 
     @DisplayName("카운팅 테스트")
