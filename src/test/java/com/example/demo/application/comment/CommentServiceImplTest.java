@@ -2,7 +2,9 @@ package com.example.demo.application.comment;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+
 
 import com.example.demo.dto.comment.CommentDto;
 import com.example.demo.dto.comment.CommentRequest;
@@ -10,7 +12,6 @@ import com.example.demo.dto.comment.CommentResponse;
 import com.example.demo.global.error.exception.business.comment.CommentNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
 import com.example.demo.repository.mybatis.board.BoardDaoImpl;
-import com.example.demo.repository.mybatis.comment.CommentChangeHistoryDaoImpl;
 import com.example.demo.repository.mybatis.comment.CommentDaoImpl;
 import com.example.demo.repository.mybatis.reply.ReplyDaoImpl;
 import com.example.demo.utils.CustomFormatter;
@@ -19,8 +20,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -142,7 +141,22 @@ class CommentServiceImplTest {
         @DisplayName("사용자가 특정 댓글을 수정한다")
         @Test
         void it_correctly_work_when_user_update_comment() {
+            // given
+            CommentRequest request = CommentRequest.builder()
+                    .cno(1)
+                    .bno(1)
+                    .cont("테스트용 댓글 내용")
+                    .user_seq(1)
+                    .writer("테스트용 작성자")
+                    .build();
 
+            CommentDto dto = new CommentDto();
+            when(commentDao.existsByCnoForUpdate(any())).thenReturn(true);
+            when(commentDao.selectByCno(any())).thenReturn(dto);
+            when(commentDao.update(any())).thenReturn(1);
+            doNothing().when(commentChangeHistoryService).modify(any());
+
+            assertDoesNotThrow(() -> sut.modify(request));
         }
 
         @DisplayName("존재하지 않는 댓글인 경우 예외가 발생한다")
@@ -262,6 +276,104 @@ class CommentServiceImplTest {
 
             // then
             assertThrows(NotApplyOnDbmsException.class, () -> sut.increaseDislikeCnt(cno));
+        }
+    }
+
+    @Nested
+    @DisplayName("사용자가 댓글을 삭제하는 경우")
+    class sut_delete_comment_test {
+
+        @DisplayName("사용자가 특정 댓글을 삭제한다")
+        @Test
+        void it_correctly_work_when_user_delete_comment() {
+            // given
+            Integer cno = 1;
+
+            when(commentDao.deleteByCno(any())).thenReturn(1);
+
+            assertDoesNotThrow(
+                    () -> sut.remove(cno)
+            );
+        }
+
+
+        @DisplayName("RDBMS에 댓글 삭제가 실패한 경우 예외가 발생한다")
+        @Test
+        void it_throws_exception_when_comment_delete_failed() {
+            // given
+            Integer cno = 1;
+
+            when(commentDao.deleteByCno(any())).thenReturn(0);
+
+            // then
+            assertThrows(NotApplyOnDbmsException.class, () -> sut.remove(cno));
+        }
+
+        @DisplayName("사용자가 특정 게시글의 모든 댓글을 삭제한다")
+        @Test
+        void it_correctly_work_when_user_delete_all_comments() {
+            // given
+            Integer bno = 1;
+
+            when(commentDao.countByBno(bno)).thenReturn(5);
+            when(commentDao.deleteByBno(bno)).thenReturn(5);
+
+            assertDoesNotThrow(
+                    () -> sut.removeByBno(bno)
+            );
+        }
+
+    }
+
+    @Nested
+    @DisplayName("사용자가 댓글을 조회 하는 경우")
+    class sut_read_comment_test {
+
+
+        @DisplayName("특정 게시글의 모든 댓글& 대댓글을 조회한다")
+        @Test
+        void it_correctly_work_when_user_read_all_comments() {
+
+        }
+
+        @DisplayName("특정 댓글을 조회한다")
+        @Test
+        void it_correctly_work_when_user_read_comment() {
+            // given
+            Integer cno = 1;
+            CommentDto dto = CommentDto.builder()
+                                        .cno(cno)
+                                        .bno(1)
+                                        .cont("테스트용 댓글 내용")
+                                        .user_seq(1)
+                                        .writer("테스트용 작성자")
+                                        .like_cnt(0)
+                                        .dislike_cnt(0)
+                                        .build();
+
+            CommentResponse expected = CommentResponse.builder()
+                                                      .cno(cno)
+                                                      .bno(1)
+                                                      .cont("테스트용 댓글 내용")
+                                                      .user_seq(1)
+                                                      .writer("테스트용 작성자")
+                                                      .like_cnt(0)
+                                                      .dislike_cnt(0)
+                                                      .build();
+            when(commentDao.existsByCno(any())).thenReturn(true);
+            when(commentDao.selectByCno(cno)).thenReturn(dto);
+
+            CommentResponse actual = sut.readByCno(cno);
+
+            assertNotNull(actual);
+
+            assertEquals(expected.getCno(), actual.getCno());
+            assertEquals(expected.getBno(), actual.getBno());
+            assertEquals(expected.getCont(), actual.getCont());
+            assertEquals(expected.getUser_seq(), actual.getUser_seq());
+            assertEquals(expected.getWriter(), actual.getWriter());
+            assertEquals(expected.getLike_cnt(), actual.getLike_cnt());
+            assertEquals(expected.getDislike_cnt(), actual.getDislike_cnt());
         }
     }
 }

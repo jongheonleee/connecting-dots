@@ -6,7 +6,6 @@ import com.example.demo.dto.comment.CommentChangeHistoryResponse;
 import com.example.demo.global.error.exception.business.comment.CommentChangeHistoryNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
 import com.example.demo.repository.mybatis.comment.CommentChangeHistoryDaoImpl;
-import com.example.demo.repository.mybatis.comment.CommentDaoImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
