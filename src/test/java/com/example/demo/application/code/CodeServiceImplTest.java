@@ -28,7 +28,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class CodeServiceImplTest {
 
     @InjectMocks
-    private CommonCodeServiceImpl codeService;
+    private CommonCodeService codeService;
 
     @Mock
     private CommonCodeDaoImpl codeDao;

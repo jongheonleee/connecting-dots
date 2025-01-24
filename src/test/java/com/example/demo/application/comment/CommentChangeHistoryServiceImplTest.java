@@ -28,7 +28,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class CommentChangeHistoryServiceImplTest {
 
     @InjectMocks
-    private CommentChangeHistoryServiceImpl sut;
+    private CommentChangeHistoryService sut;
 
     @Mock
     private CommentDaoImpl commentDao;
@@ -250,7 +250,7 @@ class CommentChangeHistoryServiceImplTest {
             // when & then
             when(commentChangeHistoryDao.delete(seq)).thenReturn(1);
 
-            assertDoesNotThrow(() -> sut.delete(seq));
+            assertDoesNotThrow(() -> sut.remove(seq));
         }
 
         @DisplayName("삭제할 댓글 변경 이력이 없으면 예외를 던진다")
@@ -263,7 +263,7 @@ class CommentChangeHistoryServiceImplTest {
             when(commentChangeHistoryDao.delete(seq)).thenReturn(0);
 
             // then
-            assertThrows(NotApplyOnDbmsException.class, () -> sut.delete(seq));
+            assertThrows(NotApplyOnDbmsException.class, () -> sut.remove(seq));
         }
 
         @DisplayName("사용자가 cno로 해당 댓글의 모든 변경 이력을 삭제한다.")
@@ -276,7 +276,7 @@ class CommentChangeHistoryServiceImplTest {
             when(commentChangeHistoryDao.countByCno(cno)).thenReturn(5);
             when(commentChangeHistoryDao.deleteByCno(cno)).thenReturn(5);
 
-            assertDoesNotThrow(() -> sut.deleteByCno(cno));
+            assertDoesNotThrow(() -> sut.removeByCno(cno));
         }
 
         @DisplayName("삭제할 댓글 변경 이력이 없으면 예외를 던진다")
@@ -290,7 +290,7 @@ class CommentChangeHistoryServiceImplTest {
             when(commentChangeHistoryDao.deleteByCno(cno)).thenReturn(10);
 
             // then
-            assertThrows(NotApplyOnDbmsException.class, () -> sut.deleteByCno(cno));
+            assertThrows(NotApplyOnDbmsException.class, () -> sut.removeByCno(cno));
         }
     }
 

@@ -3,7 +3,7 @@
 //import com.example.demo.global.error.exception.business.board.BoardFormInvalidException;
 //import com.example.demo.global.error.exception.business.board.BoardImgNotFoundException;
 //import com.example.demo.global.error.exception.business.board.BoardNotFoundException;
-//import com.example.demo.application.comment.CommentServiceImpl;
+//import com.example.demo.application.comment.impl.CommentServiceImpl;
 //import com.example.demo.dto.PageHandler;
 //import com.example.demo.dto.SearchCondition;
 //import com.example.demo.dto.board.BoardFormDto;

@@ -28,7 +28,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class CommentServiceImplTest {
 
     @InjectMocks
-    private CommentServiceImpl sut;
+    private CommentService sut;
 
     @Mock
     private BoardDaoImpl boardDao;
@@ -37,7 +37,7 @@ class CommentServiceImplTest {
     private ReplyDaoImpl replyDao;
 
     @Mock
-    private CommentChangeHistoryServiceImpl commentChangeHistoryService;
+    private CommentChangeHistoryService commentChangeHistoryService;
 
 
     @Mock

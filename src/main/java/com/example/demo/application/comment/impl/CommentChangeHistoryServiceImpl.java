@@ -1,5 +1,6 @@
-package com.example.demo.application.comment;
+package com.example.demo.application.comment.impl;
 
+import com.example.demo.application.comment.CommentChangeHistoryService;
 import com.example.demo.dto.comment.CommentChangeHistoryDto;
 import com.example.demo.dto.comment.CommentChangeHistoryRequest;
 import com.example.demo.dto.comment.CommentChangeHistoryResponse;
@@ -16,11 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CommentChangeHistoryServiceImpl {
+public class CommentChangeHistoryServiceImpl implements CommentChangeHistoryService {
 
     private final CommentChangeHistoryDaoImpl commentChangeHistoryDao;
     private final CustomFormatter formatter;
 
+    @Override
     public CommentChangeHistoryResponse create(final CommentChangeHistoryRequest request) {
         CommentChangeHistoryDto dto = createDto(request);
         checkApplied(1, commentChangeHistoryDao.insert(dto));
@@ -28,6 +30,7 @@ public class CommentChangeHistoryServiceImpl {
     }
 
 
+    @Override
     public CommentChangeHistoryResponse readBySeq(final Integer seq) {
         CommentChangeHistoryDto dto = commentChangeHistoryDao.select(seq);
         checkEmpty(seq, dto);
@@ -35,6 +38,7 @@ public class CommentChangeHistoryServiceImpl {
     }
 
 
+    @Override
     public List<CommentChangeHistoryResponse> readByCno(final Integer cno) {
         List<CommentChangeHistoryDto> found = commentChangeHistoryDao.selectByCno(cno);
         return found.stream()
@@ -42,6 +46,7 @@ public class CommentChangeHistoryServiceImpl {
                     .toList();
     }
 
+    @Override
     public void modify(final CommentChangeHistoryRequest request) {
         checkExistsForUpdate(request);
         var dto = createDto(request);
@@ -49,18 +54,21 @@ public class CommentChangeHistoryServiceImpl {
     }
 
 
-    public void delete(final Integer seq) {
+    @Override
+    public void remove(final Integer seq) {
         checkApplied(1, commentChangeHistoryDao.delete(seq));
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteByCno(final Integer cno) {
+    public void removeByCno(final Integer cno) {
         int totalCnt = commentChangeHistoryDao.countByCno(cno);
         checkApplied(totalCnt, commentChangeHistoryDao.deleteByCno(cno));
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteAll() {
+    public void removeAll() {
         int totalCnt = commentChangeHistoryDao.count();
         checkApplied(totalCnt, commentChangeHistoryDao.deleteAll());
     }

@@ -1,5 +1,7 @@
-package com.example.demo.application.comment;
+package com.example.demo.application.comment.impl;
 
+import com.example.demo.application.comment.CommentChangeHistoryService;
+import com.example.demo.application.comment.CommentService;
 import com.example.demo.application.reply.ReplyServiceImpl;
 import com.example.demo.dto.comment.CommentChangeHistoryRequest;
 import com.example.demo.dto.comment.CommentDetailResponse;
@@ -21,15 +23,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CommentServiceImpl {
+public class CommentServiceImpl implements CommentService {
 
     private final BoardDaoImpl boardDao;
     private final CommentDaoImpl commentDao;
     private final ReplyServiceImpl replyService;
-    private final CommentChangeHistoryServiceImpl commentChangeHistoryService;
+    private final CommentChangeHistoryService commentChangeHistoryService;
     private final CustomFormatter formatter;
 
 
+    @Override
     public CommentResponse create(final CommentRequest request) {
         checkBoardExists(request.getBno());
         var dto = createDto(request);
@@ -38,6 +41,7 @@ public class CommentServiceImpl {
     }
 
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void modify(final CommentRequest request) {
         checkCommentExistsForUpdate(request.getCno());
@@ -54,25 +58,30 @@ public class CommentServiceImpl {
         commentChangeHistoryService.modify(historyRequest);
     }
 
+    @Override
     public void increaseLikeCnt(final Integer cno) {
         checkCommentExistsForUpdate(cno);
         checkApplied(1, commentDao.increaseLikeCnt(cno));
     }
 
+    @Override
     public void increaseDislikeCnt(final Integer cno) {
         checkCommentExistsForUpdate(cno);
         checkApplied(1, commentDao.increaseDislikeCnt(cno));
     }
 
+    @Override
     public void remove(final Integer cno) {
         checkApplied(1, commentDao.deleteByCno(cno));
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void removeByBno(final Integer bno) {
         checkApplied(commentDao.countByBno(bno), commentDao.deleteByBno(bno));
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void removeAll() {
         checkApplied(commentDao.count(), commentDao.deleteAll());
@@ -80,11 +89,13 @@ public class CommentServiceImpl {
 
 
 
+    @Override
     public CommentResponse readByCno(final Integer cno) {
         checkCommentExists(cno);
         return createResponse(commentDao.selectByCno(cno));
     }
 
+    @Override
     public List<CommentDetailResponse> readByBno(final Integer bno) {
         return null;
     }
@@ -105,7 +116,7 @@ public class CommentServiceImpl {
         }
     }
 
-    private CommentDto createDto(CommentRequest request) {
+    private CommentDto createDto(final CommentRequest request) {
         CommentDto dto = CommentDto.builder()
                 .bno(request.getBno())
                 .cont(request.getCont())
@@ -120,7 +131,7 @@ public class CommentServiceImpl {
     }
 
 
-    private CommentResponse createResponse(CommentDto dto) {
+    private CommentResponse createResponse(final CommentDto dto) {
         return CommentResponse.builder()
                 .cno(dto.getCno())
                 .bno(dto.getBno())
@@ -132,14 +143,14 @@ public class CommentServiceImpl {
                 .build();
     }
 
-    private void checkApplied(Integer expected, Integer actual) {
+    private void checkApplied(final Integer expected, final Integer actual) {
         if (expected != actual) {
             log.error("[COMMENT] 댓글 처리 작업에 실패하였습니다.");
             throw new NotApplyOnDbmsException();
         }
     }
 
-    private void checkCommentExistsForUpdate(Integer cno) {
+    private void checkCommentExistsForUpdate(final Integer cno) {
         boolean exists = commentDao.existsByCnoForUpdate(cno);
         if (!exists) {
             log.error("[COMMENT] 댓글을 수정할 댓글이 존재하지 않습니다. cno: {}", cno);

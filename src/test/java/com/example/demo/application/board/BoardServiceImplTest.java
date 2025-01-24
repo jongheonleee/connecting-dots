@@ -7,7 +7,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.example.demo.application.code.CommonCodeServiceImpl;
+import com.example.demo.application.code.CommonCodeService;
 import com.example.demo.dto.board.BoardCategoryResponse;
 import com.example.demo.dto.board.BoardChangeHistoryRequest;
 import com.example.demo.dto.board.BoardChangeHistoryResponse;
@@ -55,7 +55,7 @@ class BoardServiceImplTest {
     private BoardStatusServiceImpl boardStatusService;
 
     @Mock
-    private CommonCodeServiceImpl commonCodeService;
+    private CommonCodeService commonCodeService;
 
     @Mock
     private BoardImgServiceImpl boardImgService;

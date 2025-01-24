@@ -3,7 +3,7 @@ package com.example.demo.application.board;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-import com.example.demo.application.code.CommonCodeServiceImpl;
+import com.example.demo.application.code.CommonCodeService;
 import com.example.demo.dto.board.BoardStatusDto;
 import com.example.demo.dto.board.BoardStatusRequest;
 import com.example.demo.dto.board.BoardStatusResponse;
@@ -42,7 +42,7 @@ class BoardStatusServiceImplTest {
     private CustomFormatter formatter;
 
     @Mock
-    private CommonCodeServiceImpl commonCodeService;
+    private CommonCodeService commonCodeService;
 
     @Mock
     private BoardDaoImpl boardDao;

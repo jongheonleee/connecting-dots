@@ -4,7 +4,7 @@
 //
 //import com.example.demo.global.error.exception.business.comment.CommentFormInvalidException;
 //import com.example.demo.global.error.exception.business.comment.CommentNotFoundException;
-//import com.example.demo.application.comment.CommentServiceImpl;
+//import com.example.demo.application.comment.impl.CommentServiceImpl;
 //import com.example.demo.validator.comment.CommentValidator;
 //import com.example.demo.dto.ord_comment.CommentResponseDto;
 //import com.example.demo.dto.ord_comment.CommentRequestDto;

@@ -1,6 +1,6 @@
 package com.example.demo.presentation.code;
 
-import com.example.demo.application.code.CommonCodeServiceImpl;
+import com.example.demo.application.code.CommonCodeService;
 import com.example.demo.dto.PageResponse;
 import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.code.CodeRequest;
@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/common-code")
 public class CommonCodeController {
 
-    private final CommonCodeServiceImpl commonCodeService;
+    private final CommonCodeService commonCodeService;
 
     @PostMapping("/create")
     public ResponseEntity<CodeResponse> create(@RequestBody @Valid CodeRequest request) {
