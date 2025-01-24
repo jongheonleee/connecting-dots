@@ -26,6 +26,13 @@
     WHERE cno = #{cno}
   </select>
 
+  <select id="existsBySeqForUpdate" parameterType="int" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM comment_change_history
+    WHERE seq = #{seq}
+    FOR UPDATE
+  </select>
+
   <select id="select" parameterType="int" resultType="CommentChangeHistoryDto">
     SELECT
       seq, bef_cont, aft_cont,

@@ -5,11 +5,9 @@ import static com.example.demo.global.error.exception.ErrorCode.*;
 import com.example.demo.global.error.exception.ErrorCode;
 import com.example.demo.global.error.exception.business.EntityNotFoundException;
 
+public class CommentChangeHistoryNotFoundException extends EntityNotFoundException {
 
-public class CommentNotFoundException extends EntityNotFoundException {
-
-    public CommentNotFoundException() {
-        super(COMMENT_NOT_FOUND);
+    public CommentChangeHistoryNotFoundException() {
+        super(COMMENT_CHANGE_HISTORY_NOT_FOUND);
     }
-
 }

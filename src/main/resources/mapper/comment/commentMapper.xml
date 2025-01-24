@@ -13,6 +13,19 @@
     WHERE bno = #{bno}
   </select>
 
+  <select id="existsByCno" parameterType="int" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM comment
+    WHERE cno = #{cno}
+  </select>
+
+  <select id="existsByCnoForUpdate" parameterType="int" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM comment
+    WHERE cno = #{cno}
+    FOR UPDATE
+  </select>
+
   <!-- 댓글 등록 -->
   <insert id="insert" parameterType="CommentDto" >
     <!-- 등록된 이후에 dto에 cno 저장 -->

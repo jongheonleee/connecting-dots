@@ -23,7 +23,11 @@ public class CommentChangeHistoryDaoImpl {
     }
 
     public boolean existsByCno(Integer cno) {
-        return session.selectOne(namespace + "existsByCno", cno) != null;
+        return session.selectOne(namespace + "existsByCno", cno);
+    }
+
+    public boolean existsByCnoForUpdate(Integer cno) {
+        return session.selectOne(namespace + "existsByCnoForUpdate", cno);
     }
 
     public CommentChangeHistoryDto select(Integer seq) {

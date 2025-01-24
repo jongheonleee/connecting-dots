@@ -22,6 +22,14 @@ public class CommentDaoImpl {
         return session.selectOne(namespace + "countByBno", bno);
     }
 
+    public boolean existsByCno(Integer cno) {
+        return session.selectOne(namespace + "existsByCno", cno) != null;
+    }
+
+    public boolean existsByCnoForUpdate(Integer cno) {
+        return session.selectOne(namespace + "existsByCnoForUpdate", cno) != null;
+    }
+
     public int insert(CommentDto dto) {
         return session.insert(namespace + "insert", dto);
     }
