@@ -1,5 +1,6 @@
 package com.example.demo.application.board.impl;
 
+import com.example.demo.application.board.BoardCategoryService;
 import com.example.demo.domain.BoardCategory;
 import com.example.demo.dto.board.BoardCategoryDto;
 import com.example.demo.dto.board.BoardCategoryRequest;
@@ -18,16 +19,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class BoardCategoryServiceImpl {
+public class BoardCategoryServiceImpl implements BoardCategoryService {
 
     private final BoardCategoryDaoImpl boardCategoryDao;
     private final CustomFormatter formatter;
 
 
+    @Override
     public int count() {
         return boardCategoryDao.count();
     }
 
+    @Override
     public BoardCategoryResponse create(BoardCategoryRequest request) {
         checkDuplicated(request);
         var dto = createDto(request);
@@ -35,12 +38,14 @@ public class BoardCategoryServiceImpl {
         return createResponse(dto);
     }
 
+    @Override
     public BoardCategoryResponse readByCateCode(String cate_code) {
         checkExisted(cate_code);
         var dto = boardCategoryDao.selectByCateCode(cate_code);
         return createResponse(dto);
     }
 
+    @Override
     public List<BoardCategoryResponse> readByTopCate(String top_cate) {
         checkExisted(top_cate);
         return boardCategoryDao.selectByTopCate(top_cate)
@@ -50,6 +55,7 @@ public class BoardCategoryServiceImpl {
 
     }
 
+    @Override
     public List<BoardCategoryResponse> readAll() {
         return boardCategoryDao.selectAll()
                                .stream()
@@ -57,6 +63,7 @@ public class BoardCategoryServiceImpl {
                                .toList();
     }
 
+    @Override
     public void modify(BoardCategoryRequest request) {
         checkExistedForUpdate(request.getCate_code());
         var dto = createDto(request);
@@ -64,21 +71,25 @@ public class BoardCategoryServiceImpl {
         checkApplied(1, boardCategoryDao.update(dto));
     }
 
+    @Override
     public void modifyChkUseY(String cate_code) {
         checkExistedForUpdate(cate_code);
         checkApplied(1, boardCategoryDao.updateChkUseY(cate_code));
     }
 
+    @Override
     public void modifyChkUseN(String cate_code) {
         checkExistedForUpdate(cate_code);
         checkApplied(1, boardCategoryDao.updateChkUseN(cate_code));
     }
 
+    @Override
     public void remove(String cate_code) {
         checkExistedForUpdate(cate_code);
         checkApplied(1, boardCategoryDao.deleteByCateCode(cate_code));
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void removeAll() {
         int totalCnt = boardCategoryDao.count();

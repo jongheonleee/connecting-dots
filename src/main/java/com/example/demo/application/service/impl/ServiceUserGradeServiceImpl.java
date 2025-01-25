@@ -1,4 +1,4 @@
-package com.example.demo.application.service;
+package com.example.demo.application.service.impl;
 
 import com.example.demo.dto.PageResponse;
 import com.example.demo.dto.SearchCondition;

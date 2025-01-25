@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 @DisplayName("학습 테스트, 어떤식으로 동작하는지 파악하기")
 class FileServiceImplTest {
 
-    private FileServiceImpl fileService = new FileServiceImpl();
+    private FileService fileService = new FileServiceImpl();
 
     @Test
     @DisplayName("파일 업로드 처리 테스트")

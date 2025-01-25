@@ -8,7 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.example.demo.application.service.ServiceUserConditionsServiceImpl;
+import com.example.demo.application.service.impl.ServiceUserConditionsServiceImpl;
 import com.example.demo.dto.service.ServiceUserConditionsRequest;
 import com.example.demo.dto.service.ServiceUserConditionsResponse;
 import com.example.demo.global.error.GlobalExceptionHandler;

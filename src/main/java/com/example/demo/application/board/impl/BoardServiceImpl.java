@@ -3,6 +3,10 @@ package com.example.demo.application.board.impl;
 import static com.example.demo.domain.Code.BOARD_CREATE;
 import static com.example.demo.domain.Code.BOARD_MODIFY;
 
+import com.example.demo.application.board.BoardCategoryService;
+import com.example.demo.application.board.BoardChangeHistoryService;
+import com.example.demo.application.board.BoardImgService;
+import com.example.demo.application.board.BoardStatusService;
 import com.example.demo.domain.Code;
 import com.example.demo.dto.PageResponse;
 import com.example.demo.dto.SearchCondition;
@@ -58,10 +62,10 @@ public class BoardServiceImpl {
 
     private final BoardDaoImpl boardDao;// [✅]
     private final BoardCategoryDaoImpl boardCategoryDao;// [✅]
-    private final BoardImgServiceImpl boardImgService; // -> 게시판 생성, 조회시 이미지 처리[✅]
-    private final BoardStatusServiceImpl boardStatusService; // -> 게시판 상태 변경시 적용[✅]
-    private final BoardChangeHistoryServiceImpl boardChangeHistoryService; // -> 게시판 변경 이력 기록[✅]
-    private final BoardCategoryServiceImpl boardCategoryService; // -> 게시판 카테고리 정보[✅]
+    private final BoardImgService boardImgService; // -> 게시판 생성, 조회시 이미지 처리[✅]
+    private final BoardStatusService boardStatusService; // -> 게시판 상태 변경시 적용[✅]
+    private final BoardChangeHistoryService boardChangeHistoryService; // -> 게시판 변경 이력 기록[✅]
+    private final BoardCategoryService boardCategoryService; // -> 게시판 카테고리 정보[✅]
     //    private final UserServiceImpl userService; -> 게시판과 관련된 사용자 정보[]
 //    private final CommentServiceImpl commentService; // -> 게시판과 관련된 댓글 정보[]
 //    private final ReplyServiceImpl replyService; // -> 게시판과 관련된 답글 정보[]

@@ -33,7 +33,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ServiceUserConditionsServiceImplTest {
 
     @InjectMocks
-    private ServiceUserConditionsServiceImpl serviceUserConditionsService;
+    private ServiceUserConditionsService serviceUserConditionsService;
 
     @Mock
     private ServiceUserConditionsDaoImpl serviceUserConditionsDao;

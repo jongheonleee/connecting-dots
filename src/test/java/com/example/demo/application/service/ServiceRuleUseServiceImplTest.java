@@ -30,7 +30,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ServiceRuleUseServiceImplTest {
 
     @InjectMocks
-    private ServiceRuleUseServiceImpl serviceRuleUseService;
+    private ServiceRuleUseService serviceRuleUseService;
 
     @Mock
     private ServiceRuleUseDaoImpl serviceRuleUseDao;

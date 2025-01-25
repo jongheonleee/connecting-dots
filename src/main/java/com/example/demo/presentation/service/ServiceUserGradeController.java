@@ -1,7 +1,6 @@
 package com.example.demo.presentation.service;
 
-import com.example.demo.application.service.ServiceUserGradeServiceImpl;
-import com.example.demo.domain.ServiceUserGrade;
+import com.example.demo.application.service.impl.ServiceUserGradeServiceImpl;
 import com.example.demo.dto.PageResponse;
 import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.service.ServiceUserGradeRequest;
@@ -11,7 +10,6 @@ import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;

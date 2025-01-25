@@ -1,7 +1,7 @@
 package com.example.demo.presentation.service;
 
 
-import com.example.demo.application.service.ServiceSanctionHistoryServiceImpl;
+import com.example.demo.application.service.impl.ServiceSanctionHistoryServiceImpl;
 import com.example.demo.dto.PageResponse;
 import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.service.ServiceSanctionHistoryRequest;

@@ -3,6 +3,8 @@ package com.example.demo.application.board.impl;
 import static com.example.demo.global.error.exception.ErrorCode.*;
 import static com.example.demo.global.error.exception.ErrorCode.FILE_UPLOAD_ERROR;
 
+import com.example.demo.application.board.BoardImgService;
+import com.example.demo.application.board.FileService;
 import com.example.demo.dto.board.BoardImgDto;
 import com.example.demo.dto.board.BoardImgRequest;
 import com.example.demo.dto.board.BoardImgResponse;
@@ -23,7 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class BoardImgServiceImpl {
+public class BoardImgServiceImpl implements BoardImgService {
 
     @Value("${boardImgLocation}")
     private String boardImgLocation;
@@ -33,10 +35,11 @@ public class BoardImgServiceImpl {
 
 
     private final BoardImgDaoImpl boardImgDao;
-    private final FileServiceImpl fileService;
+    private final FileService fileService;
     private final CustomFormatter customFormatter;
 
 
+    @Override
     public void saveBoardImage(final BoardImgRequest request, final MultipartFile boardImgFile) {
         checkValidImageFile(boardImgFile);
         String imageFileName = uploadFile(boardImgFile);
@@ -45,6 +48,7 @@ public class BoardImgServiceImpl {
         checkApplied(1, boardImgDao.insert(dto));
     }
 
+    @Override
     public List<BoardImgResponse> readByBno(final Integer bno) {
         return boardImgDao.selectByBno(bno)
                           .stream()
@@ -53,6 +57,7 @@ public class BoardImgServiceImpl {
     }
 
 
+    @Override
     public void modifyBoardImg(final Integer ino, final MultipartFile boardImgFile) {
         checkValidImageFile(boardImgFile);
         checkExistsByIno(ino);
@@ -65,6 +70,7 @@ public class BoardImgServiceImpl {
         checkApplied(1, boardImgDao.update(found));
     }
 
+    @Override
     public void removeByIno(final Integer ino) {
         checkExistsByIno(ino);
         removeFileByIno(ino);

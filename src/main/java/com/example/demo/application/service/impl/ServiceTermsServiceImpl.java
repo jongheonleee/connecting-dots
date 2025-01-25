@@ -1,5 +1,6 @@
-package com.example.demo.application.service;
+package com.example.demo.application.service.impl;
 
+import com.example.demo.application.service.ServiceTermsService;
 import com.example.demo.dto.PageResponse;
 import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.service.ServiceTermsConditionDto;
@@ -20,20 +21,23 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ServiceTermsServiceImpl {
+public class ServiceTermsServiceImpl implements ServiceTermsService {
 
     private final ServiceTermsDaoImpl serviceTermsDao;
     private final CustomFormatter formatter;
 
+    @Override
     public int count() {
         return serviceTermsDao.count();
     }
 
+    @Override
     public int countBySearchCondition(SearchCondition sc) {
         return serviceTermsDao.countBySearchCondition(sc);
     }
 
 
+    @Override
     public ServiceTermsResponse create(ServiceTermsRequest request) {
         boolean exists = serviceTermsDao.existsByPoliStat(request.getPoli_stat());
         if (exists) {
@@ -53,6 +57,7 @@ public class ServiceTermsServiceImpl {
                               .toResponse();
     }
 
+    @Override
     public ServiceTermsResponse readByPoliStat(String poli_stat) {
         boolean exists = serviceTermsDao.existsByPoliStat(poli_stat);
         if (!exists) {
@@ -64,6 +69,7 @@ public class ServiceTermsServiceImpl {
                               .toResponse();
     }
 
+    @Override
     public PageResponse<ServiceTermsResponse> readBySearchCondition(SearchCondition sc) {
         int totalCnt = serviceTermsDao.countBySearchCondition(sc);
         List<ServiceTermsResponse> responses = serviceTermsDao.selectBySearchCondition(sc)
@@ -74,6 +80,7 @@ public class ServiceTermsServiceImpl {
         return new PageResponse<>(totalCnt, sc, responses);
     }
 
+    @Override
     public List<ServiceTermsResponse> readAll() {
         return serviceTermsDao.selectAll()
                               .stream()
@@ -82,6 +89,7 @@ public class ServiceTermsServiceImpl {
     }
 
     // 리스폰스 형태로 반환하게 만들기
+    @Override
     public String getServiceTermsCondition(String poli_stat) {
         boolean exists = serviceTermsDao.existsByPoliStat(poli_stat);
         if (!exists) {
@@ -93,6 +101,7 @@ public class ServiceTermsServiceImpl {
         return serviceTermsConditionDto.getCond();
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void modify(ServiceTermsRequest request) {
         boolean exists = serviceTermsDao.existsByPoliStatForUpdate(request.getPoli_stat());
@@ -110,6 +119,7 @@ public class ServiceTermsServiceImpl {
         }
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void modifyChkUse(ServiceTermsRequest request) {
         boolean exists = serviceTermsDao.existsByPoliStatForUpdate(request.getPoli_stat());
@@ -127,6 +137,7 @@ public class ServiceTermsServiceImpl {
         }
     }
 
+    @Override
     public void remove(String poli_stat) {
         int rowCnt = serviceTermsDao.delete(poli_stat);
 
@@ -136,6 +147,7 @@ public class ServiceTermsServiceImpl {
         }
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void removeAll() {
         int totalCnt = serviceTermsDao.count();

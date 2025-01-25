@@ -3,7 +3,6 @@ package com.example.demo.application.board;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-import com.example.demo.application.board.impl.BoardChangeHistoryServiceImpl;
 import com.example.demo.dto.board.BoardChangeHistoryDto;
 import com.example.demo.dto.board.BoardChangeHistoryRequest;
 import com.example.demo.dto.board.BoardChangeHistoryResponse;
@@ -30,7 +29,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class BoardChangeHistoryServiceImplTest {
 
     @InjectMocks
-    private BoardChangeHistoryServiceImpl boardChangeHistoryService;
+    private BoardChangeHistoryService boardChangeHistoryService;
 
     @Mock
     private BoardChangeHistoryDaoImpl boardChangeHistoryDao;

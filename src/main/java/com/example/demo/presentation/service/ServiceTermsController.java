@@ -1,6 +1,6 @@
 package com.example.demo.presentation.service;
 
-import com.example.demo.application.service.ServiceTermsServiceImpl;
+import com.example.demo.application.service.ServiceTermsService;
 import com.example.demo.dto.PageResponse;
 import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.service.ServiceTermsRequest;
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/service-terms")
 public class ServiceTermsController {
 
-    private final ServiceTermsServiceImpl serviceTermsService;
+    private final ServiceTermsService serviceTermsService;
 
     @PostMapping("/create")
     public ResponseEntity<ServiceTermsResponse> create(@Valid @RequestBody ServiceTermsRequest request) {

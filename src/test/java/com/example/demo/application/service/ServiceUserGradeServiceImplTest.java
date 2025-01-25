@@ -3,6 +3,7 @@ package com.example.demo.application.service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
+import com.example.demo.application.service.impl.ServiceUserGradeServiceImpl;
 import com.example.demo.dto.PageResponse;
 import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.service.ServiceUserGradeDto;

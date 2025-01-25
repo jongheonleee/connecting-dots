@@ -1,7 +1,7 @@
 package com.example.demo.presentation.board;
 
 
-import com.example.demo.application.board.impl.BoardCategoryServiceImpl;
+import com.example.demo.application.board.BoardCategoryService;
 import com.example.demo.dto.board.BoardCategoryRequest;
 import com.example.demo.dto.board.BoardCategoryResponse;
 import jakarta.validation.Valid;
@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/board-category")
 public class BoardCategoryController {
 
-    private final BoardCategoryServiceImpl boardCategoryService;
+    private final BoardCategoryService boardCategoryService;
 
     @PostMapping("/create")
     public ResponseEntity<BoardCategoryResponse> create(@Valid @RequestBody BoardCategoryRequest request) {

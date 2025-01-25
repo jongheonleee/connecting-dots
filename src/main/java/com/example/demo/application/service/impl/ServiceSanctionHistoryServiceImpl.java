@@ -1,4 +1,4 @@
-package com.example.demo.application.service;
+package com.example.demo.application.service.impl;
 
 import com.example.demo.dto.PageResponse;
 import com.example.demo.dto.SearchCondition;
@@ -7,7 +7,6 @@ import com.example.demo.dto.service.ServiceSanctionHistoryRequest;
 import com.example.demo.dto.service.ServiceSanctionHistoryResponse;
 import com.example.demo.global.error.exception.business.service.ServiceSanctionHistoryAlreadyExistsException;
 import com.example.demo.global.error.exception.business.service.ServiceSanctionHistoryNotFoundException;
-import com.example.demo.global.error.exception.business.user.UserNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
 import com.example.demo.repository.mybatis.service.ServiceSanctionHistoryDaoImpl;
 import com.example.demo.utils.CustomFormatter;

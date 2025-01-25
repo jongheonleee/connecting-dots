@@ -6,7 +6,6 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import com.example.demo.application.board.impl.BoardImgServiceImpl;
-import com.example.demo.application.board.impl.FileServiceImpl;
 import com.example.demo.dto.board.BoardImgDto;
 import com.example.demo.dto.board.BoardImgRequest;
 import com.example.demo.global.error.exception.business.board.BoardImageNotFoundException;
@@ -30,13 +29,13 @@ import org.springframework.web.multipart.MultipartFile;
 class BoardImgServiceImplTest {
 
     @InjectMocks
-    private BoardImgServiceImpl boardImgService;
+    private BoardImgService boardImgService;
 
     @Mock
     private BoardImgDaoImpl boardImgDao;
 
     @Mock
-    private FileServiceImpl fileService;
+    private FileService fileService;
 
     @Mock
     private CustomFormatter customFormatter;

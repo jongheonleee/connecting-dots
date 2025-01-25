@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import com.example.demo.application.service.impl.ServiceSanctionHistoryServiceImpl;
 import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.service.ServiceSanctionHistoryDto;
 import com.example.demo.dto.service.ServiceSanctionHistoryRequest;

@@ -31,7 +31,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ServiceTermsServiceImplTest {
 
     @InjectMocks
-    private ServiceTermsServiceImpl serviceTermsService;
+    private ServiceTermsService serviceTermsService;
 
     @Mock
     private ServiceTermsDaoImpl serviceTermsDao;

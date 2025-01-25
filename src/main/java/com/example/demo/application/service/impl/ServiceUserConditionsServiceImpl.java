@@ -1,6 +1,7 @@
-package com.example.demo.application.service;
+package com.example.demo.application.service.impl;
 
 
+import com.example.demo.application.service.ServiceUserConditionsService;
 import com.example.demo.dto.PageResponse;
 import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.service.ServiceUserConditionsDetailResponse;
@@ -13,7 +14,6 @@ import com.example.demo.global.error.exception.technology.database.NotApplyOnDbm
 import com.example.demo.repository.mybatis.service.ServiceUserConditionsDaoImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.List;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,20 +22,23 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ServiceUserConditionsServiceImpl {
+public class ServiceUserConditionsServiceImpl implements ServiceUserConditionsService {
 
     private final ServiceUserConditionsDaoImpl serviceUserConditionsDao;
     private final CustomFormatter formatter;
 
 
+    @Override
     public int count() {
         return serviceUserConditionsDao.count();
     }
 
+    @Override
     public int countBySearchCondition(SearchCondition sc) {
         return serviceUserConditionsDao.countBySearchCondition(sc);
     }
 
+    @Override
     public ServiceUserConditionsResponse create(ServiceUserConditionsRequest request) {
         boolean exists = serviceUserConditionsDao.existsByCondsCode(request.getConds_code());
         if (exists) {
@@ -55,6 +58,7 @@ public class ServiceUserConditionsServiceImpl {
                                        .toResponse();
     }
 
+    @Override
     public ServiceUserConditionsResponse readByCondsCode(String conds_code) {
         boolean exists = serviceUserConditionsDao.existsByCondsCode(conds_code);
         if (!exists) {
@@ -66,6 +70,7 @@ public class ServiceUserConditionsServiceImpl {
                                        .toResponse();
     }
 
+    @Override
     public PageResponse<ServiceUserConditionsResponse> readBySearchCondition(SearchCondition sc) {
         int totalCnt = serviceUserConditionsDao.countBySearchCondition(sc);
         List<ServiceUserConditionsResponse> responses = serviceUserConditionsDao.selectBySearchCondition(sc)
@@ -75,6 +80,7 @@ public class ServiceUserConditionsServiceImpl {
         return new PageResponse<>(totalCnt, sc, responses);
     }
 
+    @Override
     public ServiceUserConditionsDetailResponse readByCondsCodeForUserConditions(String conds_code) {
         boolean exists = serviceUserConditionsDao.existsByCondsCode(conds_code);
         if (!exists) {
@@ -86,6 +92,7 @@ public class ServiceUserConditionsServiceImpl {
                                        .toResponse();
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void modify(ServiceUserConditionsRequest request) {
         boolean exists = serviceUserConditionsDao.existsByCondsCodeForUpdate(request.getConds_code());
@@ -104,6 +111,7 @@ public class ServiceUserConditionsServiceImpl {
 
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void modifyChkUse(ServiceUserConditionsRequest request) {
         boolean exists = serviceUserConditionsDao.existsByCondsCodeForUpdate(request.getConds_code());
@@ -122,6 +130,7 @@ public class ServiceUserConditionsServiceImpl {
 
     }
 
+    @Override
     public void removeByCondsCode(String conds_code) {
         int rowCnt = serviceUserConditionsDao.deleteByCondsCode(conds_code);
 
@@ -131,6 +140,7 @@ public class ServiceUserConditionsServiceImpl {
         }
     }
 
+    @Override
     public void remove(Integer seq) {
         int rowCnt = serviceUserConditionsDao.delete(seq);
 
@@ -140,6 +150,7 @@ public class ServiceUserConditionsServiceImpl {
         }
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void removeAll() {
         int totalCnt = serviceUserConditionsDao.count();

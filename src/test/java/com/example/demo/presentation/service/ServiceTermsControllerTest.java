@@ -9,7 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-import com.example.demo.application.service.ServiceTermsServiceImpl;
+import com.example.demo.application.service.impl.ServiceTermsServiceImpl;
 import com.example.demo.dto.service.ServiceTermsRequest;
 import com.example.demo.dto.service.ServiceTermsResponse;
 import com.example.demo.global.error.GlobalExceptionHandler;

@@ -1,7 +1,7 @@
 package com.example.demo.presentation.service;
 
 
-import com.example.demo.application.service.ServiceUserConditionsServiceImpl;
+import com.example.demo.application.service.ServiceUserConditionsService;
 import com.example.demo.dto.PageResponse;
 import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.service.ServiceUserConditionsDetailResponse;
@@ -9,11 +9,9 @@ import com.example.demo.dto.service.ServiceUserConditionsRequest;
 import com.example.demo.dto.service.ServiceUserConditionsResponse;
 import jakarta.validation.Valid;
 import java.net.URI;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -29,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/service-user-conditions")
 public class ServiceUserConditionsController {
 
-    private final ServiceUserConditionsServiceImpl serviceUserConditionsService;
+    private final ServiceUserConditionsService serviceUserConditionsService;
 
     @PostMapping("/create")
     public ResponseEntity<ServiceUserConditionsResponse> create(@Valid @RequestBody ServiceUserConditionsRequest request) {

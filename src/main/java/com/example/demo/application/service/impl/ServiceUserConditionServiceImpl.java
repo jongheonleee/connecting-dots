@@ -1,5 +1,6 @@
-package com.example.demo.application.service;
+package com.example.demo.application.service.impl;
 
+import com.example.demo.application.service.ServiceUserConditionService;
 import com.example.demo.dto.service.ServiceUserConditionDto;
 import com.example.demo.dto.service.ServiceUserConditionRequest;
 import com.example.demo.dto.service.ServiceUserConditionResponse;
@@ -17,15 +18,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ServiceUserConditionServiceImpl {
+public class ServiceUserConditionServiceImpl implements ServiceUserConditionService {
 
     private final ServiceUserConditionDaoImpl serviceUserConditionDao;
     private final CustomFormatter formatter;
 
+    @Override
     public int count() {
         return serviceUserConditionDao.count();
     }
 
+    @Override
     public ServiceUserConditionResponse create(ServiceUserConditionRequest request) {
         // 이미 존재하는 키인지 확인
         boolean exists = serviceUserConditionDao.existsByCondCode(request.getCond_code());
@@ -49,6 +52,7 @@ public class ServiceUserConditionServiceImpl {
                                       .toResponse();
     }
 
+    @Override
     public ServiceUserConditionResponse readByCondCode(String cond_code) {
         // 존재하는 키인지 확인
         boolean exists = serviceUserConditionDao.existsByCondCode(cond_code);
@@ -63,6 +67,7 @@ public class ServiceUserConditionServiceImpl {
                                       .toResponse();
     }
 
+    @Override
     public List<ServiceUserConditionResponse> readAll() {
         // 전체 조회
         List<ServiceUserConditionDto> dtos = serviceUserConditionDao.selectAll();
@@ -72,6 +77,7 @@ public class ServiceUserConditionServiceImpl {
                    .toList();
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void modify(ServiceUserConditionRequest request) {
         // 존재하는 키인지 확인
@@ -92,6 +98,7 @@ public class ServiceUserConditionServiceImpl {
         }
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void modifyChkUse(ServiceUserConditionRequest request) {
         // 존재하는 키인지 확인
@@ -112,6 +119,7 @@ public class ServiceUserConditionServiceImpl {
         }
     }
 
+    @Override
     public void remove(String cond_code) {
         // 삭제 처리
         int rowCnt = serviceUserConditionDao.delete(cond_code);
@@ -122,6 +130,7 @@ public class ServiceUserConditionServiceImpl {
         }
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void removeAll() {
         // 전체 삭제 처리

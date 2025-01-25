@@ -1,5 +1,6 @@
 package com.example.demo.application.board.impl;
 
+import com.example.demo.application.board.BoardChangeHistoryService;
 import com.example.demo.dto.board.BoardChangeHistoryDto;
 import com.example.demo.dto.board.BoardChangeHistoryRequest;
 import com.example.demo.dto.board.BoardChangeHistoryResponse;
@@ -18,22 +19,25 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class BoardChangeHistoryServiceImpl {
+public class BoardChangeHistoryServiceImpl implements BoardChangeHistoryService {
 
     private final BoardChangeHistoryDaoImpl boardChangeHistoryDao;
     private final BoardDaoImpl boardDao;
     private final CustomFormatter customFormatter;
 
+    @Override
     public int count() {
         return boardChangeHistoryDao.count();
     }
 
+    @Override
     public BoardChangeHistoryResponse readBySeq(final Integer seq) {
         checkBoardChangeHistoryExists(seq);
         var found = boardChangeHistoryDao.selectBySeq(seq);
         return createResponse(found);
     }
 
+    @Override
     public List<BoardChangeHistoryResponse> readByBno(final Integer bno) {
         checkBoardExists(bno);
         return boardChangeHistoryDao.selectByBno(bno)
@@ -43,6 +47,7 @@ public class BoardChangeHistoryServiceImpl {
     }
 
 
+    @Override
     public List<BoardChangeHistoryResponse> readAll() {
         return boardChangeHistoryDao.selectAll()
                                     .stream()
@@ -50,8 +55,10 @@ public class BoardChangeHistoryServiceImpl {
                                     .toList();
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
-    public BoardChangeHistoryResponse renewBoardChangeHistory(final Integer bno, final BoardChangeHistoryRequest request) {
+    public BoardChangeHistoryResponse renewBoardChangeHistory(final Integer bno,
+            final BoardChangeHistoryRequest request) {
         checkBoardExists(bno);
         checkBoardChangeHistoryExistsByBnoForUpdate(bno);
 
@@ -63,8 +70,10 @@ public class BoardChangeHistoryServiceImpl {
         return createResponse(newDto);
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
-    public BoardChangeHistoryResponse createInit(final Integer bno, final BoardChangeHistoryRequest request) {
+    public BoardChangeHistoryResponse createInit(final Integer bno,
+            final BoardChangeHistoryRequest request) {
         checkBoardExists(bno);
         checkBoardChangeHistoryAlreadyExists(bno);
         var newDto = createDto(bno, request);
@@ -73,11 +82,13 @@ public class BoardChangeHistoryServiceImpl {
     }
 
 
+    @Override
     public void removeBySeq(final Integer seq) {
         checkBoardChangeHistoryExists(seq);
         checkApplied(1, boardChangeHistoryDao.deleteBySeq(seq));
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void removeByBno(final Integer bno) {
         checkBoardExists(bno);
@@ -85,6 +96,7 @@ public class BoardChangeHistoryServiceImpl {
         checkApplied(boardChangeHistoryDao.countByBno(bno), boardChangeHistoryDao.deleteByBno(bno));
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void removeAll() {
         checkApplied(boardChangeHistoryDao.count(), boardChangeHistoryDao.deleteAll());

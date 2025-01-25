@@ -1,5 +1,6 @@
 package com.example.demo.application.board.impl;
 
+import com.example.demo.application.board.BoardStatusService;
 import com.example.demo.domain.Code;
 import com.example.demo.dto.board.BoardStatusDto;
 import com.example.demo.dto.board.BoardStatusRequest;
@@ -19,13 +20,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class BoardStatusServiceImpl {
+public class BoardStatusServiceImpl implements BoardStatusService {
 
     private final BoardDaoImpl boardDao;
     private final BoardStatusDaoImpl boardStatusDao;
     private final CustomFormatter formatter;
 
 
+    @Override
     public BoardStatusResponse create(final BoardStatusRequest request) {
         var statCode = Code.of(request.getStat_code());
         checkBoardExists(request.getBno());
@@ -35,6 +37,7 @@ public class BoardStatusServiceImpl {
     }
 
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void renewState(final BoardStatusRequest request) {
         checkBoardStatusExists(request);
@@ -50,12 +53,14 @@ public class BoardStatusServiceImpl {
     }
 
 
+    @Override
     public void removeBySeq(final Integer seq) {
         int rowCnt = boardStatusDao.deleteBySeq(seq);
         checkApplied(1, rowCnt);
     }
 
 
+    @Override
     public List<BoardStatusResponse> readByBno(final Integer bno) {
         checkBoardExists(bno);
         List<BoardStatusDto> found = boardStatusDao.selectByBno(bno);
@@ -64,12 +69,14 @@ public class BoardStatusServiceImpl {
                     .toList();
     }
 
+    @Override
     public BoardStatusResponse readByBnoAtPresent(final Integer bno) {
         checkBoardExists(bno);
         var found = boardStatusDao.selectByBnoAtPresent(bno);
         return createResponse(found);
     }
 
+    @Override
     public List<BoardStatusResponse> readAll() {
         List<BoardStatusDto> found = boardStatusDao.selectAll();
         return found.stream()
@@ -77,6 +84,7 @@ public class BoardStatusServiceImpl {
                     .toList();
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void removeByBno(final Integer bno) {
         checkBoardExists(bno);
@@ -85,6 +93,7 @@ public class BoardStatusServiceImpl {
         checkApplied(totalCnt, rowCnt);
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void removeAll() {
         int totalCnt = boardStatusDao.count();
@@ -92,6 +101,7 @@ public class BoardStatusServiceImpl {
         checkApplied(totalCnt, rowCnt);
     }
 
+    @Override
     public BoardStatusResponse readBySeq(final Integer seq) {
         boolean exists = boardStatusDao.existsBySeq(seq);
 

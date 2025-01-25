@@ -7,10 +7,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.example.demo.application.board.impl.BoardChangeHistoryServiceImpl;
-import com.example.demo.application.board.impl.BoardImgServiceImpl;
 import com.example.demo.application.board.impl.BoardServiceImpl;
-import com.example.demo.application.board.impl.BoardStatusServiceImpl;
 import com.example.demo.dto.board.BoardDto;
 import com.example.demo.dto.board.BoardRequest;
 import com.example.demo.dto.board.BoardStatusResponse;
@@ -54,13 +51,13 @@ class BoardServiceCreateRetryTest {
 
 
     @MockBean
-    private BoardImgServiceImpl boardImgService;
+    private BoardImgService boardImgService;
 
     @MockBean
-    private BoardStatusServiceImpl boardStatusService;
+    private BoardStatusService boardStatusService;
 
     @MockBean
-    private BoardChangeHistoryServiceImpl boardChangeHistoryService;
+    private BoardChangeHistoryService boardChangeHistoryService;
 
     @MockBean
     private CustomFormatter formatter;

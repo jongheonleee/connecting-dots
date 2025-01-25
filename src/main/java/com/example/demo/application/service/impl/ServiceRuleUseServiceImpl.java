@@ -1,5 +1,6 @@
-package com.example.demo.application.service;
+package com.example.demo.application.service.impl;
 
+import com.example.demo.application.service.ServiceRuleUseService;
 import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.service.ServiceRuleUseDto;
 import com.example.demo.dto.service.ServiceRuleUseRequest;
@@ -19,19 +20,22 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ServiceRuleUseServiceImpl {
+public class ServiceRuleUseServiceImpl implements ServiceRuleUseService {
 
     private final ServiceRuleUseDaoImpl serviceRuleUseDao;
     private final CustomFormatter formatter;
 
+    @Override
     public int count() {
         return serviceRuleUseDao.count();
     }
 
+    @Override
     public int countByCode(String code) {
         return serviceRuleUseDao.countByCode(code);
     }
 
+    @Override
     public ServiceRuleUseResponse create(ServiceRuleUseRequest request) {
         boolean exists = serviceRuleUseDao.existsByRuleStat(request.getRule_stat());
         if (exists) {
@@ -52,6 +56,7 @@ public class ServiceRuleUseServiceImpl {
                                 .toResponse();
     }
 
+    @Override
     public ServiceRuleUseResponse readByRuleStat(String rule_stat) {
         boolean exists = serviceRuleUseDao.existsByRuleStat(rule_stat);
         if (!exists) {
@@ -64,6 +69,7 @@ public class ServiceRuleUseServiceImpl {
     }
 
 
+    @Override
     public List<ServiceRuleUseResponse> readByCode(String code) {
         List<ServiceRuleUseDto> serviceRuleUseDtos = serviceRuleUseDao.selectByCode(code);
         return serviceRuleUseDtos.stream()
@@ -71,6 +77,7 @@ public class ServiceRuleUseServiceImpl {
                                  .toList();
     }
 
+    @Override
     public PageResponse<ServiceRuleUseResponse> readBySearchCondition(SearchCondition sc) {
         int totalCnt = serviceRuleUseDao.countBySearchCondition(sc);
         List<ServiceRuleUseDto> serviceRuleUseDtos = serviceRuleUseDao.selectBySearchCondition(sc);
@@ -81,6 +88,7 @@ public class ServiceRuleUseServiceImpl {
     }
 
 
+    @Override
     public List<ServiceRuleUseResponse> readAll() {
         List<ServiceRuleUseDto> dtos = serviceRuleUseDao.selectAll();
         return dtos.stream()
@@ -88,6 +96,7 @@ public class ServiceRuleUseServiceImpl {
                    .toList();
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void modify(ServiceRuleUseRequest request) {
         boolean exists = serviceRuleUseDao.existsByRuleStatForUpdate(request.getRule_stat());
@@ -105,6 +114,7 @@ public class ServiceRuleUseServiceImpl {
         }
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void modifyChkUse(ServiceRuleUseRequest request) {
         boolean exists = serviceRuleUseDao.existsByRuleStatForUpdate(request.getRule_stat());
@@ -122,6 +132,7 @@ public class ServiceRuleUseServiceImpl {
         }
     }
 
+    @Override
     public void removeByRuleStat(String rule_stat) {
         int rowCnt = serviceRuleUseDao.deleteByRuleStat(rule_stat);
 
@@ -131,6 +142,7 @@ public class ServiceRuleUseServiceImpl {
         }
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void removeByCode(String code) {
         int totalCnt = serviceRuleUseDao.countByCode(code);
@@ -143,6 +155,7 @@ public class ServiceRuleUseServiceImpl {
     }
 
 
+    @Override
     @Transactional
     public void removeAll() {
         int totalCnt = serviceRuleUseDao.count();
