@@ -1,6 +1,6 @@
 //package com.example.demo.presentation.user;
 //
-//import com.example.demo.application.board.BoardServiceImpl;
+//import com.example.demo.application.board.impl.BoardServiceImpl;
 //import com.example.demo.dto.user.UserFormDto;
 //import com.example.demo.exception.user.UserAlreadyExistsException;
 //import com.example.demo.exception.user.UserFormInvalidException;

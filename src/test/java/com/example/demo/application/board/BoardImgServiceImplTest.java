@@ -5,6 +5,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
+import com.example.demo.application.board.impl.BoardImgServiceImpl;
+import com.example.demo.application.board.impl.FileServiceImpl;
 import com.example.demo.dto.board.BoardImgDto;
 import com.example.demo.dto.board.BoardImgRequest;
 import com.example.demo.global.error.exception.business.board.BoardImageNotFoundException;

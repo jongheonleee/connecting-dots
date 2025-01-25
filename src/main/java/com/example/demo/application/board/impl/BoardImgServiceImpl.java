@@ -1,4 +1,4 @@
-package com.example.demo.application.board;
+package com.example.demo.application.board.impl;
 
 import static com.example.demo.global.error.exception.ErrorCode.*;
 import static com.example.demo.global.error.exception.ErrorCode.FILE_UPLOAD_ERROR;

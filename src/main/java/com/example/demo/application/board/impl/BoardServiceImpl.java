@@ -1,4 +1,4 @@
-package com.example.demo.application.board;
+package com.example.demo.application.board.impl;
 
 import static com.example.demo.domain.Code.BOARD_CREATE;
 import static com.example.demo.domain.Code.BOARD_MODIFY;

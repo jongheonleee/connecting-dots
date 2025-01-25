@@ -54,6 +54,8 @@ public enum ErrorCode {
     // 댓글, 대댓글
     COMMENT_NOT_FOUND(404, "EC2001", "해당 댓글을 찾을 수 없습니다"),
     COMMENT_CHANGE_HISTORY_NOT_FOUND(404, "EC2002", "해당 댓글 변경 이력을 찾을 수 없습니다"),
+    REPLY_CHANGE_HISTORY_NOT_FOUND(404, "EC2003", "해당 대댓글 변경 이력을 찾을 수 없습니다"),
+    REPLY_NOT_FOUND(404, "EC2004", "해당 대댓글을 찾을 수 없습니다"),
     // 관리자
 
     // 인공지능

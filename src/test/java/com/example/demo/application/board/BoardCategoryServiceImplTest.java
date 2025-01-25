@@ -3,6 +3,7 @@ package com.example.demo.application.board;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
+import com.example.demo.application.board.impl.BoardCategoryServiceImpl;
 import com.example.demo.dto.board.BoardCategoryDto;
 import com.example.demo.dto.board.BoardCategoryRequest;
 import com.example.demo.dto.board.BoardCategoryResponse;

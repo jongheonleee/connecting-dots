@@ -1,8 +1,6 @@
 package com.example.demo.repository.mybatis.reply;
 
-import com.example.demo.dto.ord_reply.ReplyRequestDto;
-import com.example.demo.dto.ord_reply.ReplyResponseDto;
-import com.example.demo.dto.ord_reply.ReplyUpdateRequestDto;
+
 import com.example.demo.dto.reply.ReplyDto;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +22,10 @@ public class ReplyDaoImpl {
 
     public int countByBno(Integer bno) {
         return session.selectOne(namespace + "countByBno", bno);
+    }
+
+    public int countByCno(Integer cno) {
+        return session.selectOne(namespace + "countByCno", cno);
     }
 
     public boolean existsByRcno(Integer rcno) {

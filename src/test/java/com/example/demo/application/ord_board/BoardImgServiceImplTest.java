@@ -2,7 +2,7 @@
 //
 //import static org.junit.jupiter.api.Assertions.*;
 //
-//import com.example.demo.application.board.BoardImgServiceImpl;
+//import com.example.demo.application.board.impl.BoardImgServiceImpl;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.Test;
 //import org.springframework.beans.factory.annotation.Autowired;

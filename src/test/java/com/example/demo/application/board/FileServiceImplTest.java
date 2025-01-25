@@ -2,6 +2,7 @@ package com.example.demo.application.board;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.example.demo.application.board.impl.FileServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

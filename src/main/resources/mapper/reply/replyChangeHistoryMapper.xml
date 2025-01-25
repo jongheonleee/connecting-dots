@@ -21,6 +21,12 @@
     WHERE seq = #{seq}
   </select>
 
+  <select id="countByRcno" parameterType="int" resultType="int">
+    SELECT COUNT(*)
+    FROM reply_change_history
+    WHERE rcno = #{rcno}
+  </select>
+
   <select id="existsBySeqForUpdate" parameterType="int" resultType="boolean">
     SELECT COUNT(*) > 0
     FROM reply_change_history

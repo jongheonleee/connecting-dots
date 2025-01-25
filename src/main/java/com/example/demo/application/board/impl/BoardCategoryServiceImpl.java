@@ -1,4 +1,4 @@
-package com.example.demo.application.board;
+package com.example.demo.application.board.impl;
 
 import com.example.demo.domain.BoardCategory;
 import com.example.demo.dto.board.BoardCategoryDto;

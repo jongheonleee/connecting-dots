@@ -19,6 +19,10 @@ public class ReplyChangeHistoryDaoImpl {
         return session.selectOne(namespace + "count");
     }
 
+    public int countByRcno(Integer rcno) {
+        return session.selectOne(namespace + "countByRcno", rcno);
+    }
+
 
     public int deleteAll() {
         return session.delete(namespace + "deleteAll");

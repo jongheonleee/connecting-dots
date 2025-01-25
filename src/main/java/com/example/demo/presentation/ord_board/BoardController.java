@@ -8,7 +8,7 @@
 //import com.example.demo.dto.SearchCondition;
 //import com.example.demo.dto.board.BoardFormDto;
 //import com.example.demo.dto.category.CategoryDto;
-//import com.example.demo.application.board.BoardServiceImpl;
+//import com.example.demo.application.board.impl.BoardServiceImpl;
 //import com.example.demo.validator.board.BoardValidator;
 //import jakarta.validation.Valid;
 //import java.util.List;

@@ -34,6 +34,8 @@ public class ReplyChangeHistoryRequest {
     @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$", message = "적용 시간은 yyyy-MM-dd HH:mm:ss 형식이어야 합니다.")
     private String appl_time;
 
+    private String comt;
+
     @NotNull(message = "cno는 필수값 입니다.")
     private Integer cno;
 

@@ -1,7 +1,7 @@
 package com.example.demo.presentation.board;
 
 
-import com.example.demo.application.board.BoardCategoryServiceImpl;
+import com.example.demo.application.board.impl.BoardCategoryServiceImpl;
 import com.example.demo.dto.board.BoardCategoryRequest;
 import com.example.demo.dto.board.BoardCategoryResponse;
 import jakarta.validation.Valid;

@@ -7,6 +7,11 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.example.demo.application.board.impl.BoardCategoryServiceImpl;
+import com.example.demo.application.board.impl.BoardChangeHistoryServiceImpl;
+import com.example.demo.application.board.impl.BoardImgServiceImpl;
+import com.example.demo.application.board.impl.BoardServiceImpl;
+import com.example.demo.application.board.impl.BoardStatusServiceImpl;
 import com.example.demo.application.code.CommonCodeService;
 import com.example.demo.dto.board.BoardCategoryResponse;
 import com.example.demo.dto.board.BoardChangeHistoryRequest;

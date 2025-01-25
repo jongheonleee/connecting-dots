@@ -1,4 +1,4 @@
-package com.example.demo.application.board;
+package com.example.demo.application.board.impl;
 
 import java.io.File;
 import java.io.FileOutputStream;

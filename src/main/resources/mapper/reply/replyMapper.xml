@@ -16,6 +16,12 @@
     WHERE bno = #{bno}
   </select>
 
+  <select id="countByCno" parameterType="int" resultType="int">
+    SELECT COUNT(*)
+    FROM reply
+    WHERE cno = #{cno}
+  </select>
+
   <select id="existsByRcno" parameterType="int" resultType="boolean">
     SELECT COUNT(*) > 0
     FROM reply

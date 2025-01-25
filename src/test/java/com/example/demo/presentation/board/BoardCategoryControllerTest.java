@@ -22,7 +22,7 @@ import com.example.demo.global.error.exception.business.board.BoardCategoryAlrea
 import com.example.demo.global.error.exception.business.board.BoardCategoryNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
 import org.springframework.security.test.context.support.WithMockUser;
-import com.example.demo.application.board.BoardCategoryServiceImpl;
+import com.example.demo.application.board.impl.BoardCategoryServiceImpl;
 import com.example.demo.dto.board.BoardCategoryResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;

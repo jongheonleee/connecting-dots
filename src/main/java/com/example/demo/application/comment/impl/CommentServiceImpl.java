@@ -2,7 +2,7 @@ package com.example.demo.application.comment.impl;
 
 import com.example.demo.application.comment.CommentChangeHistoryService;
 import com.example.demo.application.comment.CommentService;
-import com.example.demo.application.reply.ReplyServiceImpl;
+import com.example.demo.application.reply.ReplyService;
 import com.example.demo.dto.comment.CommentChangeHistoryRequest;
 import com.example.demo.dto.comment.CommentDetailResponse;
 import com.example.demo.dto.comment.CommentDto;
@@ -27,7 +27,7 @@ public class CommentServiceImpl implements CommentService {
 
     private final BoardDaoImpl boardDao;
     private final CommentDaoImpl commentDao;
-    private final ReplyServiceImpl replyService;
+    private final ReplyService replyService;
     private final CommentChangeHistoryService commentChangeHistoryService;
     private final CustomFormatter formatter;
 
