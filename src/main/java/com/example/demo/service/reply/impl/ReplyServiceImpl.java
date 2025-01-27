@@ -34,6 +34,18 @@ public class ReplyServiceImpl implements ReplyService {
     }
 
     @Override
+    public void increaseLikeCnt(final Integer rcno) {
+        checkExistsForUpdate(rcno);
+        checkApplied(1, replyDao.increaseRecoCnt(rcno));
+    }
+
+    @Override
+    public void increaseDislikeCnt(final Integer rcno) {
+        checkExistsForUpdate(rcno);
+        checkApplied(1, replyDao.increaseNotRecoCnt(rcno));
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void modify(final ReplyRequest request) {
         checkExistsForUpdate(request.getRcno());

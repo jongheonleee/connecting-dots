@@ -18,6 +18,10 @@ public interface ReplyService {
 
     void removeAll();
 
+    void increaseLikeCnt(Integer rcno);
+
+    void increaseDislikeCnt(Integer rcno);
+
     ReplyResponse readByRcno(Integer rcno);
 
     List<ReplyResponse> readByCno(Integer cno);
