@@ -7,7 +7,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.example.demo.service.board.impl.BoardServiceImpl;
 import com.example.demo.dto.board.BoardDto;
 import com.example.demo.dto.board.BoardRequest;
 import com.example.demo.dto.board.BoardStatusResponse;
@@ -44,7 +43,7 @@ class BoardServiceCreateRetryTest {
 
 
     @Autowired
-    private BoardServiceImpl sut;
+    private BoardService sut;
 
     @MockBean
     private BoardDaoImpl boardDao;

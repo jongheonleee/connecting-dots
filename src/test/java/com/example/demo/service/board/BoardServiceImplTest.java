@@ -16,7 +16,6 @@ import com.example.demo.dto.board.BoardMainResponse;
 import com.example.demo.dto.board.BoardUpdateRequest;
 import com.example.demo.dto.comment.CommentDetailResponse;
 import com.example.demo.repository.mybatis.board.BoardCategoryDaoImpl;
-import com.example.demo.service.board.impl.BoardServiceImpl;
 import com.example.demo.service.code.CommonCodeService;
 import com.example.demo.dto.board.BoardCategoryResponse;
 import com.example.demo.dto.board.BoardChangeHistoryRequest;
@@ -58,7 +57,7 @@ import org.springframework.web.multipart.MultipartFile;
 class BoardServiceImplTest {
 
     @InjectMocks
-    private BoardServiceImpl sut;
+    private BoardService sut;
 
     @Mock
     private BoardDaoImpl boardDao;

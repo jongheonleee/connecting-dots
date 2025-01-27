@@ -7,11 +7,11 @@ import static com.example.demo.domain.Code.BOARD_MODIFY;
 import com.example.demo.service.board.BoardCategoryService;
 import com.example.demo.service.board.BoardChangeHistoryService;
 import com.example.demo.service.board.BoardImgService;
+import com.example.demo.service.board.BoardService;
 import com.example.demo.service.board.BoardStatusService;
 import com.example.demo.domain.Code;
 import com.example.demo.dto.PageResponse;
 import com.example.demo.dto.SearchCondition;
-import com.example.demo.dto.board.BoardCategoryResponse;
 import com.example.demo.dto.board.BoardChangeHistoryRequest;
 import com.example.demo.dto.board.BoardDetailResponse;
 import com.example.demo.dto.board.BoardDto;
@@ -58,29 +58,30 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class BoardServiceImpl {
+public class BoardServiceImpl implements BoardService {
 
     private static final int MAX_RETRY = 10;
     private static final int RETRY_DELAY = 5_000;
 
-    private final BoardDaoImpl boardDao;// [✅]
-    private final BoardCategoryDaoImpl boardCategoryDao;// [✅]
-    private final BoardImgService boardImgService; // -> 게시판 생성, 조회시 이미지 처리[✅]
-    private final BoardStatusService boardStatusService; // -> 게시판 상태 변경시 적용[✅]
-    private final BoardChangeHistoryService boardChangeHistoryService; // -> 게시판 변경 이력 기록[✅]
-    private final BoardCategoryService boardCategoryService; // -> 게시판 카테고리 정보[✅]
+    private final BoardDaoImpl boardDao;
+    private final BoardCategoryDaoImpl boardCategoryDao;
+    private final BoardImgService boardImgService;
+    private final BoardStatusService boardStatusService;
+    private final BoardChangeHistoryService boardChangeHistoryService;
+    private final BoardCategoryService boardCategoryService;
     private final ReplyService replyService;
-
-    //    private final UserServiceImpl userService; -> 게시판과 관련된 사용자 정보[]
-    private final CommentService commentService; // -> 게시판과 관련된 댓글 정보[✅]
+    //    private final UserService userService; -> 게시판과 관련된 사용자 정보[]
+    private final CommentService commentService;
     private final CustomFormatter formatter;
 
 
+    @Override
     public int count() {
         return boardDao.count();
     }
 
     // 핵심 데이터는 재시도 복구 처리 대상
+    @Override
     @Retryable(
             value = { // exclude 외의 런타임 예외는 재시도 복구 처리
                     RuntimeException.class
@@ -104,6 +105,7 @@ public class BoardServiceImpl {
         return createResponse(boardDto);
     }
 
+    @Override
     @Recover
     public BoardResponse recover(RuntimeException e) {
         log.error("[BOARD] 게시글 예외 복구를 위해 재시도를 했지만 실패했습니다. 최대 재시도 횟수 : {}, 재시도 간격 : {}ms", MAX_RETRY, RETRY_DELAY);
@@ -111,6 +113,7 @@ public class BoardServiceImpl {
         throw new RetryFailedException();
     }
 
+    @Override
     @Transactional(readOnly = true)
     public PageResponse readForMain(final Integer page, final Integer pageSize) {
         int totalCnt = boardDao.count();
@@ -123,8 +126,10 @@ public class BoardServiceImpl {
         return new PageResponse<BoardMainResponse>(totalCnt, sc, responses);
     }
 
+    @Override
     @Transactional(readOnly = true)
-    public PageResponse readByCategoryForMain(final String cateCode, final Integer page, final Integer pageSize) {
+    public PageResponse readByCategoryForMain(final String cateCode, final Integer page,
+            final Integer pageSize) {
         checkBoardCategoryExists(cateCode);
         int totalCnt = boardDao.countByCategory(cateCode);
         var map = createPageInfoWithCategory(cateCode, page, pageSize);
@@ -138,6 +143,7 @@ public class BoardServiceImpl {
 
 
 
+    @Override
     @Transactional(readOnly = true)
     public PageResponse readBySearchConditionForMain(SearchCondition sc) {
         int totalCnt = boardDao.countBySearchCondition(sc);
@@ -148,6 +154,7 @@ public class BoardServiceImpl {
         return new PageResponse<BoardMainResponse>(totalCnt, sc, responses);
     }
 
+    @Override
     @Transactional(readOnly = true)
     public BoardDetailResponse readDetailByBno(final Integer bno) {
         // 게시글이 존재하는지 확인
@@ -163,20 +170,35 @@ public class BoardServiceImpl {
         List<BoardImgResponse> boardImgResponses = boardImgService.readByBno(bno);
         List<CommentDetailResponse> commentDetailResponses = commentService.readByBno(bno);
         // 조회수를 증가시킨다
-        var dto = createDtoForIncreaseView(bno);
+        var dto = createDtoForIncrease(bno);
         boardDao.increaseViewCnt(dto);
         // 응답 데이터를 반환
         return BoardDetailResponse.of(boardDto, boardCategoryResponse, boardImgResponses, commentDetailResponses);
     }
 
+    @Override
+    public void increaseReco(final Integer bno) {
+        checkBoardExists(bno);
+        var dto = createDtoForIncrease(bno);
+        boardDao.increaseRecoCnt(dto);
+    }
+
+    @Override
+    public void increaseNotReco(final Integer bno) {
+        checkBoardExists(bno);
+        var dto = createDtoForIncrease(bno);
+        boardDao.increaseNotRecoCnt(dto);
+    }
 
 
+    @Override
     @Transactional(readOnly = true)
     public PageResponse readByUserSeqForMain() {
         return null;
     }
 
 
+    @Override
     @Retryable(
             value = { // exclude 외의 런타임 예외는 재시도 복구 처리
                     RuntimeException.class
@@ -218,6 +240,7 @@ public class BoardServiceImpl {
     }
 
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void remove(final Integer bno) {
         // 댓글과 대댓글을 삭제한다
@@ -401,7 +424,7 @@ public class BoardServiceImpl {
         }
     }
 
-    private BoardDto createDtoForIncreaseView(Integer bno) {
+    private BoardDto createDtoForIncrease(Integer bno) {
         return BoardDto.builder()
                 .bno(bno)
                 .up_user_seq(formatter.getManagerSeq())

@@ -37,9 +37,7 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.http.MediaType;
 
-
-
-@WithMockUser // 시큐리티 권한 처리 무시
+@WithMockUser
 @WebMvcTest(BoardCategoryController.class)
 class BoardCategoryControllerTest {
 
