@@ -10,7 +10,6 @@ public interface CommentService {
 
     CommentResponse create(CommentRequest request);
 
-    @Transactional(rollbackFor = Exception.class)
     void modify(CommentRequest request);
 
     void increaseLikeCnt(Integer cno);
@@ -19,10 +18,8 @@ public interface CommentService {
 
     void remove(Integer cno);
 
-    @Transactional(rollbackFor = Exception.class)
     void removeByBno(Integer bno);
 
-    @Transactional(rollbackFor = Exception.class)
     void removeAll();
 
     CommentResponse readByCno(Integer cno);
