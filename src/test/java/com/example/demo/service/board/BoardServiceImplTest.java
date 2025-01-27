@@ -7,6 +7,15 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.example.demo.dto.PageResponse;
+import com.example.demo.dto.SearchCondition;
+import com.example.demo.dto.board.BoardDetailResponse;
+import com.example.demo.dto.board.BoardImgResponse;
+import com.example.demo.dto.board.BoardMainDto;
+import com.example.demo.dto.board.BoardMainResponse;
+import com.example.demo.dto.board.BoardUpdateRequest;
+import com.example.demo.dto.comment.CommentDetailResponse;
+import com.example.demo.repository.mybatis.board.BoardCategoryDaoImpl;
 import com.example.demo.service.board.impl.BoardServiceImpl;
 import com.example.demo.service.code.CommonCodeService;
 import com.example.demo.dto.board.BoardCategoryResponse;
@@ -19,8 +28,13 @@ import com.example.demo.dto.board.BoardStatusRequest;
 import com.example.demo.dto.board.BoardStatusResponse;
 import com.example.demo.dto.code.CodeResponse;
 import com.example.demo.repository.mybatis.board.BoardDaoImpl;
+import com.example.demo.service.comment.CommentService;
+import com.example.demo.service.reply.ReplyService;
 import com.example.demo.utils.CustomFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -50,10 +64,19 @@ class BoardServiceImplTest {
     private BoardDaoImpl boardDao;
 
     @Mock
+    private BoardCategoryDaoImpl boardCategoryDao;
+
+    @Mock
+    private ReplyService replyService;
+
+    @Mock
     private BoardCategoryService boardCategoryService;
 
     @Mock
     private BoardStatusService boardStatusService;
+
+    @Mock
+    private CommentService commentService;
 
     @Mock
     private CommonCodeService commonCodeService;
@@ -88,7 +111,7 @@ class BoardServiceImplTest {
 
     @Nested
     @DisplayName("게시글 카운팅 처리 테스트")
-    class CountTest {
+    class sut_count_test {
         @Test
         @DisplayName("게시글이 없을 때")
         void countWhenNoBoard() {
@@ -117,7 +140,7 @@ class BoardServiceImplTest {
 
     @Nested
     @DisplayName("게시글 생성 관련 테스트")
-    class CreateTest {
+    class sut_crete_test {
 
         @Test
         @DisplayName("게시글 생성 성공 테스트")
@@ -157,44 +180,258 @@ class BoardServiceImplTest {
 
     @Nested
     @DisplayName("게시글 조회 관련 테스트")
-    class ReadTest {
+    class sut_read_test {
 
+        /**
+         * PageResponse<T>
+         *
+         * - totalCnt; 전체 게시글 수
+         * - page; 현재 페이지
+         * - pageSize; 페이지 사이즈
+         * - totalPage; 전체 페이지 수
+         * - List<T> responses; 조회된 게시글 리스트
+         *
+         */
         @Test
-        @DisplayName("게시글 상세 조회 테스트")
-        void readBoard() {
-            // given
-            // 게시글 번호
-            int bno = 1;
-            // when
-            // 게시글 상세 조회 서비스 호출
-            // then
-            // 게시글 상세 조회 결과 확인
+        @DisplayName("사용자가 메인 페이지에 보여줄 게시글을 조회한다.")
+        void it_correctly_work_when_user_read_some_boards_on_main_page() {
+            Integer page = 1, pageSize = 10; // 1페이지, 10개씩
+            Map<String, Object> map = new HashMap<>();
+            map.put("page", page);
+            map.put("pageSize", pageSize);
+
+            List<BoardMainDto> expected = new ArrayList<>();
+            for (int i=0; i<pageSize; i++) {
+                expected.add(BoardMainDto.builder()
+                                         .bno(i+1)
+                                         .cate_name("학습")
+                                         .writer("여늘")
+                                         .title("딥러닝 전망 및 학습방법")
+                                         .view_cnt(10 * i + 1)
+                                         .reco_cnt(5 * i + 1)
+                                         .thumb("test.jpeg")
+                                         .comment_cnt(3 * i + 1)
+                                         .build()
+                );
+            }
+
+            when(boardDao.count()).thenReturn(20);
+            when(boardDao.selectForMain(map)).thenReturn(expected);
+
+            PageResponse actual = sut.readForMain(page, pageSize);
+            assertEquals(pageSize, actual.getResponses().size());
+            for (Object o : actual.getResponses()) {
+                assertTrue(o instanceof BoardMainResponse);
+                BoardMainResponse response = (BoardMainResponse) o;
+                System.out.println(response);
+
+            }
         }
 
         @Test
-        @DisplayName("게시글 검색 조회 테스트")
-        void readBoardBySearch() {
-            // given
-            // 검색 조건
-            // when
-            // 게시글 검색 조회 서비스 호출
-            // then
-            // 게시글 검색 조회 결과 확인
+        @DisplayName("사용자가 카테고리를 통해 메인 페이지에 해당 카테고리 관련된 게시글을 조회한다.")
+        void it_correctly_work_when_user_read_some_boards_on_main_page_by_category() {
+            String cate_code = "BC010201";
+            Integer page = 1, pageSize = 10; // 1페이지, 10개씩
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("cate_code", cate_code);
+            map.put("page", page);
+            map.put("pageSize", pageSize);
+
+            List<BoardMainDto> expected = new ArrayList<>();
+            for (int i=0; i<pageSize; i++) {
+                expected.add(BoardMainDto.builder()
+                        .bno(i+1)
+                        .cate_name("학습")
+                        .writer("여늘")
+                        .title("딥러닝 전망 및 학습방법")
+                        .view_cnt(10 * i + 1)
+                        .reco_cnt(5 * i + 1)
+                        .thumb("test.jpeg")
+                        .comment_cnt(3 * i + 1)
+                        .build()
+                );
+            }
+
+
+            when(boardCategoryDao.existsByCateCode(cate_code)).thenReturn(true);
+            when(boardDao.countByCategory(cate_code)).thenReturn(20);
+            when(boardDao.selectForMainByCategory(map)).thenReturn(expected);
+
+            PageResponse actual = sut.readByCategoryForMain(cate_code, page, pageSize);
+
+            assertEquals(pageSize, actual.getResponses().size());
+            for (Object o : actual.getResponses()) {
+                assertTrue(o instanceof BoardMainResponse);
+                BoardMainResponse response = (BoardMainResponse) o;
+                System.out.println(response);
+            }
         }
 
+        @Test
+        @DisplayName("사용자가 검색 키워드를 통해 메인 페이지에 해당 키워드 관련된 게시글을 조회한다.")
+        void it_correctly_work_when_user_read_some_boards_on_main_page_by_search_keyword() {
+            SearchCondition sc = new SearchCondition();
+            sc.setSearchOption("TT");
+            sc.setSearchKeyword("딥러닝");
+            sc.setSortOption("1");
+            sc.setPage(1);
+            sc.setPageSize(10);
+
+            List<BoardMainDto> expected = new ArrayList<>();
+            for (int i=0; i<sc.getPageSize(); i++) {
+                expected.add(BoardMainDto.builder()
+                        .bno(i+1)
+                        .cate_name("학습")
+                        .writer("여늘")
+                        .title("딥러닝 전망 및 학습방법")
+                        .view_cnt(10 * i + 1)
+                        .reco_cnt(5 * i + 1)
+                        .thumb("test.jpeg")
+                        .comment_cnt(3 * i + 1)
+                        .build()
+                );
+            }
+
+            when(boardDao.countBySearchCondition(sc)).thenReturn(20);
+            when(boardDao.selectForMainBySearchCondition(sc)).thenReturn(expected);
+
+            PageResponse actual = sut.readBySearchConditionForMain(sc);
+            assertEquals(sc.getPageSize(), actual.getResponses().size());
+            for (Object o : actual.getResponses()) {
+                assertTrue(o instanceof BoardMainResponse);
+                BoardMainResponse response = (BoardMainResponse) o;
+                System.out.println(response);
+            }
+
+        }
+
+        @Test
+        @DisplayName("사용자가 상세 조회한다.(상세 페이지 접속)")
+        void it_correctly_work_when_user_read_some_board_detail() {
+            Integer bno = 1;
+            BoardStatusResponse currStatus = BoardStatusResponse.builder()
+                                                                .seq(1)
+                                                                .bno(bno)
+                                                                .stat_code("3001")
+                                                                .comt("게시글 생성")
+                                                                .appl_begin(APPL_BEGIN)
+                                                                .appl_end(APPL_END)
+                                                                .build();
+
+            BoardDto found = BoardDto.builder()
+                                     .bno(bno)
+                                     .cate_code("BC010201")
+                                     .user_seq(1)
+                                     .writer("여늘")
+                                     .title("딥러닝 전망 및 학습방법")
+                                     .cont("안알랴줌 ㅋ")
+                                     .comt("...")
+                                     .reg_user_seq(REG_USER_SEQ)
+                                     .up_user_seq(REG_USER_SEQ)
+                                     .reg_date(REG_DATE)
+                                     .up_date(REG_DATE)
+                                     .build();
+
+
+            BoardCategoryResponse foundBoardCategory = BoardCategoryResponse.builder()
+                                                                          .cate_code("BC010201")
+                                                                          .top_cate("BC010200")
+                                                                          .name("인공지능")
+                                                                          .comt("딥러닝에 대한 내용을 공유합니다.")
+                                                                          .ord(1)
+                                                                          .chk_use("Y")
+                                                                          .level(2)
+                                                                          .build();
+            List<BoardImgResponse> foundBoardImages = new ArrayList<>();
+            List<CommentDetailResponse> foundComments = commentService.readByBno(bno);
+
+            when(boardDao.existsByBno(bno)).thenReturn(true);
+            when(boardStatusService.readByBnoAtPresent(bno)).thenReturn(currStatus);
+            when(boardDao.select(bno)).thenReturn(found);
+            when(boardCategoryService.readByCateCode(found.getCate_code())).thenReturn(foundBoardCategory);
+            when(boardImgService.readByBno(bno)).thenReturn(foundBoardImages);
+            when(commentService.readByBno(bno)).thenReturn(foundComments);
+
+            BoardDetailResponse actual = sut.readDetailByBno(bno);
+
+            assertNotNull(actual);
+        }
+
+        @Test
+        @DisplayName("사용자가 프로필 페이지에서 자신이 작성한 게시글을 조회한다.")
+        void it_correctly_work_when_user_read_some_boards_on_profile_page() {
+            // 추후에 회원 파트 개발되면 처리 예정
+        }
     }
 
 
     @Nested
     @DisplayName("게시글 수정 관련 테스트")
-    class ModifyTest {
+    class sut_modify_test {
 
+        @Test
+        @DisplayName("사용자가 기존에 등록한 게시글의 내용을 수정한다.")
+        void it_correctly_work_when_user_modify_some_board() {
+            BoardUpdateRequest request = BoardUpdateRequest.builder()
+                    .bno(1)
+                    .cate_code("BC010201")
+                    .user_seq(1)
+                    .writer("여늘")
+                    .title("딥러닝 전망 및 학습방법")
+                    .cont("안알랴줌 ㅋ")
+                    .comt("...")
+                    .build();
+
+            List<MultipartFile> files = createMultipartFiles();
+
+            BoardDto boardDto = BoardDto.builder()
+                    .bno(request.getBno())
+                    .cate_code(request.getCate_code())
+                    .user_seq(request.getUser_seq())
+                    .writer(request.getWriter())
+                    .title(request.getTitle())
+                    .cont(request.getCont())
+                    .comt(request.getComt())
+                    .up_user_seq(REG_USER_SEQ)
+                    .up_date(REG_DATE)
+                    .build();
+
+
+            when(formatter.getCurrentDateFormat()).thenReturn(UP_DATE);
+            when(formatter.getManagerSeq()).thenReturn(UP_USER_SEQ);
+
+            when(boardDao.existsByBnoForUpdate(request.getBno())).thenReturn(true);
+            when(boardDao.update(boardDto)).thenReturn(1);
+            when(boardImgService.readByBno(request.getBno())).thenReturn(new ArrayList<>());
+            for (int i=0; i<files.size(); i++) {
+                doNothing().when(boardImgService).saveBoardImage(any(), eq(files.get(i)));
+            }
+            doNothing().when(boardStatusService).renewState(any());
+
+            assertDoesNotThrow(() -> sut.modify(request, files));
+        }
 
     }
 
     @Nested
     @DisplayName("게시글 삭제 관련 테스트")
-    class DeleteTest {
+    class sut_remove_test {
+
+        @Test
+        @DisplayName("사용자가 자신이 등록한 게시글을 삭제한다.")
+        void it_correctly_work_when_user_remove_some_board() {
+
+            Integer bno = 1;
+            when(boardDao.delete(bno)).thenReturn(1);
+            doNothing().when(boardStatusService).removeByBno(bno);
+            doNothing().when(boardChangeHistoryService).removeByBno(bno);
+            doNothing().when(commentService).removeByBno(bno);
+
+            assertDoesNotThrow(() -> sut.remove(bno));
+        }
+
 
 
     }

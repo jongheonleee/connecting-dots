@@ -1,5 +1,6 @@
 package com.example.demo.service.comment.impl;
 
+import com.example.demo.dto.reply.ReplyResponse;
 import com.example.demo.service.comment.CommentChangeHistoryService;
 import com.example.demo.service.comment.CommentService;
 import com.example.demo.service.reply.ReplyService;
@@ -14,6 +15,7 @@ import com.example.demo.global.error.exception.technology.database.NotApplyOnDbm
 import com.example.demo.repository.mybatis.board.BoardDaoImpl;
 import com.example.demo.repository.mybatis.comment.CommentDaoImpl;
 import com.example.demo.utils.CustomFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -96,8 +98,21 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CommentDetailResponse> readByBno(final Integer bno) {
-        return null;
+        checkBoardExists(bno);
+        List<CommentDetailResponse> detailResponses = new ArrayList<>();
+        List<CommentDto> foundComments = commentDao.selectByBno(bno);
+        for (var commentDto : foundComments) {
+            List<ReplyResponse> replies = replyService.readByCno(commentDto.getCno());
+            CommentDetailResponse detailResponse = CommentDetailResponse.builder()
+                                                                        .comment(createResponse(commentDto))
+                                                                        .replies(replies)
+                                                                        .build();
+            detailResponses.add(detailResponse);
+        }
+
+        return detailResponses;
     }
 
     private void checkBoardExists(final Integer bno) {
