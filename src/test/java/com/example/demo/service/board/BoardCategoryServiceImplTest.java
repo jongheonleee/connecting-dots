@@ -9,7 +9,7 @@ import com.example.demo.dto.board.BoardCategoryResponse;
 import com.example.demo.global.error.exception.business.board.BoardCategoryAlreadyExistsException;
 import com.example.demo.global.error.exception.business.board.BoardCategoryNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
-import com.example.demo.repository.mybatis.board.BoardCategoryDaoImpl;
+import com.example.demo.repository.board.BoardCategoryRepository;
 import com.example.demo.utils.CustomFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,7 @@ class BoardCategoryServiceImplTest {
     private BoardCategoryService boardCategoryService;
 
     @Mock
-    private BoardCategoryDaoImpl boardCategoryDao;
+    private BoardCategoryRepository boardCategoryDao;
 
     @Mock
     private CustomFormatter formatter;

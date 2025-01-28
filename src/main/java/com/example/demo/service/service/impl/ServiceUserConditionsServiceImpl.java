@@ -1,6 +1,7 @@
 package com.example.demo.service.service.impl;
 
 
+import com.example.demo.repository.service.ServiceUserConditionsRepository;
 import com.example.demo.service.service.ServiceUserConditionsService;
 import com.example.demo.dto.PageResponse;
 import com.example.demo.dto.SearchCondition;
@@ -11,7 +12,6 @@ import com.example.demo.dto.service.ServiceUserConditionsResponse;
 import com.example.demo.global.error.exception.business.service.ServiceUserConditionsAlreadyExistsException;
 import com.example.demo.global.error.exception.business.service.ServiceUserConditionsNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
-import com.example.demo.repository.mybatis.service.ServiceUserConditionsDaoImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ServiceUserConditionsServiceImpl implements ServiceUserConditionsService {
 
-    private final ServiceUserConditionsDaoImpl serviceUserConditionsDao;
+    private final ServiceUserConditionsRepository serviceUserConditionsDao;
     private final CustomFormatter formatter;
 
 

@@ -1,5 +1,6 @@
 package com.example.demo.service.service.impl;
 
+import com.example.demo.repository.service.ServiceRuleUseRepository;
 import com.example.demo.service.service.ServiceRuleUseService;
 import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.service.ServiceRuleUseDto;
@@ -9,7 +10,6 @@ import com.example.demo.dto.PageResponse;
 import com.example.demo.global.error.exception.business.service.ServiceRuleUseAlreadyExistsException;
 import com.example.demo.global.error.exception.business.service.ServiceRuleUseNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
-import com.example.demo.repository.mybatis.service.ServiceRuleUseDaoImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ServiceRuleUseServiceImpl implements ServiceRuleUseService {
 
-    private final ServiceRuleUseDaoImpl serviceRuleUseDao;
+    private final ServiceRuleUseRepository serviceRuleUseDao;
     private final CustomFormatter formatter;
 
     @Override

@@ -8,7 +8,10 @@ import com.example.demo.dto.code.CodeDto;
 import com.example.demo.dto.service.ServiceRuleUseDto;
 import com.example.demo.dto.service.ServiceTermsDto;
 import com.example.demo.dto.service.ServiceUserGradeDto;
-import com.example.demo.repository.mybatis.code.CommonCodeDaoImpl;
+import com.example.demo.repository.code.CommonCodeRepository;
+import com.example.demo.repository.service.ServiceRuleUseRepository;
+import com.example.demo.repository.service.ServiceTermsRepository;
+import com.example.demo.repository.service.ServiceUserGradeRepository;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
@@ -25,7 +28,7 @@ import org.springframework.test.context.TestPropertySource;
 class ServiceUserGradeDaoImplTest {
 
     @Autowired
-    private ServiceUserGradeDaoImpl serviceUserGradeDao;
+    private ServiceUserGradeRepository serviceUserGradeDao;
 
     // 테스트 환경 구축에 필요한 데이터들
     // 1. 정책 데이터 - 회원 등급 정책
@@ -33,13 +36,13 @@ class ServiceUserGradeDaoImplTest {
     // 3. 위의 정책을 구성하는 이용 규칙 데이터 - 회원 등급 이용 규칙
 
     @Autowired
-    private ServiceRuleUseDaoImpl serviceRuleUseDao;
+    private ServiceRuleUseRepository serviceRuleUseDao;
 
     @Autowired
-    private ServiceTermsDaoImpl serviceTermsDao;
+    private ServiceTermsRepository serviceTermsDao;
 
     @Autowired
-    private CommonCodeDaoImpl codeDao;
+    private CommonCodeRepository codeDao;
 
     private final String poli_stat = "PS100";
     private final String rule_stat1 = "1001";

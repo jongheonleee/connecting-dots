@@ -11,8 +11,8 @@ import com.example.demo.dto.board.BoardDto;
 import com.example.demo.dto.board.BoardRequest;
 import com.example.demo.dto.board.BoardStatusResponse;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
-import com.example.demo.repository.mybatis.board.BoardCategoryDaoImpl;
-import com.example.demo.repository.mybatis.board.BoardDaoImpl;
+import com.example.demo.repository.board.BoardCategoryRepository;
+import com.example.demo.repository.board.BoardRepository;
 import com.example.demo.utils.CustomFormatter;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -46,7 +46,7 @@ class BoardServiceCreateRetryTest {
     private BoardService sut;
 
     @MockBean
-    private BoardDaoImpl boardDao;
+    private BoardRepository boardDao;
 
 
     @MockBean
@@ -62,7 +62,7 @@ class BoardServiceCreateRetryTest {
     private CustomFormatter formatter;
 
     @MockBean
-    private BoardCategoryDaoImpl boardCategoryDaoImpl;
+    private BoardCategoryRepository boardCategoryRepository;
 
 
 //    @BeforeEach

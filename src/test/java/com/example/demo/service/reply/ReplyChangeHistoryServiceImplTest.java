@@ -9,7 +9,7 @@ import com.example.demo.dto.reply.ReplyChangeHistoryRequest;
 import com.example.demo.dto.reply.ReplyChangeHistoryResponse;
 import com.example.demo.global.error.exception.business.reply.ReplyChangeHistoryNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
-import com.example.demo.repository.mybatis.reply.ReplyChangeHistoryDaoImpl;
+import com.example.demo.repository.reply.ReplyChangeHistoryRepository;
 import com.example.demo.utils.CustomFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ class ReplyChangeHistoryServiceImplTest {
     private ReplyChangeHistoryService sut;
 
     @Mock
-    private ReplyChangeHistoryDaoImpl replyChangeHistoryDao;
+    private ReplyChangeHistoryRepository replyChangeHistoryDao;
 
     @Mock
     private CustomFormatter formatter;

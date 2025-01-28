@@ -3,13 +3,14 @@ package com.example.demo.repository.mybatis.service;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.example.demo.domain.Code;
-import com.example.demo.domain.ServiceTerms;
 import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.code.CodeDto;
 import com.example.demo.dto.service.ServiceRuleUseDto;
 import com.example.demo.dto.service.ServiceTermsConditionDto;
 import com.example.demo.dto.service.ServiceTermsDto;
-import com.example.demo.repository.mybatis.code.CommonCodeDaoImpl;
+import com.example.demo.repository.code.CommonCodeRepository;
+import com.example.demo.repository.service.ServiceRuleUseRepository;
+import com.example.demo.repository.service.ServiceTermsRepository;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
@@ -27,13 +28,13 @@ import org.springframework.test.context.TestPropertySource;
 class ServiceTermsDaoImplTest {
 
     @Autowired
-    private ServiceTermsDaoImpl serviceTermsDao;
+    private ServiceTermsRepository serviceTermsDao;
 
     @Autowired
-    private ServiceRuleUseDaoImpl serviceRuleUseDao;
+    private ServiceRuleUseRepository serviceRuleUseDao;
 
     @Autowired
-    private CommonCodeDaoImpl commonCodeDao;
+    private CommonCodeRepository commonCodeDao;
 
     private final String rule_stat1 = "1001";
     private final String rule_stat2 = "1002";

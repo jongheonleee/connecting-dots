@@ -7,7 +7,8 @@ import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.code.CodeDto;
 import com.example.demo.dto.service.ServiceRuleUseDto;
 import com.example.demo.dto.service.ServiceRuleUseRequest;
-import com.example.demo.repository.mybatis.code.CommonCodeDaoImpl;
+import com.example.demo.repository.code.CommonCodeRepository;
+import com.example.demo.repository.service.ServiceRuleUseRepository;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
@@ -24,10 +25,10 @@ import org.springframework.test.context.TestPropertySource;
 class ServiceRuleUseDaoImplTest {
 
     @Autowired
-    private ServiceRuleUseDaoImpl serviceRuleUseDao;
+    private ServiceRuleUseRepository serviceRuleUseDao;
 
     @Autowired
-    private CommonCodeDaoImpl commonCodeDao;
+    private CommonCodeRepository commonCodeDao;
 
     @BeforeEach
     void setUp() {

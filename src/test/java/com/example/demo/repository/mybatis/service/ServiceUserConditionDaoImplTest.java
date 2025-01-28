@@ -3,6 +3,7 @@ package com.example.demo.repository.mybatis.service;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.example.demo.dto.service.ServiceUserConditionDto;
+import com.example.demo.repository.service.ServiceUserConditionRepository;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
@@ -19,7 +20,7 @@ import org.springframework.test.context.TestPropertySource;
 class ServiceUserConditionDaoImplTest {
 
     @Autowired
-    private ServiceUserConditionDaoImpl serviceUserConditionDao;
+    private ServiceUserConditionRepository serviceUserConditionDao;
 
     private final String currentDateFormat = "2025/01/09";
     private final Integer managerSeq = 1;

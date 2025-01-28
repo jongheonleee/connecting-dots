@@ -15,7 +15,8 @@ import com.example.demo.dto.board.BoardMainDto;
 import com.example.demo.dto.board.BoardMainResponse;
 import com.example.demo.dto.board.BoardUpdateRequest;
 import com.example.demo.dto.comment.CommentDetailResponse;
-import com.example.demo.repository.mybatis.board.BoardCategoryDaoImpl;
+import com.example.demo.repository.board.BoardCategoryRepository;
+import com.example.demo.repository.board.BoardRepository;
 import com.example.demo.service.code.CommonCodeService;
 import com.example.demo.dto.board.BoardCategoryResponse;
 import com.example.demo.dto.board.BoardChangeHistoryRequest;
@@ -26,7 +27,6 @@ import com.example.demo.dto.board.BoardRequest;
 import com.example.demo.dto.board.BoardStatusRequest;
 import com.example.demo.dto.board.BoardStatusResponse;
 import com.example.demo.dto.code.CodeResponse;
-import com.example.demo.repository.mybatis.board.BoardDaoImpl;
 import com.example.demo.service.comment.CommentService;
 import com.example.demo.service.reply.ReplyService;
 import com.example.demo.utils.CustomFormatter;
@@ -60,10 +60,10 @@ class BoardServiceImplTest {
     private BoardService sut;
 
     @Mock
-    private BoardDaoImpl boardDao;
+    private BoardRepository boardDao;
 
     @Mock
-    private BoardCategoryDaoImpl boardCategoryDao;
+    private BoardCategoryRepository boardCategoryDao;
 
     @Mock
     private ReplyService replyService;

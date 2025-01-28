@@ -8,7 +8,10 @@ import com.example.demo.dto.code.CodeDto;
 import com.example.demo.dto.service.ServiceRuleUseDto;
 import com.example.demo.dto.service.ServiceSanctionHistoryDto;
 import com.example.demo.dto.service.ServiceTermsDto;
-import com.example.demo.repository.mybatis.code.CommonCodeDaoImpl;
+import com.example.demo.repository.code.CommonCodeRepository;
+import com.example.demo.repository.service.ServiceRuleUseRepository;
+import com.example.demo.repository.service.ServiceSanctionHistoryRepository;
+import com.example.demo.repository.service.ServiceTermsRepository;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
@@ -25,16 +28,16 @@ import org.springframework.test.context.TestPropertySource;
 class ServiceSanctionHistoryDaoImplTest {
 
     @Autowired
-    private ServiceSanctionHistoryDaoImpl serviceSanctionHistoryDao;
+    private ServiceSanctionHistoryRepository serviceSanctionHistoryDao;
 
     @Autowired
-    private ServiceTermsDaoImpl serviceTermsDao;
+    private ServiceTermsRepository serviceTermsDao;
 
     @Autowired
-    private ServiceRuleUseDaoImpl serviceRuleUseDao;
+    private ServiceRuleUseRepository serviceRuleUseDao;
 
     @Autowired
-    private CommonCodeDaoImpl commonCodeDao;
+    private CommonCodeRepository commonCodeDao;
 
     private final String poli_stat = "PS100";
     private final String rule_stat1 = "1001";

@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import com.example.demo.repository.service.ServiceSanctionHistoryRepository;
 import com.example.demo.service.service.impl.ServiceSanctionHistoryServiceImpl;
 import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.service.ServiceSanctionHistoryDto;
@@ -12,7 +13,6 @@ import com.example.demo.dto.service.ServiceSanctionHistoryResponse;
 import com.example.demo.global.error.exception.business.service.ServiceSanctionHistoryAlreadyExistsException;
 import com.example.demo.global.error.exception.business.service.ServiceSanctionHistoryNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
-import com.example.demo.repository.mybatis.service.ServiceSanctionHistoryDaoImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,7 @@ class ServiceSanctionHistoryServiceImplTest {
     private ServiceSanctionHistoryServiceImpl serviceSanctionHistoryService;
 
     @Mock
-    private ServiceSanctionHistoryDaoImpl serviceSanctionHistoryDao;
+    private ServiceSanctionHistoryRepository serviceSanctionHistoryDao;
 
     @Mock
     private CustomFormatter formatter;

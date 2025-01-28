@@ -1,5 +1,6 @@
 package com.example.demo.service.service.impl;
 
+import com.example.demo.repository.service.ServiceTermsRepository;
 import com.example.demo.service.service.ServiceTermsService;
 import com.example.demo.dto.PageResponse;
 import com.example.demo.dto.SearchCondition;
@@ -10,7 +11,6 @@ import com.example.demo.dto.service.ServiceTermsResponse;
 import com.example.demo.global.error.exception.business.service.ServiceTermsAlreadyExistsException;
 import com.example.demo.global.error.exception.business.service.ServiceTermsNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
-import com.example.demo.repository.mybatis.service.ServiceTermsDaoImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ServiceTermsServiceImpl implements ServiceTermsService {
 
-    private final ServiceTermsDaoImpl serviceTermsDao;
+    private final ServiceTermsRepository serviceTermsDao;
     private final CustomFormatter formatter;
 
     @Override

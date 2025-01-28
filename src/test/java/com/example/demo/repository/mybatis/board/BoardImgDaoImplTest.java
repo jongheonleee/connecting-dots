@@ -6,6 +6,9 @@ import com.example.demo.domain.BoardCategory;
 import com.example.demo.dto.board.BoardCategoryDto;
 import com.example.demo.dto.board.BoardDto;
 import com.example.demo.dto.board.BoardImgDto;
+import com.example.demo.repository.board.BoardCategoryRepository;
+import com.example.demo.repository.board.BoardRepository;
+import com.example.demo.repository.board.BoardImgRepository;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
@@ -25,13 +28,13 @@ class BoardImgDaoImplTest {
 
 
     @Autowired
-    private BoardImgDaoImpl boardImgDao;
+    private BoardImgRepository boardImgDao;
 
     @Autowired
-    private BoardDaoImpl boardDao;
+    private BoardRepository boardDao;
 
     @Autowired
-    private BoardCategoryDaoImpl boardCategoryDao;
+    private BoardCategoryRepository boardCategoryDao;
 
     private BoardDto boardDto;
     private BoardCategoryDto boardCategoryDto;

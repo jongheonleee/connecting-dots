@@ -10,6 +10,8 @@ import com.example.demo.domain.BoardCategory;
 import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.board.BoardCategoryDto;
 import com.example.demo.dto.board.BoardDto;
+import com.example.demo.repository.board.BoardCategoryRepository;
+import com.example.demo.repository.board.BoardRepository;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
@@ -40,10 +42,10 @@ class BoardDaoImplTest {
     private final Integer TEST_USER_SEQ = 1;
 
     @Autowired
-    private BoardDaoImpl boardDao;
+    private BoardRepository boardDao;
 
     @Autowired
-    private BoardCategoryDaoImpl boardCategoryDao;
+    private BoardCategoryRepository boardCategoryDao;
 
     @BeforeEach
     public void setUp() {

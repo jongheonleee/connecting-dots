@@ -1,5 +1,6 @@
 package com.example.demo.service.code.impl;
 
+import com.example.demo.repository.code.CommonCodeRepository;
 import com.example.demo.service.code.CommonCodeService;
 import com.example.demo.domain.Code;
 import com.example.demo.dto.PageResponse;
@@ -7,7 +8,6 @@ import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.code.CodeDto;
 import com.example.demo.dto.code.CodeRequest;
 import com.example.demo.dto.code.CodeResponse;
-import com.example.demo.repository.mybatis.code.CommonCodeDaoImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -23,7 +23,7 @@ import org.springframework.validation.annotation.Validated;
 @AllArgsConstructor
 public class CommonCodeServiceImpl implements CommonCodeService {
 
-    private final CommonCodeDaoImpl commonCodeDao;
+    private final CommonCodeRepository commonCodeDao;
     private final CustomFormatter formatter;
 
     @Override

@@ -1,5 +1,6 @@
 package com.example.demo.service.board.impl;
 
+import com.example.demo.repository.board.BoardCategoryRepository;
 import com.example.demo.service.board.BoardCategoryService;
 import com.example.demo.domain.BoardCategory;
 import com.example.demo.dto.board.BoardCategoryDto;
@@ -8,7 +9,6 @@ import com.example.demo.dto.board.BoardCategoryResponse;
 import com.example.demo.global.error.exception.business.board.BoardCategoryAlreadyExistsException;
 import com.example.demo.global.error.exception.business.board.BoardCategoryNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
-import com.example.demo.repository.mybatis.board.BoardCategoryDaoImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class BoardCategoryServiceImpl implements BoardCategoryService {
 
-    private final BoardCategoryDaoImpl boardCategoryDao;
+    private final BoardCategoryRepository boardCategoryDao;
     private final CustomFormatter formatter;
 
 

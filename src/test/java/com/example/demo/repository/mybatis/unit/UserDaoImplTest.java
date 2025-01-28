@@ -3,7 +3,7 @@ package com.example.demo.repository.mybatis.unit;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.example.demo.dto.ord_user.UserDto;
-import com.example.demo.repository.mybatis.user.UserDaoImpl;
+import com.example.demo.repository.user.UserDaoImpl;
 import com.example.demo.dto.ord_user.UserFormDto;
 import com.example.demo.dto.ord_user.UserUpdatedFormDto;
 import java.util.ArrayList;

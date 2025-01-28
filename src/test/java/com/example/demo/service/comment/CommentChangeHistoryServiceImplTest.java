@@ -9,8 +9,8 @@ import com.example.demo.dto.comment.CommentChangeHistoryRequest;
 import com.example.demo.dto.comment.CommentChangeHistoryResponse;
 import com.example.demo.global.error.exception.business.comment.CommentChangeHistoryNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
-import com.example.demo.repository.mybatis.comment.CommentChangeHistoryDaoImpl;
-import com.example.demo.repository.mybatis.comment.CommentDaoImpl;
+import com.example.demo.repository.comment.CommentChangeHistoryRepository;
+import com.example.demo.repository.comment.CommentRepository;
 import com.example.demo.utils.CustomFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,10 +31,10 @@ class CommentChangeHistoryServiceImplTest {
     private CommentChangeHistoryService sut;
 
     @Mock
-    private CommentDaoImpl commentDao;
+    private CommentRepository commentDao;
 
     @Mock
-    private CommentChangeHistoryDaoImpl commentChangeHistoryDao;
+    private CommentChangeHistoryRepository commentChangeHistoryDao;
 
     @Mock
     private CustomFormatter formatter;

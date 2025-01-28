@@ -12,7 +12,7 @@ import com.example.demo.dto.service.ServiceTermsResponse;
 import com.example.demo.global.error.exception.business.service.ServiceTermsAlreadyExistsException;
 import com.example.demo.global.error.exception.business.service.ServiceTermsNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
-import com.example.demo.repository.mybatis.service.ServiceTermsDaoImpl;
+import com.example.demo.repository.service.ServiceTermsRepository;
 import com.example.demo.utils.CustomFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,7 @@ class ServiceTermsServiceImplTest {
     private ServiceTermsService serviceTermsService;
 
     @Mock
-    private ServiceTermsDaoImpl serviceTermsDao;
+    private ServiceTermsRepository serviceTermsDao;
 
     @Mock
     private CustomFormatter formatter;

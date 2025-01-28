@@ -12,7 +12,7 @@ import com.example.demo.dto.service.ServiceRuleUseResponse;
 import com.example.demo.global.error.exception.business.service.ServiceRuleUseAlreadyExistsException;
 import com.example.demo.global.error.exception.business.service.ServiceRuleUseNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
-import com.example.demo.repository.mybatis.service.ServiceRuleUseDaoImpl;
+import com.example.demo.repository.service.ServiceRuleUseRepository;
 import com.example.demo.utils.CustomFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ class ServiceRuleUseServiceImplTest {
     private ServiceRuleUseService serviceRuleUseService;
 
     @Mock
-    private ServiceRuleUseDaoImpl serviceRuleUseDao;
+    private ServiceRuleUseRepository serviceRuleUseDao;
 
     @Mock
     private CustomFormatter formatter;

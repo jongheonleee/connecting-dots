@@ -6,7 +6,9 @@ import com.example.demo.domain.BoardCategory;
 import com.example.demo.dto.board.BoardCategoryDto;
 import com.example.demo.dto.board.BoardChangeHistoryDto;
 import com.example.demo.dto.board.BoardDto;
-import com.example.demo.dto.ord_category.CategoryDto;
+import com.example.demo.repository.board.BoardCategoryRepository;
+import com.example.demo.repository.board.BoardChangeHistoryRepository;
+import com.example.demo.repository.board.BoardRepository;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
@@ -26,13 +28,13 @@ class BoardChangeHistoryDaoImplTest {
 
 
     @Autowired
-    private BoardChangeHistoryDaoImpl boardChangeHistoryDao;
+    private BoardChangeHistoryRepository boardChangeHistoryDao;
 
     @Autowired
-    private BoardDaoImpl boardDao;
+    private BoardRepository boardDao;
 
     @Autowired
-    private BoardCategoryDaoImpl boardCategoryDao;
+    private BoardCategoryRepository boardCategoryDao;
 
 
     private BoardDto boardDto;

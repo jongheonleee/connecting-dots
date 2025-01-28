@@ -6,6 +6,8 @@ import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.service.ServiceUserConditionDto;
 import com.example.demo.dto.service.ServiceUserConditionsDetailDto;
 import com.example.demo.dto.service.ServiceUserConditionsDto;
+import com.example.demo.repository.service.ServiceUserConditionRepository;
+import com.example.demo.repository.service.ServiceUserConditionsRepository;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -24,10 +26,10 @@ import org.springframework.test.context.TestPropertySource;
 class ServiceUserConditionsDaoImplTest {
 
     @Autowired
-    private ServiceUserConditionDaoImpl serviceUserConditionDao;
+    private ServiceUserConditionRepository serviceUserConditionDao;
 
     @Autowired
-    private ServiceUserConditionsDaoImpl serviceUserConditionsDao;
+    private ServiceUserConditionsRepository serviceUserConditionsDao;
 
     private final String currentDateFormat = "2025/01/09";
     private final Integer managerSeq = 1;

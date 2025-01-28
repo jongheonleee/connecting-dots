@@ -3,6 +3,7 @@ package com.example.demo.service.board.impl;
 import static com.example.demo.global.error.exception.ErrorCode.*;
 import static com.example.demo.global.error.exception.ErrorCode.FILE_UPLOAD_ERROR;
 
+import com.example.demo.repository.board.BoardImgRepository;
 import com.example.demo.service.board.BoardImgService;
 import com.example.demo.service.board.FileService;
 import com.example.demo.dto.board.BoardImgDto;
@@ -12,7 +13,6 @@ import com.example.demo.global.error.exception.business.board.BoardImageNotFound
 import com.example.demo.global.error.exception.business.board.InvalidBoardImageException;
 import com.example.demo.global.error.exception.technology.InternalServerException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
-import com.example.demo.repository.mybatis.board.BoardImgDaoImpl;
 import com.example.demo.utils.CustomFormatter;
 import io.micrometer.common.util.StringUtils;
 import java.util.List;
@@ -34,7 +34,7 @@ public class BoardImgServiceImpl implements BoardImgService {
     private String boardImgUrlLocation;
 
 
-    private final BoardImgDaoImpl boardImgDao;
+    private final BoardImgRepository boardImgDao;
     private final FileService fileService;
     private final CustomFormatter customFormatter;
 

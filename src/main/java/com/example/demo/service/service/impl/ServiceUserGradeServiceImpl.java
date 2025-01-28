@@ -8,7 +8,7 @@ import com.example.demo.dto.service.ServiceUserGradeResponse;
 import com.example.demo.global.error.exception.business.service.ServiceUserGradeAlreadyExistsException;
 import com.example.demo.global.error.exception.business.service.ServiceUserGradeNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
-import com.example.demo.repository.mybatis.service.ServiceUserGradeDaoImpl;
+import com.example.demo.repository.service.ServiceUserGradeRepository;
 import com.example.demo.utils.CustomFormatter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ServiceUserGradeServiceImpl {
 
-    private final ServiceUserGradeDaoImpl serviceUserGradeDao;
+    private final ServiceUserGradeRepository serviceUserGradeDao;
     private final CustomFormatter formatter;
 
     // 추후에 회원 중에서 회원들 중에서 특정 조건을 만족하는 회원들의 등급을 적용할 때 사용할 오브젝트들

@@ -10,7 +10,7 @@ import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.code.CodeDto;
 import com.example.demo.dto.code.CodeRequest;
 import com.example.demo.dto.code.CodeResponse;
-import com.example.demo.repository.mybatis.code.CommonCodeDaoImpl;
+import com.example.demo.repository.code.CommonCodeRepository;
 import com.example.demo.utils.CustomFormatter;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,7 +31,7 @@ class CodeServiceImplTest {
     private CommonCodeService codeService;
 
     @Mock
-    private CommonCodeDaoImpl codeDao;
+    private CommonCodeRepository codeDao;
 
     @Mock
     private CustomFormatter formatter;

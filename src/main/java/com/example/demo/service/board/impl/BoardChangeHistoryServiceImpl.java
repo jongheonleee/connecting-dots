@@ -1,5 +1,7 @@
 package com.example.demo.service.board.impl;
 
+import com.example.demo.repository.board.BoardChangeHistoryRepository;
+import com.example.demo.repository.board.BoardRepository;
 import com.example.demo.service.board.BoardChangeHistoryService;
 import com.example.demo.dto.board.BoardChangeHistoryDto;
 import com.example.demo.dto.board.BoardChangeHistoryRequest;
@@ -7,8 +9,6 @@ import com.example.demo.dto.board.BoardChangeHistoryResponse;
 import com.example.demo.global.error.exception.business.board.BoardChangeHistoryNotFoundException;
 import com.example.demo.global.error.exception.business.board.BoardNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
-import com.example.demo.repository.mybatis.board.BoardChangeHistoryDaoImpl;
-import com.example.demo.repository.mybatis.board.BoardDaoImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class BoardChangeHistoryServiceImpl implements BoardChangeHistoryService {
 
-    private final BoardChangeHistoryDaoImpl boardChangeHistoryDao;
-    private final BoardDaoImpl boardDao;
+    private final BoardChangeHistoryRepository boardChangeHistoryDao;
+    private final BoardRepository boardDao;
     private final CustomFormatter customFormatter;
 
     @Override

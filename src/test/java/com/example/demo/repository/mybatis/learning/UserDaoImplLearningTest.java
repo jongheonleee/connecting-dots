@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.example.demo.repository.mybatis.user.UserDaoImpl;
+import com.example.demo.repository.user.UserDaoImpl;
 import com.example.demo.dto.ord_user.UserFormDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

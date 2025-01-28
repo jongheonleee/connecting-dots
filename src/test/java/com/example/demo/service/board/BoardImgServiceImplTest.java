@@ -5,13 +5,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
+import com.example.demo.repository.board.BoardImgRepository;
 import com.example.demo.service.board.impl.BoardImgServiceImpl;
 import com.example.demo.dto.board.BoardImgDto;
 import com.example.demo.dto.board.BoardImgRequest;
 import com.example.demo.global.error.exception.business.board.BoardImageNotFoundException;
 import com.example.demo.global.error.exception.business.board.InvalidBoardImageException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
-import com.example.demo.repository.mybatis.board.BoardImgDaoImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.lang.reflect.Field;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +32,7 @@ class BoardImgServiceImplTest {
     private BoardImgService boardImgService;
 
     @Mock
-    private BoardImgDaoImpl boardImgDao;
+    private BoardImgRepository boardImgDao;
 
     @Mock
     private FileService fileService;

@@ -13,7 +13,7 @@ import com.example.demo.dto.service.ServiceUserConditionsResponse;
 import com.example.demo.global.error.exception.business.service.ServiceUserConditionsAlreadyExistsException;
 import com.example.demo.global.error.exception.business.service.ServiceUserConditionsNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
-import com.example.demo.repository.mybatis.service.ServiceUserConditionsDaoImpl;
+import com.example.demo.repository.service.ServiceUserConditionsRepository;
 import com.example.demo.utils.CustomFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +36,7 @@ class ServiceUserConditionsServiceImplTest {
     private ServiceUserConditionsService serviceUserConditionsService;
 
     @Mock
-    private ServiceUserConditionsDaoImpl serviceUserConditionsDao;
+    private ServiceUserConditionsRepository serviceUserConditionsDao;
 
     @Mock
     private CustomFormatter formatter;

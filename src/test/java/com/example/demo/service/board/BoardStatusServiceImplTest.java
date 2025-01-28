@@ -3,6 +3,8 @@ package com.example.demo.service.board;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
+import com.example.demo.repository.board.BoardRepository;
+import com.example.demo.repository.board.BoardStatusRepository;
 import com.example.demo.service.code.CommonCodeService;
 import com.example.demo.dto.board.BoardStatusDto;
 import com.example.demo.dto.board.BoardStatusRequest;
@@ -12,8 +14,6 @@ import com.example.demo.global.error.exception.business.board.BoardNotFoundExcep
 import com.example.demo.global.error.exception.business.board.BoardStatusNotFoundException;
 import com.example.demo.global.error.exception.business.code.CodeNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
-import com.example.demo.repository.mybatis.board.BoardDaoImpl;
-import com.example.demo.repository.mybatis.board.BoardStatusDaoImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +36,7 @@ class BoardStatusServiceImplTest {
     private BoardStatusService boardStatusService;
 
     @Mock
-    private BoardStatusDaoImpl boardStatusDao;
+    private BoardStatusRepository boardStatusDao;
 
     @Mock
     private CustomFormatter formatter;
@@ -45,7 +45,7 @@ class BoardStatusServiceImplTest {
     private CommonCodeService commonCodeService;
 
     @Mock
-    private BoardDaoImpl boardDao;
+    private BoardRepository boardDao;
 
     private final String reg_date = "2025-01-17";
     private final Integer reg_user_seq = 1;

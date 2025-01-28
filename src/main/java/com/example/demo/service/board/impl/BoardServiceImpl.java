@@ -4,6 +4,8 @@ import static com.example.demo.domain.Code.*;
 import static com.example.demo.domain.Code.BOARD_CREATE;
 import static com.example.demo.domain.Code.BOARD_MODIFY;
 
+import com.example.demo.repository.board.BoardCategoryRepository;
+import com.example.demo.repository.board.BoardRepository;
 import com.example.demo.service.board.BoardCategoryService;
 import com.example.demo.service.board.BoardChangeHistoryService;
 import com.example.demo.service.board.BoardImgService;
@@ -31,8 +33,6 @@ import com.example.demo.global.error.exception.business.board.BoardInvalidConten
 import com.example.demo.global.error.exception.business.board.BoardNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
 import com.example.demo.global.error.exception.technology.network.RetryFailedException;
-import com.example.demo.repository.mybatis.board.BoardCategoryDaoImpl;
-import com.example.demo.repository.mybatis.board.BoardDaoImpl;
 import com.example.demo.service.comment.CommentService;
 import com.example.demo.service.reply.ReplyService;
 import com.example.demo.utils.CustomFormatter;
@@ -63,8 +63,8 @@ public class BoardServiceImpl implements BoardService {
     private static final int MAX_RETRY = 10;
     private static final int RETRY_DELAY = 5_000;
 
-    private final BoardDaoImpl boardDao;
-    private final BoardCategoryDaoImpl boardCategoryDao;
+    private final BoardRepository boardDao;
+    private final BoardCategoryRepository boardCategoryDao;
     private final BoardImgService boardImgService;
     private final BoardStatusService boardStatusService;
     private final BoardChangeHistoryService boardChangeHistoryService;

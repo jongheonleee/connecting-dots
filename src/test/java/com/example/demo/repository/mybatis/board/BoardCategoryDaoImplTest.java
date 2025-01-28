@@ -3,6 +3,7 @@ package com.example.demo.repository.mybatis.board;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.example.demo.dto.board.BoardCategoryDto;
+import com.example.demo.repository.board.BoardCategoryRepository;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
@@ -25,7 +26,7 @@ class BoardCategoryDaoImplTest {
     private final String UP_DATE = "2025-01-14";
 
     @Autowired
-    private BoardCategoryDaoImpl boardCategoryDao;
+    private BoardCategoryRepository boardCategoryDao;
 
     @BeforeEach
     void setUp() {

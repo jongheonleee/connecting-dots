@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.report.ReportCategoryMapper">
+  <select id="count" resultType="int">
+    SELECT COUNT(*)
+    FROM report_category
+  </select>
+
+  <select id="countByLevel" parameterType="int" resultType="int">
+    SELECT COUNT(*)
+    FROM report_category
+    WHERE level = #{level}
+  </select>
+
+  <select id="existsByCateCode" parameterType="string" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM report_category
+    WHERE cate_code = #{cate_code}
+  </select>
+
+  <select id="existsByCateCodeForUpdate" parameterType="string" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM report_category
+    WHERE cate_code = #{cate_code}
+  </select>
+
+  <select id="selectAll" resultType="ReportCategoryDto">
+    SELECT
+      cate_code, top_cate, name,
+      comt, reg_date, reg_user_seq,
+      up_date, up_user_seq, ord,
+      chk_use, level
+    FROM report_category
+    ORDER BY reg_date DESC
+  </select>
+
+  <select id="selectByCateCode" parameterType="string" resultType="ReportCategoryDto">
+    SELECT
+      cate_code, top_cate, name,
+      comt, reg_date, reg_user_seq,
+      up_date, up_user_seq, ord,
+      chk_use, level
+    FROM report_category
+    WHERE cate_code = #{cate_code}
+  </select>
+
+  <select id="selectByTopCate" parameterType="string" resultType="ReportCategoryDto">
+    SELECT
+      cate_code, top_cate, name,
+      comt, reg_date, reg_user_seq,
+      up_date, up_user_seq, ord,
+      chk_use, level
+    FROM report_category
+    WHERE top_cate = #{top_cate}
+    ORDER BY ord
+  </select>
+
+  <insert id="insert" parameterType="ReportCategoryDto">
+    INSERT INTO report_category
+    (
+      cate_code, top_cate, name,
+      comt, reg_date, reg_user_seq,
+      up_date, up_user_seq, ord,
+      chk_use, level
+    )
+    VALUES
+      (
+        #{cate_code}, #{top_cate}, #{name},
+        #{comt}, #{reg_date}, #{reg_user_seq},
+        #{up_date}, #{up_user_seq}, #{ord},
+        #{chk_use}, #{level}
+      )
+  </insert>
+
+  <update id="update" parameterType="ReportCategoryDto">
+    UPDATE report_category
+    SET
+      top_cate = #{top_cate},
+      name = #{name},
+      comt = #{comt},
+      up_date = #{up_date},
+      up_user_seq = #{up_user_seq},
+      ord = #{ord},
+      chk_use = #{chk_use},
+      level = #{level}
+    WHERE cate_code = #{cate_code}
+  </update>
+
+  <update id="updateChkUseY" parameterType="string">
+    UPDATE report_category
+    SET
+      chk_use = 'Y'
+    WHERE cate_code = #{cate_code}
+  </update>
+
+  <update id="updateChkUseN" parameterType="string">
+    UPDATE report_category
+    SET
+      chk_use = 'N'
+    WHERE cate_code = #{cate_code}
+  </update>
+
+  <delete id="deleteByCateCode" parameterType="string">
+    DELETE
+    FROM report_category
+    WHERE cate_code = #{cate_code}
+  </delete>
+
+  <delete id="deleteByLevel" parameterType="int">
+    DELETE
+    FROM report_category
+    WHERE level = #{level}
+  </delete>
+</mapper>

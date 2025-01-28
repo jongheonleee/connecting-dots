@@ -3,6 +3,7 @@ package com.example.demo.service.service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
+import com.example.demo.repository.service.ServiceUserGradeRepository;
 import com.example.demo.service.service.impl.ServiceUserGradeServiceImpl;
 import com.example.demo.dto.PageResponse;
 import com.example.demo.dto.SearchCondition;
@@ -12,7 +13,6 @@ import com.example.demo.dto.service.ServiceUserGradeResponse;
 import com.example.demo.global.error.exception.business.service.ServiceUserGradeAlreadyExistsException;
 import com.example.demo.global.error.exception.business.service.ServiceUserGradeNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
-import com.example.demo.repository.mybatis.service.ServiceUserGradeDaoImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,7 @@ class ServiceUserGradeServiceImplTest {
     private ServiceUserGradeServiceImpl serviceUserGradeService;
 
     @Mock
-    private ServiceUserGradeDaoImpl serviceUserGradeDao;
+    private ServiceUserGradeRepository serviceUserGradeDao;
 
     @Mock
     private CustomFormatter formatter;

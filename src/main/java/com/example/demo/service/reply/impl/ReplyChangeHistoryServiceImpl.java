@@ -1,12 +1,12 @@
 package com.example.demo.service.reply.impl;
 
+import com.example.demo.repository.reply.ReplyChangeHistoryRepository;
 import com.example.demo.service.reply.ReplyChangeHistoryService;
 import com.example.demo.dto.reply.ReplyChangeHistoryDto;
 import com.example.demo.dto.reply.ReplyChangeHistoryRequest;
 import com.example.demo.dto.reply.ReplyChangeHistoryResponse;
 import com.example.demo.global.error.exception.business.reply.ReplyChangeHistoryNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
-import com.example.demo.repository.mybatis.reply.ReplyChangeHistoryDaoImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ReplyChangeHistoryServiceImpl implements ReplyChangeHistoryService {
 
-    private final ReplyChangeHistoryDaoImpl replyChangeHistoryDao;
+    private final ReplyChangeHistoryRepository replyChangeHistoryDao;
     private final CustomFormatter formatter;
 
     @Override

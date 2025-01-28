@@ -10,7 +10,7 @@ import com.example.demo.dto.reply.ReplyRequest;
 import com.example.demo.dto.reply.ReplyResponse;
 import com.example.demo.global.error.exception.business.reply.ReplyNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
-import com.example.demo.repository.mybatis.reply.ReplyDaoImpl;
+import com.example.demo.repository.reply.ReplyRepository;
 import com.example.demo.utils.CustomFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ class ReplyServiceImplTest {
     private ReplyService sut;
 
     @Mock
-    private ReplyDaoImpl replyDao;
+    private ReplyRepository replyDao;
 
     @Mock
     private ReplyChangeHistoryService replyChangeHistoryService;

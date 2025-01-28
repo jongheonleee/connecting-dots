@@ -38,6 +38,9 @@
     <typeAlias alias="ReplyDto" type="com.example.demo.dto.reply.ReplyDto"/>
     <typeAlias alias="ReplyChangeHistoryDto" type="com.example.demo.dto.reply.ReplyChangeHistoryDto"/>
 
+    <!-- report -->
+    <typeAlias alias="ReportDto" type="com.example.demo.dto.report.ReportDto"/>
+    <typeAlias alias="ReportCategoryDto" type="com.example.demo.dto.report.ReportCategoryDto"/>
 
 
   </typeAliases>

@@ -8,14 +8,16 @@ import com.example.demo.dto.board.BoardCategoryDto;
 import com.example.demo.dto.board.BoardDto;
 import com.example.demo.dto.board.BoardStatusDto;
 import com.example.demo.dto.code.CodeDto;
-import com.example.demo.repository.mybatis.code.CommonCodeDaoImpl;
+import com.example.demo.repository.board.BoardCategoryRepository;
+import com.example.demo.repository.board.BoardRepository;
+import com.example.demo.repository.board.BoardStatusRepository;
+import com.example.demo.repository.code.CommonCodeRepository;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,16 +29,16 @@ import org.springframework.test.context.TestPropertySource;
 class BoardStatusDaoImplTest {
 
     @Autowired
-    private BoardStatusDaoImpl boardStatusDao;
+    private BoardStatusRepository boardStatusDao;
 
     @Autowired
-    private BoardDaoImpl boardDao;
+    private BoardRepository boardDao;
 
     @Autowired
-    private BoardCategoryDaoImpl boardCategoryDao;
+    private BoardCategoryRepository boardCategoryDao;
 
     @Autowired
-    private CommonCodeDaoImpl commonCodeDao;
+    private CommonCodeRepository commonCodeDao;
 
     private BoardDto boardDto;
     private BoardCategoryDto boardCategoryDto;

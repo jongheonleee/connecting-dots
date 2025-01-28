@@ -7,9 +7,10 @@ import com.example.demo.dto.board.BoardCategoryDto;
 import com.example.demo.dto.board.BoardDto;
 import com.example.demo.dto.comment.CommentDto;
 import com.example.demo.dto.reply.ReplyDto;
-import com.example.demo.repository.mybatis.board.BoardCategoryDaoImpl;
-import com.example.demo.repository.mybatis.board.BoardDaoImpl;
-import com.example.demo.repository.mybatis.comment.CommentDaoImpl;
+import com.example.demo.repository.board.BoardCategoryRepository;
+import com.example.demo.repository.board.BoardRepository;
+import com.example.demo.repository.comment.CommentRepository;
+import com.example.demo.repository.reply.ReplyRepository;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,16 +30,16 @@ import org.springframework.test.context.TestPropertySource;
 class ReplyDaoImplTest {
 
     @Autowired
-    private ReplyDaoImpl sut;
+    private ReplyRepository sut;
 
     @Autowired
-    private CommentDaoImpl commentDao;
+    private CommentRepository commentDao;
 
     @Autowired
-    private BoardDaoImpl boardDao;
+    private BoardRepository boardDao;
 
     @Autowired
-    private BoardCategoryDaoImpl boardCategoryDao;
+    private BoardCategoryRepository boardCategoryDao;
 
     private BoardDto boardDto;
     private BoardCategoryDto boardCategoryDto;

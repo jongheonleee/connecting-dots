@@ -11,9 +11,9 @@ import com.example.demo.dto.comment.CommentRequest;
 import com.example.demo.dto.comment.CommentResponse;
 import com.example.demo.global.error.exception.business.comment.CommentNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
-import com.example.demo.repository.mybatis.board.BoardDaoImpl;
-import com.example.demo.repository.mybatis.comment.CommentDaoImpl;
-import com.example.demo.repository.mybatis.reply.ReplyDaoImpl;
+import com.example.demo.repository.board.BoardRepository;
+import com.example.demo.repository.comment.CommentRepository;
+import com.example.demo.repository.reply.ReplyRepository;
 import com.example.demo.utils.CustomFormatter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,17 +31,17 @@ class CommentServiceImplTest {
     private CommentService sut;
 
     @Mock
-    private BoardDaoImpl boardDao;
+    private BoardRepository boardDao;
 
     @Mock
-    private ReplyDaoImpl replyDao;
+    private ReplyRepository replyDao;
 
     @Mock
     private CommentChangeHistoryService commentChangeHistoryService;
 
 
     @Mock
-    private CommentDaoImpl commentDao;
+    private CommentRepository commentDao;
 
     @Mock
     private CustomFormatter formatter;

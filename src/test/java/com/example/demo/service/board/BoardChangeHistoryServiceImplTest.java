@@ -9,8 +9,8 @@ import com.example.demo.dto.board.BoardChangeHistoryResponse;
 import com.example.demo.global.error.exception.business.board.BoardChangeHistoryNotFoundException;
 import com.example.demo.global.error.exception.business.board.BoardNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
-import com.example.demo.repository.mybatis.board.BoardChangeHistoryDaoImpl;
-import com.example.demo.repository.mybatis.board.BoardDaoImpl;
+import com.example.demo.repository.board.BoardChangeHistoryRepository;
+import com.example.demo.repository.board.BoardRepository;
 import com.example.demo.utils.CustomFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,10 +32,10 @@ class BoardChangeHistoryServiceImplTest {
     private BoardChangeHistoryService boardChangeHistoryService;
 
     @Mock
-    private BoardChangeHistoryDaoImpl boardChangeHistoryDao;
+    private BoardChangeHistoryRepository boardChangeHistoryDao;
 
     @Mock
-    private BoardDaoImpl boardDao;
+    private BoardRepository boardDao;
 
     @Mock
     private CustomFormatter customFormatter;

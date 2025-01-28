@@ -7,10 +7,12 @@ import com.example.demo.dto.board.BoardCategoryDto;
 import com.example.demo.dto.board.BoardDto;
 import com.example.demo.dto.comment.CommentChangeHistoryDto;
 import com.example.demo.dto.comment.CommentDto;
-import com.example.demo.repository.mybatis.board.BoardCategoryDaoImpl;
-import com.example.demo.repository.mybatis.board.BoardDaoImpl;
-import com.example.demo.repository.mybatis.reply.ReplyChangeHistoryDaoImpl;
-import com.example.demo.repository.mybatis.reply.ReplyDaoImpl;
+import com.example.demo.repository.board.BoardCategoryRepository;
+import com.example.demo.repository.board.BoardRepository;
+import com.example.demo.repository.comment.CommentChangeHistoryRepository;
+import com.example.demo.repository.comment.CommentRepository;
+import com.example.demo.repository.reply.ReplyChangeHistoryRepository;
+import com.example.demo.repository.reply.ReplyRepository;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
@@ -29,22 +31,22 @@ import org.springframework.test.context.TestPropertySource;
 class CommentChangeHistoryDaoImplTest {
 
     @Autowired
-    private CommentChangeHistoryDaoImpl sut;
+    private CommentChangeHistoryRepository sut;
 
     @Autowired
-    private CommentDaoImpl commentDao;
+    private CommentRepository commentDao;
 
     @Autowired
-    private BoardDaoImpl boardDao;
+    private BoardRepository boardDao;
 
     @Autowired
-    private BoardCategoryDaoImpl boardCategoryDao;
+    private BoardCategoryRepository boardCategoryDao;
 
     @Autowired
-    private ReplyChangeHistoryDaoImpl replyChangeHistoryDao;
+    private ReplyChangeHistoryRepository replyChangeHistoryDao;
 
     @Autowired
-    private ReplyDaoImpl replyDao;
+    private ReplyRepository replyDao;
 
     private BoardDto boardDto;
     private BoardCategoryDto boardCategoryDto;
