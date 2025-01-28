@@ -43,5 +43,6 @@
     <typeAlias alias="ReportCategoryDto" type="com.example.demo.dto.report.ReportCategoryDto"/>
 
 
+
   </typeAliases>
 </configuration>

@@ -1,8 +1,9 @@
-package com.example.demo.repository.report;
+package com.example.demo.repository.report.impl;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.example.demo.dto.report.ReportCategoryDto;
+import com.example.demo.repository.report.ReportCategoryRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
