@@ -2,5 +2,130 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.report.ReportProcessDetailsMapper">
+  <select id="count" resultType="int">
+    SELECT COUNT(*)
+    FROM report_process_details
+  </select>
+
+  <select id="countByRno" parameterType="int" resultType="int">
+    SELECT COUNT(*)
+    FROM report_process_details
+    WHERE rno = #{rno}
+  </select>
+
+  <select id="existsBySeq" parameterType="int" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM report_process_details
+    WHERE seq = #{seq}
+  </select>
+
+  <select id="existsByRno" parameterType="int" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM report_process_details
+    WHERE rno = #{rno}
+  </select>
+
+  <select id="existsBySeqForUpdate" parameterType="int" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM report_process_details
+    WHERE seq = #{seq}
+    FOR UPDATE
+  </select>
+
+  <select id="existsByRnoForUpdate" parameterType="int" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM report_process_details
+    WHERE rno = #{rno}
+    FOR UPDATE
+  </select>
+
+  <select id="selectBySeq" parameterType="int" resultType="ReportProcessDetailsDto">
+    SELECT
+      seq, rno, pros_code,
+      appl_begin, appl_end, reg_date,
+      reg_user_seq, up_date, up_user_seq,
+      chk_use
+    FROM report_process_details
+    WHERE seq = #{seq}
+  </select>
+
+  <select id="selectByRno" parameterType="int" resultType="ReportProcessDetailsDto">
+    SELECT
+      seq, rno, pros_code,
+      appl_begin, appl_end, reg_date,
+      reg_user_seq, up_date, up_user_seq,
+      chk_use
+    FROM report_process_details
+    WHERE rno = #{rno}
+  </select>
+
+  <select id="selectAll" resultType="ReportProcessDetailsDto">
+    SELECT
+      seq, rno, pros_code,
+      appl_begin, appl_end, reg_date,
+      reg_user_seq, up_date, up_user_seq,
+      chk_use
+    FROM report_process_details
+  </select>
+
+  <select id="selectByRnoAtPresent" parameterType="int" resultType="ReportProcessDetailsDto">
+    SELECT
+      seq, rno, pros_code,
+      appl_begin, appl_end, reg_date,
+      reg_user_seq, up_date, up_user_seq,
+      chk_use
+    FROM report_process_details
+    WHERE rno = #{rno}
+    AND CURRENT_DATE BETWEEN appl_begin AND appl_end
+  </select>
+
+
+  <insert id="insert" parameterType="ReportProcessDetailsDto">
+    <selectKey keyProperty="seq" resultType="int" order="AFTER">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+
+    INSERT INTO report_process_details(
+      rno, pros_code,
+      appl_begin, appl_end, reg_date,
+      reg_user_seq, up_date, up_user_seq,
+      chk_use
+    )
+    VALUES(
+      #{rno}, #{pros_code},
+      #{appl_begin}, #{appl_end}, #{reg_date},
+      #{reg_user_seq}, #{up_date}, #{up_user_seq},
+      #{chk_use}
+    )
+  </insert>
+
+  <update id="update" parameterType="ReportProcessDetailsDto">
+    UPDATE report_process_details
+    SET
+      pros_code = #{pros_code},
+      appl_begin = #{appl_begin},
+      appl_end = #{appl_end},
+      up_date = #{up_date},
+      up_user_seq = #{up_user_seq}
+    WHERE seq = #{seq}
+  </update>
+
+  <delete id="deleteBySeq" parameterType="int">
+    DELETE
+    FROM report_process_details
+    WHERE seq = #{seq}
+  </delete>
+
+  <delete id="deleteByRno" parameterType="int">
+    DELETE
+    FROM report_process_details
+    WHERE rno = #{rno}
+  </delete>
+
+  <delete id="deleteAll">
+    DELETE
+    FROM report_process_details
+  </delete>
+
 
 </mapper>

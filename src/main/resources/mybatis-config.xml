@@ -41,7 +41,8 @@
     <!-- report -->
     <typeAlias alias="ReportDto" type="com.example.demo.dto.report.ReportDto"/>
     <typeAlias alias="ReportCategoryDto" type="com.example.demo.dto.report.ReportCategoryDto"/>
-
+    <typeAlias alias="ReportChangeHistoryDto" type="com.example.demo.dto.report.ReportChangeHistoryDto"/>
+    <typeAlias alias="ReportProcessDetailsDto" type="com.example.demo.dto.report.ReportProcessDetailsDto"/>
 
 
   </typeAliases>

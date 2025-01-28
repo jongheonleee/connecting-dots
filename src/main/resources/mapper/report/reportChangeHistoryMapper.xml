@@ -2,5 +2,140 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.report.ReportChangeHistoryMapper">
+  <select id="count" resultType="int">
+    SELECT COUNT(*)
+    FROM report_change_history
+  </select>
 
+  <select id="countByRno" parameterType="int" resultType="int">
+    SELECT COUNT(*)
+    FROM report_change_history
+    WHERE rno = #{rno}
+  </select>
+
+  <select id="existsBySeq" parameterType="int" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM report_change_history
+    WHERE seq = #{seq}
+  </select>
+
+  <select id="existsByRno" parameterType="int" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM report_change_history
+    WHERE rno = #{rno}
+  </select>
+
+  <select id="existsBySeqForUpdate" parameterType="int" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM report_change_history
+    WHERE seq = #{seq}
+    FOR UPDATE
+  </select>
+
+  <select id="existsByRnoForUpdate" parameterType="int" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM report_change_history
+    WHERE rno = #{rno}
+    FOR UPDATE
+  </select>
+
+  <insert id="insert" parameterType="ReportChangeHistoryDto">
+    <selectKey keyProperty="seq" resultType="int" order="AFTER">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+
+    INSERT INTO report_change_history(
+      rno, title,
+      cont, appl_begin, appl_end,
+      comt, reg_date, reg_user_seq,
+      up_date, up_user_seq
+    )
+    VALUES(
+      #{rno}, #{title},
+      #{cont}, #{appl_begin}, #{appl_end},
+      #{comt}, #{reg_date}, #{reg_user_seq},
+      #{up_date}, #{up_user_seq}
+    )
+  </insert>
+
+  <select id="selectBySeq" parameterType="int" resultType="ReportChangeHistoryDto">
+    SELECT
+      seq, rno, title,
+      cont, appl_begin, appl_end,
+      comt, reg_date, reg_user_seq,
+      up_date, up_user_seq
+    FROM report_change_history
+    WHERE seq = #{seq}
+  </select>
+
+  <select id="selectByRno" parameterType="int" resultType="ReportChangeHistoryDto">
+    SELECT
+      seq, rno, title,
+      cont, appl_begin, appl_end,
+      comt, reg_date, reg_user_seq,
+      up_date, up_user_seq
+    FROM report_change_history
+    WHERE rno = #{rno}
+  </select>
+
+  <select id="selectAll" resultType="ReportChangeHistoryDto">
+    SELECT
+      seq, rno, title,
+      cont, appl_begin, appl_end,
+      comt, reg_date, reg_user_seq,
+      up_date, up_user_seq
+    FROM report_change_history
+  </select>
+
+  <select id="selectLatestByRno" parameterType="int" resultType="ReportChangeHistoryDto">
+    SELECT
+      r1.seq AS seq,
+      r1.rno AS rno,
+      r1.title AS title,
+      r1.cont AS cont,
+      r1.comt AS comt,
+      r1.appl_begin AS appl_begin,
+      r1.appl_end AS appl_end,
+      r1.reg_date AS reg_date,
+      r1.reg_user_seq AS reg_user_seq,
+      r1.up_date AS up_date,
+      r1.up_user_seq AS up_user_seq
+    FROM report_change_history AS r1
+    INNER JOIN (
+      SELECT MAX(seq) AS seq
+      FROM report_change_history
+      WHERE rno = #{rno}
+    ) AS r2
+    ON r1.seq = r2.seq
+  </select>
+
+  <update id="update" parameterType="ReportChangeHistoryDto">
+    UPDATE report_change_history
+    SET
+      title = #{title},
+      cont = #{cont},
+      comt = #{comt},
+      appl_begin = #{appl_begin},
+      appl_end = #{appl_end},
+      up_date = #{up_date},
+      up_user_seq = #{up_user_seq}
+    WHERE seq = #{seq}
+  </update>
+
+  <delete id="deleteBySeq" parameterType="int">
+    DELETE
+    FROM report_change_history
+    WHERE seq = #{seq}
+  </delete>
+
+  <delete id="deleteByRno" parameterType="int">
+    DELETE
+    FROM report_change_history
+    WHERE rno = #{rno}
+  </delete>
+
+  <delete id="deleteAll">
+    DELETE
+    FROM report_change_history
+  </delete>
 </mapper>

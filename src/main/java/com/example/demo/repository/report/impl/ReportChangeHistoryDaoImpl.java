@@ -1,5 +1,95 @@
 package com.example.demo.repository.report.impl;
 
-public class ReportChangeHistoryDaoImpl {
+import com.example.demo.dto.report.ReportChangeHistoryDto;
+import com.example.demo.repository.report.ReportChangeHistoryRepository;
+import java.util.List;
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public class ReportChangeHistoryDaoImpl implements ReportChangeHistoryRepository {
+
+    private static final String namespace = "com.example.demo.mapper.report.ReportChangeHistoryMapper.";
+
+    @Autowired
+    private SqlSession session;
+
+
+    @Override
+    public int count() {
+        return session.selectOne(namespace + "count");
+    }
+
+    @Override
+    public int countByRno(Integer rno) {
+        return session.selectOne(namespace + "countByRno", rno);
+    }
+
+    @Override
+    public boolean existsBySeq(Integer seq) {
+        return session.selectOne(namespace + "existsBySeq", seq);
+    }
+
+    @Override
+    public boolean existsByRno(Integer rno) {
+        return session.selectOne(namespace + "existsByRno", rno);
+    }
+
+    @Override
+    public boolean existsBySeqForUpdate(Integer seq) {
+        return session.selectOne(namespace + "existsBySeqForUpdate", seq);
+    }
+
+    @Override
+    public boolean existsByRnoForUpdate(Integer rno) {
+        return session.selectOne(namespace + "existsByRnoForUpdate", rno);
+    }
+
+    @Override
+    public ReportChangeHistoryDto selectBySeq(Integer seq) {
+        return session.selectOne(namespace + "selectBySeq", seq);
+    }
+
+    @Override
+    public List<ReportChangeHistoryDto> selectByRno(Integer rno) {
+        return session.selectList(namespace + "selectByRno", rno);
+    }
+
+    @Override
+    public List<ReportChangeHistoryDto> selectAll() {
+        return session.selectList(namespace + "selectAll");
+    }
+
+    @Override
+    public ReportChangeHistoryDto selectLatestByRno(Integer rno) {
+        return session.selectOne(namespace + "selectLatestByRno", rno);
+    }
+
+    @Override
+    public int insert(ReportChangeHistoryDto dto) {
+        return session.insert(namespace + "insert", dto);
+    }
+
+    @Override
+    public int update(ReportChangeHistoryDto dto) {
+        return session.update(namespace + "update", dto);
+    }
+
+    @Override
+    public int delete(Integer seq) {
+        return session.delete(namespace + "deleteBySeq", seq);
+    }
+
+    @Override
+    public int deleteByRno(Integer rno) {
+        return session.delete(namespace + "deleteByRno", rno);
+    }
+
+    @Override
+    public int deleteAll() {
+        return session.delete(namespace + "deleteAll");
+    }
 
 }
+
