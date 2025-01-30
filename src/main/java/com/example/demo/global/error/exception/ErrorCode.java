@@ -50,6 +50,10 @@ public enum ErrorCode {
     // 회원
 
     // 리포트
+    REPORT_NOT_FOUND(404, "EC2001", "해당 리포트를 찾을 수 없습니다"),
+    REPORT_CHANGE_HISTORY_NOT_FOUND(404, "EC2002", "해당 리포트 변경 이력을 찾을 수 없습니다"),
+    REPORT_CATEGORY_ALREADY_EXISTS(409, "EC2001", "해당 리포트 카테고리가 이미 존재합니다"),
+    REPORT_CATEGORY_NOT_FOUND(404, "EC2002", "해당 리포트 카테고리를 찾을 수 없습니다"),
 
     // 댓글, 대댓글
     COMMENT_NOT_FOUND(404, "EC2001", "해당 댓글을 찾을 수 없습니다"),

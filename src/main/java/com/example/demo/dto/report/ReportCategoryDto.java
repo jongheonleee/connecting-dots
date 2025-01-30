@@ -27,4 +27,16 @@ public class ReportCategoryDto {
     private Integer reg_user_seq;
     private String up_date;
     private Integer up_user_seq;
+
+    public ReportCategoryResponse toResponse() {
+        return ReportCategoryResponse.builder()
+                .cate_code(cate_code)
+                .top_cate(top_cate)
+                .name(name)
+                .comt(comt)
+                .ord(ord)
+                .chk_use(chk_use)
+                .level(level)
+                .build();
+    }
 }

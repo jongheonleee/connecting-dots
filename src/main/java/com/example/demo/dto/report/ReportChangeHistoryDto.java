@@ -29,4 +29,22 @@ public class ReportChangeHistoryDto {
     private String up_date;
     private Integer up_user_seq;
 
+    public ReportChangeHistoryResponse toResponse() {
+        return ReportChangeHistoryResponse.builder()
+                                        .seq(seq)
+                                        .rno(rno)
+                                        .title(title)
+                                        .cont(cont)
+                                        .appl_begin(appl_begin)
+                                        .appl_end(appl_end)
+                                        .comt(comt)
+                                        .build();
+    }
+
+    public void updateApplEnd(final String appl_end, final String up_date, final Integer up_user_seq) {
+        this.appl_end = appl_end;
+        this.up_date = up_date;
+        this.up_user_seq = up_user_seq;
+    }
+
 }
