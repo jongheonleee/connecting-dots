@@ -25,60 +25,24 @@ public class ReportChangeHistoryServiceImpl {
 
 
     public ReportChangeHistoryResponse create(final ReportChangeHistoryRequest request) {
-        var dto = request.toDto(formatter.getCurrentDateFormat(),
-                formatter.getManagerSeq(), formatter.getCurrentDateFormat(),
-                formatter.getLastDateFormat());
-
-        boolean exists = reportRepository.existsByRno(request.getRno());
-        if (!exists) {
-            log.error("[REPORT_CHANGE_HISTORY] 해당 리포트가 존재하지 않습니다. rno: {}", request.getRno());
-            throw new ReportNotFoundException();
-        }
-
-        int rowCnt = reportChangeHistoryRepository.insert(dto);
-        if (rowCnt != 1) {
-            log.error("[REPORT_CHANGE_HISTORY] DBMS에 정상 반영되지 않았습니다. rno: {}", request.getRno());
-            throw new NotApplyOnDbmsException();
-        }
-
+        var dto = request.toDto(formatter.getCurrentDateFormat(), formatter.getManagerSeq(), formatter.getCurrentDateFormat(), formatter.getLastDateFormat());
+        checkReportExists(request.getRno());
+        checkApplied(1, reportChangeHistoryRepository.insert(dto));
         return dto.toResponse();
     }
 
     @Transactional(rollbackFor = Exception.class)
     public ReportChangeHistoryResponse renew(final ReportChangeHistoryRequest request) {
-        var dto = request.toDto(formatter.getCurrentDateFormat(),
-                formatter.getManagerSeq(), formatter.getCurrentDateFormat(),
-                formatter.getLastDateFormat());
-
-        boolean existsReport = reportRepository.existsByRnoForUpdate(request.getRno());
-        if (!existsReport) {
-            log.error("[REPORT_CHANGE_HISTORY] 해당 리포트가 존재하지 않습니다. rno: {}", request.getRno());
-            throw new ReportNotFoundException();
-        }
-
-        boolean existsChangeHistory = reportChangeHistoryRepository.existsByRnoForUpdate(request.getRno());
-        if (!existsChangeHistory) {
-            log.error("[REPORT_CHANGE_HISTORY] 해당 리포트의 변경 이력이 존재하지 않습니다. rno: {}", request.getRno());
-            throw new ReportChangeHistoryNotFoundException();
-        }
-
+        var dto = request.toDto(formatter.getCurrentDateFormat(), formatter.getManagerSeq(), formatter.getCurrentDateFormat(), formatter.getLastDateFormat());
+        checkReportExistsForUpdate(request.getRno());
+        checkReportChangeHistoryExistsForUpdate(request.getRno());
         var foundOriginal = reportChangeHistoryRepository.selectLatestByRno(request.getRno());
         foundOriginal.updateApplEnd(formatter.minusDateFormat(1), formatter.getCurrentDateFormat(), formatter.getManagerSeq());
-        int rowCnt = reportChangeHistoryRepository.update(foundOriginal);
-
-        if (rowCnt != 1) {
-            log.error("[REPORT_CHANGE_HISTORY] DBMS에 정상 반영되지 않았습니다. rno: {}", request.getRno());
-            throw new NotApplyOnDbmsException();
-        }
-
-        rowCnt = reportChangeHistoryRepository.insert(dto);
-        if (rowCnt != 1) {
-            log.error("[REPORT_CHANGE_HISTORY] DBMS에 정상 반영되지 않았습니다. rno: {}", request.getRno());
-            throw new NotApplyOnDbmsException();
-        }
-
+        checkApplied(2, reportChangeHistoryRepository.update(foundOriginal) + reportChangeHistoryRepository.insert(dto));
         return dto.toResponse();
     }
+
+
 
     public ReportChangeHistoryResponse readBySeq(final Integer seq) {
         var found = reportChangeHistoryRepository.selectBySeq(seq);
@@ -106,50 +70,62 @@ public class ReportChangeHistoryServiceImpl {
     }
 
     public void modify(final ReportChangeHistoryRequest request) {
-        var dto = request.toDto(formatter.getCurrentDateFormat(),
-                formatter.getManagerSeq(), formatter.getCurrentDateFormat(),
-                formatter.getLastDateFormat());
-
-        boolean exists = reportChangeHistoryRepository.existsBySeqForUpdate(request.getSeq());
-        if (!exists) {
-            log.error("[REPORT_CHANGE_HISTORY] 해당 변경 이력이 존재하지 않습니다. seq: {}", request.getSeq());
-            throw new ReportChangeHistoryNotFoundException();
-        }
-
-        int rowCnt = reportChangeHistoryRepository.update(dto);
-        if (rowCnt != 1) {
-            log.error("[REPORT_CHANGE_HISTORY] DBMS에 정상 반영되지 않았습니다. seq: {}", request.getSeq());
-            throw new NotApplyOnDbmsException();
-        }
+        var dto = request.toDto(formatter.getCurrentDateFormat(), formatter.getManagerSeq(), formatter.getCurrentDateFormat(), formatter.getLastDateFormat());
+        checkReportChangeHistoryForUpdateBySeq(request.getSeq());
+        checkApplied(1, reportChangeHistoryRepository.update(dto));
     }
 
     public void removeBySeq(final Integer seq) {
-        int rowCnt = reportChangeHistoryRepository.delete(seq);
-        if (rowCnt != 1) {
-            log.error("[REPORT_CHANGE_HISTORY] DBMS에 정상 반영되지 않았습니다. seq: {}", seq);
-            throw new NotApplyOnDbmsException();
-        }
+        checkApplied(1, reportChangeHistoryRepository.delete(seq));
     }
 
     @Transactional(rollbackFor = Exception.class)
     public void removeByRno(final Integer rno) {
-        int totalCnt = reportChangeHistoryRepository.countByRno(rno);
-        int rowCnt = reportChangeHistoryRepository.deleteByRno(rno);
-
-        if (totalCnt != rowCnt) {
-            log.error("[REPORT_CHANGE_HISTORY] DBMS에 정상 반영되지 않았습니다. rno: {}", rno);
-            throw new NotApplyOnDbmsException();
-        }
+        checkApplied(reportChangeHistoryRepository.countByRno(rno), reportChangeHistoryRepository.deleteByRno(rno));
     }
 
     @Transactional(rollbackFor = Exception.class)
     void removeAll() {
-        int totalCnt = reportChangeHistoryRepository.count();
-        int rowCnt = reportChangeHistoryRepository.deleteAll();
+        checkApplied(reportChangeHistoryRepository.count(), reportChangeHistoryRepository.deleteAll());
+    }
 
-        if (totalCnt != rowCnt) {
-            log.error("[REPORT_CHANGE_HISTORY] DBMS에 정상 반영되지 않았습니다.");
+    private void checkReportExists(final Integer rno) {
+        boolean exists = reportRepository.existsByRno(rno);
+        if (!exists) {
+            log.error("[REPORT_CHANGE_HISTORY] 해당 리포트가 존재하지 않습니다. rno: {}", rno);
+            throw new ReportNotFoundException();
+        }
+    }
+
+    private void checkApplied(Integer expected, Integer actual) {
+        if (expected != actual) {
+            log.error("[REPORT_CHANGE_HISTORY] DBMS에 정상 반영되지 않았습니다. expected: {}, actual: {}", expected, actual);
             throw new NotApplyOnDbmsException();
         }
     }
+
+    private void checkReportExistsForUpdate(final Integer rno) {
+        boolean existsReport = reportRepository.existsByRnoForUpdate(rno);
+        if (!existsReport) {
+            log.error("[REPORT_CHANGE_HISTORY] 해당 리포트가 존재하지 않습니다. rno: {}", rno);
+            throw new ReportNotFoundException();
+        }
+    }
+
+    private void checkReportChangeHistoryExistsForUpdate(final Integer rno) {
+        boolean existsChangeHistory = reportChangeHistoryRepository.existsByRnoForUpdate(rno);
+        if (!existsChangeHistory) {
+            log.error("[REPORT_CHANGE_HISTORY] 해당 리포트의 변경 이력이 존재하지 않습니다. rno: {}", rno);
+            throw new ReportChangeHistoryNotFoundException();
+        }
+    }
+
+    private void checkReportChangeHistoryForUpdateBySeq(final Integer seq) {
+        boolean exists = reportChangeHistoryRepository.existsBySeqForUpdate(seq);
+        if (!exists) {
+            log.error("[REPORT_CHANGE_HISTORY] 해당 변경 이력이 존재하지 않습니다. seq: {}", seq);
+            throw new ReportChangeHistoryNotFoundException();
+        }
+    }
+
 }
