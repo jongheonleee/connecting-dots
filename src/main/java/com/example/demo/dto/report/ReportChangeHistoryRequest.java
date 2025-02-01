@@ -20,6 +20,8 @@ import lombok.ToString;
 public class ReportChangeHistoryRequest {
 
 
+    private Integer seq;
+
     @NotNull(message = "bno 필수값입니다.")
     private Integer rno;
 
@@ -33,6 +35,7 @@ public class ReportChangeHistoryRequest {
 
     public ReportChangeHistoryDto toDto(final String currDateTime, final Integer managerSeq, final String applBeginTime, final String applEndTime) {
         return ReportChangeHistoryDto.builder()
+                .seq(seq)
                 .rno(rno)
                 .title(title)
                 .cont(cont)
