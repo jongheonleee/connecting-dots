@@ -27,6 +27,11 @@ public class CommonCodeDaoImpl implements CommonCodeRepository {
     }
 
     @Override
+    public boolean existsByCode(String code) {
+        return session.selectOne(namespace + "existsByCode", code);
+    }
+
+    @Override
     public List<CodeDto> selectByTopCode(String top_code) {
         return session.selectList(namespace + "selectByTopCode", top_code);
     }

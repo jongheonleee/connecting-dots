@@ -19,6 +19,8 @@ public interface ReportProcessDetailsRepository {
 
     boolean existsByRnoForUpdate(Integer rno);
 
+    ReportProcessDetailsDto selectLatestByRno(Integer rno);
+
     ReportProcessDetailsDto selectBySeq(Integer seq);
 
     List<ReportProcessDetailsDto> selectByRno(Integer rno);

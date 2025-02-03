@@ -27,6 +27,12 @@
         </choose>
   </select>
 
+  <select id="existsByCode" parameterType="string" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM common_code
+    WHERE code = #{code}
+  </select>
+
 
   <select id="select" parameterType="string" resultType="CodeDto">
     SELECT

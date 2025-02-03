@@ -80,6 +80,28 @@
   </select>
 
 
+  <select id="selectLatestByRno" parameterType="int" resultType="ReportProcessDetailsDto">
+    SELECT
+      r1.seq AS seq,
+      r1.rno AS rno,
+      r1.pros_code AS pros_code,
+      r1.appl_begin AS appl_begin,
+      r1.appl_end AS appl_end,
+      r1.reg_date AS reg_date,
+      r1.reg_user_seq AS reg_user_seq,
+      r1.up_date AS up_date,
+      r1.up_user_seq AS up_user_seq,
+      r1.chk_use AS chk_use
+    FROM report_process_details AS r1
+    INNER JOIN (
+      SELECT MAX(seq) AS seq
+      FROM report_process_details
+      WHERE rno = #{rno}
+    ) AS r2
+    ON r1.seq = r2.seq
+  </select>
+
+
   <insert id="insert" parameterType="ReportProcessDetailsDto">
     <selectKey keyProperty="seq" resultType="int" order="AFTER">
       SELECT LAST_INSERT_ID()

@@ -51,6 +51,11 @@ public class ReportProcessDetailsDaoImpl implements ReportProcessDetailsReposito
     }
 
     @Override
+    public ReportProcessDetailsDto selectLatestByRno(Integer rno) {
+        return session.selectOne(namespace + "selectLatestByRno", rno);
+    }
+
+    @Override
     public ReportProcessDetailsDto selectBySeq(Integer seq) {
         return session.selectOne(namespace + "selectBySeq", seq);
     }

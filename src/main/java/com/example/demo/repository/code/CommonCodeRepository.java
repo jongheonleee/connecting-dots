@@ -10,6 +10,8 @@ public interface CommonCodeRepository {
 
     int countBySearchCondition(SearchCondition sc);
 
+    boolean existsByCode(String code);
+
     List<CodeDto> selectByTopCode(String top_code);
 
     CodeDto selectBySeq(Integer seq);

@@ -7,6 +7,7 @@ import com.example.demo.global.error.exception.business.report.ReportNotFoundExc
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
 import com.example.demo.repository.report.ReportChangeHistoryRepository;
 import com.example.demo.repository.report.ReportRepository;
+import com.example.demo.service.report.ReportChangeHistoryService;
 import com.example.demo.utils.CustomFormatter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -17,13 +18,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ReportChangeHistoryServiceImpl {
+public class ReportChangeHistoryServiceImpl implements ReportChangeHistoryService {
 
     private final ReportChangeHistoryRepository reportChangeHistoryRepository;
     private final ReportRepository reportRepository;
     private final CustomFormatter formatter;
 
 
+    @Override
     public ReportChangeHistoryResponse create(final ReportChangeHistoryRequest request) {
         var dto = request.toDto(formatter.getCurrentDateFormat(), formatter.getManagerSeq(), formatter.getCurrentDateFormat(), formatter.getLastDateFormat());
         checkReportExists(request.getRno());
@@ -31,6 +33,7 @@ public class ReportChangeHistoryServiceImpl {
         return dto.toResponse();
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public ReportChangeHistoryResponse renew(final ReportChangeHistoryRequest request) {
         var dto = request.toDto(formatter.getCurrentDateFormat(), formatter.getManagerSeq(), formatter.getCurrentDateFormat(), formatter.getLastDateFormat());
@@ -44,6 +47,7 @@ public class ReportChangeHistoryServiceImpl {
 
 
 
+    @Override
     public ReportChangeHistoryResponse readBySeq(final Integer seq) {
         var found = reportChangeHistoryRepository.selectBySeq(seq);
         if (found == null) {
@@ -54,6 +58,7 @@ public class ReportChangeHistoryServiceImpl {
         return found.toResponse();
     }
 
+    @Override
     public List<ReportChangeHistoryResponse> readByRno(final Integer rno) {
         return reportChangeHistoryRepository.selectByRno(rno)
                                             .stream()
@@ -62,6 +67,7 @@ public class ReportChangeHistoryServiceImpl {
     }
 
 
+    @Override
     public List<ReportChangeHistoryResponse> readAll() {
         return reportChangeHistoryRepository.selectAll()
                                             .stream()
@@ -69,23 +75,27 @@ public class ReportChangeHistoryServiceImpl {
                                             .toList();
     }
 
+    @Override
     public void modify(final ReportChangeHistoryRequest request) {
         var dto = request.toDto(formatter.getCurrentDateFormat(), formatter.getManagerSeq(), formatter.getCurrentDateFormat(), formatter.getLastDateFormat());
         checkReportChangeHistoryForUpdateBySeq(request.getSeq());
         checkApplied(1, reportChangeHistoryRepository.update(dto));
     }
 
+    @Override
     public void removeBySeq(final Integer seq) {
         checkApplied(1, reportChangeHistoryRepository.delete(seq));
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void removeByRno(final Integer rno) {
         checkApplied(reportChangeHistoryRepository.countByRno(rno), reportChangeHistoryRepository.deleteByRno(rno));
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
-    void removeAll() {
+    public void removeAll() {
         checkApplied(reportChangeHistoryRepository.count(), reportChangeHistoryRepository.deleteAll());
     }
 
