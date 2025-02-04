@@ -10,96 +10,49 @@ import com.example.demo.global.error.exception.technology.database.NotApplyOnDbm
 import com.example.demo.repository.code.CommonCodeRepository;
 import com.example.demo.repository.report.ReportProcessDetailsRepository;
 import com.example.demo.repository.report.ReportRepository;
+import com.example.demo.service.report.ReportProcessDetailsService;
 import com.example.demo.utils.CustomFormatter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ReportProcessDetailsServiceImpl {
+public class ReportProcessDetailsServiceImpl implements ReportProcessDetailsService {
 
     private final ReportProcessDetailsRepository reportProcessDetailsRepository;
     private final CommonCodeRepository commonCodeRepository;
     private final ReportRepository reportRepository;
     private final CustomFormatter formatter;
 
+    @Override
     public ReportProcessDetailsResponse create(final ReportProcessDetailsRequest request) {
-        boolean existsReport = reportRepository.existsByRno(request.getRno());
-
-        if (!existsReport) {
-            log.error("[REPORT_PROCESS_DETAILS] 해당 리포트가 존재하지 않습니다. rno: {}", request.getRno());
-            throw new ReportNotFoundException();
-        }
-
-        boolean existsCode = commonCodeRepository.existsByCode(request.getPros_code());
-        if (!existsCode) {
-            log.error("[REPORT_PROCESS_DETAILS] 해당 코드가 존재하지 않습니다. pros_code: {}", request.getPros_code());
-            throw new CodeNotFoundException();
-        }
-
-        boolean exists = reportProcessDetailsRepository.existsByRno(request.getRno());
-        if (exists) {
-            log.error("[REPORT_PROCESS_DETAILS] 해당 리포트 처리 내역이 이미 존재합니다. rno: {}", request.getRno());
-            throw new ReportProcessAlreadyExistsException(); //
-        }
-
+        checkReportExists(request.getRno());
+        checkCodeExists(request.getPros_code());
+        checkDuplicatedReportProcessDetails(request.getRno());
         var dto = request.toDto(formatter.getCurrentDateFormat(), formatter.getManagerSeq(), formatter.getCurrentDateFormat(), formatter.getLastDateFormat());
-        int rowCnt = reportProcessDetailsRepository.insert(dto);
-
-        if (rowCnt != 1) {
-            log.error("[REPORT_PROCESS_DETAILS] 리포트 처리 내역 등록에 실패하였습니다. rno: {}, pros_code: {}", request.getRno(), request.getPros_code());
-            throw new NotApplyOnDbmsException();
-        }
-
-
+        checkApplied(1, reportProcessDetailsRepository.insert(dto));
         return dto.toResponse();
     }
 
 
-
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public ReportProcessDetailsResponse renew(final ReportProcessDetailsRequest request) {
-        boolean existsReport = reportRepository.existsByRno(request.getRno());
-
-        if (!existsReport) {
-            log.error("[REPORT_PROCESS_DETAILS] 해당 리포트가 존재하지 않습니다. rno: {}", request.getRno());
-            throw new ReportNotFoundException();
-        }
-
-        boolean existsCode = commonCodeRepository.existsByCode(request.getPros_code());
-        if (!existsCode) {
-            log.error("[REPORT_PROCESS_DETAILS] 해당 코드가 존재하지 않습니다. pros_code: {}", request.getPros_code());
-            throw new CodeNotFoundException();
-        }
-
-        boolean exists = reportProcessDetailsRepository.existsByRno(request.getRno());
-        if (!exists) {
-            log.error("[REPORT_PROCESS_DETAILS] 해당 리포트 처리 내역이 존재하지 않습니다. rno: {}", request.getRno());
-            throw new ReportProcessNotFoundException();
-        }
-
+        checkReportExists(request.getRno());
+        checkCodeExists(request.getPros_code());
+        checkReportProcessDetailsExists(request.getRno());
         var foundOriginal = reportProcessDetailsRepository.selectLatestByRno(request.getRno());
         foundOriginal.updateApplEnd(formatter.minusDateFormat(1), formatter.getCurrentDateFormat(), formatter.getManagerSeq());
-        int rowCnt = reportProcessDetailsRepository.update(foundOriginal);
-
-        if (rowCnt != 1) {
-            log.error("[REPORT_PROCESS_DETAILS] 리포트 처리 내역 갱신에 실패하였습니다. rno: {}, pros_code: {}", request.getRno(), request.getPros_code());
-            throw new NotApplyOnDbmsException();
-        }
-
-        var dto = request.toDto(formatter.getCurrentDateFormat(), formatter.getManagerSeq(), formatter.getCurrentDateFormat(), formatter.getLastDateFormat());
-        rowCnt = reportProcessDetailsRepository.insert(dto);
-
-        if (rowCnt != 1) {
-            log.error("[REPORT_PROCESS_DETAILS] 리포트 처리 내역 등록에 실패하였습니다. rno: {}, pros_code: {}", request.getRno(), request.getPros_code());
-            throw new NotApplyOnDbmsException();
-        }
-
-        return dto.toResponse();
+        var newOne = request.toDto(formatter.getCurrentDateFormat(), formatter.getManagerSeq(), formatter.getCurrentDateFormat(), formatter.getLastDateFormat());
+        checkApplied(2, reportProcessDetailsRepository.update(foundOriginal) + reportProcessDetailsRepository.insert(newOne));
+        return newOne.toResponse();
     }
 
+    @Override
     public ReportProcessDetailsResponse readBySeq(final Integer seq) {
         var found = reportProcessDetailsRepository.selectBySeq(seq);
         if (found == null) {
@@ -110,20 +63,16 @@ public class ReportProcessDetailsServiceImpl {
         return found.toResponse();
     }
 
+    @Override
     public List<ReportProcessDetailsResponse> readByRno(final Integer rno) {
-        boolean existsReport = reportRepository.existsByRno(rno);
-
-        if (!existsReport) {
-            log.error("[REPORT_PROCESS_DETAILS] 해당 리포트 처리 내역이 존재하지 않습니다. rno: {}", rno);
-            throw new ReportNotFoundException();
-        }
-
+        checkReportExists(rno);
         return reportProcessDetailsRepository.selectByRno(rno)
                                              .stream()
                                              .map(o -> o.toResponse())
                                              .toList();
     }
 
+    @Override
     public List<ReportProcessDetailsResponse> readAll() {
         return reportProcessDetailsRepository.selectAll()
                                              .stream()
@@ -131,50 +80,77 @@ public class ReportProcessDetailsServiceImpl {
                                              .toList();
     }
 
+    @Override
     public void modify(final ReportProcessDetailsRequest request) {
-        boolean exists = reportProcessDetailsRepository.existsBySeqForUpdate(request.getSeq());
-
-        if (!exists) {
-            log.error("[REPORT_PROCESS_DETAILS] 해당 리포트 처리 내역이 존재하지 않습니다. seq: {}", request.getSeq());
-            throw new ReportProcessNotFoundException();
-        }
-
+        checkReportProcessDetailsExistsForUpdate(request.getSeq());
         var found = reportProcessDetailsRepository.selectBySeq(request.getSeq());
         found.update(request, formatter.getCurrentDateFormat(), formatter.getManagerSeq());
-        int rowCnt = reportProcessDetailsRepository.update(found);
-
-        if (rowCnt != 1) {
-            log.error("[REPORT_PROCESS_DETAILS] 리포트 처리 내역 수정에 실패하였습니다. seq: {}", request.getSeq());
-            throw new NotApplyOnDbmsException();
-        }
+        checkApplied(1, reportProcessDetailsRepository.update(found));
     }
 
+    @Override
     public void removeBySeq(final Integer seq) {
-        int rowCnt = reportProcessDetailsRepository.deleteBySeq(seq);
-
-        if (rowCnt != 1) {
-            log.error("[REPORT_PROCESS_DETAILS] 리포트 처리 내역 삭제에 실패하였습니다. seq: {}", seq);
-            throw new NotApplyOnDbmsException();
-        }
+        checkApplied(1, reportProcessDetailsRepository.deleteBySeq(seq));
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public void removeByRno(final Integer rno) {
-        int totalCnt = reportProcessDetailsRepository.countByRno(rno);
-        int rowCnt = reportProcessDetailsRepository.deleteByRno(rno);
+        checkApplied(reportProcessDetailsRepository.countByRno(rno), reportProcessDetailsRepository.deleteByRno(rno));
+    }
 
-        if (totalCnt != rowCnt) {
-            log.error("[REPORT_PROCESS_DETAILS] 리포트 처리 내역 삭제에 실패하였습니다. rno: {}", rno);
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void removeAll() {
+        checkApplied(reportProcessDetailsRepository.count(), reportProcessDetailsRepository.deleteAll());
+    }
+
+    private void checkReportExists(final Integer rno) {
+        boolean existsReport = reportRepository.existsByRno(rno);
+
+        if (!existsReport) {
+            log.error("[REPORT_PROCESS_DETAILS] 해당 리포트가 존재하지 않습니다. rno: {}", rno);
+            throw new ReportNotFoundException();
+        }
+    }
+
+    private void checkCodeExists(final String pros_code) {
+        boolean existsCode = commonCodeRepository.existsByCode(pros_code);
+        if (!existsCode) {
+            log.error("[REPORT_PROCESS_DETAILS] 해당 코드가 존재하지 않습니다. pros_code: {}", pros_code);
+            throw new CodeNotFoundException();
+        }
+    }
+
+    private void checkDuplicatedReportProcessDetails(final Integer rno) {
+        boolean exists = reportProcessDetailsRepository.existsByRno(rno);
+        if (exists) {
+            log.error("[REPORT_PROCESS_DETAILS] 해당 리포트 처리 내역이 이미 존재합니다. rno: {}", rno);
+            throw new ReportProcessAlreadyExistsException();
+        }
+    }
+
+    private void checkApplied(final Integer expected, final Integer actual) {
+        if (expected != actual) {
+            log.error("[REPORT_PROCESS_DETAILS] 리포트 처리 내역 처리에 실패하였습니다. expected: {}, actual: {}", expected, actual);
             throw new NotApplyOnDbmsException();
         }
     }
 
-    public void removeAll() {
-        int totalCnt = reportProcessDetailsRepository.count();
-        int rowCnt = reportProcessDetailsRepository.deleteAll();
+    private void checkReportProcessDetailsExists(final Integer rno) {
+        boolean exists = reportProcessDetailsRepository.existsByRno(rno);
+        if (!exists) {
+            log.error("[REPORT_PROCESS_DETAILS] 해당 리포트 처리 내역이 존재하지 않습니다. rno: {}", rno);
+            throw new ReportProcessNotFoundException();
+        }
+    }
 
-        if (totalCnt != rowCnt) {
-            log.error("[REPORT_PROCESS_DETAILS] 리포트 처리 내역 전체 삭제에 실패하였습니다.");
-            throw new NotApplyOnDbmsException();
+    private void checkReportProcessDetailsExistsForUpdate(final Integer seq) {
+        boolean exists = reportProcessDetailsRepository.existsBySeqForUpdate(seq);
+
+        if (!exists) {
+            log.error("[REPORT_PROCESS_DETAILS] 해당 리포트 처리 내역이 존재하지 않습니다. seq: {}", seq);
+            throw new ReportProcessNotFoundException();
         }
     }
 }
