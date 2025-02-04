@@ -33,4 +33,21 @@ public class ReportDto {
     private Integer reg_user_seq;
     private String up_date;
     private Integer up_user_seq;
+
+    public ReportResponse toResponse() {
+        return ReportResponse.builder()
+                            .rno(rno)
+                            .cate_code(cate_code)
+                            .title(title)
+                            .cont(cont)
+                            .chk_change(chk_change)
+                            .comt(comt)
+                            .repo_seq(repo_seq)
+                            .resp_seq(resp_seq)
+                            .boar(boar)
+                            .cmnt(cmnt)
+                            .repl(repl)
+                            .type(type)
+                            .build();
+    }
 }
