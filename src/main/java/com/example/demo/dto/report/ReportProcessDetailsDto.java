@@ -39,9 +39,16 @@ public class ReportProcessDetailsDto {
                 .build();
     }
 
-    public void updateApplEnd(String appl_end, String up_date, Integer up_user_seq) {
-        this.appl_end = appl_end;
-        this.up_date = up_date;
-        this.up_user_seq = up_user_seq;
+    public void updateApplEnd(final String applEnd, final String upDateFormat, final Integer upUserSeq) {
+        this.appl_end = applEnd;
+        this.up_date = upDateFormat;
+        this.up_user_seq = upUserSeq;
+    }
+
+    public void update(final ReportProcessDetailsRequest request, final String upDateFormat, final Integer upUserSeq) {
+        this.pros_code = request.getPros_code();
+        this.chk_use = request.getChk_use();
+        this.up_date = upDateFormat;
+        this.up_user_seq = upUserSeq;
     }
 }

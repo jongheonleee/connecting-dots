@@ -44,4 +44,5 @@ public class ReportProcessDetailsRequest {
                                     .up_user_seq(managerSeq)
                                     .build();
     }
+
 }

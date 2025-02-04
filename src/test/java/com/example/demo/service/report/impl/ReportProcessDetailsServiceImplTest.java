@@ -15,6 +15,8 @@ import com.example.demo.repository.code.impl.CommonCodeDaoImpl;
 import com.example.demo.repository.report.impl.ReportDaoImpl;
 import com.example.demo.repository.report.impl.ReportProcessDetailsDaoImpl;
 import com.example.demo.utils.CustomFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -285,26 +287,243 @@ class ReportProcessDetailsServiceImplTest {
     @DisplayName("리포트 처리 내역 조회 관련 테스트 - 3가지 기능 지원")
     class sut_read_test {
         // 1. 특정 처리 내역만 조회
+        @Test
+        @DisplayName("사용자가 특정 리포트 처리 내역을 조회했지만, 해당 내용이 존재하지 않는 경우 예외가 발생한다.")
+        void it_throws_report_process_not_found_exception_when_user_read_report_process_details() {
+            // given
+            ReportProcessDetailsRequest request = createRequest();
+
+            // when
+            when(reportProcessDetailsDaoImpl.selectBySeq(request.getSeq())).thenReturn(null);
+
+            // then
+            assertThrows(ReportProcessNotFoundException.class, () -> sut.readBySeq(request.getSeq()));
+        }
+
+        @Test
+        @DisplayName("사용자가 특정 리포트 처리 내역을 성공적으로 조회한다.")
+        void it_correctly_work_when_user_read_report_process_details() {
+            // given
+            ReportProcessDetailsRequest request = createRequest();
+            ReportProcessDetailsDto dto = createDto(request);
+
+            // when
+            when(reportProcessDetailsDaoImpl.selectBySeq(request.getSeq())).thenReturn(dto);
+
+            // then
+            ReportProcessDetailsResponse actual = sut.readBySeq(request.getSeq());
+            assertNotNull(actual);
+            assertEquals(request.getSeq(), actual.getSeq());
+            assertEquals(request.getRno(), actual.getRno());
+            assertEquals(request.getPros_code(), actual.getPros_code());
+            assertEquals(request.getChk_use(), actual.getChk_use());
+        }
 
         // 2. 특정 리포트와 관련된 모든 처리 내역 조회
+        @Test
+        @DisplayName("사용자가 특정 리포트와 관련된 처리 내역을 조회했지만, 해당 리포트가 존재하지 않는 경우 예외가 발생한다.")
+        void it_throws_report_not_found_exception_when_user_read_report_process_details() {
+            // given
+            ReportProcessDetailsRequest request = createRequest();
+
+            // when
+            when(reportDaoImpl.existsByRno(request.getRno())).thenReturn(false);
+
+            // then
+            assertThrows(ReportNotFoundException.class, () -> sut.readByRno(request.getRno()));
+        }
+
+        @Test
+        @DisplayName("사용자가 특정 리포트와 관련된 처리 내역을 성공적으로 조회한다.")
+        void it_correctly_work_when_user_read_all_report_process_details_by_rno() {
+            // given
+            List<ReportProcessDetailsDto> expected = new ArrayList<>();
+            for (int i=0; i<5; i++) {
+                ReportProcessDetailsRequest request = createRequest();
+                ReportProcessDetailsDto dto = createDto(request);
+                expected.add(dto);
+            }
+
+            // when
+            when(reportDaoImpl.existsByRno(1)).thenReturn(true);
+            when(reportProcessDetailsDaoImpl.selectByRno(1)).thenReturn(expected);
+
+            // then
+            List<ReportProcessDetailsResponse> actual = sut.readByRno(1);
+
+            assertNotNull(actual);
+            assertEquals(expected.size(), actual.size());
+
+            for (int i=0; i<5; i++) {
+                ReportProcessDetailsDto e = expected.get(i);
+                ReportProcessDetailsResponse a = actual.get(i);
+
+                assertEquals(e.getSeq(), a.getSeq());
+                assertEquals(e.getRno(), a.getRno());
+                assertEquals(e.getPros_code(), a.getPros_code());
+                assertEquals(e.getChk_use(), a.getChk_use());
+            }
+        }
 
         // 3. 모든 처리 내역 조회
+        @Test
+        @DisplayName("사용자가 성공적으로 모든 리포트 처리 내역을 조회한다.")
+        void it_correctly_work_when_user_read_all_report_process_details() {
+            // given
+            List<ReportProcessDetailsDto> expected = new ArrayList<>();
+            for (int i=0; i<5; i++) {
+                ReportProcessDetailsRequest request = createRequest();
+                ReportProcessDetailsDto dto = createDto(request);
+                expected.add(dto);
+            }
+
+            // when
+            when(reportProcessDetailsDaoImpl.selectAll()).thenReturn(expected);
+
+            // then
+            List<ReportProcessDetailsResponse> actual = sut.readAll();
+
+            assertNotNull(actual);
+            assertEquals(expected.size(), actual.size());
+
+            for (int i=0; i<5; i++) {
+                ReportProcessDetailsDto e = expected.get(i);
+                ReportProcessDetailsResponse a = actual.get(i);
+
+                assertEquals(e.getSeq(), a.getSeq());
+                assertEquals(e.getRno(), a.getRno());
+                assertEquals(e.getPros_code(), a.getPros_code());
+                assertEquals(e.getChk_use(), a.getChk_use());
+            }
+        }
     }
 
     @Nested
     @DisplayName("리포트 처리 내역 수정 관련 테스트")
     class sut_update_test {
 
+        @Test
+        @DisplayName("사용자가 특정 리포트 처리 내역을 수정하려고 했지만, 해당 리포트 처리 내역이 존재하지 않는 경우 예외가 발생한다.")
+        void it_throws_report_process_not_found_exception_when_user_update_report_process_details() {
+            // given
+            ReportProcessDetailsRequest request = createRequest();
+
+            // when
+            when(reportProcessDetailsDaoImpl.existsBySeqForUpdate(request.getSeq())).thenReturn(false);
+
+            // then
+            assertThrows(ReportProcessNotFoundException.class, () -> sut.modify(request));
+        }
+
+        @Test
+        @DisplayName("사용자가 특정 리포트 처리 내역을 수정했지만 처리과정에서 정상적으로 DBMS에 반영되지 않은 경우 예외가 발생한다.")
+        void it_throws_not_apply_on_dbms_exception_when_user_update_report_process_details() {
+            // given
+            ReportProcessDetailsRequest request = createRequest();
+            ReportProcessDetailsDto dto = createDto(request);
+
+            // when
+            when(formatter.getCurrentDateFormat()).thenReturn(REG_DATE);
+            when(formatter.getManagerSeq()).thenReturn(MANAGER_SEQ);
+
+
+            when(reportProcessDetailsDaoImpl.existsBySeqForUpdate(request.getSeq())).thenReturn(true);
+            when(reportProcessDetailsDaoImpl.selectBySeq(request.getSeq())).thenReturn(dto);
+            when(reportProcessDetailsDaoImpl.update(dto)).thenReturn(0);
+
+            // then
+            assertThrows(NotApplyOnDbmsException.class, () -> sut.modify(request));
+        }
+
+        @Test
+        @DisplayName("사용자가 특정 리포트 처리 내역을 성공적으로 수정한다.")
+        void it_correctly_work_when_user_update_report_process_details() {
+            // given
+            ReportProcessDetailsRequest request = createRequest();
+            ReportProcessDetailsDto dto = createDto(request);
+
+            // when
+            when(formatter.getCurrentDateFormat()).thenReturn(REG_DATE);
+            when(formatter.getManagerSeq()).thenReturn(MANAGER_SEQ);
+
+            when(reportProcessDetailsDaoImpl.existsBySeqForUpdate(request.getSeq())).thenReturn(true);
+            when(reportProcessDetailsDaoImpl.selectBySeq(request.getSeq())).thenReturn(dto);
+            when(reportProcessDetailsDaoImpl.update(dto)).thenReturn(1);
+
+            // then
+            assertDoesNotThrow(() -> sut.modify(request));
+        }
     }
 
     @Nested
     @DisplayName("리포트 처리 내역 삭제 관련 테스트 - 3가지 기능 지원")
     class sut_delete_test {
         // 1. 특정 처리 내역만 삭제
+        @Test
+        @DisplayName("사용자가 특정 리포트 내역을 성공적으로 삭제한다.")
+        void it_correctly_work_when_user_delete_report_process_details() {
+            // given
+            ReportProcessDetailsRequest request = createRequest();
+
+            // when
+            when(reportProcessDetailsDaoImpl.deleteBySeq(request.getSeq())).thenReturn(1);
+
+            // then
+            assertDoesNotThrow(() -> sut.removeBySeq(request.getSeq()));
+        }
 
         // 2. 특정 리포트와 관련된 모든 처리 내역 삭제
 
+        @Test
+        @DisplayName("사용자가 특정 리포트와 관련된 모든 리포트 처리 내역을 삭제했지만, RDBMS에 정상적으로 반영되지 못하여 예외가 발생한다.")
+        void it_throws_not_apply_on_dbms_exception_when_user_delete_all_report_process_details_by_rno() {
+            // given
+            ReportProcessDetailsRequest request = createRequest();
+
+            // when
+            when(reportProcessDetailsDaoImpl.countByRno(request.getRno())).thenReturn(5);
+            when(reportProcessDetailsDaoImpl.deleteByRno(request.getRno())).thenReturn(0);
+
+            // then
+            assertThrows(NotApplyOnDbmsException.class, () -> sut.removeByRno(request.getRno()));
+        }
+
+        @Test
+        @DisplayName("사용자가 특정 리포트와 관련된 모든 리포트 처리 내역을 성공적으로 삭제한다.")
+        void it_correctly_work_when_user_delete_all_report_process_details_by_rno() {
+            // given
+            ReportProcessDetailsRequest request = createRequest();
+
+            // when
+            when(reportProcessDetailsDaoImpl.countByRno(request.getRno())).thenReturn(5);
+            when(reportProcessDetailsDaoImpl.deleteByRno(request.getRno())).thenReturn(5);
+
+            // then
+            assertDoesNotThrow(() -> sut.removeByRno(request.getRno()));
+        }
+
         // 3. 모든 처리 내역 삭제
+        @Test
+        @DisplayName("사용자가 모든 리포트 처리 내역을 삭제하려고 했지만, RDBMS에 정상적으로 반영되지 못하여 예외가 발생한다.")
+        void it_throws_not_apply_on_dbms_exception_when_user_delete_all_report_process_details() {
+            // when
+            when(reportProcessDetailsDaoImpl.count()).thenReturn(5);
+            when(reportProcessDetailsDaoImpl.deleteAll()).thenReturn(0);
+
+            // then
+            assertThrows(NotApplyOnDbmsException.class, () -> sut.removeAll());
+        }
+
+        @Test
+        @DisplayName("사용자가 모든 리포트 처리 내역을 성공적으로 삭제한다.")
+        void it_correctly_work_when_user_delete_all_report_process_details() {
+            // when
+            when(reportProcessDetailsDaoImpl.count()).thenReturn(5);
+            when(reportProcessDetailsDaoImpl.deleteAll()).thenReturn(5);
+
+            // then
+            assertDoesNotThrow(() -> sut.removeAll());
+        }
     }
 
     private ReportProcessDetailsRequest createRequest() {
