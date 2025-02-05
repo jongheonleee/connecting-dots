@@ -69,7 +69,8 @@ public enum Code {
     COMMENT_REMOVE(2, "4009", "삭제", "4000"),
 
     // 리포트 관련 코드
-    REPORT(2, "5000", "리포트", "0000"),
+    REPORT(1, "5000", "리포트", "0000"),
+
     REPORT_CREATE(2, "5001", "생성완료", "5000"),
     REPORT_MODIFY(2, "5002", "수정완료", "5000"),
     REPORT_WAIT(2, "5003", "처리 대기중", "5000"),
@@ -105,6 +106,11 @@ public enum Code {
                      .filter(c -> c.getCode().equals(code))
                      .findFirst()
                      .orElseThrow(CodeNotFoundException::new);
+    }
+
+    // 리포트가 생성 완료, 수정 완료, 처리 대기 중일 때는 삭제 가능
+    public boolean isAvailableReportRemove() {
+        return this == REPORT_CREATE || this == REPORT_MODIFY || this == REPORT_WAIT;
     }
 
     public Integer getLevel() {

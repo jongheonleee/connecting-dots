@@ -56,6 +56,7 @@ public enum ErrorCode {
     REPORT_CATEGORY_NOT_FOUND(404, "EC2002", "해당 리포트 카테고리를 찾을 수 없습니다"),
     REPORT_PROCESS_ALREADY_EXISTS(409, "EC2003", "해당 리포트 처리 내역이 이미 존재합니다"),
     REPORT_PROCESS_NOT_FOUND(404, "EC2004", "해당 리포트 처리 내역을 찾을 수 없습니다"),
+    REPORT_ALREADY_PROCESSED(409, "EC2005", "해당 리포트는 이미 처리되었습니다"),
 
     // 댓글, 대댓글
     COMMENT_NOT_FOUND(404, "EC2001", "해당 댓글을 찾을 수 없습니다"),

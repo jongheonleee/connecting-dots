@@ -3,6 +3,7 @@ package com.example.demo.service.report.impl;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import com.example.demo.dto.report.ReportChangeHistoryResponse;
@@ -11,6 +12,8 @@ import com.example.demo.dto.report.ReportProcessDetailsResponse;
 import com.example.demo.dto.report.ReportRequest;
 import com.example.demo.dto.report.ReportResponse;
 import com.example.demo.global.error.exception.business.code.CodeNotFoundException;
+import com.example.demo.global.error.exception.business.report.ReportAlreadyProcessedException;
+import com.example.demo.global.error.exception.business.report.ReportNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
 import com.example.demo.repository.report.impl.ReportCategoryDaoImpl;
 import com.example.demo.repository.report.impl.ReportDaoImpl;
@@ -196,7 +199,6 @@ class ReportServiceImplTest {
             assertEquals(dto.getRepl(), actual.getRepl());
             assertEquals(dto.getType(), actual.getType());
 
-
         }
 
 
@@ -204,27 +206,325 @@ class ReportServiceImplTest {
     }
 
     @Nested
-    @DisplayName("리포트 조회 관련 테스트")
+    @DisplayName("리포트 조회 관련 테스트 - 총 3가지 기능 지원")
     class sut_read_test {
 
+        // 1. 관리자 페이지에서 모든 리포트 조회함
+
+        // 2. 사용자가 자신이 작성한 모든 리포트 조회함
+
+        // 3. 특정 리포트를 상세하게 조회함
     }
 
 
     @Nested
-    @DisplayName("리포트 수정 관련 테스트")
+    @DisplayName("리포트 수정 관련 테스트 - 총 2가지 기능 지원")
     class sut_modify_test {
 
+        // 1. 사용자가 리포트 내용 자체를 수정한다.
+        @Test
+        @DisplayName("사용자가 리포트를 수정하려고 할 때, 해당 리포트가 존재하지 않는 경우 예외가 발생한다.")
+        void it_throws_exception_when_report_does_not_exist_when_user_tries_to_modify_report() {
+            // given
+            ReportRequest request = createRequest();
+
+            // when
+            when(reportDaoImpl.existsByRnoForUpdate(request.getRno())).thenReturn(false);
+
+            // then
+            assertThrows(ReportNotFoundException.class, () -> sut.modify(request));
+        }
+
+        // 추후에 개발할 예정
+        @Test
+        @DisplayName("사용자가 리포트를 수정하려고 할 때, 자신의 리포트가 아닌 것을 수정하려고 하면 예외가 발생한다.")
+        void it_throws_exception_when_user_tries_to_modify_report_that_is_not_his_own() {
+            // given
+            // when
+            // then
+        }
+
+        @Test
+        @DisplayName("사용자가 리포트를 수정하려고 할 때, 리포트 처리 내역이 이미 진행되어서 수정할 수 없는 경우 예외가 발생한다.")
+        void it_throws_exception_when_user_tries_to_modify_report_that_has_already_been_processed() {
+            // given
+            ReportRequest request = createRequest();
+
+            // when
+            when(reportDaoImpl.existsByRnoForUpdate(request.getRno())).thenReturn(true);
+            when(reportProcessDetailsServiceImpl.canChangeReport(request.getRepo_seq())).thenReturn(false);
+
+            // then
+            assertThrows(ReportAlreadyProcessedException.class, () -> sut.modify(request));
+        }
+
+        @Test
+        @DisplayName("사용자가 리포트를 수정하는 과정에서 RDDMS에 반영되지 않아서 예외가 발생한다.")
+        void it_throws_exception_when_report_is_not_reflected_in_rddms_when_user_modifies_report() {
+            // given
+            ReportRequest request = createRequest();
+            ReportDto dto = createDto(request);
+
+            // when
+            when(formatter.getCurrentDateFormat()).thenReturn(REG_DATE);
+            when(formatter.getLastDateFormat()).thenReturn(LAST_DATE);
+            when(formatter.getManagerSeq()).thenReturn(MANAGER_SEQ);
+
+            when(reportDaoImpl.existsByRnoForUpdate(request.getRno())).thenReturn(true);
+            when(reportProcessDetailsServiceImpl.canChangeReport(request.getRepo_seq())).thenReturn(true);
+            when(reportDaoImpl.update(dto)).thenReturn(0);
+
+            // then
+            assertThrows(NotApplyOnDbmsException.class, () -> sut.modify(request));
+
+        }
+
+        @Test
+        @DisplayName("사용자가 리포트를 수정하는 과정에서 리포트 변경 이력을 갱신하는 과정에서 예외가 발생하여 실패한다.")
+        void it_fails_when_exception_occurs_while_updating_report_change_history_in_the_process_of_modifying_report() {
+            // given
+            ReportRequest request = createRequest();
+            ReportDto dto = createDto(request);
+
+            // when
+            when(formatter.getCurrentDateFormat()).thenReturn(REG_DATE);
+            when(formatter.getLastDateFormat()).thenReturn(LAST_DATE);
+            when(formatter.getManagerSeq()).thenReturn(MANAGER_SEQ);
+
+            when(reportDaoImpl.existsByRnoForUpdate(request.getRno())).thenReturn(true);
+            when(reportProcessDetailsServiceImpl.canChangeReport(request.getRepo_seq())).thenReturn(true);
+            when(reportDaoImpl.update(dto)).thenReturn(1);
+            doThrow(RuntimeException.class).when(reportChangeHistoryServiceImpl).renew(any());
+
+            // then
+            assertThrows(RuntimeException.class, () -> sut.modify(request));
+
+        }
+
+        @Test
+        @DisplayName("사용자가 성공적으로 리포트를 수정한다.")
+        void it_correctly_work_when_user_modifies_report() {
+            // given
+            ReportRequest request = createRequest();
+            ReportDto dto = createDto(request);
+
+            // when
+            when(formatter.getCurrentDateFormat()).thenReturn(REG_DATE);
+            when(formatter.getLastDateFormat()).thenReturn(LAST_DATE);
+            when(formatter.getManagerSeq()).thenReturn(MANAGER_SEQ);
+
+            when(reportDaoImpl.existsByRnoForUpdate(request.getRno())).thenReturn(true);
+            when(reportProcessDetailsServiceImpl.canChangeReport(request.getRepo_seq())).thenReturn(true);
+            when(reportDaoImpl.update(dto)).thenReturn(1);
+            when(reportChangeHistoryServiceImpl.renew(any())).thenReturn(ReportChangeHistoryResponse.builder().build());
+
+            // then
+            assertDoesNotThrow(() -> sut.modify(request));
+
+        }
+
     }
 
     @Nested
-    @DisplayName("리포트 삭제 관련 테스트")
+    @DisplayName("리포트 삭제 관련 테스트 - 3가지 기능 지원")
     class sut_remove_test {
+
+        // 1. 단건 삭제
+
+        // 추후에 추가 구현[]
+        @Test
+        @DisplayName("사용자가 특정 리포트를 삭제하려고 했지만, 자신의 리포트 글이 아니기에 예외가 발생한다.")
+        void it_throws_exception_when_user_tries_to_delete_report_that_is_not_his_own() {
+            // given
+            // when
+            // then
+        }
+
+        @Test
+        @DisplayName("사용자가 특정 리포트를 삭제하려고 했지만, 이미 리포트가 처리가 되어 삭제할 수 없는 경우 예외가 발생한다.")
+        void it_throws_exception_when_user_tries_to_delete_report_that_has_already_been_processed() {
+            // given
+            Integer rno = 1;
+            ReportDto dto = ReportDto.builder().build();
+
+            // when
+            when(reportDaoImpl.selectByRno(rno)).thenReturn(dto);
+            // 신고자의 시퀀스와 현재 회원의 시퀀스를 비교함 -> 이 과정에서 true 반환
+            when(reportProcessDetailsServiceImpl.canChangeReport(rno)).thenReturn(false);
+
+
+            // then
+            assertThrows(ReportAlreadyProcessedException.class, () -> sut.removeBySeq(rno));
+        }
+
+        @Test
+        @DisplayName("사용자가 특정 리포트를 삭제할 때, 변경 이력을 삭제하는 과정에서 예외가 발생하여 실패한다.")
+        void it_fails_when_exception_occurs_in_the_process_of_deleting_change_history() {
+            // given
+            Integer rno = 1;
+            ReportDto dto = ReportDto.builder().build();
+
+            // when
+            when(reportDaoImpl.selectByRno(rno)).thenReturn(dto);
+            // 신고자의 시퀀스와 현재 회원의 시퀀스를 비교함 -> 이 과정에서 true 반환
+            when(reportProcessDetailsServiceImpl.canChangeReport(rno)).thenReturn(true);
+            doThrow(RuntimeException.class).when(reportChangeHistoryServiceImpl).removeBySeq(rno);
+
+            // then
+            assertThrows(RuntimeException.class, () -> sut.removeBySeq(rno));
+        }
+
+        @Test
+        @DisplayName("사용자가 특정 리포트를 삭제할 때, 해당 리포트 관련 처리 내역을 삭제하는 도중에 예외가 발생하면 실패한다.")
+        void it_fails_when_exception_occurs_while_deleting_report_related_processing_history() {
+            // given
+            Integer rno = 1;
+            ReportDto dto = ReportDto.builder().build();
+
+            // when
+            when(reportDaoImpl.selectByRno(rno)).thenReturn(dto);
+            // 신고자의 시퀀스와 현재 회원의 시퀀스를 비교함 -> 이 과정에서 true 반환
+            when(reportProcessDetailsServiceImpl.canChangeReport(rno)).thenReturn(true);
+            doNothing().when(reportChangeHistoryServiceImpl).removeBySeq(rno);
+            doThrow(RuntimeException.class).when(reportProcessDetailsServiceImpl).removeByRno(rno);
+
+            // then
+            assertThrows(RuntimeException.class, () -> sut.removeBySeq(rno));
+        }
+
+        @Test
+        @DisplayName("사용자가 특정 리포트를 삭제하는 과정에서 해당 리포트를 삭제할 때 정상적으로 RDDMS에 반영되지 않아서 예외가 발생한다.")
+        void it_throws_exception_when_report_is_not_reflected_in_rddms_when_user_deletes_specific_report() {
+            // given
+            Integer rno = 1;
+            ReportDto dto = ReportDto.builder().build();
+
+            // when
+            when(reportDaoImpl.selectByRno(rno)).thenReturn(dto);
+            // 신고자의 시퀀스와 현재 회원의 시퀀스를 비교함 -> 이 과정에서 true 반환
+            when(reportProcessDetailsServiceImpl.canChangeReport(rno)).thenReturn(true);
+            doNothing().when(reportChangeHistoryServiceImpl).removeBySeq(rno);
+            doNothing().when(reportProcessDetailsServiceImpl).removeByRno(rno);
+            when(reportDaoImpl.delete(rno)).thenReturn(0);
+
+            // then
+            assertThrows(NotApplyOnDbmsException.class, () -> sut.removeBySeq(rno));
+        }
+
+        @Test
+        @DisplayName("사용자가 특정 리포트를 성공적으로 삭제한다.")
+        void it_correctly_work_when_user_delete_report() {
+            // given
+            Integer rno = 1;
+            ReportDto dto = ReportDto.builder().build();
+
+            // when
+            when(reportDaoImpl.selectByRno(rno)).thenReturn(dto);
+            // 신고자의 시퀀스와 현재 회원의 시퀀스를 비교함 -> 이 과정에서 true 반환
+            when(reportProcessDetailsServiceImpl.canChangeReport(rno)).thenReturn(true);
+            doNothing().when(reportChangeHistoryServiceImpl).removeBySeq(rno);
+            doNothing().when(reportProcessDetailsServiceImpl).removeByRno(rno);
+            when(reportDaoImpl.delete(rno)).thenReturn(1);
+
+            // then
+            assertDoesNotThrow(() -> sut.removeBySeq(rno));
+        }
+
+
+
+        // 2. 사용자가 탈퇴할 때 해당 리포트 내용 모두 삭제 처리 - 추가 구현 필요
+        @Test
+        @DisplayName("사용자가 탈퇴하여 그와 관련된 모든 리포트를 삭제할 때, 해당 리포트를 삭제하는 과정에서 예외가 발생하면 실패한다.")
+        void it_fail_when_exception_occurs_while_deleting_report_when_user_withdraws_and_deletes_all_related_reports() {
+            // given
+            // when
+            // then
+        }
+
+        @Test
+        @DisplayName("사용자가 탈퇴하여 그와 관련된 모든 리포트를 삭제할 때, 카운팅 된 리포트 개수와 삭제된 리포트 개수가 일치하지 않아서 예외가 발생한다.")
+        void it_throws_exception_when_the_counted_report_number_and_the_deleted_report_number_do_not_match_when_the_user_withdraws_and_deletes_all_related_reports() {
+            // given
+            // when
+            // then
+        }
+
+        @Test
+        @DisplayName("사용자가 탈퇴하여 그와 관련된 모든 리포트를 성공적으로 삭제한다.")
+        void it_correctly_work_when_user_withdraws_and_deletes_all_related_reports() {
+            // given
+            // when
+            // then
+        }
+
+        // 3. 모든 리포트를 삭제한다.
+
+        // 추후에 개발예정
+        @Test
+        @DisplayName("사용자가 모든 리포트를 삭제할 때, 사용자가 관리자가 아닌 경우 예외가 발생한다.")
+        void it_throws_exception_when_user_is_not_administrator_when_user_deletes_all_reports() {
+            // given
+            // when
+            // then
+        }
+
+        @Test
+        @DisplayName("사용자가 모든 리포트를 삭제할 때, 변경 이력을 삭제하는 과정에서 예외가 발생하여 실패한다.")
+        void it_fails_when_exception_occurs_in_the_process_of_deleting_change_history_when_user_deletes_all_reports() {
+            // given
+            // when
+            doThrow(RuntimeException.class).when(reportChangeHistoryServiceImpl).removeAll();
+
+            // then
+            assertThrows(RuntimeException.class, () -> sut.removeAll());
+        }
+
+        @Test
+        @DisplayName("사용자가 모든 리포트를 삭제할 때, 해당 리포트 관련 처리 내역을 삭제하는 도중에 예외가 발생하면 실패한다.")
+        void it_fails_when_exception_occurs_while_deleting_report_related_processing_history_when_user_deletes_all_reports() {
+            // given
+            // when
+            doNothing().when(reportChangeHistoryServiceImpl).removeAll();
+            doThrow(RuntimeException.class).when(reportProcessDetailsServiceImpl).removeAll();
+
+            // then
+            assertThrows(RuntimeException.class, () -> sut.removeAll());
+        }
+
+        @Test
+        @DisplayName("사용자가 모든 리포트를 삭제할 때, 해당 리포트를 삭제할 때 정상적으로 RDDMS에 반영되지 않아서 예외가 발생한다.")
+        void it_throws_exception_when_report_is_not_reflected_in_rddms_when_user_deletes_all_reports() {
+            // given
+            // when
+            doNothing().when(reportChangeHistoryServiceImpl).removeAll();
+            doNothing().when(reportProcessDetailsServiceImpl).removeAll();
+            when(reportDaoImpl.count()).thenReturn(10);
+            when(reportDaoImpl.deleteAll()).thenReturn(0);
+
+            // then
+            assertThrows(NotApplyOnDbmsException.class, () -> sut.removeAll());
+        }
+
+        @Test
+        @DisplayName("사용자가 모든 리포트를 성공적으로 삭제한다.")
+        void it_correctly_work_when_user_deletes_all_reports() {
+            // given
+            // when
+            doNothing().when(reportChangeHistoryServiceImpl).removeAll();
+            doNothing().when(reportProcessDetailsServiceImpl).removeAll();
+            when(reportDaoImpl.count()).thenReturn(10);
+            when(reportDaoImpl.deleteAll()).thenReturn(10);
+
+            // then
+            assertDoesNotThrow(() -> sut.removeAll());
+        }
 
     }
 
 
     private ReportRequest createRequest() {
         return ReportRequest.builder()
+                            .rno(1)
                             .cate_code("AA123456")
                             .title("신고합니다.")
                             .cont("신고합니다.")
@@ -242,6 +542,7 @@ class ReportServiceImplTest {
 
     private ReportDto createDto(ReportRequest request) {
         return ReportDto.builder()
+                        .rno(request.getRno())
                         .cate_code(request.getCate_code())
                         .title(request.getTitle())
                         .cont(request.getCont())

@@ -9,7 +9,6 @@ public interface ReportChangeHistoryService {
 
     ReportChangeHistoryResponse create(ReportChangeHistoryRequest request);
 
-    @Transactional(rollbackFor = Exception.class)
     ReportChangeHistoryResponse renew(ReportChangeHistoryRequest request);
 
     ReportChangeHistoryResponse readBySeq(Integer seq);
@@ -22,9 +21,7 @@ public interface ReportChangeHistoryService {
 
     void removeBySeq(Integer seq);
 
-    @Transactional(rollbackFor = Exception.class)
     void removeByRno(Integer rno);
 
-    @Transactional(rollbackFor = Exception.class)
     void removeAll();
 }

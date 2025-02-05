@@ -1,5 +1,7 @@
 package com.example.demo.service.report.impl;
 
+import com.example.demo.domain.Code;
+import com.example.demo.dto.report.ReportProcessDetailsDto;
 import com.example.demo.dto.report.ReportProcessDetailsRequest;
 import com.example.demo.dto.report.ReportProcessDetailsResponse;
 import com.example.demo.global.error.exception.business.code.CodeNotFoundException;
@@ -50,6 +52,15 @@ public class ReportProcessDetailsServiceImpl implements ReportProcessDetailsServ
         var newOne = request.toDto(formatter.getCurrentDateFormat(), formatter.getManagerSeq(), formatter.getCurrentDateFormat(), formatter.getLastDateFormat());
         checkApplied(2, reportProcessDetailsRepository.update(foundOriginal) + reportProcessDetailsRepository.insert(newOne));
         return newOne.toResponse();
+    }
+
+    // 현재 상태를 나타내는 메서드, 아직 테스트 안함 []
+    @Override
+    public boolean canChangeReport(final Integer rno) {
+        // 현재 상태 조회
+        var currentProcessDetails = reportProcessDetailsRepository.selectLatestByRno(rno);
+        var currentCode = Code.of(currentProcessDetails.getPros_code());
+        return currentCode.isAvailableReportRemove();
     }
 
     @Override

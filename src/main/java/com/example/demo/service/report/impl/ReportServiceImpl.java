@@ -2,12 +2,15 @@ package com.example.demo.service.report.impl;
 
 
 import com.example.demo.dto.report.ReportChangeHistoryRequest;
+import com.example.demo.dto.report.ReportDto;
 import com.example.demo.dto.report.ReportProcessDetailsRequest;
 import com.example.demo.dto.report.ReportRequest;
 import com.example.demo.dto.report.ReportResponse;
 import com.example.demo.global.error.exception.business.BusinessException;
 import com.example.demo.global.error.exception.business.InvalidValueException;
 import com.example.demo.global.error.exception.business.code.CodeNotFoundException;
+import com.example.demo.global.error.exception.business.report.ReportAlreadyProcessedException;
+import com.example.demo.global.error.exception.business.report.ReportNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
 import com.example.demo.global.error.exception.technology.network.RetryFailedException;
 import com.example.demo.repository.report.ReportCategoryRepository;
@@ -28,6 +31,7 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
@@ -99,6 +103,88 @@ public class ReportServiceImpl {
         log.error("[REPORT] 리포트 예외 복구를 위해 재시도를 했지만 실패했습니다. 최대 재시도 횟수 : {}, 재시도 간격 : {}ms", MAX_RETRY, RETRY_DELAY);
         log.error("[REPORT] 예외 내용 : {}", e.getMessage());
         throw new RetryFailedException();
+    }
+
+    @Transactional(
+            rollbackFor = Exception.class,
+            propagation = Propagation.REQUIRED
+    )
+    public void modify(final ReportRequest request) {
+        boolean exists = reportRepository.existsByRnoForUpdate(request.getRno());
+        if (!exists) {
+            log.error("[REPORT] 해당 리포트를 찾을 수 없습니다. rno: {}", request.getRno());
+            throw new ReportNotFoundException();
+        }
+
+
+        if (!reportProcessDetailsService.canChangeReport(request.getRno())) {
+            log.error("[REPORT] 리포트 수정 권한이 없습니다. rno: {}", request.getRno());
+            throw new ReportAlreadyProcessedException();
+        }
+
+        var dto = request.toDto(formatter.getCurrentDateFormat(), formatter.getLastDateFormat(), formatter.getManagerSeq());
+        int rowCnt = reportRepository.update(dto);
+
+        if (rowCnt != 1) {
+            log.error("[REPORT] 리포트 수정에 실패하였습니다. rowCnt: {}", rowCnt);
+            throw new NotApplyOnDbmsException();
+        }
+
+        ReportChangeHistoryRequest reportChangeHistoryRequest = ReportChangeHistoryRequest.builder()
+                                                                                          .rno(request.getRno())
+                                                                                          .title(request.getTitle())
+                                                                                          .cont(request.getCont())
+                                                                                          .build();
+        reportChangeHistoryService.renew(reportChangeHistoryRequest);
+
+    }
+
+
+    @Transactional(
+            rollbackFor = Exception.class,
+            propagation = Propagation.REQUIRED
+    )
+    public void removeBySeq(final Integer rno) {
+        var found = reportRepository.selectByRno(rno);
+        // 신고자의 시퀀스와 현재 회원의 시퀀스 비교 -> true/false; 추후에 개발할 예정
+
+        if (!reportProcessDetailsService.canChangeReport(rno)) {
+            log.error("[REPORT] 리포트 삭제 권한이 없습니다. rno: {}", rno);
+            throw new ReportAlreadyProcessedException();
+        }
+
+
+        reportChangeHistoryService.removeBySeq(rno);
+        reportProcessDetailsService.removeByRno(rno);
+
+        int rowCnt = reportRepository.delete(rno);
+
+        if (rowCnt != 1) {
+            log.error("[REPORT] 리포트 삭제에 실패하였습니다. rowCnt: {}", rowCnt);
+            throw new NotApplyOnDbmsException();
+        }
+    }
+
+    // 추후에 개발할 내용 [ ]
+    public void removeAllForUserLeave(final Integer userSeq) {
+
+    }
+
+    @Transactional(
+            rollbackFor = Exception.class,
+            propagation = Propagation.REQUIRED
+    )
+    public void removeAll() {
+        // 이를 호출한 사용자가 관리자 인지 확인 -> true/false; 추후에 개발할 예정
+        reportChangeHistoryService.removeAll();
+        reportProcessDetailsService.removeAll();
+        int totalCnt = reportRepository.count();
+        int rowCnt = reportRepository.deleteAll();
+
+        if (totalCnt != rowCnt) {
+            log.error("[REPORT] 리포트 전체 삭제에 실패하였습니다. totalCnt: {}, rowCnt: {}", totalCnt, rowCnt);
+            throw new NotApplyOnDbmsException();
+        }
     }
 
 }
