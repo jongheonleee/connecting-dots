@@ -1,9 +1,13 @@
 package com.example.demo.service.report.impl;
 
 
+import com.example.demo.domain.Code;
+import com.example.demo.dto.report.ReportCategoryResponse;
 import com.example.demo.dto.report.ReportChangeHistoryRequest;
+import com.example.demo.dto.report.ReportDetailResponse;
 import com.example.demo.dto.report.ReportDto;
 import com.example.demo.dto.report.ReportProcessDetailsRequest;
+import com.example.demo.dto.report.ReportProcessDetailsResponse;
 import com.example.demo.dto.report.ReportRequest;
 import com.example.demo.dto.report.ReportResponse;
 import com.example.demo.global.error.exception.business.BusinessException;
@@ -14,6 +18,7 @@ import com.example.demo.global.error.exception.business.report.ReportNotFoundExc
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
 import com.example.demo.global.error.exception.technology.network.RetryFailedException;
 import com.example.demo.repository.report.ReportCategoryRepository;
+import com.example.demo.repository.report.ReportProcessDetailsRepository;
 import com.example.demo.repository.report.ReportRepository;
 import com.example.demo.service.report.ReportCategoryService;
 import com.example.demo.service.report.ReportChangeHistoryService;
@@ -49,6 +54,7 @@ public class ReportServiceImpl {
     private final ReportCategoryService reportCategoryService;
     private final ReportChangeHistoryService reportChangeHistoryService;
     private final ReportProcessDetailsService reportProcessDetailsService;
+    private final ReportProcessDetailsRepository reportProcessDetailsRepository;
     private final CustomFormatter formatter;
 
 
@@ -67,34 +73,11 @@ public class ReportServiceImpl {
     )
     @Transactional(rollbackFor = Exception.class)
     public ReportResponse create(final ReportRequest request) {
-        boolean existsCode = reportCategoryRepository.existsByCateCode(request.getCate_code());
-        if (!existsCode) {
-            log.error("[REPORT] 해당 카테고리 코드가 존재하지 않습니다. cate_code: {}", request.getCate_code());
-            throw new CodeNotFoundException();
-        }
-
+        checkReportCategoryExists(request.getCate_code());
         var dto = request.toDto(formatter.getCurrentDateFormat(),formatter.getLastDateFormat(), formatter.getManagerSeq());
-        int rowCnt = reportRepository.insert(dto);
-
-        if (rowCnt != 1) {
-            log.error("[REPORT] 리포트 생성에 실패하였습니다. rowCnt: {}", rowCnt);
-            throw new NotApplyOnDbmsException();
-        }
-
-        var historyRequest = ReportChangeHistoryRequest.builder()
-                                                       .rno(dto.getRno())
-                                                       .title(dto.getTitle())
-                                                       .cont(dto.getCont())
-                                                       .build();
-        reportChangeHistoryService.create(historyRequest);
-
-        ReportProcessDetailsRequest processDetailsRequest = ReportProcessDetailsRequest.builder()
-                                                                                      .rno(dto.getRno())
-                                                                                      .pros_code(dto.getCate_code())
-                                                                                      .build();
-        reportProcessDetailsService.create(processDetailsRequest);
-
-
+        checkApplied(1, reportRepository.insert(dto));
+        createReportChangeHistory(dto);
+        createInitReportProcessDetails(dto);
         return dto.toResponse();
     }
 
@@ -105,39 +88,35 @@ public class ReportServiceImpl {
         throw new RetryFailedException();
     }
 
+    @Transactional(readOnly = true)
+    public ReportDetailResponse readReportDetailsBySeq(final Integer rno) {
+        var foundReport = reportRepository.selectByRno(rno);
+        if (foundReport == null) {
+            log.error("[REPORT] 해당 리포트를 찾을 수 없습니다. rno: {}", rno);
+            throw new ReportNotFoundException();
+        }
+
+        ReportProcessDetailsResponse foundCurrentReportProcessDetails = reportProcessDetailsService.readByRnoAtPresent(rno);
+        ReportCategoryResponse foundReportCategory = reportCategoryService.readByCateCode(foundReport.getCate_code());
+        return ReportDetailResponse.of(foundReport, foundReportCategory, foundCurrentReportProcessDetails);
+    }
+
     @Transactional(
             rollbackFor = Exception.class,
             propagation = Propagation.REQUIRED
     )
     public void modify(final ReportRequest request) {
-        boolean exists = reportRepository.existsByRnoForUpdate(request.getRno());
-        if (!exists) {
-            log.error("[REPORT] 해당 리포트를 찾을 수 없습니다. rno: {}", request.getRno());
-            throw new ReportNotFoundException();
-        }
-
-
+        checkReportExistsForUpdate(request.getRno());
         if (!reportProcessDetailsService.canChangeReport(request.getRno())) {
-            log.error("[REPORT] 리포트 수정 권한이 없습니다. rno: {}", request.getRno());
+            log.error("[REPORT] 리포트 처리가 진행되었기 때문에 수정을 할 수 없습니다. rno: {}", request.getRno());
             throw new ReportAlreadyProcessedException();
         }
 
         var dto = request.toDto(formatter.getCurrentDateFormat(), formatter.getLastDateFormat(), formatter.getManagerSeq());
-        int rowCnt = reportRepository.update(dto);
-
-        if (rowCnt != 1) {
-            log.error("[REPORT] 리포트 수정에 실패하였습니다. rowCnt: {}", rowCnt);
-            throw new NotApplyOnDbmsException();
-        }
-
-        ReportChangeHistoryRequest reportChangeHistoryRequest = ReportChangeHistoryRequest.builder()
-                                                                                          .rno(request.getRno())
-                                                                                          .title(request.getTitle())
-                                                                                          .cont(request.getCont())
-                                                                                          .build();
-        reportChangeHistoryService.renew(reportChangeHistoryRequest);
-
+        checkApplied(1, reportRepository.update(dto));
+        updateOldChangeHistoryAndCreateNewChangeHistory(request);
     }
+
 
 
     @Transactional(
@@ -156,13 +135,7 @@ public class ReportServiceImpl {
 
         reportChangeHistoryService.removeBySeq(rno);
         reportProcessDetailsService.removeByRno(rno);
-
-        int rowCnt = reportRepository.delete(rno);
-
-        if (rowCnt != 1) {
-            log.error("[REPORT] 리포트 삭제에 실패하였습니다. rowCnt: {}", rowCnt);
-            throw new NotApplyOnDbmsException();
-        }
+        checkApplied(1, reportRepository.delete(rno));
     }
 
     // 추후에 개발할 내용 [ ]
@@ -178,12 +151,56 @@ public class ReportServiceImpl {
         // 이를 호출한 사용자가 관리자 인지 확인 -> true/false; 추후에 개발할 예정
         reportChangeHistoryService.removeAll();
         reportProcessDetailsService.removeAll();
-        int totalCnt = reportRepository.count();
-        int rowCnt = reportRepository.deleteAll();
+        checkApplied(reportRepository.count(), reportRepository.deleteAll());
+    }
 
-        if (totalCnt != rowCnt) {
-            log.error("[REPORT] 리포트 전체 삭제에 실패하였습니다. totalCnt: {}, rowCnt: {}", totalCnt, rowCnt);
+
+    private void createInitReportProcessDetails(final ReportDto dto) {
+        ReportProcessDetailsRequest processDetailsRequest = ReportProcessDetailsRequest.builder()
+                                                                                        .rno(dto.getRno())
+                                                                                        .pros_code(Code.REPORT_CREATE.getCode())
+                                                                                        .build();
+        reportProcessDetailsService.create(processDetailsRequest);
+    }
+
+    private void createReportChangeHistory(final ReportDto dto) {
+        var historyRequest = ReportChangeHistoryRequest.builder()
+                                                    .rno(dto.getRno())
+                                                    .title(dto.getTitle())
+                                                    .cont(dto.getCont())
+                                                    .build();
+        reportChangeHistoryService.create(historyRequest);
+    }
+
+    private void checkReportCategoryExists(final String cateCode) {
+        boolean existsReportCategory = reportCategoryRepository.existsByCateCode(cateCode);
+        if (!existsReportCategory) {
+            log.error("[REPORT] 해당 카테고리 코드가 존재하지 않습니다. cate_code: {}", cateCode);
+            throw new CodeNotFoundException();
+        }
+    }
+
+    private void checkApplied(final Integer expected, final Integer actual) {
+        if (expected != actual) {
+            log.error("[REPORT] 리포트 처리 과정에서 RDBMS가 정상적으로 반영되지 못했습니다. rno: {}", expected);
             throw new NotApplyOnDbmsException();
+        }
+    }
+
+    private void updateOldChangeHistoryAndCreateNewChangeHistory(ReportRequest request) {
+        ReportChangeHistoryRequest reportChangeHistoryRequest = ReportChangeHistoryRequest.builder()
+                                                                                        .rno(request.getRno())
+                                                                                        .title(request.getTitle())
+                                                                                        .cont(request.getCont())
+                                                                                        .build();
+        reportChangeHistoryService.renew(reportChangeHistoryRequest);
+    }
+
+    private void checkReportExistsForUpdate(final Integer rno) {
+        boolean exists = reportRepository.existsByRnoForUpdate(rno);
+        if (!exists) {
+            log.error("[REPORT] 해당 리포트를 찾을 수 없습니다. rno: {}", rno);
+            throw new ReportNotFoundException();
         }
     }
 

@@ -12,6 +12,8 @@ public interface ReportProcessDetailsService {
 
     ReportProcessDetailsResponse readBySeq(Integer seq);
 
+    ReportProcessDetailsResponse readByRnoAtPresent(Integer rno);
+
     List<ReportProcessDetailsResponse> readByRno(Integer rno);
 
     List<ReportProcessDetailsResponse> readAll();

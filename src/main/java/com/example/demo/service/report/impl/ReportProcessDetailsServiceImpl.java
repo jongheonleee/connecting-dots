@@ -75,6 +75,13 @@ public class ReportProcessDetailsServiceImpl implements ReportProcessDetailsServ
     }
 
     @Override
+    public ReportProcessDetailsResponse readByRnoAtPresent(final Integer rno) {
+        checkReportExists(rno);
+        var found = reportProcessDetailsRepository.selectLatestByRno(rno);
+        return found.toResponse();
+    }
+
+    @Override
     public List<ReportProcessDetailsResponse> readByRno(final Integer rno) {
         checkReportExists(rno);
         return reportProcessDetailsRepository.selectByRno(rno)

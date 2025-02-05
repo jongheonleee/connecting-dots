@@ -17,6 +17,7 @@ import com.example.demo.global.error.exception.business.report.ReportNotFoundExc
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
 import com.example.demo.repository.report.impl.ReportCategoryDaoImpl;
 import com.example.demo.repository.report.impl.ReportDaoImpl;
+import com.example.demo.repository.report.impl.ReportProcessDetailsDaoImpl;
 import com.example.demo.utils.CustomFormatter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -50,6 +51,9 @@ class ReportServiceImplTest {
 
     @Mock
     private ReportProcessDetailsServiceImpl reportProcessDetailsServiceImpl;
+
+    @Mock
+    private ReportProcessDetailsDaoImpl reportProcessDetailsDaoImpl;
 
     @Mock
     private CustomFormatter formatter;
@@ -210,10 +214,56 @@ class ReportServiceImplTest {
     class sut_read_test {
 
         // 1. 관리자 페이지에서 모든 리포트 조회함
+        // 추후에 개발 진행
 
         // 2. 사용자가 자신이 작성한 모든 리포트 조회함
+        // 추후에 개발 진행
 
         // 3. 특정 리포트를 상세하게 조회함
+        @Test
+        @DisplayName("사용자가 특정 리포트를 상세 조회하려고 할 때, 해당 리포트가 존재하지 않는 경우 예외가 발생한다.")
+        void it_throws_exception_when_specific_report_does_not_exist_when_user_tries_to_view_specific_report() {
+            // given
+            Integer rno = 1;
+
+            // when
+            when(reportDaoImpl.selectByRno(rno)).thenReturn(null);
+
+            // then
+            assertThrows(ReportNotFoundException.class, () -> sut.readReportDetailsBySeq(rno));
+        }
+
+        @Test
+        @DisplayName("사용자가 특정 리포트를 상세 조회하려고 할 때, 처리 내역이 존재하지 않는 경우 예외가 발생한다.")
+        void it_throws_exception_when_processing_history_does_not_exist_when_user_tries_to_view_specific_report() {
+            // given
+            Integer rno = 1;
+            ReportDto dto = ReportDto.builder().build();
+
+            // when
+            when(reportDaoImpl.selectByRno(rno)).thenReturn(dto);
+            doThrow(RuntimeException.class).when(reportProcessDetailsServiceImpl).readByRnoAtPresent(rno);
+
+            // then
+            assertThrows(RuntimeException.class, () -> sut.readReportDetailsBySeq(rno));
+        }
+
+        @Test
+        @DisplayName("사용자가 특정 리포트를 성공적으로 조회한다")
+        void it_correctly_work_when_user_views_specific_report() {
+            // given
+            Integer rno = 1;
+            ReportDto dto = ReportDto.builder().build();
+            ReportProcessDetailsResponse processDetailsResponse = ReportProcessDetailsResponse.builder().build();
+
+            // when
+            when(reportDaoImpl.selectByRno(rno)).thenReturn(dto);
+            when(reportProcessDetailsServiceImpl.readByRnoAtPresent(rno)).thenReturn(processDetailsResponse);
+
+            // then
+            assertDoesNotThrow(() -> sut.readReportDetailsBySeq(rno));
+        }
+
     }
 
 
