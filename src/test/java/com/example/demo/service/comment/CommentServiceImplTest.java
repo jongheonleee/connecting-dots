@@ -11,9 +11,11 @@ import com.example.demo.dto.comment.CommentRequest;
 import com.example.demo.dto.comment.CommentResponse;
 import com.example.demo.global.error.exception.business.comment.CommentNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
-import com.example.demo.repository.board.BoardRepository;
-import com.example.demo.repository.comment.CommentRepository;
-import com.example.demo.repository.reply.ReplyRepository;
+import com.example.demo.repository.board.impl.BoardDaoImpl;
+import com.example.demo.repository.comment.impl.CommentDaoImpl;
+import com.example.demo.repository.reply.impl.ReplyDaoImpl;
+import com.example.demo.service.comment.impl.CommentChangeHistoryServiceImpl;
+import com.example.demo.service.comment.impl.CommentServiceImpl;
 import com.example.demo.utils.CustomFormatter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -28,20 +30,20 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class CommentServiceImplTest {
 
     @InjectMocks
-    private CommentService sut;
+    private CommentServiceImpl sut;
 
     @Mock
-    private BoardRepository boardDao;
+    private BoardDaoImpl boardDaoImpl;
 
     @Mock
-    private ReplyRepository replyDao;
+    private ReplyDaoImpl replyDaoImpl;
 
     @Mock
-    private CommentChangeHistoryService commentChangeHistoryService;
+    private CommentChangeHistoryServiceImpl commentChangeHistoryServiceImpl;
 
 
     @Mock
-    private CommentRepository commentDao;
+    private CommentDaoImpl commentDaoImpl;
 
     @Mock
     private CustomFormatter formatter;
@@ -49,7 +51,7 @@ class CommentServiceImplTest {
     @BeforeEach
     public void setUp() {
         assertNotNull(sut);
-        assertNotNull(commentDao);
+        assertNotNull(commentDaoImpl);
         assertNotNull(formatter);
     }
 
@@ -80,8 +82,8 @@ class CommentServiceImplTest {
 
             when(formatter.getCurrentDateFormat()).thenReturn("2021-08-01 00:00:00");
             when(formatter.getManagerSeq()).thenReturn(1);
-            when(boardDao.existsByBno(any())).thenReturn(true);
-            when(commentDao.insert(any())).thenReturn(1);
+            when(boardDaoImpl.existsByBno(any())).thenReturn(true);
+            when(commentDaoImpl.insert(any())).thenReturn(1);
 
             // when
             CommentResponse actual = sut.create(request);
@@ -106,7 +108,7 @@ class CommentServiceImplTest {
                                                     .writer("테스트용 작성자")
                                                     .build();
 
-            when(boardDao.existsByBno(any())).thenReturn(false);
+            when(boardDaoImpl.existsByBno(any())).thenReturn(false);
 
             // when
             // then
@@ -124,8 +126,8 @@ class CommentServiceImplTest {
                                                     .writer("테스트용 작성자")
                                                     .build();
 
-            when(boardDao.existsByBno(any())).thenReturn(true);
-            when(commentDao.insert(any())).thenReturn(0);
+            when(boardDaoImpl.existsByBno(any())).thenReturn(true);
+            when(commentDaoImpl.insert(any())).thenReturn(0);
 
             // when
             // then
@@ -151,10 +153,10 @@ class CommentServiceImplTest {
                     .build();
 
             CommentDto dto = new CommentDto();
-            when(commentDao.existsByCnoForUpdate(any())).thenReturn(true);
-            when(commentDao.selectByCno(any())).thenReturn(dto);
-            when(commentDao.update(any())).thenReturn(1);
-            doNothing().when(commentChangeHistoryService).modify(any());
+            when(commentDaoImpl.existsByCnoForUpdate(any())).thenReturn(true);
+            when(commentDaoImpl.selectByCno(any())).thenReturn(dto);
+            when(commentDaoImpl.update(any())).thenReturn(1);
+            doNothing().when(commentChangeHistoryServiceImpl).modify(any());
 
             assertDoesNotThrow(() -> sut.modify(request));
         }
@@ -172,7 +174,7 @@ class CommentServiceImplTest {
                                                     .build();
 
             // when
-            when(commentDao.existsByCnoForUpdate(any())).thenReturn(false);
+            when(commentDaoImpl.existsByCnoForUpdate(any())).thenReturn(false);
 
             // then
             assertThrows(CommentNotFoundException.class, () -> sut.modify(request));
@@ -191,8 +193,8 @@ class CommentServiceImplTest {
                                                     .build();
 
             // when
-            when(commentDao.existsByCnoForUpdate(any())).thenReturn(true);
-            when(commentDao.update(any())).thenReturn(0);
+            when(commentDaoImpl.existsByCnoForUpdate(any())).thenReturn(true);
+            when(commentDaoImpl.update(any())).thenReturn(0);
 
             // then
             assertThrows(NotApplyOnDbmsException.class, () -> sut.modify(request));
@@ -206,8 +208,8 @@ class CommentServiceImplTest {
             // given
             Integer cno = 1;
 
-            when(commentDao.existsByCnoForUpdate(any())).thenReturn(true);
-            when(commentDao.increaseLikeCnt(any())).thenReturn(1);
+            when(commentDaoImpl.existsByCnoForUpdate(any())).thenReturn(true);
+            when(commentDaoImpl.increaseLikeCnt(any())).thenReturn(1);
 
             assertDoesNotThrow(
                     () -> sut.increaseLikeCnt(cno)
@@ -220,7 +222,7 @@ class CommentServiceImplTest {
             // given
             Integer cno = 1;
 
-            when(commentDao.existsByCnoForUpdate(any())).thenReturn(false);
+            when(commentDaoImpl.existsByCnoForUpdate(any())).thenReturn(false);
 
             // then
             assertThrows(CommentNotFoundException.class, () -> sut.increaseLikeCnt(cno));
@@ -232,8 +234,8 @@ class CommentServiceImplTest {
             // given
             Integer cno = 1;
 
-            when(commentDao.existsByCnoForUpdate(any())).thenReturn(true);
-            when(commentDao.increaseLikeCnt(any())).thenReturn(0);
+            when(commentDaoImpl.existsByCnoForUpdate(any())).thenReturn(true);
+            when(commentDaoImpl.increaseLikeCnt(any())).thenReturn(0);
 
             // then
             assertThrows(NotApplyOnDbmsException.class, () -> sut.increaseLikeCnt(cno));
@@ -245,8 +247,8 @@ class CommentServiceImplTest {
             // given
             Integer cno = 1;
 
-            when(commentDao.existsByCnoForUpdate(any())).thenReturn(true);
-            when(commentDao.increaseDislikeCnt(any())).thenReturn(1);
+            when(commentDaoImpl.existsByCnoForUpdate(any())).thenReturn(true);
+            when(commentDaoImpl.increaseDislikeCnt(any())).thenReturn(1);
 
             assertDoesNotThrow(
                     () -> sut.increaseDislikeCnt(cno)
@@ -259,7 +261,7 @@ class CommentServiceImplTest {
             // given
             Integer cno = 1;
 
-            when(commentDao.existsByCnoForUpdate(any())).thenReturn(false);
+            when(commentDaoImpl.existsByCnoForUpdate(any())).thenReturn(false);
 
             // then
             assertThrows(CommentNotFoundException.class, () -> sut.increaseDislikeCnt(cno));
@@ -271,8 +273,8 @@ class CommentServiceImplTest {
             // given
             Integer cno = 1;
 
-            when(commentDao.existsByCnoForUpdate(any())).thenReturn(true);
-            when(commentDao.increaseDislikeCnt(any())).thenReturn(0);
+            when(commentDaoImpl.existsByCnoForUpdate(any())).thenReturn(true);
+            when(commentDaoImpl.increaseDislikeCnt(any())).thenReturn(0);
 
             // then
             assertThrows(NotApplyOnDbmsException.class, () -> sut.increaseDislikeCnt(cno));
@@ -289,7 +291,7 @@ class CommentServiceImplTest {
             // given
             Integer cno = 1;
 
-            when(commentDao.deleteByCno(any())).thenReturn(1);
+            when(commentDaoImpl.deleteByCno(any())).thenReturn(1);
 
             assertDoesNotThrow(
                     () -> sut.remove(cno)
@@ -303,7 +305,7 @@ class CommentServiceImplTest {
             // given
             Integer cno = 1;
 
-            when(commentDao.deleteByCno(any())).thenReturn(0);
+            when(commentDaoImpl.deleteByCno(any())).thenReturn(0);
 
             // then
             assertThrows(NotApplyOnDbmsException.class, () -> sut.remove(cno));
@@ -315,8 +317,8 @@ class CommentServiceImplTest {
             // given
             Integer bno = 1;
 
-            when(commentDao.countByBno(bno)).thenReturn(5);
-            when(commentDao.deleteByBno(bno)).thenReturn(5);
+            when(commentDaoImpl.countByBno(bno)).thenReturn(5);
+            when(commentDaoImpl.deleteByBno(bno)).thenReturn(5);
 
             assertDoesNotThrow(
                     () -> sut.removeByBno(bno)
@@ -360,8 +362,8 @@ class CommentServiceImplTest {
                                                       .like_cnt(0)
                                                       .dislike_cnt(0)
                                                       .build();
-            when(commentDao.existsByCno(any())).thenReturn(true);
-            when(commentDao.selectByCno(cno)).thenReturn(dto);
+            when(commentDaoImpl.existsByCno(any())).thenReturn(true);
+            when(commentDaoImpl.selectByCno(cno)).thenReturn(dto);
 
             CommentResponse actual = sut.readByCno(cno);
 

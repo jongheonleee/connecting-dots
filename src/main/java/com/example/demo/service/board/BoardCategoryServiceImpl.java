@@ -5,7 +5,7 @@ import com.example.demo.dto.board.BoardCategoryResponse;
 import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 
-public interface BoardCategoryService {
+public interface BoardCategoryServiceImpl {
 
     int count();
 

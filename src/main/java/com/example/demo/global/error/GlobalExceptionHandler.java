@@ -18,7 +18,7 @@ import org.springframework.validation.BindException;
 
 // 모든 예외 공통적으로 처리
 @Slf4j
-@ControllerAdvice(basePackages = {"com.example.demo.presentation"})
+@ControllerAdvice(basePackages = {"com.example.demo.controller"})
 public class GlobalExceptionHandler {
 
     /**

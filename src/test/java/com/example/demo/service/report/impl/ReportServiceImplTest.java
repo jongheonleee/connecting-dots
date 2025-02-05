@@ -230,7 +230,7 @@ class ReportServiceImplTest {
             when(reportDaoImpl.selectByRno(rno)).thenReturn(null);
 
             // then
-            assertThrows(ReportNotFoundException.class, () -> sut.readReportDetailsBySeq(rno));
+            assertThrows(ReportNotFoundException.class, () -> sut.readReportDetailsByRno(rno));
         }
 
         @Test
@@ -245,7 +245,7 @@ class ReportServiceImplTest {
             doThrow(RuntimeException.class).when(reportProcessDetailsServiceImpl).readByRnoAtPresent(rno);
 
             // then
-            assertThrows(RuntimeException.class, () -> sut.readReportDetailsBySeq(rno));
+            assertThrows(RuntimeException.class, () -> sut.readReportDetailsByRno(rno));
         }
 
         @Test
@@ -261,7 +261,7 @@ class ReportServiceImplTest {
             when(reportProcessDetailsServiceImpl.readByRnoAtPresent(rno)).thenReturn(processDetailsResponse);
 
             // then
-            assertDoesNotThrow(() -> sut.readReportDetailsBySeq(rno));
+            assertDoesNotThrow(() -> sut.readReportDetailsByRno(rno));
         }
 
     }

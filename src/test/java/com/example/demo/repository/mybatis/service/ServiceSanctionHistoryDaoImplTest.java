@@ -46,7 +46,7 @@ class ServiceSanctionHistoryDaoImplTest {
     private final String code = "100";
 
     private final String appl_begin = "2025-01-01 00:00:00";
-    private final String appl_end = "2025-02-01 00:00:00";
+    private final String appl_end = "9999-12-31 23:59:59";
 
     private final String currentDateFormat = "2025-01-08 00:00:00";
     private final Integer managerSeq = 1;

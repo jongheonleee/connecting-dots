@@ -6,7 +6,7 @@ import static com.example.demo.domain.Code.BOARD_MODIFY;
 
 import com.example.demo.repository.board.BoardCategoryRepository;
 import com.example.demo.repository.board.BoardRepository;
-import com.example.demo.service.board.BoardCategoryService;
+import com.example.demo.service.board.BoardCategoryServiceImpl;
 import com.example.demo.service.board.BoardChangeHistoryService;
 import com.example.demo.service.board.BoardImgService;
 import com.example.demo.service.board.BoardService;
@@ -68,7 +68,7 @@ public class BoardServiceImpl implements BoardService {
     private final BoardImgService boardImgService;
     private final BoardStatusService boardStatusService;
     private final BoardChangeHistoryService boardChangeHistoryService;
-    private final BoardCategoryService boardCategoryService;
+    private final BoardCategoryServiceImpl boardCategoryService;
     private final ReplyService replyService;
     //    private final UserService userService; -> 게시판과 관련된 사용자 정보[]
     private final CommentService commentService;

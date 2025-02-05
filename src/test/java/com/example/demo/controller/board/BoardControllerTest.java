@@ -22,7 +22,7 @@ import com.example.demo.dto.board.BoardMainResponse;
 import com.example.demo.dto.board.BoardRequest;
 import com.example.demo.dto.board.BoardResponse;
 import com.example.demo.dto.board.BoardUpdateRequest;
-import com.example.demo.service.board.BoardService;
+import com.example.demo.service.board.impl.BoardServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,13 +51,13 @@ class BoardControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private BoardService boardService;
+    private BoardServiceImpl boardServiceImpl;
 
     @BeforeEach
     void setUp() {
         assertNotNull(mockMvc);
         assertNotNull(objectMapper);
-        assertNotNull(boardService);
+        assertNotNull(boardServiceImpl);
     }
 
     @Nested
@@ -70,7 +70,7 @@ class BoardControllerTest {
             // given
             Integer page = 1, pageSize = 10;
             PageResponse response = createMainResponse(100, new SearchCondition(), pageSize);
-            given(boardService.readForMain(page, pageSize))
+            given(boardServiceImpl.readForMain(page, pageSize))
                               .willReturn(response);
 
             // when & then
@@ -102,7 +102,7 @@ class BoardControllerTest {
             String cate_code = "C001";
 
             PageResponse response = createMainResponse(100, new SearchCondition(), pageSize);
-            given(boardService.readByCategoryForMain(cate_code, page, pageSize))
+            given(boardServiceImpl.readByCategoryForMain(cate_code, page, pageSize))
                               .willReturn(response);
 
             // when & then
@@ -136,7 +136,7 @@ class BoardControllerTest {
             String searchOption = "TT", searchKeyword = "백엔드", sortOption = "1";
 
             PageResponse response = createMainResponse(100, new SearchCondition(), pageSize);
-            given(boardService.readBySearchConditionForMain(any()))
+            given(boardServiceImpl.readBySearchConditionForMain(any()))
                               .willReturn(response);
 
             // when & then
@@ -171,7 +171,7 @@ class BoardControllerTest {
             Integer bno = 1;
             BoardDetailResponse response = createDetailResponse(bno, 1);
 
-            given(boardService.readDetailByBno(bno))
+            given(boardServiceImpl.readDetailByBno(bno))
                               .willReturn(response);
 
             // when & then
@@ -204,7 +204,7 @@ class BoardControllerTest {
         void it_correctly_work_when_user_request_read_board_for_like() throws Exception {
             // given
             Integer bno = 1;
-            willDoNothing().given(boardService).increaseReco(bno);
+            willDoNothing().given(boardServiceImpl).increaseReco(bno);
 
             // when & then
             mockMvc.perform(get("/api/board/like/{bno}", bno))
@@ -217,7 +217,7 @@ class BoardControllerTest {
         void it_correctly_work_when_user_request_read_board_for_dislike() throws Exception {
             // given
             Integer bno = 1;
-            willDoNothing().given(boardService).increaseNotReco(bno);
+            willDoNothing().given(boardServiceImpl).increaseNotReco(bno);
 
             // when & then
             mockMvc.perform(get("/api/board/dislike/{bno}", bno))
@@ -250,15 +250,15 @@ class BoardControllerTest {
             MockMultipartFile boardDataPart = new MockMultipartFile("boardData", "", "application/json", boardData.getBytes());
 
             BoardResponse response = BoardResponse.builder()
-                    .bno(1)
-                    .title("테스트용 게시글")
-                    .writer("최여늘")
-                    .user_seq(1)
-                    .cate_code("BC010101")
-                    .cont("테스트용 게시글 내용")
-                    .build();
+                                                .bno(1)
+                                                .title("테스트용 게시글")
+                                                .writer("최여늘")
+                                                .user_seq(1)
+                                                .cate_code("BC010101")
+                                                .cont("테스트용 게시글 내용")
+                                                .build();
 
-            given(boardService.create(any(BoardRequest.class), anyList()))
+            given(boardServiceImpl.create(any(BoardRequest.class), anyList()))
                     .willReturn(response);
 
             // when & then
@@ -313,7 +313,7 @@ class BoardControllerTest {
             MockMultipartFile boardDataPart = new MockMultipartFile("boardData", "", "application/json", boardData.getBytes());
 
             // when
-            willDoNothing().given(boardService).modify(any(BoardUpdateRequest.class), anyList());
+            willDoNothing().given(boardServiceImpl).modify(any(BoardUpdateRequest.class), anyList());
 
             // then
             mockMvc.perform(multipart("/api/board/modify")
@@ -339,7 +339,7 @@ class BoardControllerTest {
             Integer bno = 1;
 
             // when
-            willDoNothing().given(boardService).remove(bno);
+            willDoNothing().given(boardServiceImpl).remove(bno);
 
             // then
             assertDoesNotThrow(() -> mockMvc.perform(delete("/api/board/{bno}", bno)

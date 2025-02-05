@@ -12,7 +12,8 @@ import com.example.demo.dto.service.ServiceRuleUseResponse;
 import com.example.demo.global.error.exception.business.service.ServiceRuleUseAlreadyExistsException;
 import com.example.demo.global.error.exception.business.service.ServiceRuleUseNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
-import com.example.demo.repository.service.ServiceRuleUseRepository;
+import com.example.demo.repository.service.impl.ServiceRuleUseDaoImpl;
+import com.example.demo.service.service.impl.ServiceRuleUseServiceImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,10 +31,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ServiceRuleUseServiceImplTest {
 
     @InjectMocks
-    private ServiceRuleUseService serviceRuleUseService;
+    private ServiceRuleUseServiceImpl serviceRuleUseServiceImpl;
 
     @Mock
-    private ServiceRuleUseRepository serviceRuleUseDao;
+    private ServiceRuleUseDaoImpl serviceRuleUseDaoImpl;
 
     @Mock
     private CustomFormatter formatter;
@@ -43,8 +44,8 @@ class ServiceRuleUseServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        assertNotNull(serviceRuleUseService);
-        assertNotNull(serviceRuleUseDao);
+        assertNotNull(serviceRuleUseServiceImpl);
+        assertNotNull(serviceRuleUseDaoImpl);
         assertNotNull(formatter);
     }
 
@@ -54,8 +55,8 @@ class ServiceRuleUseServiceImplTest {
     @ParameterizedTest
     @ValueSource(ints = {1, 5, 10, 15, 20})
     void 카운팅_테스트(int cnt) {
-        when(serviceRuleUseDao.count()).thenReturn(cnt);
-        int totalCnt = serviceRuleUseService.count();
+        when(serviceRuleUseDaoImpl.count()).thenReturn(cnt);
+        int totalCnt = serviceRuleUseServiceImpl.count();
         assertEquals(cnt, totalCnt);
     }
 
@@ -63,8 +64,8 @@ class ServiceRuleUseServiceImplTest {
     @ParameterizedTest
     @ValueSource(strings = {"100", "200", "300", "400", "500"})
     void 코드로_카운팅_테스트(String code) {
-        when(serviceRuleUseDao.countByCode(code)).thenReturn(5);
-        int totalCnt = serviceRuleUseService.countByCode(code);
+        when(serviceRuleUseDaoImpl.countByCode(code)).thenReturn(5);
+        int totalCnt = serviceRuleUseServiceImpl.countByCode(code);
         assertEquals(5, totalCnt);
     }
 
@@ -78,11 +79,11 @@ class ServiceRuleUseServiceImplTest {
             ServiceRuleUseDto dto = new ServiceRuleUseDto(request, currentDateFormat, managerSeq, currentDateFormat, managerSeq);
             when(formatter.getCurrentDateFormat()).thenReturn(currentDateFormat);
             when(formatter.getManagerSeq()).thenReturn(managerSeq);
-            when(serviceRuleUseDao.insert(dto)).thenReturn(1);
-            when(serviceRuleUseDao.selectByRuleStat(dto.getRule_stat())).thenReturn(dto);
+            when(serviceRuleUseDaoImpl.insert(dto)).thenReturn(1);
+            when(serviceRuleUseDaoImpl.selectByRuleStat(dto.getRule_stat())).thenReturn(dto);
 
             // when
-            ServiceRuleUseResponse response = serviceRuleUseService.create(request);
+            ServiceRuleUseResponse response = serviceRuleUseServiceImpl.create(request);
 
             // then
             assertEquals(dto.getRule_stat(), response.getRule_stat());
@@ -102,11 +103,11 @@ class ServiceRuleUseServiceImplTest {
         String rule_stat = request.getRule_stat();
 
         ServiceRuleUseDto dto = new ServiceRuleUseDto(request, currentDateFormat, managerSeq, currentDateFormat, managerSeq);
-        when(serviceRuleUseDao.selectByRuleStat(rule_stat)).thenReturn(dto);
-        when(serviceRuleUseDao.existsByRuleStat(rule_stat)).thenReturn(true);
+        when(serviceRuleUseDaoImpl.selectByRuleStat(rule_stat)).thenReturn(dto);
+        when(serviceRuleUseDaoImpl.existsByRuleStat(rule_stat)).thenReturn(true);
 
         // when
-        ServiceRuleUseResponse response = serviceRuleUseService.readByRuleStat(rule_stat);
+        ServiceRuleUseResponse response = serviceRuleUseServiceImpl.readByRuleStat(rule_stat);
 
         // then
         assertEquals(dto.getRule_stat(), response.getRule_stat());
@@ -135,8 +136,8 @@ class ServiceRuleUseServiceImplTest {
         List<ServiceRuleUseResponse> expectedResponses = dummy.stream()
                                                             .map(ServiceRuleUseResponse::new)
                                                             .toList();
-        when(serviceRuleUseDao.selectByCode(code)).thenReturn(dummy);
-        List<ServiceRuleUseResponse> responses = serviceRuleUseService.readByCode(code);
+        when(serviceRuleUseDaoImpl.selectByCode(code)).thenReturn(dummy);
+        List<ServiceRuleUseResponse> responses = serviceRuleUseServiceImpl.readByCode(code);
 
         // then
         assertEquals(expectedResponses.size(), responses.size());
@@ -166,8 +167,8 @@ class ServiceRuleUseServiceImplTest {
         List<ServiceRuleUseResponse> expectedResponses = dummy.stream()
                                                             .map(ServiceRuleUseResponse::new)
                                                             .toList();
-        when(serviceRuleUseDao.selectAll()).thenReturn(dummy);
-        List<ServiceRuleUseResponse> responses = serviceRuleUseService.readAll();
+        when(serviceRuleUseDaoImpl.selectAll()).thenReturn(dummy);
+        List<ServiceRuleUseResponse> responses = serviceRuleUseServiceImpl.readAll();
 
         // then
         assertEquals(expectedResponses.size(), responses.size());
@@ -191,11 +192,11 @@ class ServiceRuleUseServiceImplTest {
             when(formatter.getCurrentDateFormat()).thenReturn(currentDateFormat);
             when(formatter.getManagerSeq()).thenReturn(managerSeq);
 
-            when(serviceRuleUseDao.existsByRuleStatForUpdate(request.getRule_stat())).thenReturn(true);
-            when(serviceRuleUseDao.update(dto)).thenReturn(1);
+            when(serviceRuleUseDaoImpl.existsByRuleStatForUpdate(request.getRule_stat())).thenReturn(true);
+            when(serviceRuleUseDaoImpl.update(dto)).thenReturn(1);
 
             // when
-            assertDoesNotThrow(() -> serviceRuleUseService.modify(request));
+            assertDoesNotThrow(() -> serviceRuleUseServiceImpl.modify(request));
         }
     }
 
@@ -210,11 +211,11 @@ class ServiceRuleUseServiceImplTest {
             when(formatter.getCurrentDateFormat()).thenReturn(currentDateFormat);
             when(formatter.getManagerSeq()).thenReturn(managerSeq);
 
-            when(serviceRuleUseDao.existsByRuleStatForUpdate(request.getRule_stat())).thenReturn(true);
-            when(serviceRuleUseDao.updateUse(dto)).thenReturn(1);
+            when(serviceRuleUseDaoImpl.existsByRuleStatForUpdate(request.getRule_stat())).thenReturn(true);
+            when(serviceRuleUseDaoImpl.updateUse(dto)).thenReturn(1);
 
             // when
-            assertDoesNotThrow(() -> serviceRuleUseService.modifyChkUse(request));
+            assertDoesNotThrow(() -> serviceRuleUseServiceImpl.modifyChkUse(request));
         }
     }
 
@@ -225,10 +226,10 @@ class ServiceRuleUseServiceImplTest {
         for (int i=0; i<cnt; i++) {
             // given
             ServiceRuleUseRequest request = createRequest(i);
-            when(serviceRuleUseDao.deleteByRuleStat(request.getRule_stat())).thenReturn(1);
+            when(serviceRuleUseDaoImpl.deleteByRuleStat(request.getRule_stat())).thenReturn(1);
 
             // when
-            assertDoesNotThrow(() -> serviceRuleUseService.removeByRuleStat(request.getRule_stat()));
+            assertDoesNotThrow(() -> serviceRuleUseServiceImpl.removeByRuleStat(request.getRule_stat()));
         }
     }
 
@@ -236,11 +237,11 @@ class ServiceRuleUseServiceImplTest {
     @Test
     void 전체_서비스_룰_사용_삭제_테스트() {
         // given
-        when(serviceRuleUseDao.count()).thenReturn(20);
-        when(serviceRuleUseDao.deleteAll()).thenReturn(20);
+        when(serviceRuleUseDaoImpl.count()).thenReturn(20);
+        when(serviceRuleUseDaoImpl.deleteAll()).thenReturn(20);
 
         // when
-        assertDoesNotThrow(() -> serviceRuleUseService.removeAll());
+        assertDoesNotThrow(() -> serviceRuleUseServiceImpl.removeAll());
     }
 
     @DisplayName("코드로 전체 서비스 룰 사용 삭제 테스트")
@@ -249,11 +250,11 @@ class ServiceRuleUseServiceImplTest {
     void 코드로_전체_서비스_룰_사용_삭제_테스트(int cnt) {
         // given
         String code = "2002";
-        when(serviceRuleUseDao.countByCode(code)).thenReturn(cnt);
-        when(serviceRuleUseDao.deleteByCode(code)).thenReturn(cnt);
+        when(serviceRuleUseDaoImpl.countByCode(code)).thenReturn(cnt);
+        when(serviceRuleUseDaoImpl.deleteByCode(code)).thenReturn(cnt);
 
         // when
-        assertDoesNotThrow(() -> serviceRuleUseService.removeByCode(code));
+        assertDoesNotThrow(() -> serviceRuleUseServiceImpl.removeByCode(code));
     }
 
     @Test
@@ -266,13 +267,13 @@ class ServiceRuleUseServiceImplTest {
                 new ServiceRuleUseDto(createRequest(2), "2025/01/05", 1, "2025/01/05", 1),
                 new ServiceRuleUseDto(createRequest(3), "2025/01/05", 1, "2025/01/05", 1)
         );
-        when(serviceRuleUseDao.selectBySearchCondition(any())).thenReturn(dummy);
+        when(serviceRuleUseDaoImpl.selectBySearchCondition(any())).thenReturn(dummy);
 
         // when
         List<ServiceRuleUseResponse> expectedResponses = dummy.stream()
                                                             .map(ServiceRuleUseResponse::new)
                                                             .toList();
-        PageResponse<ServiceRuleUseResponse> responses = serviceRuleUseService.readBySearchCondition(sc);
+        PageResponse<ServiceRuleUseResponse> responses = serviceRuleUseServiceImpl.readBySearchCondition(sc);
 
         // then
         assertNotNull(responses);
@@ -292,10 +293,10 @@ class ServiceRuleUseServiceImplTest {
     void create_중복된_키_값_요청시_예외_발생() {
         // given
         ServiceRuleUseRequest request = createRequest(1);
-        when(serviceRuleUseDao.existsByRuleStat(request.getRule_stat())).thenReturn(true);
+        when(serviceRuleUseDaoImpl.existsByRuleStat(request.getRule_stat())).thenReturn(true);
 
         // when
-        assertThrows(ServiceRuleUseAlreadyExistsException.class, () -> serviceRuleUseService.create(request));
+        assertThrows(ServiceRuleUseAlreadyExistsException.class, () -> serviceRuleUseServiceImpl.create(request));
     }
 
     @Test
@@ -306,10 +307,10 @@ class ServiceRuleUseServiceImplTest {
         ServiceRuleUseDto dto = new ServiceRuleUseDto(request, currentDateFormat, managerSeq, currentDateFormat, managerSeq);
         when(formatter.getCurrentDateFormat()).thenReturn(currentDateFormat);
         when(formatter.getManagerSeq()).thenReturn(managerSeq);
-        when(serviceRuleUseDao.insert(dto)).thenReturn(0);
+        when(serviceRuleUseDaoImpl.insert(dto)).thenReturn(0);
 
         // when
-        assertThrows(NotApplyOnDbmsException.class, () -> serviceRuleUseService.create(request));
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceRuleUseServiceImpl.create(request));
     }
 
 
@@ -318,10 +319,10 @@ class ServiceRuleUseServiceImplTest {
     void selectByRuleStat_서비스_이용_규칙_코드로_조회_실패시_예외_발생() {
         // given
         String notExistsRuleStat = "2002";
-        when(serviceRuleUseDao.existsByRuleStat(notExistsRuleStat)).thenReturn(false);
+        when(serviceRuleUseDaoImpl.existsByRuleStat(notExistsRuleStat)).thenReturn(false);
 
         // when
-        assertThrows(ServiceRuleUseNotFoundException.class, () -> serviceRuleUseService.readByRuleStat(notExistsRuleStat));
+        assertThrows(ServiceRuleUseNotFoundException.class, () -> serviceRuleUseServiceImpl.readByRuleStat(notExistsRuleStat));
     }
 
     @Test
@@ -329,10 +330,10 @@ class ServiceRuleUseServiceImplTest {
     void modify_해당_키와_관련된_데이터가_없을_경우_예외_발생() {
         // given
         ServiceRuleUseRequest request = createRequest(1);
-        when(serviceRuleUseDao.existsByRuleStatForUpdate(request.getRule_stat())).thenReturn(false);
+        when(serviceRuleUseDaoImpl.existsByRuleStatForUpdate(request.getRule_stat())).thenReturn(false);
 
         // when
-        assertThrows(ServiceRuleUseNotFoundException.class, () -> serviceRuleUseService.modify(request));
+        assertThrows(ServiceRuleUseNotFoundException.class, () -> serviceRuleUseServiceImpl.modify(request));
     }
 
     @Test
@@ -343,11 +344,11 @@ class ServiceRuleUseServiceImplTest {
         ServiceRuleUseDto dto = new ServiceRuleUseDto(request, currentDateFormat, managerSeq, currentDateFormat, managerSeq);
         when(formatter.getCurrentDateFormat()).thenReturn(currentDateFormat);
         when(formatter.getManagerSeq()).thenReturn(managerSeq);
-        when(serviceRuleUseDao.existsByRuleStatForUpdate(request.getRule_stat())).thenReturn(true);
-        when(serviceRuleUseDao.update(dto)).thenReturn(0);
+        when(serviceRuleUseDaoImpl.existsByRuleStatForUpdate(request.getRule_stat())).thenReturn(true);
+        when(serviceRuleUseDaoImpl.update(dto)).thenReturn(0);
 
         // when
-        assertThrows(NotApplyOnDbmsException.class, () -> serviceRuleUseService.modify(request));
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceRuleUseServiceImpl.modify(request));
     }
 
     @Test
@@ -355,10 +356,10 @@ class ServiceRuleUseServiceImplTest {
     void modifyChkUse_해당_키와_관련된_데이터가_없을_경우_예외_발생() {
         // given
         ServiceRuleUseRequest request = createRequest(1);
-        when(serviceRuleUseDao.existsByRuleStatForUpdate(request.getRule_stat())).thenReturn(false);
+        when(serviceRuleUseDaoImpl.existsByRuleStatForUpdate(request.getRule_stat())).thenReturn(false);
 
         // when
-        assertThrows(ServiceRuleUseNotFoundException.class, () -> serviceRuleUseService.modifyChkUse(request));
+        assertThrows(ServiceRuleUseNotFoundException.class, () -> serviceRuleUseServiceImpl.modifyChkUse(request));
     }
 
     @Test
@@ -369,11 +370,11 @@ class ServiceRuleUseServiceImplTest {
         ServiceRuleUseDto dto = new ServiceRuleUseDto(request, currentDateFormat, managerSeq, currentDateFormat, managerSeq);
         when(formatter.getCurrentDateFormat()).thenReturn(currentDateFormat);
         when(formatter.getManagerSeq()).thenReturn(managerSeq);
-        when(serviceRuleUseDao.existsByRuleStatForUpdate(request.getRule_stat())).thenReturn(true);
-        when(serviceRuleUseDao.updateUse(dto)).thenReturn(0);
+        when(serviceRuleUseDaoImpl.existsByRuleStatForUpdate(request.getRule_stat())).thenReturn(true);
+        when(serviceRuleUseDaoImpl.updateUse(dto)).thenReturn(0);
 
         // when
-        assertThrows(NotApplyOnDbmsException.class, () -> serviceRuleUseService.modifyChkUse(request));
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceRuleUseServiceImpl.modifyChkUse(request));
     }
 
     @Test
@@ -381,10 +382,10 @@ class ServiceRuleUseServiceImplTest {
     void removeByRuleStat_DBMS에_정상_반영_안될_경우_예외_발생() {
         // given
         String ruleStat = "SA0001";
-        when(serviceRuleUseDao.deleteByRuleStat(ruleStat)).thenReturn(0);
+        when(serviceRuleUseDaoImpl.deleteByRuleStat(ruleStat)).thenReturn(0);
 
         // when
-        assertThrows(NotApplyOnDbmsException.class, () -> serviceRuleUseService.removeByRuleStat(ruleStat));
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceRuleUseServiceImpl.removeByRuleStat(ruleStat));
     }
 
     @Test
@@ -392,22 +393,22 @@ class ServiceRuleUseServiceImplTest {
     void removeByCode_DBMS에_정상_반영_안될_경우_예외_발생() {
         // given
         String code = "2002";
-        when(serviceRuleUseDao.countByCode(code)).thenReturn(5);
-        when(serviceRuleUseDao.deleteByCode(code)).thenReturn(0);
+        when(serviceRuleUseDaoImpl.countByCode(code)).thenReturn(5);
+        when(serviceRuleUseDaoImpl.deleteByCode(code)).thenReturn(0);
 
         // when
-        assertThrows(NotApplyOnDbmsException.class, () -> serviceRuleUseService.removeByCode(code));
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceRuleUseServiceImpl.removeByCode(code));
     }
 
     @Test
     @DisplayName("removeAll() -> DBMS에 정상 반영 안될 경우 예외 발생")
     void removeAll_DBMS에_정상_반영_안될_경우_예외_발생() {
         // given
-        when(serviceRuleUseDao.count()).thenReturn(20);
-        when(serviceRuleUseDao.deleteAll()).thenReturn(0);
+        when(serviceRuleUseDaoImpl.count()).thenReturn(20);
+        when(serviceRuleUseDaoImpl.deleteAll()).thenReturn(0);
 
         // when
-        assertThrows(NotApplyOnDbmsException.class, () -> serviceRuleUseService.removeAll());
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceRuleUseServiceImpl.removeAll());
     }
 
 

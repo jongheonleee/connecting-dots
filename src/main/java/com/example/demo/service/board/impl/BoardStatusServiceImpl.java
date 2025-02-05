@@ -2,7 +2,6 @@ package com.example.demo.service.board.impl;
 
 import com.example.demo.repository.board.BoardRepository;
 import com.example.demo.repository.board.BoardStatusRepository;
-import com.example.demo.service.board.BoardStatusService;
 import com.example.demo.domain.Code;
 import com.example.demo.dto.board.BoardStatusDto;
 import com.example.demo.dto.board.BoardStatusRequest;
@@ -10,6 +9,7 @@ import com.example.demo.dto.board.BoardStatusResponse;
 import com.example.demo.global.error.exception.business.board.BoardNotFoundException;
 import com.example.demo.global.error.exception.business.board.BoardStatusNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
+import com.example.demo.service.board.BoardStatusService;
 import com.example.demo.utils.CustomFormatter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class BoardStatusServiceImpl implements BoardStatusService {
+public class BoardStatusServiceImpl implements
+        BoardStatusService {
 
     private final BoardRepository boardDao;
     private final BoardStatusRepository boardStatusDao;

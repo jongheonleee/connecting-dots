@@ -9,7 +9,6 @@ public interface BoardStatusService {
 
     BoardStatusResponse create(BoardStatusRequest request);
 
-    @Transactional(rollbackFor = Exception.class)
     void renewState(BoardStatusRequest request);
 
     void removeBySeq(Integer seq);
@@ -20,10 +19,8 @@ public interface BoardStatusService {
 
     List<BoardStatusResponse> readAll();
 
-    @Transactional(rollbackFor = Exception.class)
     void removeByBno(Integer bno);
 
-    @Transactional(rollbackFor = Exception.class)
     void removeAll();
 
     BoardStatusResponse readBySeq(Integer seq);

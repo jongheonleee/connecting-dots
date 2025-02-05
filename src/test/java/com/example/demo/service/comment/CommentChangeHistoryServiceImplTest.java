@@ -9,8 +9,9 @@ import com.example.demo.dto.comment.CommentChangeHistoryRequest;
 import com.example.demo.dto.comment.CommentChangeHistoryResponse;
 import com.example.demo.global.error.exception.business.comment.CommentChangeHistoryNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
-import com.example.demo.repository.comment.CommentChangeHistoryRepository;
-import com.example.demo.repository.comment.CommentRepository;
+import com.example.demo.repository.comment.impl.CommentChangeHistoryDaoImpl;
+import com.example.demo.repository.comment.impl.CommentDaoImpl;
+import com.example.demo.service.comment.impl.CommentChangeHistoryServiceImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,13 +29,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class CommentChangeHistoryServiceImplTest {
 
     @InjectMocks
-    private CommentChangeHistoryService sut;
+    private CommentChangeHistoryServiceImpl sut;
 
     @Mock
-    private CommentRepository commentDao;
+    private CommentDaoImpl commentDaoImpl;
 
     @Mock
-    private CommentChangeHistoryRepository commentChangeHistoryDao;
+    private CommentChangeHistoryDaoImpl commentChangeHistoryDaoImpl;
 
     @Mock
     private CustomFormatter formatter;
@@ -65,7 +66,7 @@ class CommentChangeHistoryServiceImplTest {
                                                                                .bno(1)
                                                                                .build();
             // when
-            when(commentChangeHistoryDao.insert(any())).thenReturn(1);
+            when(commentChangeHistoryDaoImpl.insert(any())).thenReturn(1);
 
             CommentChangeHistoryResponse actual = sut.create(request);
 
@@ -92,7 +93,7 @@ class CommentChangeHistoryServiceImplTest {
                                                                             .build();
 
             // when
-            when(commentChangeHistoryDao.insert(any())).thenReturn(0);
+            when(commentChangeHistoryDaoImpl.insert(any())).thenReturn(0);
 
             // then
             assertThrows(NotApplyOnDbmsException.class, () -> sut.create(request));
@@ -130,7 +131,7 @@ class CommentChangeHistoryServiceImplTest {
             }
 
             Integer cno = 1;
-            when(commentChangeHistoryDao.selectByCno(cno)).thenReturn(dummy);
+            when(commentChangeHistoryDaoImpl.selectByCno(cno)).thenReturn(dummy);
             List<CommentChangeHistoryResponse> actual = sut.readByCno(cno);
 
             assertEquals(cnt, actual.size());
@@ -153,7 +154,7 @@ class CommentChangeHistoryServiceImplTest {
             Integer seq = 1;
 
             CommentChangeHistoryDto dto = new CommentChangeHistoryDto();
-            when(commentChangeHistoryDao.select(seq)).thenReturn(dto);
+            when(commentChangeHistoryDaoImpl.select(seq)).thenReturn(dto);
 
             CommentChangeHistoryResponse actual = sut.readBySeq(seq);
 
@@ -164,7 +165,7 @@ class CommentChangeHistoryServiceImplTest {
         @Test
         void it_throws_exception_when_select_fails() {
             Integer seq = 1;
-            when(commentChangeHistoryDao.select(seq)).thenReturn(null);
+            when(commentChangeHistoryDaoImpl.select(seq)).thenReturn(null);
             assertThrows(CommentChangeHistoryNotFoundException.class, () -> sut.readBySeq(seq));
         }
 
@@ -189,8 +190,8 @@ class CommentChangeHistoryServiceImplTest {
 
 
             // when & then
-            when(commentChangeHistoryDao.existsByCnoForUpdate(request.getCno())).thenReturn(true);
-            when(commentChangeHistoryDao.update(any())).thenReturn(1);
+            when(commentChangeHistoryDaoImpl.existsByCnoForUpdate(request.getCno())).thenReturn(true);
+            when(commentChangeHistoryDaoImpl.update(any())).thenReturn(1);
 
             assertDoesNotThrow(()->sut.modify(request));
         }
@@ -209,7 +210,7 @@ class CommentChangeHistoryServiceImplTest {
                     .build();
 
             // when
-            when(commentChangeHistoryDao.existsByCnoForUpdate(request.getCno())).thenReturn(false);
+            when(commentChangeHistoryDaoImpl.existsByCnoForUpdate(request.getCno())).thenReturn(false);
 
             // then
             assertThrows(CommentChangeHistoryNotFoundException.class, () -> sut.modify(request));
@@ -229,8 +230,8 @@ class CommentChangeHistoryServiceImplTest {
                     .build();
 
             // when
-            when(commentChangeHistoryDao.existsByCnoForUpdate(request.getCno())).thenReturn(true);
-            when(commentChangeHistoryDao.update(any())).thenReturn(0);
+            when(commentChangeHistoryDaoImpl.existsByCnoForUpdate(request.getCno())).thenReturn(true);
+            when(commentChangeHistoryDaoImpl.update(any())).thenReturn(0);
 
             // then
             assertThrows(NotApplyOnDbmsException.class, () -> sut.modify(request));
@@ -248,7 +249,7 @@ class CommentChangeHistoryServiceImplTest {
             Integer seq = 1;
 
             // when & then
-            when(commentChangeHistoryDao.delete(seq)).thenReturn(1);
+            when(commentChangeHistoryDaoImpl.delete(seq)).thenReturn(1);
 
             assertDoesNotThrow(() -> sut.remove(seq));
         }
@@ -260,7 +261,7 @@ class CommentChangeHistoryServiceImplTest {
             Integer seq = 1;
 
             // when
-            when(commentChangeHistoryDao.delete(seq)).thenReturn(0);
+            when(commentChangeHistoryDaoImpl.delete(seq)).thenReturn(0);
 
             // then
             assertThrows(NotApplyOnDbmsException.class, () -> sut.remove(seq));
@@ -273,8 +274,8 @@ class CommentChangeHistoryServiceImplTest {
             Integer cno = 1;
 
             // when & then
-            when(commentChangeHistoryDao.countByCno(cno)).thenReturn(5);
-            when(commentChangeHistoryDao.deleteByCno(cno)).thenReturn(5);
+            when(commentChangeHistoryDaoImpl.countByCno(cno)).thenReturn(5);
+            when(commentChangeHistoryDaoImpl.deleteByCno(cno)).thenReturn(5);
 
             assertDoesNotThrow(() -> sut.removeByCno(cno));
         }
@@ -286,8 +287,8 @@ class CommentChangeHistoryServiceImplTest {
             Integer cno = 1;
 
             // when
-            when(commentChangeHistoryDao.countByCno(cno)).thenReturn(3);
-            when(commentChangeHistoryDao.deleteByCno(cno)).thenReturn(10);
+            when(commentChangeHistoryDaoImpl.countByCno(cno)).thenReturn(3);
+            when(commentChangeHistoryDaoImpl.deleteByCno(cno)).thenReturn(10);
 
             // then
             assertThrows(NotApplyOnDbmsException.class, () -> sut.removeByCno(cno));

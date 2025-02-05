@@ -13,7 +13,8 @@ import com.example.demo.dto.service.ServiceUserConditionsResponse;
 import com.example.demo.global.error.exception.business.service.ServiceUserConditionsAlreadyExistsException;
 import com.example.demo.global.error.exception.business.service.ServiceUserConditionsNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
-import com.example.demo.repository.service.ServiceUserConditionsRepository;
+import com.example.demo.repository.service.impl.ServiceUserConditionsDaoImpl;
+import com.example.demo.service.service.impl.ServiceUserConditionsServiceImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,10 +34,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ServiceUserConditionsServiceImplTest {
 
     @InjectMocks
-    private ServiceUserConditionsService serviceUserConditionsService;
+    private ServiceUserConditionsServiceImpl serviceUserConditionsServiceImpl;
 
     @Mock
-    private ServiceUserConditionsRepository serviceUserConditionsDao;
+    private ServiceUserConditionsDaoImpl serviceUserConditionsDaoImpl;
 
     @Mock
     private CustomFormatter formatter;
@@ -57,8 +58,8 @@ class ServiceUserConditionsServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        assertNotNull(serviceUserConditionsService);
-        assertNotNull(serviceUserConditionsDao);
+        assertNotNull(serviceUserConditionsServiceImpl);
+        assertNotNull(serviceUserConditionsDaoImpl);
         assertNotNull(formatter);
     }
 
@@ -68,8 +69,8 @@ class ServiceUserConditionsServiceImplTest {
     @ParameterizedTest
     @ValueSource(ints = {1, 5, 10, 15, 20})
     void 카운팅_테스트(int cnt) {
-        when(serviceUserConditionsDao.count()).thenReturn(cnt);
-        assertEquals(cnt, serviceUserConditionsService.count());
+        when(serviceUserConditionsDaoImpl.count()).thenReturn(cnt);
+        assertEquals(cnt, serviceUserConditionsServiceImpl.count());
     }
 
     @DisplayName("검색 조건에 따른 카운팅 테스트")
@@ -77,8 +78,8 @@ class ServiceUserConditionsServiceImplTest {
     @ValueSource(ints = {1, 5, 10, 15, 20})
     void 검색_조건에_따른_카운팅_테스트(int cnt) {
         SearchCondition sc = new SearchCondition();
-        when(serviceUserConditionsDao.countBySearchCondition(sc)).thenReturn(cnt);
-        assertEquals(cnt, serviceUserConditionsService.countBySearchCondition(sc));
+        when(serviceUserConditionsDaoImpl.countBySearchCondition(sc)).thenReturn(cnt);
+        assertEquals(cnt, serviceUserConditionsServiceImpl.countBySearchCondition(sc));
     }
 
     @DisplayName("생성 테스트")
@@ -92,11 +93,11 @@ class ServiceUserConditionsServiceImplTest {
             when(formatter.getCurrentDateFormat()).thenReturn(reg_date);
             when(formatter.getManagerSeq()).thenReturn(reg_user_seq);
 
-            when(serviceUserConditionsDao.existsByCondsCode(request.getConds_code())).thenReturn(false);
-            when(serviceUserConditionsDao.insert(dto)).thenReturn(1);
-            when(serviceUserConditionsDao.selectByCondsCode(dto.getConds_code())).thenReturn(dto);
+            when(serviceUserConditionsDaoImpl.existsByCondsCode(request.getConds_code())).thenReturn(false);
+            when(serviceUserConditionsDaoImpl.insert(dto)).thenReturn(1);
+            when(serviceUserConditionsDaoImpl.selectByCondsCode(dto.getConds_code())).thenReturn(dto);
 
-            ServiceUserConditionsResponse response = serviceUserConditionsService.create(request);
+            ServiceUserConditionsResponse response = serviceUserConditionsServiceImpl.create(request);
 
             assertEquals(dto.getConds_code(), response.getConds_code());
             assertEquals(dto.getName(), response.getName());
@@ -120,10 +121,10 @@ class ServiceUserConditionsServiceImplTest {
             ServiceUserConditionsRequest request = createRequest(i);
             ServiceUserConditionsDto dto = createDto(request);
 
-            when(serviceUserConditionsDao.existsByCondsCode(request.getConds_code())).thenReturn(true);
-            when(serviceUserConditionsDao.selectByCondsCode(request.getConds_code())).thenReturn(dto);
+            when(serviceUserConditionsDaoImpl.existsByCondsCode(request.getConds_code())).thenReturn(true);
+            when(serviceUserConditionsDaoImpl.selectByCondsCode(request.getConds_code())).thenReturn(dto);
 
-            ServiceUserConditionsResponse response = serviceUserConditionsService.readByCondsCode(request.getConds_code());
+            ServiceUserConditionsResponse response = serviceUserConditionsServiceImpl.readByCondsCode(request.getConds_code());
 
             assertEquals(dto.getConds_code(), response.getConds_code());
             assertEquals(dto.getName(), response.getName());
@@ -152,10 +153,10 @@ class ServiceUserConditionsServiceImplTest {
             dummy.add(dto);
         }
 
-        when(serviceUserConditionsDao.countBySearchCondition(sc)).thenReturn(cnt);
-        when(serviceUserConditionsDao.selectBySearchCondition(sc)).thenReturn(dummy);
+        when(serviceUserConditionsDaoImpl.countBySearchCondition(sc)).thenReturn(cnt);
+        when(serviceUserConditionsDaoImpl.selectBySearchCondition(sc)).thenReturn(dummy);
 
-        PageResponse<ServiceUserConditionsResponse> response = serviceUserConditionsService.readBySearchCondition(sc);
+        PageResponse<ServiceUserConditionsResponse> response = serviceUserConditionsServiceImpl.readBySearchCondition(sc);
 
         assertEquals(cnt, response.getTotalCnt());
         assertEquals(cnt, response.getResponses().size());
@@ -170,10 +171,10 @@ class ServiceUserConditionsServiceImplTest {
             ServiceUserConditionsDto dto = createDto(request);
             ServiceUserConditionsDetailDto detailDto = createDetailDto(request);
 
-            when(serviceUserConditionsDao.existsByCondsCode(request.getConds_code())).thenReturn(true);
-            when(serviceUserConditionsDao.selectForUserConditions(request.getConds_code())).thenReturn(detailDto);
+            when(serviceUserConditionsDaoImpl.existsByCondsCode(request.getConds_code())).thenReturn(true);
+            when(serviceUserConditionsDaoImpl.selectForUserConditions(request.getConds_code())).thenReturn(detailDto);
 
-            ServiceUserConditionsDetailResponse response = serviceUserConditionsService.readByCondsCodeForUserConditions(request.getConds_code());
+            ServiceUserConditionsDetailResponse response = serviceUserConditionsServiceImpl.readByCondsCodeForUserConditions(request.getConds_code());
 
             assertEquals(dto.getConds_code(), response.getConds_code());
             assertEquals(dto.getName(), response.getName());
@@ -199,10 +200,10 @@ class ServiceUserConditionsServiceImplTest {
             when(formatter.getCurrentDateFormat()).thenReturn(up_date);
             when(formatter.getManagerSeq()).thenReturn(up_user_seq);
 
-            when(serviceUserConditionsDao.existsByCondsCodeForUpdate(request.getConds_code())).thenReturn(true);
-            when(serviceUserConditionsDao.update(dto)).thenReturn(1);
+            when(serviceUserConditionsDaoImpl.existsByCondsCodeForUpdate(request.getConds_code())).thenReturn(true);
+            when(serviceUserConditionsDaoImpl.update(dto)).thenReturn(1);
 
-            assertDoesNotThrow(() -> serviceUserConditionsService.modify(request));
+            assertDoesNotThrow(() -> serviceUserConditionsServiceImpl.modify(request));
         }
     }
 
@@ -217,10 +218,10 @@ class ServiceUserConditionsServiceImplTest {
             when(formatter.getCurrentDateFormat()).thenReturn(up_date);
             when(formatter.getManagerSeq()).thenReturn(up_user_seq);
 
-            when(serviceUserConditionsDao.existsByCondsCodeForUpdate(request.getConds_code())).thenReturn(true);
-            when(serviceUserConditionsDao.updateChkUse(dto)).thenReturn(1);
+            when(serviceUserConditionsDaoImpl.existsByCondsCodeForUpdate(request.getConds_code())).thenReturn(true);
+            when(serviceUserConditionsDaoImpl.updateChkUse(dto)).thenReturn(1);
 
-            assertDoesNotThrow(() -> serviceUserConditionsService.modifyChkUse(request));
+            assertDoesNotThrow(() -> serviceUserConditionsServiceImpl.modifyChkUse(request));
         }
     }
 
@@ -230,8 +231,8 @@ class ServiceUserConditionsServiceImplTest {
     void 코드로_삭제_테스트(int cnt) {
         for (int i=0; i<cnt; i++) {
             ServiceUserConditionsRequest request = createRequest(i);
-            when(serviceUserConditionsDao.deleteByCondsCode(request.getConds_code())).thenReturn(1);
-            assertDoesNotThrow(() -> serviceUserConditionsService.removeByCondsCode(request.getConds_code()));
+            when(serviceUserConditionsDaoImpl.deleteByCondsCode(request.getConds_code())).thenReturn(1);
+            assertDoesNotThrow(() -> serviceUserConditionsServiceImpl.removeByCondsCode(request.getConds_code()));
         }
     }
 
@@ -242,8 +243,8 @@ class ServiceUserConditionsServiceImplTest {
         for (int i=0; i<cnt; i++) {
             ServiceUserConditionsRequest request = createRequest(i);
             ServiceUserConditionsDto dto = createDto(request);
-            when(serviceUserConditionsDao.delete(dto.getSeq())).thenReturn(1);
-            assertDoesNotThrow(() -> serviceUserConditionsService.remove(dto.getSeq()));
+            when(serviceUserConditionsDaoImpl.delete(dto.getSeq())).thenReturn(1);
+            assertDoesNotThrow(() -> serviceUserConditionsServiceImpl.remove(dto.getSeq()));
         }
     }
 
@@ -251,9 +252,9 @@ class ServiceUserConditionsServiceImplTest {
     @ParameterizedTest
     @ValueSource(ints = {1, 5, 10, 15, 20})
     void 모두_삭제_테스트(int cnt) {
-        when(serviceUserConditionsDao.count()).thenReturn(cnt);
-        when(serviceUserConditionsDao.deleteAll()).thenReturn(cnt);
-        assertDoesNotThrow(() -> serviceUserConditionsService.removeAll());
+        when(serviceUserConditionsDaoImpl.count()).thenReturn(cnt);
+        when(serviceUserConditionsDaoImpl.deleteAll()).thenReturn(cnt);
+        assertDoesNotThrow(() -> serviceUserConditionsServiceImpl.removeAll());
     }
 
     // ===================== 예외 처리 테스트 =====================
@@ -261,8 +262,8 @@ class ServiceUserConditionsServiceImplTest {
     @DisplayName("create() -> 중복된 키 값으로 인한 예외 발생")
     void create_중복된_키_값으로_인한_예외_발생() {
         ServiceUserConditionsRequest request = createRequest(1);
-        when(serviceUserConditionsDao.existsByCondsCode(request.getConds_code())).thenReturn(true);
-        assertThrows(ServiceUserConditionsAlreadyExistsException.class, () -> serviceUserConditionsService.create(request));
+        when(serviceUserConditionsDaoImpl.existsByCondsCode(request.getConds_code())).thenReturn(true);
+        assertThrows(ServiceUserConditionsAlreadyExistsException.class, () -> serviceUserConditionsServiceImpl.create(request));
     }
 
     @Test
@@ -274,18 +275,18 @@ class ServiceUserConditionsServiceImplTest {
         when(formatter.getCurrentDateFormat()).thenReturn(reg_date);
         when(formatter.getManagerSeq()).thenReturn(reg_user_seq);
 
-        when(serviceUserConditionsDao.existsByCondsCode(request.getConds_code())).thenReturn(false);
-        when(serviceUserConditionsDao.insert(dto)).thenReturn(0);
+        when(serviceUserConditionsDaoImpl.existsByCondsCode(request.getConds_code())).thenReturn(false);
+        when(serviceUserConditionsDaoImpl.insert(dto)).thenReturn(0);
 
-        assertThrows(NotApplyOnDbmsException.class, () -> serviceUserConditionsService.create(request));
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceUserConditionsServiceImpl.create(request));
     }
 
     @Test
     @DisplayName("readByCondsCode() -> 존재하지 않는 키 값으로 인한 예외 발생")
     void readByCondsCode_존재하지_않는_키_값으로_인한_예외_발생() {
         ServiceUserConditionsRequest request = createRequest(1);
-        when(serviceUserConditionsDao.existsByCondsCode(request.getConds_code())).thenReturn(false);
-        assertThrows(ServiceUserConditionsNotFoundException.class, () -> serviceUserConditionsService.readByCondsCode(request.getConds_code()));
+        when(serviceUserConditionsDaoImpl.existsByCondsCode(request.getConds_code())).thenReturn(false);
+        assertThrows(ServiceUserConditionsNotFoundException.class, () -> serviceUserConditionsServiceImpl.readByCondsCode(request.getConds_code()));
     }
 
 
@@ -293,16 +294,16 @@ class ServiceUserConditionsServiceImplTest {
     @DisplayName("readByCondsCodeForUserConditions() -> 존재하지 않는 키 값으로 인한 예외 발생")
     void readByCondsCodeForUserConditions_존재하지_않는_키_값으로_인한_예외_발생() {
         ServiceUserConditionsRequest request = createRequest(1);
-        when(serviceUserConditionsDao.existsByCondsCode(request.getConds_code())).thenReturn(false);
-        assertThrows(ServiceUserConditionsNotFoundException.class, () -> serviceUserConditionsService.readByCondsCodeForUserConditions(request.getConds_code()));
+        when(serviceUserConditionsDaoImpl.existsByCondsCode(request.getConds_code())).thenReturn(false);
+        assertThrows(ServiceUserConditionsNotFoundException.class, () -> serviceUserConditionsServiceImpl.readByCondsCodeForUserConditions(request.getConds_code()));
     }
 
     @Test
     @DisplayName("modify() -> 존재하지 않는 키 값으로 인한 예외 발생")
     void modify_존재하지_않는_키_값으로_인한_예외_발생() {
         ServiceUserConditionsRequest request = createRequest(1);
-        when(serviceUserConditionsDao.existsByCondsCodeForUpdate(request.getConds_code())).thenReturn(false);
-        assertThrows(ServiceUserConditionsNotFoundException.class, () -> serviceUserConditionsService.modify(request));
+        when(serviceUserConditionsDaoImpl.existsByCondsCodeForUpdate(request.getConds_code())).thenReturn(false);
+        assertThrows(ServiceUserConditionsNotFoundException.class, () -> serviceUserConditionsServiceImpl.modify(request));
     }
 
     @Test
@@ -314,18 +315,18 @@ class ServiceUserConditionsServiceImplTest {
         when(formatter.getCurrentDateFormat()).thenReturn(up_date);
         when(formatter.getManagerSeq()).thenReturn(up_user_seq);
 
-        when(serviceUserConditionsDao.existsByCondsCodeForUpdate(request.getConds_code())).thenReturn(true);
-        when(serviceUserConditionsDao.update(dto)).thenReturn(0);
+        when(serviceUserConditionsDaoImpl.existsByCondsCodeForUpdate(request.getConds_code())).thenReturn(true);
+        when(serviceUserConditionsDaoImpl.update(dto)).thenReturn(0);
 
-        assertThrows(NotApplyOnDbmsException.class, () -> serviceUserConditionsService.modify(request));
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceUserConditionsServiceImpl.modify(request));
     }
 
     @Test
     @DisplayName("modifyChkUse() -> 존재하지 않는 키 값으로 인한 예외 발생")
     void modifyChkUse_존재하지_않는_키_값으로_인한_예외_발생() {
         ServiceUserConditionsRequest request = createRequest(1);
-        when(serviceUserConditionsDao.existsByCondsCodeForUpdate(request.getConds_code())).thenReturn(false);
-        assertThrows(ServiceUserConditionsNotFoundException.class, () -> serviceUserConditionsService.modifyChkUse(request));
+        when(serviceUserConditionsDaoImpl.existsByCondsCodeForUpdate(request.getConds_code())).thenReturn(false);
+        assertThrows(ServiceUserConditionsNotFoundException.class, () -> serviceUserConditionsServiceImpl.modifyChkUse(request));
     }
 
     @Test
@@ -337,18 +338,18 @@ class ServiceUserConditionsServiceImplTest {
         when(formatter.getCurrentDateFormat()).thenReturn(up_date);
         when(formatter.getManagerSeq()).thenReturn(up_user_seq);
 
-        when(serviceUserConditionsDao.existsByCondsCodeForUpdate(request.getConds_code())).thenReturn(true);
-        when(serviceUserConditionsDao.updateChkUse(dto)).thenReturn(0);
+        when(serviceUserConditionsDaoImpl.existsByCondsCodeForUpdate(request.getConds_code())).thenReturn(true);
+        when(serviceUserConditionsDaoImpl.updateChkUse(dto)).thenReturn(0);
 
-        assertThrows(NotApplyOnDbmsException.class, () -> serviceUserConditionsService.modifyChkUse(request));
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceUserConditionsServiceImpl.modifyChkUse(request));
     }
 
     @Test
     @DisplayName("removeByCondsCode() -> DBMS 적용 실패로 인한 예외 발생")
     void removeByCondsCode_DBMS_적용_실패로_인한_예외_발생() {
         ServiceUserConditionsRequest request = createRequest(1);
-        when(serviceUserConditionsDao.deleteByCondsCode(request.getConds_code())).thenReturn(0);
-        assertThrows(NotApplyOnDbmsException.class, () -> serviceUserConditionsService.removeByCondsCode(request.getConds_code()));
+        when(serviceUserConditionsDaoImpl.deleteByCondsCode(request.getConds_code())).thenReturn(0);
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceUserConditionsServiceImpl.removeByCondsCode(request.getConds_code()));
     }
 
     @Test
@@ -356,16 +357,16 @@ class ServiceUserConditionsServiceImplTest {
     void remove_DBMS_적용_실패로_인한_예외_발생() {
         ServiceUserConditionsRequest request = createRequest(1);
         ServiceUserConditionsDto dto = createDto(request);
-        when(serviceUserConditionsDao.delete(dto.getSeq())).thenReturn(0);
-        assertThrows(NotApplyOnDbmsException.class, () -> serviceUserConditionsService.remove(dto.getSeq()));
+        when(serviceUserConditionsDaoImpl.delete(dto.getSeq())).thenReturn(0);
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceUserConditionsServiceImpl.remove(dto.getSeq()));
     }
 
     @Test
     @DisplayName("removeAll() -> DBMS 적용 실패로 인한 예외 발생")
     void removeAll_DBMS_적용_실패로_인한_예외_발생() {
-        when(serviceUserConditionsDao.count()).thenReturn(10);
-        when(serviceUserConditionsDao.deleteAll()).thenReturn(0);
-        assertThrows(NotApplyOnDbmsException.class, () -> serviceUserConditionsService.removeAll());
+        when(serviceUserConditionsDaoImpl.count()).thenReturn(10);
+        when(serviceUserConditionsDaoImpl.deleteAll()).thenReturn(0);
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceUserConditionsServiceImpl.removeAll());
     }
 
 

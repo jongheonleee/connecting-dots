@@ -54,8 +54,8 @@ public class ReportServiceImpl implements ReportService {
      *
      */
 
-    private static final Integer MAX_RETRY = 10;
-    private static final Integer RETRY_DELAY = 5_000;
+    private static final int MAX_RETRY = 10;
+    private static final int RETRY_DELAY = 5_000;
 
 
     //    private final UserService userService; - 추후에 추가해야 할 서비스 오브젝트
@@ -102,7 +102,7 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     @Transactional(readOnly = true)
-    public ReportDetailResponse readReportDetailsBySeq(final Integer rno) {
+    public ReportDetailResponse readReportDetailsByRno(final Integer rno) {
         var foundReport = reportRepository.selectByRno(rno);
         if (foundReport == null) {
             log.error("[REPORT] 해당 리포트를 찾을 수 없습니다. rno: {}", rno);

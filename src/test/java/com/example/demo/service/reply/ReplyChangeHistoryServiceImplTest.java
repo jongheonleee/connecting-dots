@@ -9,7 +9,8 @@ import com.example.demo.dto.reply.ReplyChangeHistoryRequest;
 import com.example.demo.dto.reply.ReplyChangeHistoryResponse;
 import com.example.demo.global.error.exception.business.reply.ReplyChangeHistoryNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
-import com.example.demo.repository.reply.ReplyChangeHistoryRepository;
+import com.example.demo.repository.reply.impl.ReplyChangeHistoryDaoImpl;
+import com.example.demo.service.reply.impl.ReplyChangeHistoryServiceImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +26,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ReplyChangeHistoryServiceImplTest {
 
     @InjectMocks
-    private ReplyChangeHistoryService sut;
+    private ReplyChangeHistoryServiceImpl sut;
 
     @Mock
-    private ReplyChangeHistoryRepository replyChangeHistoryDao;
+    private ReplyChangeHistoryDaoImpl replyChangeHistoryDaoImpl;
 
     @Mock
     private CustomFormatter formatter;
@@ -67,7 +68,7 @@ class ReplyChangeHistoryServiceImplTest {
 
             // when
             when(formatter.getCurrentDateFormat()).thenReturn("2021-08-01 00:00:00");
-            when(replyChangeHistoryDao.insert(any())).thenReturn(1);
+            when(replyChangeHistoryDaoImpl.insert(any())).thenReturn(1);
 
             // then
             ReplyChangeHistoryResponse actual = sut.create(request);
@@ -98,7 +99,7 @@ class ReplyChangeHistoryServiceImplTest {
 
             // when
             when(formatter.getCurrentDateFormat()).thenReturn("2021-08-01 00:00:00");
-            when(replyChangeHistoryDao.insert(any())).thenReturn(0);
+            when(replyChangeHistoryDaoImpl.insert(any())).thenReturn(0);
 
             // then
             assertThrows(NotApplyOnDbmsException.class, () -> sut.create(request));
@@ -127,8 +128,8 @@ class ReplyChangeHistoryServiceImplTest {
 
             // when
             when(formatter.getCurrentDateFormat()).thenReturn("2021-08-01 00:00:00");
-            when(replyChangeHistoryDao.existsBySeqForUpdate(rcno)).thenReturn(true);
-            when(replyChangeHistoryDao.update(any())).thenReturn(1);
+            when(replyChangeHistoryDaoImpl.existsBySeqForUpdate(rcno)).thenReturn(true);
+            when(replyChangeHistoryDaoImpl.update(any())).thenReturn(1);
 
             // then
             assertDoesNotThrow(() -> sut.modify(request));
@@ -149,7 +150,7 @@ class ReplyChangeHistoryServiceImplTest {
                     .build();
 
             // when
-            when(replyChangeHistoryDao.existsBySeqForUpdate(1)).thenReturn(false);
+            when(replyChangeHistoryDaoImpl.existsBySeqForUpdate(1)).thenReturn(false);
 
             // then
             assertThrows(ReplyChangeHistoryNotFoundException.class, () -> sut.modify(request));
@@ -173,8 +174,8 @@ class ReplyChangeHistoryServiceImplTest {
 
             // when
             when(formatter.getCurrentDateFormat()).thenReturn("2021-08-01 00:00:00");
-            when(replyChangeHistoryDao.existsBySeqForUpdate(1)).thenReturn(true);
-            when(replyChangeHistoryDao.update(any())).thenReturn(0);
+            when(replyChangeHistoryDaoImpl.existsBySeqForUpdate(1)).thenReturn(true);
+            when(replyChangeHistoryDaoImpl.update(any())).thenReturn(0);
 
             // then
             assertThrows(NotApplyOnDbmsException.class, () -> sut.modify(request));
@@ -189,7 +190,7 @@ class ReplyChangeHistoryServiceImplTest {
         @DisplayName("특정 대댓글 변경 이력을 삭제한다")
         void it_correctly_deletes_reply_change_history() {
             Integer seq = 1;
-            when(replyChangeHistoryDao.deleteBySeq(seq)).thenReturn(1);
+            when(replyChangeHistoryDaoImpl.deleteBySeq(seq)).thenReturn(1);
             assertDoesNotThrow(() -> sut.remove(seq));
         }
 
@@ -198,7 +199,7 @@ class ReplyChangeHistoryServiceImplTest {
         @DisplayName("특정 대댓글 변경 이력 삭제시 DBMS 적용 실패시 예외를 던진다.")
         void it_throws_exception_when_dbms_application_fails_when_deleting_reply_change_history() {
             Integer seq = 1;
-            when(replyChangeHistoryDao.deleteBySeq(seq)).thenReturn(0);
+            when(replyChangeHistoryDaoImpl.deleteBySeq(seq)).thenReturn(0);
             assertThrows(NotApplyOnDbmsException.class, () -> sut.remove(seq));
         }
 
@@ -206,8 +207,8 @@ class ReplyChangeHistoryServiceImplTest {
         @DisplayName("사용자가 rcno로 대댓글 변경 이력을 모두 삭제한다")
         void it_correctly_deletes_all_reply_change_history_when_user_delete_rcno() {
             Integer rcno = 1;
-            when(replyChangeHistoryDao.countByRcno(rcno)).thenReturn(5);
-            when(replyChangeHistoryDao.deleteByRcno(rcno)).thenReturn(5);
+            when(replyChangeHistoryDaoImpl.countByRcno(rcno)).thenReturn(5);
+            when(replyChangeHistoryDaoImpl.deleteByRcno(rcno)).thenReturn(5);
             assertDoesNotThrow(() -> sut.removeByRcno(rcno));
         }
 
@@ -215,24 +216,24 @@ class ReplyChangeHistoryServiceImplTest {
         @DisplayName("사용자가 rcno로 대댓글 변경 이력을 모두 삭제시 DBMS 적용 실패시 예외를 던진다.")
         void it_throws_exception_when_dbms_application_fails_when_deleting_all_reply_change_history_when_user_delete_rcno() {
             Integer rcno = 1;
-            when(replyChangeHistoryDao.countByRcno(rcno)).thenReturn(5);
-            when(replyChangeHistoryDao.deleteByRcno(rcno)).thenReturn(4);
+            when(replyChangeHistoryDaoImpl.countByRcno(rcno)).thenReturn(5);
+            when(replyChangeHistoryDaoImpl.deleteByRcno(rcno)).thenReturn(4);
             assertThrows(NotApplyOnDbmsException.class, () -> sut.removeByRcno(rcno));
         }
 
         @Test
         @DisplayName("사용자가 모든 대댓글 변경 이력을 삭제한다")
         void it_correctly_deletes_all_reply_change_history() {
-            when(replyChangeHistoryDao.count()).thenReturn(5);
-            when(replyChangeHistoryDao.deleteAll()).thenReturn(5);
+            when(replyChangeHistoryDaoImpl.count()).thenReturn(5);
+            when(replyChangeHistoryDaoImpl.deleteAll()).thenReturn(5);
             assertDoesNotThrow(() -> sut.removeAll());
         }
 
         @Test
         @DisplayName("사용자가 모든 대댓글 변경 이력을 삭제시 DBMS 적용 실패시 예외를 던진다.")
         void it_throws_exception_when_dbms_application_fails_when_deleting_all_reply_change_history() {
-            when(replyChangeHistoryDao.count()).thenReturn(5);
-            when(replyChangeHistoryDao.deleteAll()).thenReturn(4);
+            when(replyChangeHistoryDaoImpl.count()).thenReturn(5);
+            when(replyChangeHistoryDaoImpl.deleteAll()).thenReturn(4);
             assertThrows(NotApplyOnDbmsException.class, () -> sut.removeAll());
         }
     }
@@ -246,7 +247,7 @@ class ReplyChangeHistoryServiceImplTest {
         void it_correctly_reads_reply_change_history_seq() {
             Integer seq = 1;
             ReplyChangeHistoryDto dto = new ReplyChangeHistoryDto();
-            when(replyChangeHistoryDao.selectBySeq(seq)).thenReturn(dto);
+            when(replyChangeHistoryDaoImpl.selectBySeq(seq)).thenReturn(dto);
             assertDoesNotThrow(() -> sut.readBySeq(seq));
         }
 
@@ -254,7 +255,7 @@ class ReplyChangeHistoryServiceImplTest {
         @DisplayName("특정 대댓글 변경 이력 조회시 대댓글 변경 이력이 존재하지 않으면 예외를 던진다.")
         void it_throws_exception_when_reply_change_history_does_not_exist_seq() {
             Integer seq = 1;
-            when(replyChangeHistoryDao.selectBySeq(seq)).thenReturn(null);
+            when(replyChangeHistoryDaoImpl.selectBySeq(seq)).thenReturn(null);
             assertThrows(ReplyChangeHistoryNotFoundException.class, () -> sut.readBySeq(seq));
         }
 
@@ -263,7 +264,7 @@ class ReplyChangeHistoryServiceImplTest {
         void it_correctly_reads_reply_change_history_rcno() {
             Integer rcno = 1;
             List<ReplyChangeHistoryDto> expected = new ArrayList<>();
-            when(replyChangeHistoryDao.selectByRcno(rcno)).thenReturn(expected);
+            when(replyChangeHistoryDaoImpl.selectByRcno(rcno)).thenReturn(expected);
             assertDoesNotThrow(() -> sut.readByRcno(rcno));
         }
 
@@ -271,7 +272,7 @@ class ReplyChangeHistoryServiceImplTest {
         @DisplayName("특정 대댓글 변경 이력을 조회한다")
         void it_correctly_reads_all_reply_change_history() {
             List<ReplyChangeHistoryDto> expected = new ArrayList<>();
-            when(replyChangeHistoryDao.selectAll()).thenReturn(expected);
+            when(replyChangeHistoryDaoImpl.selectAll()).thenReturn(expected);
             assertDoesNotThrow(() -> sut.readAll());
         }
 

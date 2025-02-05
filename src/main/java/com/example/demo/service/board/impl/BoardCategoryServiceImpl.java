@@ -1,7 +1,6 @@
 package com.example.demo.service.board.impl;
 
 import com.example.demo.repository.board.BoardCategoryRepository;
-import com.example.demo.service.board.BoardCategoryService;
 import com.example.demo.domain.BoardCategory;
 import com.example.demo.dto.board.BoardCategoryDto;
 import com.example.demo.dto.board.BoardCategoryRequest;
@@ -19,7 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class BoardCategoryServiceImpl implements BoardCategoryService {
+public class BoardCategoryServiceImpl implements
+        com.example.demo.service.board.BoardCategoryServiceImpl {
 
     private final BoardCategoryRepository boardCategoryDao;
     private final CustomFormatter formatter;

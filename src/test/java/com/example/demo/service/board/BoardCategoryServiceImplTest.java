@@ -9,7 +9,8 @@ import com.example.demo.dto.board.BoardCategoryResponse;
 import com.example.demo.global.error.exception.business.board.BoardCategoryAlreadyExistsException;
 import com.example.demo.global.error.exception.business.board.BoardCategoryNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
-import com.example.demo.repository.board.BoardCategoryRepository;
+import com.example.demo.repository.board.impl.BoardCategoryDaoImpl;
+import com.example.demo.service.board.impl.BoardCategoryServiceImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,10 +29,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class BoardCategoryServiceImplTest {
 
     @InjectMocks
-    private BoardCategoryService boardCategoryService;
+    private BoardCategoryServiceImpl boardCategoryServiceImpl;
 
     @Mock
-    private BoardCategoryRepository boardCategoryDao;
+    private BoardCategoryDaoImpl boardCategoryDaoImpl;
 
     @Mock
     private CustomFormatter formatter;
@@ -44,8 +45,8 @@ class BoardCategoryServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        assertNotNull(boardCategoryService);
-        assertNotNull(boardCategoryDao);
+        assertNotNull(boardCategoryServiceImpl);
+        assertNotNull(boardCategoryDaoImpl);
         assertNotNull(formatter);
     }
 
@@ -57,8 +58,8 @@ class BoardCategoryServiceImplTest {
         @ParameterizedTest
         @ValueSource(ints = {1, 5, 10, 15, 20})
         void 카운팅_처리(int cnt) {
-            when(boardCategoryDao.count()).thenReturn(cnt);
-            assertEquals(cnt, boardCategoryService.count());
+            when(boardCategoryDaoImpl.count()).thenReturn(cnt);
+            assertEquals(cnt, boardCategoryServiceImpl.count());
         }
 
         @DisplayName("존재하는 카테고리 코드로 상세 조회 처리")
@@ -70,10 +71,10 @@ class BoardCategoryServiceImplTest {
                 BoardCategoryResponse expected = createResponse(i);
                 BoardCategoryDto dto = createDto(request);
 
-                when(boardCategoryDao.existsByCateCode(request.getCate_code())).thenReturn(true);
-                when(boardCategoryDao.selectByCateCode(request.getCate_code())).thenReturn(dto);
+                when(boardCategoryDaoImpl.existsByCateCode(request.getCate_code())).thenReturn(true);
+                when(boardCategoryDaoImpl.selectByCateCode(request.getCate_code())).thenReturn(dto);
 
-                BoardCategoryResponse actual = boardCategoryService.readByCateCode(request.getCate_code());
+                BoardCategoryResponse actual = boardCategoryServiceImpl.readByCateCode(request.getCate_code());
 
                 assertEquals(expected.getCate_code(), actual.getCate_code());
                 assertEquals(expected.getTop_cate(), actual.getTop_cate());
@@ -91,8 +92,8 @@ class BoardCategoryServiceImplTest {
         void 카테고리_코드로_상세_조회_처리시_예외_발생(int cnt) {
             for (int i=0; i<cnt; i++) {
                 BoardCategoryRequest request = createRequest(i);
-                when(boardCategoryDao.existsByCateCode(request.getCate_code())).thenReturn(false);
-                assertThrows(BoardCategoryNotFoundException.class, () -> boardCategoryService.readByCateCode(request.getCate_code()));
+                when(boardCategoryDaoImpl.existsByCateCode(request.getCate_code())).thenReturn(false);
+                assertThrows(BoardCategoryNotFoundException.class, () -> boardCategoryServiceImpl.readByCateCode(request.getCate_code()));
             }
         }
 
@@ -112,10 +113,10 @@ class BoardCategoryServiceImplTest {
             }
             dummy.sort((o1, o2) -> o1.getOrd().compareTo(o2.getOrd()));
 
-            when(boardCategoryDao.existsByCateCode(top_cate)).thenReturn(true);
-            when(boardCategoryDao.selectByTopCate(top_cate)).thenReturn(dummy);
+            when(boardCategoryDaoImpl.existsByCateCode(top_cate)).thenReturn(true);
+            when(boardCategoryDaoImpl.selectByTopCate(top_cate)).thenReturn(dummy);
 
-            List<BoardCategoryResponse> actual = boardCategoryService.readByTopCate(top_cate);
+            List<BoardCategoryResponse> actual = boardCategoryServiceImpl.readByTopCate(top_cate);
 
             assertEquals(cnt, actual.size());
 
@@ -137,8 +138,8 @@ class BoardCategoryServiceImplTest {
         @Test
         void 상위_카테고리_코드로_그_하위_카테고리_조회시_예외_발생() {
             String top_cate = "AB010100";
-            when(boardCategoryDao.existsByCateCode(top_cate)).thenReturn(false);
-            assertThrows(BoardCategoryNotFoundException.class, () -> boardCategoryService.readByTopCate(top_cate));
+            when(boardCategoryDaoImpl.existsByCateCode(top_cate)).thenReturn(false);
+            assertThrows(BoardCategoryNotFoundException.class, () -> boardCategoryServiceImpl.readByTopCate(top_cate));
         }
 
         @DisplayName("모든 카테고리 조회 처리")
@@ -155,9 +156,9 @@ class BoardCategoryServiceImplTest {
 
             dummy.sort((o1, o2) -> o1.getOrd().compareTo(o2.getOrd()));
 
-            when(boardCategoryDao.selectAll()).thenReturn(dummy);
+            when(boardCategoryDaoImpl.selectAll()).thenReturn(dummy);
 
-            List<BoardCategoryResponse> actual = boardCategoryService.readAll();
+            List<BoardCategoryResponse> actual = boardCategoryServiceImpl.readAll();
 
             assertEquals(cnt, actual.size());
             for (int i=0; i<cnt; i++) {
@@ -192,10 +193,10 @@ class BoardCategoryServiceImplTest {
                 when(formatter.getCurrentDateFormat()).thenReturn(reg_date);
                 when(formatter.getManagerSeq()).thenReturn(reg_user_seq);
 
-                when(boardCategoryDao.existsByCateCode(request.getCate_code())).thenReturn(false);
-                when(boardCategoryDao.insert(dto)).thenReturn(1);
+                when(boardCategoryDaoImpl.existsByCateCode(request.getCate_code())).thenReturn(false);
+                when(boardCategoryDaoImpl.insert(dto)).thenReturn(1);
 
-                BoardCategoryResponse actual = boardCategoryService.create(request);
+                BoardCategoryResponse actual = boardCategoryServiceImpl.create(request);
 
                 assertEquals(expected.getCate_code(), actual.getCate_code());
                 assertEquals(expected.getTop_cate(), actual.getTop_cate());
@@ -213,8 +214,8 @@ class BoardCategoryServiceImplTest {
         void 주어진_카테고리_코드_번호가_이미_등록된_경우_예외_발생(int cnt) {
             for (int i=0; i<cnt; i++) {
                 BoardCategoryRequest request = createRequest(i);
-                when(boardCategoryDao.existsByCateCode(request.getCate_code())).thenReturn(true);
-                assertThrows(BoardCategoryAlreadyExistsException.class, () -> boardCategoryService.create(request));
+                when(boardCategoryDaoImpl.existsByCateCode(request.getCate_code())).thenReturn(true);
+                assertThrows(BoardCategoryAlreadyExistsException.class, () -> boardCategoryServiceImpl.create(request));
             }
         }
 
@@ -229,10 +230,10 @@ class BoardCategoryServiceImplTest {
                 when(formatter.getCurrentDateFormat()).thenReturn(reg_date);
                 when(formatter.getManagerSeq()).thenReturn(reg_user_seq);
 
-                when(boardCategoryDao.existsByCateCode(request.getCate_code())).thenReturn(false);
-                when(boardCategoryDao.insert(dto)).thenReturn(0);
+                when(boardCategoryDaoImpl.existsByCateCode(request.getCate_code())).thenReturn(false);
+                when(boardCategoryDaoImpl.insert(dto)).thenReturn(0);
 
-                assertThrows(NotApplyOnDbmsException.class, () -> boardCategoryService.create(request));
+                assertThrows(NotApplyOnDbmsException.class, () -> boardCategoryServiceImpl.create(request));
             }
         }
     }
@@ -258,10 +259,10 @@ class BoardCategoryServiceImplTest {
                 when(formatter.getCurrentDateFormat()).thenReturn(up_date);
                 when(formatter.getManagerSeq()).thenReturn(up_user_seq);
 
-                when(boardCategoryDao.existsByCateCodeForUpdate(cate_code)).thenReturn(true);
-                when(boardCategoryDao.update(dto)).thenReturn(1);
+                when(boardCategoryDaoImpl.existsByCateCodeForUpdate(cate_code)).thenReturn(true);
+                when(boardCategoryDaoImpl.update(dto)).thenReturn(1);
 
-                assertDoesNotThrow(() -> boardCategoryService.modify(request));
+                assertDoesNotThrow(() -> boardCategoryServiceImpl.modify(request));
             }
         }
 
@@ -277,10 +278,10 @@ class BoardCategoryServiceImplTest {
                 request.setChk_use("N");
                 request.setComt("수정된 카테고리입니다.");
 
-                when(boardCategoryDao.existsByCateCodeForUpdate(cate_code)).thenReturn(false);
+                when(boardCategoryDaoImpl.existsByCateCodeForUpdate(cate_code)).thenReturn(false);
 
                 assertThrows(BoardCategoryNotFoundException.class,
-                        () -> boardCategoryService.modify(request)
+                        () -> boardCategoryServiceImpl.modify(request)
                 );
             }
         }
@@ -302,11 +303,11 @@ class BoardCategoryServiceImplTest {
                 when(formatter.getCurrentDateFormat()).thenReturn(up_date);
                 when(formatter.getManagerSeq()).thenReturn(up_user_seq);
 
-                when(boardCategoryDao.existsByCateCodeForUpdate(cate_code)).thenReturn(true);
-                when(boardCategoryDao.update(dto)).thenReturn(0);
+                when(boardCategoryDaoImpl.existsByCateCodeForUpdate(cate_code)).thenReturn(true);
+                when(boardCategoryDaoImpl.update(dto)).thenReturn(0);
 
                 assertThrows(NotApplyOnDbmsException.class,
-                        () -> boardCategoryService.modify(request)
+                        () -> boardCategoryServiceImpl.modify(request)
                 );
             }
         }
@@ -319,10 +320,10 @@ class BoardCategoryServiceImplTest {
                 BoardCategoryRequest request = createRequest(i);
                 String cate_code = request.getCate_code();
 
-                when(boardCategoryDao.existsByCateCodeForUpdate(cate_code)).thenReturn(true);
-                when(boardCategoryDao.updateChkUseY(cate_code)).thenReturn(1);
+                when(boardCategoryDaoImpl.existsByCateCodeForUpdate(cate_code)).thenReturn(true);
+                when(boardCategoryDaoImpl.updateChkUseY(cate_code)).thenReturn(1);
 
-                assertDoesNotThrow(() -> boardCategoryService.modifyChkUseY(cate_code));
+                assertDoesNotThrow(() -> boardCategoryServiceImpl.modifyChkUseY(cate_code));
             }
         }
 
@@ -334,11 +335,11 @@ class BoardCategoryServiceImplTest {
                 BoardCategoryRequest request = createRequest(i);
                 String cate_code = request.getCate_code();
 
-                when(boardCategoryDao.existsByCateCodeForUpdate(cate_code)).thenReturn(true);
-                when(boardCategoryDao.updateChkUseY(cate_code)).thenReturn(0);
+                when(boardCategoryDaoImpl.existsByCateCodeForUpdate(cate_code)).thenReturn(true);
+                when(boardCategoryDaoImpl.updateChkUseY(cate_code)).thenReturn(0);
 
                 assertThrows(NotApplyOnDbmsException.class,
-                        () -> boardCategoryService.modifyChkUseY(cate_code)
+                        () -> boardCategoryServiceImpl.modifyChkUseY(cate_code)
                 );
             }
         }
@@ -350,10 +351,10 @@ class BoardCategoryServiceImplTest {
             for (int i=0; i<cnt; i++) {
                 BoardCategoryRequest request = createRequest(i);
                 String cate_code = request.getCate_code();
-                when(boardCategoryDao.existsByCateCodeForUpdate(cate_code)).thenReturn(false);
+                when(boardCategoryDaoImpl.existsByCateCodeForUpdate(cate_code)).thenReturn(false);
 
                 assertThrows(BoardCategoryNotFoundException.class,
-                        () -> boardCategoryService.modifyChkUseY(cate_code)
+                        () -> boardCategoryServiceImpl.modifyChkUseY(cate_code)
                 );
             }
         }
@@ -366,10 +367,10 @@ class BoardCategoryServiceImplTest {
                 BoardCategoryRequest request = createRequest(i);
                 String cate_code = request.getCate_code();
 
-                when(boardCategoryDao.existsByCateCodeForUpdate(cate_code)).thenReturn(true);
-                when(boardCategoryDao.updateChkUseN(cate_code)).thenReturn(1);
+                when(boardCategoryDaoImpl.existsByCateCodeForUpdate(cate_code)).thenReturn(true);
+                when(boardCategoryDaoImpl.updateChkUseN(cate_code)).thenReturn(1);
 
-                assertDoesNotThrow(() -> boardCategoryService.modifyChkUseN(cate_code));
+                assertDoesNotThrow(() -> boardCategoryServiceImpl.modifyChkUseN(cate_code));
             }
         }
 
@@ -380,10 +381,10 @@ class BoardCategoryServiceImplTest {
             for (int i=0; i<cnt; i++) {
                 BoardCategoryRequest request = createRequest(i);
                 String cate_code = request.getCate_code();
-                when(boardCategoryDao.existsByCateCodeForUpdate(cate_code)).thenReturn(false);
+                when(boardCategoryDaoImpl.existsByCateCodeForUpdate(cate_code)).thenReturn(false);
 
                 assertThrows(BoardCategoryNotFoundException.class,
-                        () -> boardCategoryService.modifyChkUseN(cate_code)
+                        () -> boardCategoryServiceImpl.modifyChkUseN(cate_code)
                 );
             }
         }
@@ -402,10 +403,10 @@ class BoardCategoryServiceImplTest {
             for(int i=0; i<cnt; i++) {
                 BoardCategoryRequest request = createRequest(i);
                 String cate_code = request.getCate_code();
-                when(boardCategoryDao.existsByCateCodeForUpdate(cate_code)).thenReturn(true);
-                when(boardCategoryDao.deleteByCateCode(cate_code)).thenReturn(1);
+                when(boardCategoryDaoImpl.existsByCateCodeForUpdate(cate_code)).thenReturn(true);
+                when(boardCategoryDaoImpl.deleteByCateCode(cate_code)).thenReturn(1);
 
-                assertDoesNotThrow(() -> boardCategoryService.remove(cate_code));
+                assertDoesNotThrow(() -> boardCategoryServiceImpl.remove(cate_code));
             }
         }
 
@@ -416,9 +417,9 @@ class BoardCategoryServiceImplTest {
             for(int i=0; i<cnt; i++) {
                 BoardCategoryRequest request = createRequest(i);
                 String cate_code = request.getCate_code();
-                when(boardCategoryDao.existsByCateCodeForUpdate(cate_code)).thenReturn(true);
-                when(boardCategoryDao.deleteByCateCode(cate_code)).thenReturn(0);
-                assertThrows(NotApplyOnDbmsException.class, () -> boardCategoryService.remove(cate_code));
+                when(boardCategoryDaoImpl.existsByCateCodeForUpdate(cate_code)).thenReturn(true);
+                when(boardCategoryDaoImpl.deleteByCateCode(cate_code)).thenReturn(0);
+                assertThrows(NotApplyOnDbmsException.class, () -> boardCategoryServiceImpl.remove(cate_code));
             }
         }
 

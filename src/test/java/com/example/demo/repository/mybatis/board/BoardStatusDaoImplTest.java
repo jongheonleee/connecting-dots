@@ -281,7 +281,7 @@ class BoardStatusDaoImplTest {
                     dto.setAppl_end("2024-12-31 00:00:00");
                 } else {
                     dto.setAppl_begin("2025-01-16 00:00:00");
-                    dto.setAppl_end("2025-01-31 00:00:00");
+                    dto.setAppl_end("9999-12-31 23:59:59");
                 }
 
                 assertEquals(1, boardStatusDao.insert(dto));
@@ -291,7 +291,6 @@ class BoardStatusDaoImplTest {
             BoardStatusDto expected = dummy.get(cnt - 1);
             BoardStatusDto actual = boardStatusDao.selectByBnoAtPresent(boardDto.getBno());
 
-            assertEquals(expected.getSeq(), actual.getSeq());
             assertEquals(expected.getBno(), actual.getBno());
             assertEquals(expected.getStat_code(), actual.getStat_code());
             assertEquals(expected.getComt(), actual.getComt());

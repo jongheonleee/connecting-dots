@@ -15,9 +15,11 @@ import com.example.demo.dto.board.BoardMainDto;
 import com.example.demo.dto.board.BoardMainResponse;
 import com.example.demo.dto.board.BoardUpdateRequest;
 import com.example.demo.dto.comment.CommentDetailResponse;
-import com.example.demo.repository.board.BoardCategoryRepository;
-import com.example.demo.repository.board.BoardRepository;
-import com.example.demo.service.code.CommonCodeService;
+import com.example.demo.repository.board.impl.BoardCategoryDaoImpl;
+import com.example.demo.repository.board.impl.BoardDaoImpl;
+import com.example.demo.service.board.impl.BoardChangeHistoryServiceImpl;
+import com.example.demo.service.board.impl.BoardImgServiceImpl;
+import com.example.demo.service.board.impl.BoardServiceImpl;
 import com.example.demo.dto.board.BoardCategoryResponse;
 import com.example.demo.dto.board.BoardChangeHistoryRequest;
 import com.example.demo.dto.board.BoardChangeHistoryResponse;
@@ -27,8 +29,9 @@ import com.example.demo.dto.board.BoardRequest;
 import com.example.demo.dto.board.BoardStatusRequest;
 import com.example.demo.dto.board.BoardStatusResponse;
 import com.example.demo.dto.code.CodeResponse;
-import com.example.demo.service.comment.CommentService;
-import com.example.demo.service.reply.ReplyService;
+import com.example.demo.service.code.impl.CommonCodeServiceImpl;
+import com.example.demo.service.comment.impl.CommentServiceImpl;
+import com.example.demo.service.reply.impl.ReplyServiceImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,34 +60,34 @@ import org.springframework.web.multipart.MultipartFile;
 class BoardServiceImplTest {
 
     @InjectMocks
-    private BoardService sut;
+    private BoardServiceImpl sut;
 
     @Mock
-    private BoardRepository boardDao;
+    private BoardDaoImpl boardDaoImpl;
 
     @Mock
-    private BoardCategoryRepository boardCategoryDao;
+    private BoardCategoryDaoImpl boardCategoryDaoImpl;
 
     @Mock
-    private ReplyService replyService;
+    private ReplyServiceImpl replyServiceImpl;
 
     @Mock
-    private BoardCategoryService boardCategoryService;
+    private BoardCategoryServiceImpl boardCategoryServiceImpl;
 
     @Mock
-    private BoardStatusService boardStatusService;
+    private BoardStatusService boardStatusServiceImpl;
 
     @Mock
-    private CommentService commentService;
+    private CommentServiceImpl commentServiceImpl;
 
     @Mock
-    private CommonCodeService commonCodeService;
+    private CommonCodeServiceImpl commonCodeServiceImpl;
 
     @Mock
-    private BoardImgService boardImgService;
+    private BoardImgServiceImpl boardImgServiceImpl;
 
     @Mock
-    private BoardChangeHistoryService boardChangeHistoryService;
+    private BoardChangeHistoryServiceImpl boardChangeHistoryServiceImpl;
 
     @Mock
     private CustomFormatter formatter;
@@ -103,8 +106,8 @@ class BoardServiceImplTest {
     @BeforeEach
     void setUp() {
         assertNotNull(sut);
-        assertNotNull(boardDao);
-        assertNotNull(boardCategoryService);
+        assertNotNull(boardDaoImpl);
+        assertNotNull(boardCategoryServiceImpl);
         assertNotNull(formatter);
     }
 
@@ -117,7 +120,7 @@ class BoardServiceImplTest {
             // given
             int expected = 0;
             // when
-            when(boardDao.count()).thenReturn(expected);
+            when(boardDaoImpl.count()).thenReturn(expected);
             int actual = sut.count();
             // then
             assertEquals(expected, actual);
@@ -130,7 +133,7 @@ class BoardServiceImplTest {
             // given
             int expected = n;
             // when
-            when(boardDao.count()).thenReturn(expected);
+            when(boardDaoImpl.count()).thenReturn(expected);
             int actual = sut.count();
             // then
             assertEquals(expected, actual);
@@ -153,20 +156,20 @@ class BoardServiceImplTest {
             when(formatter.getCurrentDateFormat()).thenReturn(REG_DATE);
             when(formatter.getManagerSeq()).thenReturn(REG_USER_SEQ);
 
-            when(boardDao.insert(any())).thenReturn(1);
+            when(boardDaoImpl.insert(any())).thenReturn(1);
 
             for (int i=0; i<files.size(); i++) {
-                doNothing().when(boardImgService).saveBoardImage(any(), eq(files.get(i)));
+                doNothing().when(boardImgServiceImpl).saveBoardImage(any(), eq(files.get(i)));
             }
 
 
             BoardStatusRequest boardStatusRequest = createBoardStatusRequestRequest();
             BoardStatusResponse boardStatusResponse = createBoardStatusRequestResponse(boardStatusRequest);
-            when(boardStatusService.create(any())).thenReturn(boardStatusResponse);
+            when(boardStatusServiceImpl.create(any())).thenReturn(boardStatusResponse);
 
             BoardChangeHistoryRequest boardChangeHistoryRequest = createBoardChangeHistoryRequest();
             BoardChangeHistoryResponse boardChangeHistoryResponse = createBoardChangeHistoryResponse(boardChangeHistoryRequest);
-            when(boardChangeHistoryService.createInit(any(), any())).thenReturn(boardChangeHistoryResponse);
+            when(boardChangeHistoryServiceImpl.createInit(any(), any())).thenReturn(boardChangeHistoryResponse);
 
             // when
             // 게시글 생성 서비스 호출
@@ -214,8 +217,8 @@ class BoardServiceImplTest {
                 );
             }
 
-            when(boardDao.count()).thenReturn(20);
-            when(boardDao.selectForMain(map)).thenReturn(expected);
+            when(boardDaoImpl.count()).thenReturn(20);
+            when(boardDaoImpl.selectForMain(map)).thenReturn(expected);
 
             PageResponse actual = sut.readForMain(page, pageSize);
             assertEquals(pageSize, actual.getResponses().size());
@@ -254,9 +257,9 @@ class BoardServiceImplTest {
             }
 
 
-            when(boardCategoryDao.existsByCateCode(cate_code)).thenReturn(true);
-            when(boardDao.countByCategory(cate_code)).thenReturn(20);
-            when(boardDao.selectForMainByCategory(map)).thenReturn(expected);
+            when(boardCategoryDaoImpl.existsByCateCode(cate_code)).thenReturn(true);
+            when(boardDaoImpl.countByCategory(cate_code)).thenReturn(20);
+            when(boardDaoImpl.selectForMainByCategory(map)).thenReturn(expected);
 
             PageResponse actual = sut.readByCategoryForMain(cate_code, page, pageSize);
 
@@ -293,8 +296,8 @@ class BoardServiceImplTest {
                 );
             }
 
-            when(boardDao.countBySearchCondition(sc)).thenReturn(20);
-            when(boardDao.selectForMainBySearchCondition(sc)).thenReturn(expected);
+            when(boardDaoImpl.countBySearchCondition(sc)).thenReturn(20);
+            when(boardDaoImpl.selectForMainBySearchCondition(sc)).thenReturn(expected);
 
             PageResponse actual = sut.readBySearchConditionForMain(sc);
             assertEquals(sc.getPageSize(), actual.getResponses().size());
@@ -344,14 +347,14 @@ class BoardServiceImplTest {
                                                                           .level(2)
                                                                           .build();
             List<BoardImgResponse> foundBoardImages = new ArrayList<>();
-            List<CommentDetailResponse> foundComments = commentService.readByBno(bno);
+            List<CommentDetailResponse> foundComments = commentServiceImpl.readByBno(bno);
 
-            when(boardDao.existsByBno(bno)).thenReturn(true);
-            when(boardStatusService.readByBnoAtPresent(bno)).thenReturn(currStatus);
-            when(boardDao.select(bno)).thenReturn(found);
-            when(boardCategoryService.readByCateCode(found.getCate_code())).thenReturn(foundBoardCategory);
-            when(boardImgService.readByBno(bno)).thenReturn(foundBoardImages);
-            when(commentService.readByBno(bno)).thenReturn(foundComments);
+            when(boardDaoImpl.existsByBno(bno)).thenReturn(true);
+            when(boardStatusServiceImpl.readByBnoAtPresent(bno)).thenReturn(currStatus);
+            when(boardDaoImpl.select(bno)).thenReturn(found);
+            when(boardCategoryServiceImpl.readByCateCode(found.getCate_code())).thenReturn(foundBoardCategory);
+            when(boardImgServiceImpl.readByBno(bno)).thenReturn(foundBoardImages);
+            when(commentServiceImpl.readByBno(bno)).thenReturn(foundComments);
 
             BoardDetailResponse actual = sut.readDetailByBno(bno);
 
@@ -401,13 +404,13 @@ class BoardServiceImplTest {
             when(formatter.getCurrentDateFormat()).thenReturn(UP_DATE);
             when(formatter.getManagerSeq()).thenReturn(UP_USER_SEQ);
 
-            when(boardDao.existsByBnoForUpdate(request.getBno())).thenReturn(true);
-            when(boardDao.update(boardDto)).thenReturn(1);
-            when(boardImgService.readByBno(request.getBno())).thenReturn(new ArrayList<>());
+            when(boardDaoImpl.existsByBnoForUpdate(request.getBno())).thenReturn(true);
+            when(boardDaoImpl.update(boardDto)).thenReturn(1);
+            when(boardImgServiceImpl.readByBno(request.getBno())).thenReturn(new ArrayList<>());
             for (int i=0; i<files.size(); i++) {
-                doNothing().when(boardImgService).saveBoardImage(any(), eq(files.get(i)));
+                doNothing().when(boardImgServiceImpl).saveBoardImage(any(), eq(files.get(i)));
             }
-            doNothing().when(boardStatusService).renewState(any());
+            doNothing().when(boardStatusServiceImpl).renewState(any());
 
             assertDoesNotThrow(() -> sut.modify(request, files));
         }
@@ -423,10 +426,10 @@ class BoardServiceImplTest {
         void it_correctly_work_when_user_remove_some_board() {
 
             Integer bno = 1;
-            when(boardDao.delete(bno)).thenReturn(1);
-            doNothing().when(boardStatusService).removeByBno(bno);
-            doNothing().when(boardChangeHistoryService).removeByBno(bno);
-            doNothing().when(commentService).removeByBno(bno);
+            when(boardDaoImpl.delete(bno)).thenReturn(1);
+            doNothing().when(boardStatusServiceImpl).removeByBno(bno);
+            doNothing().when(boardChangeHistoryServiceImpl).removeByBno(bno);
+            doNothing().when(commentServiceImpl).removeByBno(bno);
 
             assertDoesNotThrow(() -> sut.remove(bno));
         }

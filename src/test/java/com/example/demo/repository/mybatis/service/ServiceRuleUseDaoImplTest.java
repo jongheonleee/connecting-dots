@@ -55,7 +55,7 @@ class ServiceRuleUseDaoImplTest {
 
     @AfterEach
     void clean() {
-        for (int level = Code.MAX_LEVEL; level > 0; level--) {
+        for (int level = Code.MAX_LEVEL; level >= 0; level--) {
             commonCodeDao.deleteByLevel(level);
         }
         serviceRuleUseDao.deleteAll();

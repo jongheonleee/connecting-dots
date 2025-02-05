@@ -5,13 +5,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
-import com.example.demo.repository.board.BoardImgRepository;
+import com.example.demo.repository.board.impl.BoardImgDaoImpl;
 import com.example.demo.service.board.impl.BoardImgServiceImpl;
 import com.example.demo.dto.board.BoardImgDto;
 import com.example.demo.dto.board.BoardImgRequest;
 import com.example.demo.global.error.exception.business.board.BoardImageNotFoundException;
 import com.example.demo.global.error.exception.business.board.InvalidBoardImageException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
+import com.example.demo.service.board.impl.FileServiceImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.lang.reflect.Field;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,13 +30,13 @@ import org.springframework.web.multipart.MultipartFile;
 class BoardImgServiceImplTest {
 
     @InjectMocks
-    private BoardImgService boardImgService;
+    private BoardImgServiceImpl boardImgServiceImpl;
 
     @Mock
-    private BoardImgRepository boardImgDao;
+    private BoardImgDaoImpl boardImgDaoImpl;
 
     @Mock
-    private FileService fileService;
+    private FileServiceImpl fileServiceImpl;
 
     @Mock
     private CustomFormatter customFormatter;
@@ -46,19 +47,19 @@ class BoardImgServiceImplTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        assertNotNull(boardImgService);
-        assertNotNull(boardImgDao);
-        assertNotNull(fileService);
+        assertNotNull(boardImgServiceImpl);
+        assertNotNull(boardImgDaoImpl);
+        assertNotNull(fileServiceImpl);
         assertNotNull(customFormatter);
 
         // Reflection으로 @Value 필드 설정
         Field boardImgLocationField = BoardImgServiceImpl.class.getDeclaredField("boardImgLocation");
         boardImgLocationField.setAccessible(true);
-        boardImgLocationField.set(boardImgService, boardImgLocation);
+        boardImgLocationField.set(boardImgServiceImpl, boardImgLocation);
 
         Field boardImgUrlLocationField = BoardImgServiceImpl.class.getDeclaredField("boardImgUrlLocation");
         boardImgUrlLocationField.setAccessible(true);
-        boardImgUrlLocationField.set(boardImgService, boardImgUrlLocation);
+        boardImgUrlLocationField.set(boardImgServiceImpl, boardImgUrlLocation);
     }
 
     @Nested
@@ -73,10 +74,10 @@ class BoardImgServiceImplTest {
             MultipartFile boardImgFile = createMultipartFile();
 
             String imageFileName = "test.jpeg";
-            when(fileService.uploadFile(boardImgLocation, boardImgFile.getOriginalFilename(), boardImgFile.getBytes())).thenReturn(imageFileName);
-            when(boardImgDao.insert(any())).thenReturn(1);
+            when(fileServiceImpl.uploadFile(boardImgLocation, boardImgFile.getOriginalFilename(), boardImgFile.getBytes())).thenReturn(imageFileName);
+            when(boardImgDaoImpl.insert(any())).thenReturn(1);
 
-            assertDoesNotThrow(() -> boardImgService.saveBoardImage(request, boardImgFile));
+            assertDoesNotThrow(() -> boardImgServiceImpl.saveBoardImage(request, boardImgFile));
         }
 
         @DisplayName("이미지 등록 처리 성공 테스트, 이미지 파일이 없는 경우")
@@ -89,7 +90,7 @@ class BoardImgServiceImplTest {
             // when
 
             // then
-            assertThrows(InvalidBoardImageException.class, () -> boardImgService.saveBoardImage(request, boardImgFile));
+            assertThrows(InvalidBoardImageException.class, () -> boardImgServiceImpl.saveBoardImage(request, boardImgFile));
         }
 
         @DisplayName("이미지 파일 이름이 존재하지 않는 경우, 예외 발생")
@@ -100,7 +101,7 @@ class BoardImgServiceImplTest {
             MultipartFile boardImgFile = createWrongMultipartFile();
 
             // then
-            assertThrows(InvalidBoardImageException.class, () -> boardImgService.saveBoardImage(request, boardImgFile));
+            assertThrows(InvalidBoardImageException.class, () -> boardImgServiceImpl.saveBoardImage(request, boardImgFile));
         }
 
         @DisplayName("이미지 등록 처리 실패시 예외 발생 테스트, DBMS 반영 안됨")
@@ -111,11 +112,11 @@ class BoardImgServiceImplTest {
             MultipartFile boardImgFile = createMultipartFile();
 
             // when
-            when(fileService.uploadFile(boardImgLocation, boardImgFile.getOriginalFilename(), boardImgFile.getBytes())).thenReturn("test.jpeg");
-            when(boardImgDao.insert(any())).thenReturn(0);
+            when(fileServiceImpl.uploadFile(boardImgLocation, boardImgFile.getOriginalFilename(), boardImgFile.getBytes())).thenReturn("test.jpeg");
+            when(boardImgDaoImpl.insert(any())).thenReturn(0);
 
             // then
-            assertThrows(NotApplyOnDbmsException.class, () -> boardImgService.saveBoardImage(request, boardImgFile));
+            assertThrows(NotApplyOnDbmsException.class, () -> boardImgServiceImpl.saveBoardImage(request, boardImgFile));
         }
     }
 
@@ -134,14 +135,14 @@ class BoardImgServiceImplTest {
             BoardImgDto dto = createDto(request, imageFileName, boardImgUrlLocation);
 
             // when
-            when(boardImgDao.existsByInoForUpdate(ino)).thenReturn(true);
-            when(boardImgDao.selectByIno(ino)).thenReturn(dto);
-            doNothing().when(fileService).deleteFile(boardImgLocation + "/" + dto.getName());
-            when(fileService.uploadFile(boardImgLocation, boardImgFile.getOriginalFilename(), boardImgFile.getBytes())).thenReturn(imageFileName);
-            when(boardImgDao.update(dto)).thenReturn(1);
+            when(boardImgDaoImpl.existsByInoForUpdate(ino)).thenReturn(true);
+            when(boardImgDaoImpl.selectByIno(ino)).thenReturn(dto);
+            doNothing().when(fileServiceImpl).deleteFile(boardImgLocation + "/" + dto.getName());
+            when(fileServiceImpl.uploadFile(boardImgLocation, boardImgFile.getOriginalFilename(), boardImgFile.getBytes())).thenReturn(imageFileName);
+            when(boardImgDaoImpl.update(dto)).thenReturn(1);
 
             // then
-            assertDoesNotThrow(() -> boardImgService.modifyBoardImg(ino, boardImgFile));
+            assertDoesNotThrow(() -> boardImgServiceImpl.modifyBoardImg(ino, boardImgFile));
         }
 
         @DisplayName("이미지 수정 처리 실패 테스트, ino가 존재하지 않는 경우")
@@ -152,10 +153,10 @@ class BoardImgServiceImplTest {
             MultipartFile boardImgFile = createMultipartFile();
 
             // when
-            when(boardImgDao.existsByInoForUpdate(ino)).thenReturn(false);
+            when(boardImgDaoImpl.existsByInoForUpdate(ino)).thenReturn(false);
 
             // then
-            assertThrows(BoardImageNotFoundException.class, () -> boardImgService.modifyBoardImg(ino, boardImgFile));
+            assertThrows(BoardImageNotFoundException.class, () -> boardImgServiceImpl.modifyBoardImg(ino, boardImgFile));
         }
 
         @DisplayName("이미지 수정 처리 실패 테스트, 이미지 파일이 없는 경우")
@@ -166,7 +167,7 @@ class BoardImgServiceImplTest {
             MultipartFile boardImgFile = null;
 
             // then
-            assertThrows(InvalidBoardImageException.class, () -> boardImgService.modifyBoardImg(ino, boardImgFile));
+            assertThrows(InvalidBoardImageException.class, () -> boardImgServiceImpl.modifyBoardImg(ino, boardImgFile));
         }
 
 
@@ -178,7 +179,7 @@ class BoardImgServiceImplTest {
             MultipartFile boardImgFile = createWrongMultipartFile();
 
             // then
-            assertThrows(InvalidBoardImageException.class, () -> boardImgService.modifyBoardImg(ino, boardImgFile));
+            assertThrows(InvalidBoardImageException.class, () -> boardImgServiceImpl.modifyBoardImg(ino, boardImgFile));
         }
 
         @DisplayName("이미지 수정 처리 실패 테스트, DBMS 반영 안됨")
@@ -192,14 +193,14 @@ class BoardImgServiceImplTest {
             BoardImgDto dto = createDto(request, imageFileName, boardImgUrlLocation);
 
             // when
-            when(boardImgDao.existsByInoForUpdate(ino)).thenReturn(true);
-            when(boardImgDao.selectByIno(ino)).thenReturn(dto);
-            doNothing().when(fileService).deleteFile(boardImgLocation + "/" + dto.getName());
-            when(fileService.uploadFile(boardImgLocation, boardImgFile.getOriginalFilename(), boardImgFile.getBytes())).thenReturn(imageFileName);
-            when(boardImgDao.update(dto)).thenReturn(0);
+            when(boardImgDaoImpl.existsByInoForUpdate(ino)).thenReturn(true);
+            when(boardImgDaoImpl.selectByIno(ino)).thenReturn(dto);
+            doNothing().when(fileServiceImpl).deleteFile(boardImgLocation + "/" + dto.getName());
+            when(fileServiceImpl.uploadFile(boardImgLocation, boardImgFile.getOriginalFilename(), boardImgFile.getBytes())).thenReturn(imageFileName);
+            when(boardImgDaoImpl.update(dto)).thenReturn(0);
 
             // then
-            assertThrows(NotApplyOnDbmsException.class, () -> boardImgService.modifyBoardImg(ino, boardImgFile));
+            assertThrows(NotApplyOnDbmsException.class, () -> boardImgServiceImpl.modifyBoardImg(ino, boardImgFile));
         }
     }
 
@@ -215,13 +216,13 @@ class BoardImgServiceImplTest {
             BoardImgDto dto = createDto(createRequest(), "test.jpeg", boardImgUrlLocation);
 
             // when
-            when(boardImgDao.existsByInoForUpdate(ino)).thenReturn(true);
-            when(boardImgDao.selectByIno(ino)).thenReturn(dto);
-            doNothing().when(fileService).deleteFile(boardImgLocation + "/" + dto.getName());
-            when(boardImgDao.deleteByIno(ino)).thenReturn(1);
+            when(boardImgDaoImpl.existsByInoForUpdate(ino)).thenReturn(true);
+            when(boardImgDaoImpl.selectByIno(ino)).thenReturn(dto);
+            doNothing().when(fileServiceImpl).deleteFile(boardImgLocation + "/" + dto.getName());
+            when(boardImgDaoImpl.deleteByIno(ino)).thenReturn(1);
 
             // then
-            assertDoesNotThrow(() -> boardImgService.removeByIno(ino));
+            assertDoesNotThrow(() -> boardImgServiceImpl.removeByIno(ino));
         }
 
         @DisplayName("이미지 삭제 처리 실패 테스트, ino가 존재하지 않는 경우")
@@ -231,10 +232,10 @@ class BoardImgServiceImplTest {
             Integer ino = 1;
 
             // when
-            when(boardImgDao.existsByInoForUpdate(ino)).thenReturn(false);
+            when(boardImgDaoImpl.existsByInoForUpdate(ino)).thenReturn(false);
 
             // then
-            assertThrows(BoardImageNotFoundException.class, () -> boardImgService.removeByIno(ino));
+            assertThrows(BoardImageNotFoundException.class, () -> boardImgServiceImpl.removeByIno(ino));
         }
 
         @DisplayName("이미지 삭제 처리 실패 테스트")
@@ -245,13 +246,13 @@ class BoardImgServiceImplTest {
             BoardImgDto dto = createDto(createRequest(), "test.jpeg", boardImgUrlLocation);
 
             // when
-            when(boardImgDao.existsByInoForUpdate(ino)).thenReturn(true);
-            when(boardImgDao.selectByIno(ino)).thenReturn(dto);
-            doNothing().when(fileService).deleteFile(boardImgLocation + "/" + dto.getName());
-            when(boardImgDao.deleteByIno(ino)).thenReturn(0);
+            when(boardImgDaoImpl.existsByInoForUpdate(ino)).thenReturn(true);
+            when(boardImgDaoImpl.selectByIno(ino)).thenReturn(dto);
+            doNothing().when(fileServiceImpl).deleteFile(boardImgLocation + "/" + dto.getName());
+            when(boardImgDaoImpl.deleteByIno(ino)).thenReturn(0);
 
             // then
-            assertThrows(NotApplyOnDbmsException.class, () -> boardImgService.removeByIno(ino));
+            assertThrows(NotApplyOnDbmsException.class, () -> boardImgServiceImpl.removeByIno(ino));
         }
     }
 

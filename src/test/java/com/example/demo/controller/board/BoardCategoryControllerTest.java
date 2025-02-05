@@ -17,11 +17,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-import com.example.demo.service.board.BoardCategoryService;
 import com.example.demo.dto.board.BoardCategoryRequest;
 import com.example.demo.global.error.exception.business.board.BoardCategoryAlreadyExistsException;
 import com.example.demo.global.error.exception.business.board.BoardCategoryNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
+import com.example.demo.service.board.impl.BoardCategoryServiceImpl;
 import org.springframework.security.test.context.support.WithMockUser;
 import com.example.demo.dto.board.BoardCategoryResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -48,13 +48,13 @@ class BoardCategoryControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private BoardCategoryService boardCategoryService;
+    private BoardCategoryServiceImpl boardCategoryServiceImpl;
 
     @BeforeEach
     void setUp() {
         assertNotNull(mockMvc);
         assertNotNull(objectMapper);
-        assertNotNull(boardCategoryService);
+        assertNotNull(boardCategoryServiceImpl);
     }
 
     @Nested
@@ -64,7 +64,7 @@ class BoardCategoryControllerTest {
         @Test
         @DisplayName("존재하는 코드로 상세 조회 성공")
         void 존재하는_코드로_상세_조회_성공() throws Exception {
-            given(boardCategoryService.readByCateCode(any()))
+            given(boardCategoryServiceImpl.readByCateCode(any()))
                     .willReturn(createResponse(1));
 
             mockMvc.perform(get("/api/board-category/AB010101"))
@@ -84,7 +84,7 @@ class BoardCategoryControllerTest {
         @Test
         @DisplayName("존재하지 않는 코드로 상세 조회 실패")
         void 존재하지_않는_코드로_상세_조회_실패() throws Exception {
-            given(boardCategoryService.readByCateCode(any()))
+            given(boardCategoryServiceImpl.readByCateCode(any()))
                     .willThrow(new BoardCategoryNotFoundException());
 
             mockMvc.perform(get("/api/board-category/AB010101"))
@@ -100,7 +100,7 @@ class BoardCategoryControllerTest {
         @Test
         @DisplayName("존재하는 코드로 리스트 조회 성공")
         void 존재하는_코드로_리스트_조회_성공() throws Exception {
-            given(boardCategoryService.readByTopCate(any()))
+            given(boardCategoryServiceImpl.readByTopCate(any()))
                     .willReturn(List.of(createResponse(1), createResponse(2)));
 
             mockMvc.perform(get("/api/board-category/top/AB010100"))
@@ -127,7 +127,7 @@ class BoardCategoryControllerTest {
         @Test
         @DisplayName("존재하지 않는 코드로 리스트 조회 실패")
         void 존재하지_않는_코드로_리스트_조회_실패() throws Exception {
-            given(boardCategoryService.readByTopCate(any()))
+            given(boardCategoryServiceImpl.readByTopCate(any()))
                     .willThrow(new BoardCategoryNotFoundException());
 
             mockMvc.perform(get("/api/board-category/top/AB010100"))
@@ -143,7 +143,7 @@ class BoardCategoryControllerTest {
         @Test
         @DisplayName("모든 카테고리 조회 성공")
         void 모든_카테고리_조회_성공() throws Exception {
-            given(boardCategoryService.readAll())
+            given(boardCategoryServiceImpl.readAll())
                     .willReturn(List.of(createResponse(1), createResponse(2)));
 
             mockMvc.perform(get("/api/board-category/all"))
@@ -170,7 +170,7 @@ class BoardCategoryControllerTest {
         @Test
         @DisplayName("카테고리가 존재하지 않는 경우, 빈 리스트 반환")
         void 카테고리가_존재하지_않는_경우_빈_리스트_반환() throws Exception {
-            given(boardCategoryService.readAll())
+            given(boardCategoryServiceImpl.readAll())
                     .willReturn(List.of());
 
             mockMvc.perform(get("/api/board-category/all"))
@@ -189,7 +189,7 @@ class BoardCategoryControllerTest {
         @Test
         @DisplayName("카테고리 생성 성공")
         void 카테고리_생성_성공() throws Exception {
-            given(boardCategoryService.create(any()))
+            given(boardCategoryServiceImpl.create(any()))
                     .willReturn(createResponse(1));
 
             String body = objectMapper.writeValueAsString(
@@ -222,7 +222,7 @@ class BoardCategoryControllerTest {
         @Test
         @DisplayName("전달받은 코드가 이미 존재하는 코드인 경우, 예외 발생 -> 409 CONFLICT")
         void 전달받은_코드가_이미_존재하는_코드인_경우_예외_발생() throws Exception {
-            given(boardCategoryService.create(any()))
+            given(boardCategoryServiceImpl.create(any()))
                     .willThrow(new BoardCategoryAlreadyExistsException());
 
             String body = objectMapper.writeValueAsString(
@@ -267,7 +267,7 @@ class BoardCategoryControllerTest {
         @Test
         @DisplayName("DBMS 반영 실패로 인한 예외 발생 -> 500 INTERNAL SERVER ERROR")
         void DBMS_반영_실패로_인한_예외_발생() throws Exception {
-            given(boardCategoryService.create(any()))
+            given(boardCategoryServiceImpl.create(any()))
                     .willThrow(new NotApplyOnDbmsException());
 
             String body = objectMapper.writeValueAsString(
@@ -296,7 +296,7 @@ class BoardCategoryControllerTest {
         @DisplayName("카테고리 수정 성공")
         void 카테고리_수정_성공() throws Exception {
             willDoNothing()
-                    .given(boardCategoryService)
+                    .given(boardCategoryServiceImpl)
                     .modify(any());
 
             String body = objectMapper.writeValueAsString(
@@ -316,14 +316,14 @@ class BoardCategoryControllerTest {
                     .andDo(print())
                     .andExpect(status().isNoContent());
 
-            verify(boardCategoryService).modify(any());
+            verify(boardCategoryServiceImpl).modify(any());
         }
 
         @Test
         @DisplayName("존재하지 않는 코드로 수정 시, 예외 발생 -> 404 NOT FOUND")
         void 존재하지_않는_코드로_수정_시_예외_발생() throws Exception {
             willThrow(new BoardCategoryNotFoundException())
-                    .given(boardCategoryService)
+                    .given(boardCategoryServiceImpl)
                     .modify(any());
 
             String body = objectMapper.writeValueAsString(
@@ -348,7 +348,7 @@ class BoardCategoryControllerTest {
         @DisplayName("DBMS 반영 실패로 인한 예외 발생 -> 500 INTERNAL SERVER ERROR")
         void DBMS_반영_실패로_인한_예외_발생() throws Exception {
             willThrow(new NotApplyOnDbmsException())
-                    .given(boardCategoryService)
+                    .given(boardCategoryServiceImpl)
                     .modify(any());
 
             String body = objectMapper.writeValueAsString(
@@ -400,7 +400,7 @@ class BoardCategoryControllerTest {
         @DisplayName("사용 중인 카테고리로 변경 성공")
         void 사용_중인_카테고리로_변경_성공() throws Exception {
             willDoNothing()
-                    .given(boardCategoryService)
+                    .given(boardCategoryServiceImpl)
                     .modifyChkUseY(any());
 
             mockMvc.perform(patch("/api/board-category/usey/AB010101")
@@ -408,14 +408,14 @@ class BoardCategoryControllerTest {
                     .andDo(print())
                     .andExpect(status().isNoContent());
 
-            verify(boardCategoryService).modifyChkUseY(any());
+            verify(boardCategoryServiceImpl).modifyChkUseY(any());
         }
 
         @Test
         @DisplayName("존재하지 않는 코드로 사용 중인 카테고리 변경 시, 예외 발생 -> 404 NOT FOUND")
         void 존재하지_않는_코드로_사용_중인_카테고리_변경_시_예외_발생() throws Exception {
             willThrow(new BoardCategoryNotFoundException())
-                    .given(boardCategoryService)
+                    .given(boardCategoryServiceImpl)
                     .modifyChkUseY(any());
 
             mockMvc.perform(patch("/api/board-category/usey/AB010101")
@@ -428,7 +428,7 @@ class BoardCategoryControllerTest {
         @DisplayName("DBMS 반영 실패로 인한 예외 발생 -> 500 INTERNAL SERVER ERROR")
         void DBMS_반영_실패로_인한_예외_발생() throws Exception {
             willThrow(new NotApplyOnDbmsException())
-                    .given(boardCategoryService)
+                    .given(boardCategoryServiceImpl)
                     .modifyChkUseY(any());
 
             mockMvc.perform(patch("/api/board-category/usey/AB010101")
@@ -446,7 +446,7 @@ class BoardCategoryControllerTest {
         @DisplayName("코드로 카테고리 삭제 성공")
         void 코드로_카테고리_삭제_성공() throws Exception {
             willDoNothing()
-                    .given(boardCategoryService)
+                    .given(boardCategoryServiceImpl)
                     .remove(any());
 
             mockMvc.perform(delete("/api/board-category/AB010101")
@@ -454,14 +454,14 @@ class BoardCategoryControllerTest {
                     .andDo(print())
                     .andExpect(status().isNoContent());
 
-            verify(boardCategoryService).remove(any());
+            verify(boardCategoryServiceImpl).remove(any());
         }
 
         @Test
         @DisplayName("존재하지 않는 코드로 삭제 시, 예외 발생 -> 404 NOT FOUND")
         void 존재하지_않는_코드로_삭제_시_예외_발생() throws Exception {
             willThrow(new BoardCategoryNotFoundException())
-                    .given(boardCategoryService)
+                    .given(boardCategoryServiceImpl)
                     .remove(any());
 
             mockMvc.perform(delete("/api/board-category/AB010101")
@@ -474,7 +474,7 @@ class BoardCategoryControllerTest {
         @DisplayName("모든 카테고리 삭제 성공")
         void 모든_카테고리_삭제_성공() throws Exception {
             willDoNothing()
-                    .given(boardCategoryService)
+                    .given(boardCategoryServiceImpl)
                     .removeAll();
 
             mockMvc.perform(delete("/api/board-category/all")
@@ -482,7 +482,7 @@ class BoardCategoryControllerTest {
                     .andDo(print())
                     .andExpect(status().isNoContent());
 
-            verify(boardCategoryService).removeAll();
+            verify(boardCategoryServiceImpl).removeAll();
         }
     }
 

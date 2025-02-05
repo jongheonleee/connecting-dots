@@ -9,8 +9,9 @@ import com.example.demo.dto.board.BoardChangeHistoryResponse;
 import com.example.demo.global.error.exception.business.board.BoardChangeHistoryNotFoundException;
 import com.example.demo.global.error.exception.business.board.BoardNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
-import com.example.demo.repository.board.BoardChangeHistoryRepository;
-import com.example.demo.repository.board.BoardRepository;
+import com.example.demo.repository.board.impl.BoardChangeHistoryDaoImpl;
+import com.example.demo.repository.board.impl.BoardDaoImpl;
+import com.example.demo.service.board.impl.BoardChangeHistoryServiceImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,13 +30,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class BoardChangeHistoryServiceImplTest {
 
     @InjectMocks
-    private BoardChangeHistoryService boardChangeHistoryService;
+    private BoardChangeHistoryServiceImpl boardChangeHistoryServiceImpl;
 
     @Mock
-    private BoardChangeHistoryRepository boardChangeHistoryDao;
+    private BoardChangeHistoryDaoImpl boardChangeHistoryDaoImpl;
 
     @Mock
-    private BoardRepository boardDao;
+    private BoardDaoImpl boardDaoImpl;
 
     @Mock
     private CustomFormatter customFormatter;
@@ -46,9 +47,9 @@ class BoardChangeHistoryServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        assertNotNull(boardChangeHistoryService);
-        assertNotNull(boardChangeHistoryDao);
-        assertNotNull(boardDao);
+        assertNotNull(boardChangeHistoryServiceImpl);
+        assertNotNull(boardChangeHistoryDaoImpl);
+        assertNotNull(boardDaoImpl);
         assertNotNull(customFormatter);
     }
 
@@ -64,11 +65,11 @@ class BoardChangeHistoryServiceImplTest {
             BoardChangeHistoryDto dto = createBoardChangeHistoryDto(seq);
 
             // when
-            when(boardChangeHistoryDao.existsBySeq(seq)).thenReturn(true);
-            when(boardChangeHistoryDao.selectBySeq(seq)).thenReturn(dto);
+            when(boardChangeHistoryDaoImpl.existsBySeq(seq)).thenReturn(true);
+            when(boardChangeHistoryDaoImpl.selectBySeq(seq)).thenReturn(dto);
 
             // then
-            BoardChangeHistoryResponse actual = boardChangeHistoryService.readBySeq(seq);
+            BoardChangeHistoryResponse actual = boardChangeHistoryServiceImpl.readBySeq(seq);
 
             assertNotNull(actual);
             assertEquals(dto.getSeq(), actual.getSeq());
@@ -87,10 +88,10 @@ class BoardChangeHistoryServiceImplTest {
             Integer seq = 1;
 
             // when
-            when(boardChangeHistoryDao.existsBySeq(seq)).thenReturn(false);
+            when(boardChangeHistoryDaoImpl.existsBySeq(seq)).thenReturn(false);
 
             // then
-            assertThrows(BoardChangeHistoryNotFoundException.class, () -> boardChangeHistoryService.readBySeq(seq));
+            assertThrows(BoardChangeHistoryNotFoundException.class, () -> boardChangeHistoryServiceImpl.readBySeq(seq));
         }
 
         @DisplayName("한 게시글에 모든 변경 이력 조회 처리 - bno")
@@ -107,11 +108,11 @@ class BoardChangeHistoryServiceImplTest {
             }
 
             // when
-            when(boardDao.existsByBno(bno)).thenReturn(true);
-            when(boardChangeHistoryDao.selectByBno(bno)).thenReturn(dummy);
+            when(boardDaoImpl.existsByBno(bno)).thenReturn(true);
+            when(boardChangeHistoryDaoImpl.selectByBno(bno)).thenReturn(dummy);
 
             // then
-            List<BoardChangeHistoryResponse> result = boardChangeHistoryService.readByBno(bno);
+            List<BoardChangeHistoryResponse> result = boardChangeHistoryServiceImpl.readByBno(bno);
 
             assertNotNull(result);
             assertEquals(cnt, result.size());
@@ -143,10 +144,10 @@ class BoardChangeHistoryServiceImplTest {
             }
 
             // when
-            when(boardChangeHistoryDao.selectAll()).thenReturn(dummy);
+            when(boardChangeHistoryDaoImpl.selectAll()).thenReturn(dummy);
 
             // then
-            List<BoardChangeHistoryResponse> result = boardChangeHistoryService.readAll();
+            List<BoardChangeHistoryResponse> result = boardChangeHistoryServiceImpl.readAll();
 
             assertNotNull(result);
             assertEquals(cnt, result.size());
@@ -186,14 +187,14 @@ class BoardChangeHistoryServiceImplTest {
             when(customFormatter.getLastDateFormat()).thenReturn(APPL_END);
             when(customFormatter.getManagerSeq()).thenReturn(1);
 
-            when(boardDao.existsByBno(bno)).thenReturn(true);
-            when(boardChangeHistoryDao.existsByBnoForUpdate(bno)).thenReturn(true);
-            when(boardChangeHistoryDao.selectLatestByBno(1)).thenReturn(ordDto);
-            when(boardChangeHistoryDao.update(ordDto)).thenReturn(1);
-            when(boardChangeHistoryDao.insert(newDto)).thenReturn(1);
+            when(boardDaoImpl.existsByBno(bno)).thenReturn(true);
+            when(boardChangeHistoryDaoImpl.existsByBnoForUpdate(bno)).thenReturn(true);
+            when(boardChangeHistoryDaoImpl.selectLatestByBno(1)).thenReturn(ordDto);
+            when(boardChangeHistoryDaoImpl.update(ordDto)).thenReturn(1);
+            when(boardChangeHistoryDaoImpl.insert(newDto)).thenReturn(1);
 
             // then
-            BoardChangeHistoryResponse actual = boardChangeHistoryService.renewBoardChangeHistory(bno, request);
+            BoardChangeHistoryResponse actual = boardChangeHistoryServiceImpl.renewBoardChangeHistory(bno, request);
 
             assertNotNull(actual);
             assertEquals(newDto.getSeq(), actual.getSeq());
@@ -214,10 +215,10 @@ class BoardChangeHistoryServiceImplTest {
             BoardChangeHistoryRequest request = createBoardChangeHistoryRequest();
 
             // when
-            when(boardDao.existsByBno(bno)).thenReturn(false);
+            when(boardDaoImpl.existsByBno(bno)).thenReturn(false);
 
             // then
-            assertThrows(BoardNotFoundException.class, () -> boardChangeHistoryService.renewBoardChangeHistory(bno, request));
+            assertThrows(BoardNotFoundException.class, () -> boardChangeHistoryServiceImpl.renewBoardChangeHistory(bno, request));
         }
 
         @Test
@@ -230,11 +231,11 @@ class BoardChangeHistoryServiceImplTest {
             BoardChangeHistoryDto newDto = createBoardChangeHistoryDto(request);
 
             // when
-            when(boardDao.existsByBno(bno)).thenReturn(true);
-            when(boardChangeHistoryDao.existsByBnoForUpdate(bno)).thenReturn(false);
+            when(boardDaoImpl.existsByBno(bno)).thenReturn(true);
+            when(boardChangeHistoryDaoImpl.existsByBnoForUpdate(bno)).thenReturn(false);
 
             // then
-            assertThrows(BoardChangeHistoryNotFoundException.class, () -> boardChangeHistoryService.renewBoardChangeHistory(bno, request));
+            assertThrows(BoardChangeHistoryNotFoundException.class, () -> boardChangeHistoryServiceImpl.renewBoardChangeHistory(bno, request));
 
         }
 
@@ -250,13 +251,13 @@ class BoardChangeHistoryServiceImplTest {
             when(customFormatter.minusDateFormat(1)).thenReturn(END_APPL);
             when(customFormatter.getManagerSeq()).thenReturn(1);
 
-            when(boardDao.existsByBno(bno)).thenReturn(true);
-            when(boardChangeHistoryDao.existsByBnoForUpdate(bno)).thenReturn(true);
-            when(boardChangeHistoryDao.selectLatestByBno(1)).thenReturn(ordDto);
-            when(boardChangeHistoryDao.update(ordDto)).thenReturn(0);
+            when(boardDaoImpl.existsByBno(bno)).thenReturn(true);
+            when(boardChangeHistoryDaoImpl.existsByBnoForUpdate(bno)).thenReturn(true);
+            when(boardChangeHistoryDaoImpl.selectLatestByBno(1)).thenReturn(ordDto);
+            when(boardChangeHistoryDaoImpl.update(ordDto)).thenReturn(0);
 
             // then
-            assertThrows(NotApplyOnDbmsException.class, () -> boardChangeHistoryService.renewBoardChangeHistory(bno, request));
+            assertThrows(NotApplyOnDbmsException.class, () -> boardChangeHistoryServiceImpl.renewBoardChangeHistory(bno, request));
         }
 
         @Test
@@ -274,14 +275,14 @@ class BoardChangeHistoryServiceImplTest {
             when(customFormatter.getLastDateFormat()).thenReturn(APPL_END);
             when(customFormatter.getManagerSeq()).thenReturn(1);
 
-            when(boardDao.existsByBno(bno)).thenReturn(true);
-            when(boardChangeHistoryDao.existsByBnoForUpdate(bno)).thenReturn(true);
-            when(boardChangeHistoryDao.selectLatestByBno(1)).thenReturn(ordDto);
-            when(boardChangeHistoryDao.update(ordDto)).thenReturn(1);
-            when(boardChangeHistoryDao.insert(newDto)).thenReturn(0);
+            when(boardDaoImpl.existsByBno(bno)).thenReturn(true);
+            when(boardChangeHistoryDaoImpl.existsByBnoForUpdate(bno)).thenReturn(true);
+            when(boardChangeHistoryDaoImpl.selectLatestByBno(1)).thenReturn(ordDto);
+            when(boardChangeHistoryDaoImpl.update(ordDto)).thenReturn(1);
+            when(boardChangeHistoryDaoImpl.insert(newDto)).thenReturn(0);
 
             // then
-            assertThrows(NotApplyOnDbmsException.class, () -> boardChangeHistoryService.renewBoardChangeHistory(bno, request));
+            assertThrows(NotApplyOnDbmsException.class, () -> boardChangeHistoryServiceImpl.renewBoardChangeHistory(bno, request));
         }
 
     }
@@ -303,12 +304,12 @@ class BoardChangeHistoryServiceImplTest {
             when(customFormatter.getLastDateFormat()).thenReturn(APPL_END);
             when(customFormatter.getManagerSeq()).thenReturn(1);
 
-            when(boardDao.existsByBno(bno)).thenReturn(true);
-            when(boardChangeHistoryDao.existsByBno(bno)).thenReturn(false);
-            when(boardChangeHistoryDao.insert(newDto)).thenReturn(1);
+            when(boardDaoImpl.existsByBno(bno)).thenReturn(true);
+            when(boardChangeHistoryDaoImpl.existsByBno(bno)).thenReturn(false);
+            when(boardChangeHistoryDaoImpl.insert(newDto)).thenReturn(1);
 
             // then
-            BoardChangeHistoryResponse actual = boardChangeHistoryService.createInit(bno, request);
+            BoardChangeHistoryResponse actual = boardChangeHistoryServiceImpl.createInit(bno, request);
 
             assertNotNull(actual);
             assertEquals(newDto.getSeq(), actual.getSeq());
@@ -328,10 +329,10 @@ class BoardChangeHistoryServiceImplTest {
             BoardChangeHistoryRequest request = createBoardChangeHistoryRequest();
 
             // when
-            when(boardDao.existsByBno(bno)).thenReturn(false);
+            when(boardDaoImpl.existsByBno(bno)).thenReturn(false);
 
             // then
-            assertThrows(BoardNotFoundException.class, () -> boardChangeHistoryService.createInit(bno, request));
+            assertThrows(BoardNotFoundException.class, () -> boardChangeHistoryServiceImpl.createInit(bno, request));
         }
 
         @Test
@@ -342,11 +343,11 @@ class BoardChangeHistoryServiceImplTest {
             BoardChangeHistoryRequest request = createBoardChangeHistoryRequest();
 
             // when
-            when(boardDao.existsByBno(bno)).thenReturn(true);
-            when(boardChangeHistoryDao.existsByBno(bno)).thenReturn(true);
+            when(boardDaoImpl.existsByBno(bno)).thenReturn(true);
+            when(boardChangeHistoryDaoImpl.existsByBno(bno)).thenReturn(true);
 
             // then
-            assertThrows(BoardChangeHistoryNotFoundException.class, () -> boardChangeHistoryService.createInit(bno, request));
+            assertThrows(BoardChangeHistoryNotFoundException.class, () -> boardChangeHistoryServiceImpl.createInit(bno, request));
         }
 
         @Test
@@ -362,12 +363,12 @@ class BoardChangeHistoryServiceImplTest {
             when(customFormatter.getLastDateFormat()).thenReturn(APPL_END);
             when(customFormatter.getManagerSeq()).thenReturn(1);
 
-            when(boardDao.existsByBno(bno)).thenReturn(true);
-            when(boardChangeHistoryDao.existsByBno(bno)).thenReturn(false);
-            when(boardChangeHistoryDao.insert(newDto)).thenReturn(0);
+            when(boardDaoImpl.existsByBno(bno)).thenReturn(true);
+            when(boardChangeHistoryDaoImpl.existsByBno(bno)).thenReturn(false);
+            when(boardChangeHistoryDaoImpl.insert(newDto)).thenReturn(0);
 
             // then
-            assertThrows(NotApplyOnDbmsException.class, () -> boardChangeHistoryService.createInit(bno, request));
+            assertThrows(NotApplyOnDbmsException.class, () -> boardChangeHistoryServiceImpl.createInit(bno, request));
         }
 
 
@@ -385,11 +386,11 @@ class BoardChangeHistoryServiceImplTest {
             Integer seq = 1;
 
             // when
-            when(boardChangeHistoryDao.existsBySeq(seq)).thenReturn(true);
-            when(boardChangeHistoryDao.deleteBySeq(seq)).thenReturn(1);
+            when(boardChangeHistoryDaoImpl.existsBySeq(seq)).thenReturn(true);
+            when(boardChangeHistoryDaoImpl.deleteBySeq(seq)).thenReturn(1);
 
             // then
-            assertDoesNotThrow(() -> boardChangeHistoryService.removeBySeq(seq));
+            assertDoesNotThrow(() -> boardChangeHistoryServiceImpl.removeBySeq(seq));
         }
 
         @DisplayName("한 게시글에 대한 변경 이력 삭제 처리 실패 - seq에 대한 게시글 없음")
@@ -399,10 +400,10 @@ class BoardChangeHistoryServiceImplTest {
             Integer seq = 1;
 
             // when
-            when(boardChangeHistoryDao.existsBySeq(seq)).thenReturn(false);
+            when(boardChangeHistoryDaoImpl.existsBySeq(seq)).thenReturn(false);
 
             // then
-            assertThrows(BoardChangeHistoryNotFoundException.class, () -> boardChangeHistoryService.removeBySeq(seq));
+            assertThrows(BoardChangeHistoryNotFoundException.class, () -> boardChangeHistoryServiceImpl.removeBySeq(seq));
         }
 
         @DisplayName("한 게시글에 대한 변경 이력 삭제 처리 실패 - DBMS 처리 실패")
@@ -412,11 +413,11 @@ class BoardChangeHistoryServiceImplTest {
             Integer seq = 1;
 
             // when
-            when(boardChangeHistoryDao.existsBySeq(seq)).thenReturn(true);
-            when(boardChangeHistoryDao.deleteBySeq(seq)).thenReturn(0);
+            when(boardChangeHistoryDaoImpl.existsBySeq(seq)).thenReturn(true);
+            when(boardChangeHistoryDaoImpl.deleteBySeq(seq)).thenReturn(0);
 
             // then
-            assertThrows(NotApplyOnDbmsException.class, () -> boardChangeHistoryService.removeBySeq(seq));
+            assertThrows(NotApplyOnDbmsException.class, () -> boardChangeHistoryServiceImpl.removeBySeq(seq));
         }
 
 
@@ -435,13 +436,13 @@ class BoardChangeHistoryServiceImplTest {
             }
 
             // when
-            when(boardDao.existsByBno(bno)).thenReturn(true);
-            when(boardChangeHistoryDao.existsByBno(bno)).thenReturn(true);
-            when(boardChangeHistoryDao.countByBno(bno)).thenReturn(cnt);
-            when(boardChangeHistoryDao.deleteByBno(bno)).thenReturn(cnt);
+            when(boardDaoImpl.existsByBno(bno)).thenReturn(true);
+            when(boardChangeHistoryDaoImpl.existsByBno(bno)).thenReturn(true);
+            when(boardChangeHistoryDaoImpl.countByBno(bno)).thenReturn(cnt);
+            when(boardChangeHistoryDaoImpl.deleteByBno(bno)).thenReturn(cnt);
 
             // then
-            assertDoesNotThrow(() -> boardChangeHistoryService.removeByBno(bno));
+            assertDoesNotThrow(() -> boardChangeHistoryServiceImpl.removeByBno(bno));
         }
 
         @DisplayName("한 게시글에 대한 변경 이력 삭제 처리 실패 - bno에 대한 게시글 없음")
@@ -451,10 +452,10 @@ class BoardChangeHistoryServiceImplTest {
             Integer bno = 1;
 
             // when
-            when(boardDao.existsByBno(bno)).thenReturn(false);
+            when(boardDaoImpl.existsByBno(bno)).thenReturn(false);
 
             // then
-            assertThrows(BoardNotFoundException.class, () -> boardChangeHistoryService.removeByBno(bno));
+            assertThrows(BoardNotFoundException.class, () -> boardChangeHistoryServiceImpl.removeByBno(bno));
         }
 
         @DisplayName("한 게시글에 대한 변경 이력 삭제 처리 실패 - DBMS 처리 실패")
@@ -470,13 +471,13 @@ class BoardChangeHistoryServiceImplTest {
             }
 
             // when
-            when(boardDao.existsByBno(bno)).thenReturn(true);
-            when(boardChangeHistoryDao.existsByBno(bno)).thenReturn(true);
-            when(boardChangeHistoryDao.countByBno(bno)).thenReturn(cnt);
-            when(boardChangeHistoryDao.deleteByBno(bno)).thenReturn(0);
+            when(boardDaoImpl.existsByBno(bno)).thenReturn(true);
+            when(boardChangeHistoryDaoImpl.existsByBno(bno)).thenReturn(true);
+            when(boardChangeHistoryDaoImpl.countByBno(bno)).thenReturn(cnt);
+            when(boardChangeHistoryDaoImpl.deleteByBno(bno)).thenReturn(0);
 
             // then
-            assertThrows(NotApplyOnDbmsException.class, () -> boardChangeHistoryService.removeByBno(bno));
+            assertThrows(NotApplyOnDbmsException.class, () -> boardChangeHistoryServiceImpl.removeByBno(bno));
         }
 
         @DisplayName("모든 게시글에 대한 변경 이력 삭제 처리 - all")
@@ -492,11 +493,11 @@ class BoardChangeHistoryServiceImplTest {
             }
 
             // when
-            when(boardChangeHistoryDao.count()).thenReturn(cnt);
-            when(boardChangeHistoryDao.deleteAll()).thenReturn(cnt);
+            when(boardChangeHistoryDaoImpl.count()).thenReturn(cnt);
+            when(boardChangeHistoryDaoImpl.deleteAll()).thenReturn(cnt);
 
             // then
-            assertDoesNotThrow(() -> boardChangeHistoryService.removeAll());
+            assertDoesNotThrow(() -> boardChangeHistoryServiceImpl.removeAll());
 
         }
 
@@ -507,10 +508,10 @@ class BoardChangeHistoryServiceImplTest {
             Integer bno = 1;
 
             // when
-            when(boardDao.existsByBno(bno)).thenReturn(false);
+            when(boardDaoImpl.existsByBno(bno)).thenReturn(false);
 
             // then
-            assertThrows(BoardNotFoundException.class, () -> boardChangeHistoryService.removeByBno(bno));
+            assertThrows(BoardNotFoundException.class, () -> boardChangeHistoryServiceImpl.removeByBno(bno));
         }
 
     }

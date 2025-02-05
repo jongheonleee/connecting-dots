@@ -12,7 +12,8 @@ import com.example.demo.dto.service.ServiceTermsResponse;
 import com.example.demo.global.error.exception.business.service.ServiceTermsAlreadyExistsException;
 import com.example.demo.global.error.exception.business.service.ServiceTermsNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
-import com.example.demo.repository.service.ServiceTermsRepository;
+import com.example.demo.repository.service.impl.ServiceTermsDaoImpl;
+import com.example.demo.service.service.impl.ServiceTermsServiceImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,10 +32,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ServiceTermsServiceImplTest {
 
     @InjectMocks
-    private ServiceTermsService serviceTermsService;
+    private ServiceTermsServiceImpl serviceTermsServiceImpl;
 
     @Mock
-    private ServiceTermsRepository serviceTermsDao;
+    private ServiceTermsDaoImpl serviceTermsDaoImpl;
 
     @Mock
     private CustomFormatter formatter;
@@ -49,8 +50,8 @@ class ServiceTermsServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        assertNotNull(serviceTermsService);
-        assertNotNull(serviceTermsDao);
+        assertNotNull(serviceTermsServiceImpl);
+        assertNotNull(serviceTermsDaoImpl);
         assertNotNull(formatter);
     }
 
@@ -60,8 +61,8 @@ class ServiceTermsServiceImplTest {
     @ParameterizedTest
     @ValueSource(ints = {1, 5, 10, 15, 20})
     void count(int cnt) {
-        when(serviceTermsDao.count()).thenReturn(cnt);
-        assertEquals(cnt, serviceTermsService.count());
+        when(serviceTermsDaoImpl.count()).thenReturn(cnt);
+        assertEquals(cnt, serviceTermsServiceImpl.count());
     }
 
     @DisplayName("검색 조건에 따른 카운팅 테스트")
@@ -69,8 +70,8 @@ class ServiceTermsServiceImplTest {
     @ValueSource(ints = {1, 5, 10, 15, 20})
     void countBySearchCondition(int cnt) {
         SearchCondition sc = new SearchCondition();
-        when(serviceTermsDao.countBySearchCondition(sc)).thenReturn(cnt);
-        assertEquals(cnt, serviceTermsService.countBySearchCondition(sc));
+        when(serviceTermsDaoImpl.countBySearchCondition(sc)).thenReturn(cnt);
+        assertEquals(cnt, serviceTermsServiceImpl.countBySearchCondition(sc));
     }
 
     @DisplayName("서비스 정책 생성 테스트")
@@ -79,15 +80,15 @@ class ServiceTermsServiceImplTest {
     void create(int cnt) {
         for (int i=0; i<cnt; i++) {
             ServiceTermsRequest request = createRequest(i);
-            when(serviceTermsDao.existsByPoliStat(request.getPoli_stat())).thenReturn(false);
+            when(serviceTermsDaoImpl.existsByPoliStat(request.getPoli_stat())).thenReturn(false);
             when(formatter.getCurrentDateFormat()).thenReturn(reg_date);
             when(formatter.getManagerSeq()).thenReturn(reg_user_seq);
 
             ServiceTermsDto dto = createDto(i);
-            when(serviceTermsDao.insert(dto)).thenReturn(1);
-            when(serviceTermsDao.select(request.getPoli_stat())).thenReturn(dto);
+            when(serviceTermsDaoImpl.insert(dto)).thenReturn(1);
+            when(serviceTermsDaoImpl.select(request.getPoli_stat())).thenReturn(dto);
 
-            ServiceTermsResponse response = serviceTermsService.create(request);
+            ServiceTermsResponse response = serviceTermsServiceImpl.create(request);
 
             assertEquals(request.getPoli_stat(), response.getPoli_stat());
             assertEquals(request.getName(), response.getName());
@@ -107,10 +108,10 @@ class ServiceTermsServiceImplTest {
     void readByPoliStat(int cnt) {
         for (int i=0; i<cnt; i++) {
             ServiceTermsDto dto = createDto(i);
-            when(serviceTermsDao.existsByPoliStat(dto.getPoli_stat())).thenReturn(true);
-            when(serviceTermsDao.select(dto.getPoli_stat())).thenReturn(dto);
+            when(serviceTermsDaoImpl.existsByPoliStat(dto.getPoli_stat())).thenReturn(true);
+            when(serviceTermsDaoImpl.select(dto.getPoli_stat())).thenReturn(dto);
 
-            ServiceTermsResponse response = serviceTermsService.readByPoliStat(dto.getPoli_stat());
+            ServiceTermsResponse response = serviceTermsServiceImpl.readByPoliStat(dto.getPoli_stat());
 
             assertEquals(dto.getPoli_stat(), response.getPoli_stat());
             assertEquals(dto.getName(), response.getName());
@@ -138,10 +139,10 @@ class ServiceTermsServiceImplTest {
             dummy.add(dto);
         }
 
-        when(serviceTermsDao.countBySearchCondition(sc)).thenReturn(cnt);
-        when(serviceTermsDao.selectBySearchCondition(sc)).thenReturn(dummy);
+        when(serviceTermsDaoImpl.countBySearchCondition(sc)).thenReturn(cnt);
+        when(serviceTermsDaoImpl.selectBySearchCondition(sc)).thenReturn(dummy);
 
-        PageResponse<ServiceTermsResponse> response = serviceTermsService.readBySearchCondition(sc);
+        PageResponse<ServiceTermsResponse> response = serviceTermsServiceImpl.readBySearchCondition(sc);
         assertEquals(cnt, response.getResponses().size());
     }
 
@@ -155,9 +156,9 @@ class ServiceTermsServiceImplTest {
             dummy.add(dto);
         }
 
-        when(serviceTermsDao.selectAll()).thenReturn(dummy);
+        when(serviceTermsDaoImpl.selectAll()).thenReturn(dummy);
 
-        List<ServiceTermsResponse> responses = serviceTermsService.readAll();
+        List<ServiceTermsResponse> responses = serviceTermsServiceImpl.readAll();
         assertEquals(cnt, responses.size());
     }
 
@@ -169,10 +170,10 @@ class ServiceTermsServiceImplTest {
         String expectedCond = "col1 >= 5 AND col2 < 10";
         ServiceTermsConditionDto dto = new ServiceTermsConditionDto(poli_stat, name, expectedCond);
 
-        when(serviceTermsDao.existsByPoliStat(poli_stat)).thenReturn(true);
-        when(serviceTermsDao.selectForCondition(poli_stat)).thenReturn(dto);
+        when(serviceTermsDaoImpl.existsByPoliStat(poli_stat)).thenReturn(true);
+        when(serviceTermsDaoImpl.selectForCondition(poli_stat)).thenReturn(dto);
 
-        String cond = serviceTermsService.getServiceTermsCondition(poli_stat);
+        String cond = serviceTermsServiceImpl.getServiceTermsCondition(poli_stat);
         assertEquals(expectedCond, cond);
     }
 
@@ -182,14 +183,14 @@ class ServiceTermsServiceImplTest {
     void modify(int cnt) {
         for (int i=0; i<cnt; i++) {
             ServiceTermsRequest request = createRequest(i);
-            when(serviceTermsDao.existsByPoliStatForUpdate(request.getPoli_stat())).thenReturn(true);
+            when(serviceTermsDaoImpl.existsByPoliStatForUpdate(request.getPoli_stat())).thenReturn(true);
             when(formatter.getCurrentDateFormat()).thenReturn(up_date);
             when(formatter.getManagerSeq()).thenReturn(up_user_seq);
 
             ServiceTermsDto dto = createDto(i);
-            when(serviceTermsDao.update(dto)).thenReturn(1);
+            when(serviceTermsDaoImpl.update(dto)).thenReturn(1);
 
-            assertDoesNotThrow(() -> serviceTermsService.modify(request));
+            assertDoesNotThrow(() -> serviceTermsServiceImpl.modify(request));
         }
     }
 
@@ -199,14 +200,14 @@ class ServiceTermsServiceImplTest {
     void modifyChkUse(int cnt) {
         for (int i=0; i<cnt; i++) {
             ServiceTermsRequest request = createRequest(i);
-            when(serviceTermsDao.existsByPoliStatForUpdate(request.getPoli_stat())).thenReturn(true);
+            when(serviceTermsDaoImpl.existsByPoliStatForUpdate(request.getPoli_stat())).thenReturn(true);
             when(formatter.getCurrentDateFormat()).thenReturn(up_date);
             when(formatter.getManagerSeq()).thenReturn(up_user_seq);
 
             ServiceTermsDto dto = createDto(i);
-            when(serviceTermsDao.updateChkUse(dto)).thenReturn(1);
+            when(serviceTermsDaoImpl.updateChkUse(dto)).thenReturn(1);
 
-            assertDoesNotThrow(() -> serviceTermsService.modifyChkUse(request));
+            assertDoesNotThrow(() -> serviceTermsServiceImpl.modifyChkUse(request));
         }
     }
 
@@ -216,9 +217,9 @@ class ServiceTermsServiceImplTest {
     void remove(int cnt) {
         for (int i=0; i<cnt; i++) {
             ServiceTermsRequest request = createRequest(i);
-            when(serviceTermsDao.delete(request.getPoli_stat())).thenReturn(1);
+            when(serviceTermsDaoImpl.delete(request.getPoli_stat())).thenReturn(1);
 
-            assertDoesNotThrow(() -> serviceTermsService.remove(request.getPoli_stat()));
+            assertDoesNotThrow(() -> serviceTermsServiceImpl.remove(request.getPoli_stat()));
         }
     }
 
@@ -226,10 +227,10 @@ class ServiceTermsServiceImplTest {
     @ParameterizedTest
     @ValueSource(ints = {1, 5, 10, 15, 20})
     void removeByCode(int cnt) {
-        when(serviceTermsDao.count()).thenReturn(cnt);
-        when(serviceTermsDao.deleteAll()).thenReturn(cnt);
+        when(serviceTermsDaoImpl.count()).thenReturn(cnt);
+        when(serviceTermsDaoImpl.deleteAll()).thenReturn(cnt);
 
-        assertDoesNotThrow(() -> serviceTermsService.removeAll());
+        assertDoesNotThrow(() -> serviceTermsServiceImpl.removeAll());
     }
 
     // ===================== 예외 처리 테스트 =====================
@@ -237,80 +238,80 @@ class ServiceTermsServiceImplTest {
     @DisplayName("create() -> 중복된 키 값으로 인한 예외 발생")
     void create_중복된_키_값으로_인한_예외_발생() {
         ServiceTermsRequest request = createRequest(1);
-        when(serviceTermsDao.existsByPoliStat(request.getPoli_stat())).thenReturn(true);
-        assertThrows(ServiceTermsAlreadyExistsException.class, () -> serviceTermsService.create(request));
+        when(serviceTermsDaoImpl.existsByPoliStat(request.getPoli_stat())).thenReturn(true);
+        assertThrows(ServiceTermsAlreadyExistsException.class, () -> serviceTermsServiceImpl.create(request));
     }
 
     @Test
     @DisplayName("create() -> DBMS 적용 실패로 인한 예외 발생")
     void create_DBMS_적용_실패로_인한_예외_발생() {
         ServiceTermsRequest request = createRequest(1);
-        when(serviceTermsDao.existsByPoliStat(request.getPoli_stat())).thenReturn(false);
+        when(serviceTermsDaoImpl.existsByPoliStat(request.getPoli_stat())).thenReturn(false);
         when(formatter.getCurrentDateFormat()).thenReturn(reg_date);
         when(formatter.getManagerSeq()).thenReturn(reg_user_seq);
 
         ServiceTermsDto dto = createDto(1);
-        when(serviceTermsDao.insert(dto)).thenReturn(0);
-        assertThrows(NotApplyOnDbmsException.class, () -> serviceTermsService.create(request));
+        when(serviceTermsDaoImpl.insert(dto)).thenReturn(0);
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceTermsServiceImpl.create(request));
     }
 
     @Test
     @DisplayName("readByPoliStat() -> 존재하지 않는 키 값으로 인한 예외 발생")
     void readByPoliStat_존재하지_않는_키_값으로_인한_예외_발생() {
         String poli_stat = "테스트용";
-        when(serviceTermsDao.existsByPoliStat(poli_stat)).thenReturn(false);
-        assertThrows(ServiceTermsNotFoundException.class, () -> serviceTermsService.readByPoliStat(poli_stat));
+        when(serviceTermsDaoImpl.existsByPoliStat(poli_stat)).thenReturn(false);
+        assertThrows(ServiceTermsNotFoundException.class, () -> serviceTermsServiceImpl.readByPoliStat(poli_stat));
     }
 
     @Test
     @DisplayName("modify() -> 존재하지 않는 키 값으로 인한 예외 발생")
     void modify_존재하지_않는_키_값으로_인한_예외_발생() {
         ServiceTermsRequest request = createRequest(1);
-        when(serviceTermsDao.existsByPoliStatForUpdate(request.getPoli_stat())).thenReturn(false);
-        assertThrows(ServiceTermsNotFoundException.class, () -> serviceTermsService.modify(request));
+        when(serviceTermsDaoImpl.existsByPoliStatForUpdate(request.getPoli_stat())).thenReturn(false);
+        assertThrows(ServiceTermsNotFoundException.class, () -> serviceTermsServiceImpl.modify(request));
     }
 
     @Test
     @DisplayName("modify() -> DBMS 적용 실패로 인한 예외 발생")
     void modify_DBMS_적용_실패로_인한_예외_발생() {
         ServiceTermsRequest request = createRequest(1);
-        when(serviceTermsDao.existsByPoliStatForUpdate(request.getPoli_stat())).thenReturn(true);
+        when(serviceTermsDaoImpl.existsByPoliStatForUpdate(request.getPoli_stat())).thenReturn(true);
         when(formatter.getCurrentDateFormat()).thenReturn(up_date);
         when(formatter.getManagerSeq()).thenReturn(up_user_seq);
 
         ServiceTermsDto dto = createDto(1);
-        when(serviceTermsDao.update(dto)).thenReturn(0);
-        assertThrows(NotApplyOnDbmsException.class, () -> serviceTermsService.modify(request));
+        when(serviceTermsDaoImpl.update(dto)).thenReturn(0);
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceTermsServiceImpl.modify(request));
     }
 
     @Test
     @DisplayName("modifyChkUse() -> 존재하지 않는 키 값으로 인한 예외 발생")
     void modifyChkUse_존재하지_않는_키_값으로_인한_예외_발생() {
         ServiceTermsRequest request = createRequest(1);
-        when(serviceTermsDao.existsByPoliStatForUpdate(request.getPoli_stat())).thenReturn(false);
-        assertThrows(ServiceTermsNotFoundException.class, () -> serviceTermsService.modifyChkUse(request));
+        when(serviceTermsDaoImpl.existsByPoliStatForUpdate(request.getPoli_stat())).thenReturn(false);
+        assertThrows(ServiceTermsNotFoundException.class, () -> serviceTermsServiceImpl.modifyChkUse(request));
     }
 
     @Test
     @DisplayName("modifyChkUse() -> DBMS 적용 실패로 인한 예외 발생")
     void modifyChkUse_DBMS_적용_실패로_인한_예외_발생() {
         ServiceTermsRequest request = createRequest(1);
-        when(serviceTermsDao.existsByPoliStatForUpdate(request.getPoli_stat())).thenReturn(true);
+        when(serviceTermsDaoImpl.existsByPoliStatForUpdate(request.getPoli_stat())).thenReturn(true);
         when(formatter.getCurrentDateFormat()).thenReturn(up_date);
         when(formatter.getManagerSeq()).thenReturn(up_user_seq);
 
         ServiceTermsDto dto = createDto(1);
-        when(serviceTermsDao.updateChkUse(dto)).thenReturn(0);
-        assertThrows(NotApplyOnDbmsException.class, () -> serviceTermsService.modifyChkUse(request));
+        when(serviceTermsDaoImpl.updateChkUse(dto)).thenReturn(0);
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceTermsServiceImpl.modifyChkUse(request));
     }
 
 
     @Test
     @DisplayName("removeAll() -> DBMS 적용 실패로 인한 예외 발생")
     void removeAll_DBMS_적용_실패로_인한_예외_발생() {
-        when(serviceTermsDao.count()).thenReturn(10);
-        when(serviceTermsDao.deleteAll()).thenReturn(5);
-        assertThrows(NotApplyOnDbmsException.class, () -> serviceTermsService.removeAll());
+        when(serviceTermsDaoImpl.count()).thenReturn(10);
+        when(serviceTermsDaoImpl.deleteAll()).thenReturn(5);
+        assertThrows(NotApplyOnDbmsException.class, () -> serviceTermsServiceImpl.removeAll());
     }
 
     private ServiceTermsRequest createRequest(int i) {

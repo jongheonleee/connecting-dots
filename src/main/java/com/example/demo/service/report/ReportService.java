@@ -11,7 +11,7 @@ public interface ReportService {
 
     ReportResponse recover(RuntimeException e);
 
-    ReportDetailResponse readReportDetailsBySeq(Integer rno);
+    ReportDetailResponse readReportDetailsByRno(Integer rno);
 
     void modify(ReportRequest request);
 

@@ -10,7 +10,8 @@ import com.example.demo.dto.SearchCondition;
 import com.example.demo.dto.code.CodeDto;
 import com.example.demo.dto.code.CodeRequest;
 import com.example.demo.dto.code.CodeResponse;
-import com.example.demo.repository.code.CommonCodeRepository;
+import com.example.demo.repository.code.impl.CommonCodeDaoImpl;
+import com.example.demo.service.code.impl.CommonCodeServiceImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,18 +29,18 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class CodeServiceImplTest {
 
     @InjectMocks
-    private CommonCodeService codeService;
+    private CommonCodeServiceImpl codeServiceImpl;
 
     @Mock
-    private CommonCodeRepository codeDao;
+    private CommonCodeDaoImpl codeDaoImpl;
 
     @Mock
     private CustomFormatter formatter;
 
     @BeforeEach
     void setUp() {
-        assertNotNull(codeService);
-        assertNotNull(codeDao);
+        assertNotNull(codeServiceImpl);
+        assertNotNull(codeDaoImpl);
         assertNotNull(formatter);
     }
 
@@ -47,8 +48,8 @@ class CodeServiceImplTest {
     @ParameterizedTest
     @ValueSource(ints = {1, 5, 10, 15, 20})
     void 카운팅_테스트(int cnt) {
-        when(codeDao.count()).thenReturn(cnt);
-        int totalCnt = codeService.count();
+        when(codeDaoImpl.count()).thenReturn(cnt);
+        int totalCnt = codeServiceImpl.count();
         assertEquals(cnt, totalCnt);
     }
 
@@ -62,11 +63,11 @@ class CodeServiceImplTest {
             new CodeDto(2, 2, "102", "테스트용", "Y", "100", "2025/01/05", 1, "2025/01/05", 1),
             new CodeDto(3, 3, "103", "테스트용", "Y", "100", "2025/01/05", 1, "2025/01/05", 1)
         );
-        when(codeDao.selectByTopCode(top_code)).thenReturn(dummy);
+        when(codeDaoImpl.selectByTopCode(top_code)).thenReturn(dummy);
 
         // when
         List<CodeResponse> expectedResponses = dummy.stream().map(CodeResponse::new).toList();
-        var responses = codeService.readByTopCode(top_code);
+        var responses = codeServiceImpl.readByTopCode(top_code);
 
         // then
         assertNotNull(responses);
@@ -86,11 +87,11 @@ class CodeServiceImplTest {
         // given
         String code = "100";
         CodeDto dto = new CodeDto(1, 1, code, "테스트용", "Y", "100", "2025/01/05", 1, "2025/01/05", 1);
-        when(codeDao.selectByCode(code)).thenReturn(dto);
+        when(codeDaoImpl.selectByCode(code)).thenReturn(dto);
 
         // when
         CodeResponse expectedResponse = new CodeResponse(dto);
-        var response = codeService.readByCode(code);
+        var response = codeServiceImpl.readByCode(code);
 
         // then
         assertNotNull(response);
@@ -106,11 +107,11 @@ class CodeServiceImplTest {
         // given
         String code = "100";
         CodeDto dto = new CodeDto(1, 1, code, "테스트용", "Y", "100", "2025/01/05", 1, "2025/01/05", 1);
-        when(codeDao.selectBySeq(dto.getSeq())).thenReturn(dto);
+        when(codeDaoImpl.selectBySeq(dto.getSeq())).thenReturn(dto);
 
         // when
         CodeResponse expectedResponse = new CodeResponse(dto);
-        var response = codeService.readBySeq(dto.getSeq());
+        var response = codeServiceImpl.readBySeq(dto.getSeq());
 
         // then
         assertNotNull(response);
@@ -129,11 +130,11 @@ class CodeServiceImplTest {
             new CodeDto(2, 2, "102", "테스트용", "Y", "100", "2025/01/05", 1, "2025/01/05", 1),
             new CodeDto(3, 3, "103", "테스트용", "Y", "100", "2025/01/05", 1, "2025/01/05", 1)
         );
-        when(codeDao.selectAll()).thenReturn(dummy);
+        when(codeDaoImpl.selectAll()).thenReturn(dummy);
 
         // when
         List<CodeResponse> expectedResponses = dummy.stream().map(CodeResponse::new).toList();
-        var responses = codeService.readAll();
+        var responses = codeServiceImpl.readAll();
 
         // then
         assertNotNull(responses);
@@ -159,11 +160,11 @@ class CodeServiceImplTest {
 
         when(formatter.getCurrentDateFormat()).thenReturn(currentDateFormat);
         when(formatter.getManagerSeq()).thenReturn(managerSeq);
-        when(codeDao.insert(dto)).thenReturn(1);
-        when(codeDao.selectBySeq(dto.getSeq())).thenReturn(dto);
+        when(codeDaoImpl.insert(dto)).thenReturn(1);
+        when(codeDaoImpl.selectBySeq(dto.getSeq())).thenReturn(dto);
 
         // when
-        assertDoesNotThrow(() -> codeService.create(request));
+        assertDoesNotThrow(() -> codeServiceImpl.create(request));
     }
 
     @Test
@@ -178,10 +179,10 @@ class CodeServiceImplTest {
 
         when(formatter.getCurrentDateFormat()).thenReturn(currentDateFormat);
         when(formatter.getManagerSeq()).thenReturn(managerSeq);
-        when(codeDao.update(dto)).thenReturn(1);
+        when(codeDaoImpl.update(dto)).thenReturn(1);
 
         // when
-        assertDoesNotThrow(() -> codeService.modify(request));
+        assertDoesNotThrow(() -> codeServiceImpl.modify(request));
     }
 
     @Test
@@ -197,10 +198,10 @@ class CodeServiceImplTest {
 
         when(formatter.getCurrentDateFormat()).thenReturn(currentDateFormat);
         when(formatter.getManagerSeq()).thenReturn(managerSeq);
-        when(codeDao.updateUse(dto)).thenReturn(1);
+        when(codeDaoImpl.updateUse(dto)).thenReturn(1);
 
         // when
-        assertDoesNotThrow(() -> codeService.modifyUse(request));
+        assertDoesNotThrow(() -> codeServiceImpl.modifyUse(request));
     }
 
     @Test
@@ -208,10 +209,10 @@ class CodeServiceImplTest {
     void 레벨로_삭제_테스트() {
         // given
         int level = 1;
-        when(codeDao.deleteByLevel(level)).thenReturn(1);
+        when(codeDaoImpl.deleteByLevel(level)).thenReturn(1);
 
         // when
-        assertDoesNotThrow(() -> codeService.removeByLevel(level));
+        assertDoesNotThrow(() -> codeServiceImpl.removeByLevel(level));
     }
 
     @Test
@@ -219,10 +220,10 @@ class CodeServiceImplTest {
     void 코드로_삭제_테스트() {
         // given
         String code = "100";
-        when(codeDao.deleteByCode(code)).thenReturn(1);
+        when(codeDaoImpl.deleteByCode(code)).thenReturn(1);
 
         // when
-        assertDoesNotThrow(() -> codeService.removeByCode(code));
+        assertDoesNotThrow(() -> codeServiceImpl.removeByCode(code));
     }
 
     @Test
@@ -230,10 +231,10 @@ class CodeServiceImplTest {
     void 시퀀스로_삭제_테스트() {
         // given
         int seq = 1;
-        when(codeDao.delete(seq)).thenReturn(1);
+        when(codeDaoImpl.delete(seq)).thenReturn(1);
 
         // when
-        assertDoesNotThrow(() -> codeService.removeBySeq(seq));
+        assertDoesNotThrow(() -> codeServiceImpl.removeBySeq(seq));
     }
 
     @Test
@@ -241,21 +242,21 @@ class CodeServiceImplTest {
     void 코드_삭제_테스트() {
         // given
         int seq = 1;
-        when(codeDao.delete(seq)).thenReturn(1);
+        when(codeDaoImpl.delete(seq)).thenReturn(1);
 
         // when
-        assertDoesNotThrow(() -> codeService.removeBySeq(seq));
+        assertDoesNotThrow(() -> codeServiceImpl.removeBySeq(seq));
     }
 
     @Test
     @DisplayName("코드 모두 삭제 테스트")
     void 코드_모두_삭제_테스트() {
         // given
-        when(codeDao.deleteByLevel(any())).thenReturn(1);
-        when(codeDao.count()).thenReturn(0);
+        when(codeDaoImpl.deleteByLevel(any())).thenReturn(1);
+        when(codeDaoImpl.count()).thenReturn(0);
 
         // when
-        assertDoesNotThrow(() -> codeService.removeAll());
+        assertDoesNotThrow(() -> codeServiceImpl.removeAll());
     }
 
     @Test
@@ -268,11 +269,11 @@ class CodeServiceImplTest {
             new CodeDto(2, 2, "102", "테스트용", "Y", "100", "2025/01/05", 1, "2025/01/05", 1),
             new CodeDto(3, 3, "103", "테스트용", "Y", "100", "2025/01/05", 1, "2025/01/05", 1)
         );
-        when(codeDao.selectBySearchCondition(any())).thenReturn(dummy);
+        when(codeDaoImpl.selectBySearchCondition(any())).thenReturn(dummy);
 
         // when
         List<CodeResponse> expectedResponses = dummy.stream().map(CodeResponse::new).toList();
-        PageResponse<CodeResponse> responses = codeService.readBySearchCondition(sc);
+        PageResponse<CodeResponse> responses = codeServiceImpl.readBySearchCondition(sc);
 
         // then
         assertNotNull(responses);

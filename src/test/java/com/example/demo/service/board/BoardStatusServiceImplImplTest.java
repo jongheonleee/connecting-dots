@@ -3,9 +3,8 @@ package com.example.demo.service.board;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-import com.example.demo.repository.board.BoardRepository;
-import com.example.demo.repository.board.BoardStatusRepository;
-import com.example.demo.service.code.CommonCodeService;
+import com.example.demo.repository.board.impl.BoardDaoImpl;
+import com.example.demo.repository.board.impl.BoardStatusDaoImpl;
 import com.example.demo.dto.board.BoardStatusDto;
 import com.example.demo.dto.board.BoardStatusRequest;
 import com.example.demo.dto.board.BoardStatusResponse;
@@ -14,6 +13,8 @@ import com.example.demo.global.error.exception.business.board.BoardNotFoundExcep
 import com.example.demo.global.error.exception.business.board.BoardStatusNotFoundException;
 import com.example.demo.global.error.exception.business.code.CodeNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
+import com.example.demo.service.board.impl.BoardStatusServiceImpl;
+import com.example.demo.service.code.impl.CommonCodeServiceImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,22 +31,22 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class BoardStatusServiceImplTest {
+class BoardStatusServiceImplImplTest {
 
     @InjectMocks
-    private BoardStatusService boardStatusService;
+    private BoardStatusServiceImpl sut;
 
     @Mock
-    private BoardStatusRepository boardStatusDao;
+    private BoardStatusDaoImpl boardStatusDaoImpl;
 
     @Mock
     private CustomFormatter formatter;
 
     @Mock
-    private CommonCodeService commonCodeService;
+    private CommonCodeServiceImpl commonCodeServiceImpl;
 
     @Mock
-    private BoardRepository boardDao;
+    private BoardDaoImpl boardDaoImpl;
 
     private final String reg_date = "2025-01-17";
     private final Integer reg_user_seq = 1;
@@ -62,11 +63,11 @@ class BoardStatusServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        assertNotNull(boardStatusService);
-        assertNotNull(boardStatusDao);
+        assertNotNull(sut);
+        assertNotNull(boardStatusDaoImpl);
         assertNotNull(formatter);
-        assertNotNull(commonCodeService);
-        assertNotNull(boardDao);
+        assertNotNull(commonCodeServiceImpl);
+        assertNotNull(boardDaoImpl);
 
     }
 
@@ -85,15 +86,15 @@ class BoardStatusServiceImplTest {
             when(formatter.getCurrentDateFormat()).thenReturn(reg_date);
             when(formatter.plusDateFormat(request.getDays())).thenReturn(appl_end);
 
-            when(boardDao.existsByBno(request.getBno())).thenReturn(true);
+            when(boardDaoImpl.existsByBno(request.getBno())).thenReturn(true);
 
             BoardStatusDto dto = createBoardStatusDto(request);
-            when(boardStatusDao.insert(dto)).thenReturn(1);
+            when(boardStatusDaoImpl.insert(dto)).thenReturn(1);
 
             BoardStatusResponse expected = createResponse(dto);
             // When
 
-            BoardStatusResponse actual = boardStatusService.create(request);
+            BoardStatusResponse actual = sut.create(request);
 
             // Then
             assertEquals(expected.getBno(), actual.getBno());
@@ -107,7 +108,7 @@ class BoardStatusServiceImplTest {
         @CsvSource({"1, 1, 30", "2, 1, 30", "3, 1, 30", "4, 1, 30", "5, 1, 30"})
         void It_fail_register(String wrongStatCode, Integer bno, Integer days) {
             BoardStatusRequest request = createRequest(wrongStatCode, bno, days);
-            assertThrows(CodeNotFoundException.class, () -> boardStatusService.create(request));
+            assertThrows(CodeNotFoundException.class, () -> sut.create(request));
         }
 
         @DisplayName("존재하지 않는 bno 전달로 인한 게시판 상태 등록 처리 실패 테스트")
@@ -115,8 +116,8 @@ class BoardStatusServiceImplTest {
         @CsvSource({"3001, 1, 30", "3002, 1, 30", "3003, 1, 30", "3004, 1, 30", "3005, 1, 30"})
         void It_fail_register_bno(String statCode, Integer wrongBno, Integer days) {
             BoardStatusRequest request = createRequest(statCode, wrongBno, days);
-            when(boardDao.existsByBno(request.getBno())).thenReturn(false);
-            assertThrows(BoardNotFoundException.class, () -> boardStatusService.create(request));
+            when(boardDaoImpl.existsByBno(request.getBno())).thenReturn(false);
+            assertThrows(BoardNotFoundException.class, () -> sut.create(request));
         }
 
         @DisplayName("DBMS 적용 불가로 인한 게시판 상태 등록 처리 실패 테스트")
@@ -128,12 +129,12 @@ class BoardStatusServiceImplTest {
             when(formatter.getCurrentDateFormat()).thenReturn(reg_date);
             when(formatter.plusDateFormat(request.getDays())).thenReturn(appl_end);
 
-            when(boardDao.existsByBno(request.getBno())).thenReturn(true);
+            when(boardDaoImpl.existsByBno(request.getBno())).thenReturn(true);
 
             BoardStatusDto dto = createBoardStatusDto(request);
-            when(boardStatusDao.insert(dto)).thenReturn(0);
+            when(boardStatusDaoImpl.insert(dto)).thenReturn(0);
 
-            assertThrows(NotApplyOnDbmsException.class, () -> boardStatusService.create(request));
+            assertThrows(NotApplyOnDbmsException.class, () -> sut.create(request));
         }
 
     }
@@ -156,19 +157,19 @@ class BoardStatusServiceImplTest {
             when(formatter.getCurrentDateFormat()).thenReturn(up_date);
             when(formatter.getManagerSeq()).thenReturn(up_user_seq);
 
-            when(boardStatusDao.existsByBnoForUpdate(request.getBno())).thenReturn(true);
-            when(boardStatusDao.selectByBnoAtPresent(request.getBno())).thenReturn(currDto);
+            when(boardStatusDaoImpl.existsByBnoForUpdate(request.getBno())).thenReturn(true);
+            when(boardStatusDaoImpl.selectByBnoAtPresent(request.getBno())).thenReturn(currDto);
 
             currDto.setAppl_end(apple_update_date);
             currDto.setUp_date(up_date);
             currDto.setUp_user_seq(up_user_seq);
 
-            when(boardStatusDao.update(currDto)).thenReturn(1);
-            when(boardStatusDao.insert(newDto)).thenReturn(1);
+            when(boardStatusDaoImpl.update(currDto)).thenReturn(1);
+            when(boardStatusDaoImpl.insert(newDto)).thenReturn(1);
 
             // When
             // Then
-            assertDoesNotThrow(() -> boardStatusService.renewState(request));
+            assertDoesNotThrow(() -> sut.renewState(request));
         }
 
         @DisplayName("게시판 상태 수정 처리 실패 테스트 - 존재하지 않는 bno")
@@ -177,10 +178,10 @@ class BoardStatusServiceImplTest {
         void It_fail_modify(String statCode, Integer bno, Integer days) {
             // Given
             BoardStatusRequest request = createRequest(statCode, bno, days);
-            when(boardStatusDao.existsByBnoForUpdate(request.getBno())).thenReturn(false);
+            when(boardStatusDaoImpl.existsByBnoForUpdate(request.getBno())).thenReturn(false);
             // When
             // Then
-            assertThrows(BoardStatusNotFoundException.class, () -> boardStatusService.renewState(request));
+            assertThrows(BoardStatusNotFoundException.class, () -> sut.renewState(request));
         }
 
         @DisplayName("게시판 상태 수정 처리 실패 테스트 - DBMS 적용 불가")
@@ -197,19 +198,19 @@ class BoardStatusServiceImplTest {
             when(formatter.getCurrentDateFormat()).thenReturn(up_date);
             when(formatter.getManagerSeq()).thenReturn(up_user_seq);
 
-            when(boardStatusDao.existsByBnoForUpdate(request.getBno())).thenReturn(true);
-            when(boardStatusDao.selectByBnoAtPresent(request.getBno())).thenReturn(currDto);
+            when(boardStatusDaoImpl.existsByBnoForUpdate(request.getBno())).thenReturn(true);
+            when(boardStatusDaoImpl.selectByBnoAtPresent(request.getBno())).thenReturn(currDto);
 
             currDto.setAppl_end(apple_update_date);
             currDto.setUp_date(up_date);
             currDto.setUp_user_seq(up_user_seq);
 
-            when(boardStatusDao.update(currDto)).thenReturn(1);
-            when(boardStatusDao.insert(newDto)).thenReturn(0);
+            when(boardStatusDaoImpl.update(currDto)).thenReturn(1);
+            when(boardStatusDaoImpl.insert(newDto)).thenReturn(0);
 
             // When
             // Then
-            assertThrows(NotApplyOnDbmsException.class, () -> boardStatusService.renewState(request));
+            assertThrows(NotApplyOnDbmsException.class, () -> sut.renewState(request));
         }
 
         @DisplayName("게시판 상태 수정 처리 실패 테스트 - DBMS 적용 실패")
@@ -224,13 +225,13 @@ class BoardStatusServiceImplTest {
             when(formatter.getCurrentDateFormat()).thenReturn(up_date);
             when(formatter.getManagerSeq()).thenReturn(up_user_seq);
 
-            when(boardStatusDao.existsByBnoForUpdate(request.getBno())).thenReturn(true);
-            when(boardStatusDao.selectByBnoAtPresent(request.getBno())).thenReturn(currDto);
-            when(boardStatusDao.update(currDto)).thenReturn(0);
+            when(boardStatusDaoImpl.existsByBnoForUpdate(request.getBno())).thenReturn(true);
+            when(boardStatusDaoImpl.selectByBnoAtPresent(request.getBno())).thenReturn(currDto);
+            when(boardStatusDaoImpl.update(currDto)).thenReturn(0);
 
             // When
             // Then
-            assertThrows(NotApplyOnDbmsException.class, () -> boardStatusService.renewState(request));
+            assertThrows(NotApplyOnDbmsException.class, () -> sut.renewState(request));
         }
 
         @DisplayName("게시판 상태 수정 처리 실패 테스트 - 존재하지 않는 게시글 상태 코드")
@@ -246,13 +247,13 @@ class BoardStatusServiceImplTest {
             when(formatter.getCurrentDateFormat()).thenReturn(up_date);
             when(formatter.getManagerSeq()).thenReturn(up_user_seq);
 
-            when(boardStatusDao.existsByBnoForUpdate(request.getBno())).thenReturn(true);
-            when(boardStatusDao.selectByBnoAtPresent(request.getBno())).thenReturn(currDto);
-            when(boardStatusDao.update(currDto)).thenReturn(1);
+            when(boardStatusDaoImpl.existsByBnoForUpdate(request.getBno())).thenReturn(true);
+            when(boardStatusDaoImpl.selectByBnoAtPresent(request.getBno())).thenReturn(currDto);
+            when(boardStatusDaoImpl.update(currDto)).thenReturn(1);
 
             // When
             // Then
-            assertThrows(CodeNotFoundException.class, () -> boardStatusService.renewState(request));
+            assertThrows(CodeNotFoundException.class, () -> sut.renewState(request));
         }
 
     }
@@ -267,9 +268,9 @@ class BoardStatusServiceImplTest {
             // Given
             Integer seq = 1;
             // When
-            when(boardStatusDao.deleteBySeq(seq)).thenReturn(1);
+            when(boardStatusDaoImpl.deleteBySeq(seq)).thenReturn(1);
             // Then
-            assertDoesNotThrow(() -> boardStatusService.removeBySeq(seq));
+            assertDoesNotThrow(() -> sut.removeBySeq(seq));
         }
 
         @Test
@@ -278,9 +279,9 @@ class BoardStatusServiceImplTest {
             // Given
             Integer seq = 1;
             // When
-            when(boardStatusDao.deleteBySeq(seq)).thenReturn(0);
+            when(boardStatusDaoImpl.deleteBySeq(seq)).thenReturn(0);
             // Then
-            assertThrows(NotApplyOnDbmsException.class, () -> boardStatusService.removeBySeq(seq));
+            assertThrows(NotApplyOnDbmsException.class, () -> sut.removeBySeq(seq));
         }
 
         @Test
@@ -289,11 +290,11 @@ class BoardStatusServiceImplTest {
             // Given
             Integer bno = 1;
             // When
-            when(boardDao.existsByBno(bno)).thenReturn(true);
-            when(boardStatusDao.countByBno(bno)).thenReturn(1);
-            when(boardStatusDao.deleteByBno(bno)).thenReturn(1);
+            when(boardDaoImpl.existsByBno(bno)).thenReturn(true);
+            when(boardStatusDaoImpl.countByBno(bno)).thenReturn(1);
+            when(boardStatusDaoImpl.deleteByBno(bno)).thenReturn(1);
             // Then
-            assertDoesNotThrow(() -> boardStatusService.removeByBno(bno));
+            assertDoesNotThrow(() -> sut.removeByBno(bno));
         }
 
         @Test
@@ -302,11 +303,11 @@ class BoardStatusServiceImplTest {
             // Given
             Integer bno = 1;
             // When
-            when(boardDao.existsByBno(bno)).thenReturn(true);
-            when(boardStatusDao.countByBno(bno)).thenReturn(1);
-            when(boardStatusDao.deleteByBno(bno)).thenReturn(0);
+            when(boardDaoImpl.existsByBno(bno)).thenReturn(true);
+            when(boardStatusDaoImpl.countByBno(bno)).thenReturn(1);
+            when(boardStatusDaoImpl.deleteByBno(bno)).thenReturn(0);
             // Then
-            assertThrows(NotApplyOnDbmsException.class, () -> boardStatusService.removeByBno(bno));
+            assertThrows(NotApplyOnDbmsException.class, () -> sut.removeByBno(bno));
         }
 
         @Test
@@ -314,10 +315,10 @@ class BoardStatusServiceImplTest {
         void It_success_delete_all() {
             // Given
             // When
-            when(boardStatusDao.count()).thenReturn(1);
-            when(boardStatusDao.deleteAll()).thenReturn(1);
+            when(boardStatusDaoImpl.count()).thenReturn(1);
+            when(boardStatusDaoImpl.deleteAll()).thenReturn(1);
             // Then
-            assertDoesNotThrow(() -> boardStatusService.removeAll());
+            assertDoesNotThrow(() -> sut.removeAll());
         }
 
         @Test
@@ -325,10 +326,10 @@ class BoardStatusServiceImplTest {
         void It_fail_delete_all() {
             // Given
             // When
-            when(boardStatusDao.count()).thenReturn(1);
-            when(boardStatusDao.deleteAll()).thenReturn(0);
+            when(boardStatusDaoImpl.count()).thenReturn(1);
+            when(boardStatusDaoImpl.deleteAll()).thenReturn(0);
             // Then
-            assertThrows(NotApplyOnDbmsException.class, () -> boardStatusService.removeAll());
+            assertThrows(NotApplyOnDbmsException.class, () -> sut.removeAll());
         }
 
     }
@@ -344,10 +345,10 @@ class BoardStatusServiceImplTest {
             BoardStatusRequest request = createRequest("3001", 1, 30);
             BoardStatusDto dto = createBoardStatusDto(request);
 
-            when(boardStatusDao.existsBySeq(seq)).thenReturn(true);
-            when(boardStatusDao.selectBySeq(seq)).thenReturn(dto);
+            when(boardStatusDaoImpl.existsBySeq(seq)).thenReturn(true);
+            when(boardStatusDaoImpl.selectBySeq(seq)).thenReturn(dto);
 
-            BoardStatusResponse response = boardStatusService.readBySeq(seq);
+            BoardStatusResponse response = sut.readBySeq(seq);
 
             assertNotNull(response);
 
@@ -366,11 +367,11 @@ class BoardStatusServiceImplTest {
             Integer seq = 1;
 
             // When
-            when(boardStatusDao.existsBySeq(seq)).thenReturn(false);
+            when(boardStatusDaoImpl.existsBySeq(seq)).thenReturn(false);
 
             // Then
             assertThrows(BoardStatusNotFoundException.class,
-                    () -> boardStatusService.readBySeq(seq));
+                    () -> sut.readBySeq(seq));
         }
 
         @ParameterizedTest
@@ -388,11 +389,11 @@ class BoardStatusServiceImplTest {
             }
 
             // When
-            when(boardDao.existsByBno(bno)).thenReturn(true);
-            when(boardStatusDao.selectByBno(bno)).thenReturn(dummy);
+            when(boardDaoImpl.existsByBno(bno)).thenReturn(true);
+            when(boardStatusDaoImpl.selectByBno(bno)).thenReturn(dummy);
 
             // Then
-            List<BoardStatusResponse> result = boardStatusService.readByBno(bno);
+            List<BoardStatusResponse> result = sut.readByBno(bno);
 
             assertEquals(cnt, result.size());
 
@@ -424,10 +425,10 @@ class BoardStatusServiceImplTest {
             }
 
             // When
-            when(boardStatusDao.selectAll()).thenReturn(dummy);
+            when(boardStatusDaoImpl.selectAll()).thenReturn(dummy);
 
             // Then
-            List<BoardStatusResponse> result = boardStatusService.readAll();
+            List<BoardStatusResponse> result = sut.readAll();
 
             assertEquals(cnt, result.size());
 

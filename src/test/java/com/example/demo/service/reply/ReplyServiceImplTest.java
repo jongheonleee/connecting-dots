@@ -10,7 +10,9 @@ import com.example.demo.dto.reply.ReplyRequest;
 import com.example.demo.dto.reply.ReplyResponse;
 import com.example.demo.global.error.exception.business.reply.ReplyNotFoundException;
 import com.example.demo.global.error.exception.technology.database.NotApplyOnDbmsException;
-import com.example.demo.repository.reply.ReplyRepository;
+import com.example.demo.repository.reply.impl.ReplyDaoImpl;
+import com.example.demo.service.reply.impl.ReplyChangeHistoryServiceImpl;
+import com.example.demo.service.reply.impl.ReplyServiceImpl;
 import com.example.demo.utils.CustomFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,13 +28,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ReplyServiceImplTest {
 
     @InjectMocks
-    private ReplyService sut;
+    private ReplyServiceImpl sut;
 
     @Mock
-    private ReplyRepository replyDao;
+    private ReplyDaoImpl replyDaoImpl;
 
     @Mock
-    private ReplyChangeHistoryService replyChangeHistoryService;
+    private ReplyChangeHistoryServiceImpl replyChangeHistoryServiceImpl;
 
     @Mock
     private CustomFormatter formatter;
@@ -66,7 +68,7 @@ class ReplyServiceImplTest {
             // when
             when(formatter.getCurrentDateFormat()).thenReturn("2021-08-01 00:00:00");
             when(formatter.getManagerSeq()).thenReturn(1);
-            when(replyDao.insert(any())).thenReturn(1);
+            when(replyDaoImpl.insert(any())).thenReturn(1);
 
             // then
             ReplyResponse actual = sut.create(request);
@@ -97,7 +99,7 @@ class ReplyServiceImplTest {
             // when
             when(formatter.getCurrentDateFormat()).thenReturn("2021-08-01 00:00:00");
             when(formatter.getManagerSeq()).thenReturn(1);
-            when(replyDao.insert(any())).thenReturn(0);
+            when(replyDaoImpl.insert(any())).thenReturn(0);
 
             // then
             assertThrows(NotApplyOnDbmsException.class, () -> sut.create(request));
@@ -141,12 +143,12 @@ class ReplyServiceImplTest {
                                                                            .comt(null)
                                                                            .build();
             // when
-            when(replyDao.existsByRcnoForUpdate(any())).thenReturn(true);
+            when(replyDaoImpl.existsByRcnoForUpdate(any())).thenReturn(true);
             when(formatter.getCurrentDateFormat()).thenReturn("2021-08-01 00:00:00");
             when(formatter.getManagerSeq()).thenReturn(1);
-            when(replyDao.select(request.getRcno())).thenReturn(dto);
-            when(replyChangeHistoryService.create(any())).thenReturn(replyChangeHistoryResponse);
-            when(replyDao.update(any())).thenReturn(1);
+            when(replyDaoImpl.select(request.getRcno())).thenReturn(dto);
+            when(replyChangeHistoryServiceImpl.create(any())).thenReturn(replyChangeHistoryResponse);
+            when(replyDaoImpl.update(any())).thenReturn(1);
 
             // then
             assertDoesNotThrow(() -> sut.modify(request));
@@ -165,7 +167,7 @@ class ReplyServiceImplTest {
                     .user_seq(1)
                     .build();
             // when
-            when(replyDao.existsByRcnoForUpdate(any())).thenReturn(false);
+            when(replyDaoImpl.existsByRcnoForUpdate(any())).thenReturn(false);
 
             // then
             assertThrows(ReplyNotFoundException.class, () -> sut.modify(request));
@@ -202,12 +204,12 @@ class ReplyServiceImplTest {
                     .comt(null)
                     .build();
             // when
-            when(replyDao.existsByRcnoForUpdate(any())).thenReturn(true);
+            when(replyDaoImpl.existsByRcnoForUpdate(any())).thenReturn(true);
             when(formatter.getCurrentDateFormat()).thenReturn("2021-08-01 00:00:00");
             when(formatter.getManagerSeq()).thenReturn(1);
-            when(replyDao.select(request.getRcno())).thenReturn(dto);
-            when(replyChangeHistoryService.create(any())).thenReturn(replyChangeHistoryResponse);
-            when(replyDao.update(any())).thenReturn(0);
+            when(replyDaoImpl.select(request.getRcno())).thenReturn(dto);
+            when(replyChangeHistoryServiceImpl.create(any())).thenReturn(replyChangeHistoryResponse);
+            when(replyDaoImpl.update(any())).thenReturn(0);
 
             // then
             assertThrows(NotApplyOnDbmsException.class, () -> sut.modify(request));
@@ -223,7 +225,7 @@ class ReplyServiceImplTest {
         @DisplayName("사용자가 rcno로 특정 대댓글을 삭제한다")
         void it_correctly_work_when_user_deletes_reply_rcno() {
             Integer rcno = 1;
-            when(replyDao.delete(rcno)).thenReturn(1);
+            when(replyDaoImpl.delete(rcno)).thenReturn(1);
             assertDoesNotThrow(() -> sut.remove(rcno));
         }
 
@@ -231,7 +233,7 @@ class ReplyServiceImplTest {
         @DisplayName("DBMS에 정상적으로 적용되지 않는 경우 예외를 발생시킨다")
         void it_throws_exception_when_dbms_not_applied_correctly_rcno() {
             Integer rcno = 1;
-            when(replyDao.delete(rcno)).thenReturn(0);
+            when(replyDaoImpl.delete(rcno)).thenReturn(0);
             assertThrows(NotApplyOnDbmsException.class, () -> sut.remove(rcno));
         }
 
@@ -239,8 +241,8 @@ class ReplyServiceImplTest {
         @DisplayName("사용자가 cno로 특정 댓글에 달려있는 모든 대댓글을 삭제한다")
         void it_correctly_work_when_user_deletes_all_replies_cno() {
             Integer cno = 1;
-            when(replyDao.countByCno(cno)).thenReturn(5);
-            when(replyDao.deleteByCno(cno)).thenReturn(5);
+            when(replyDaoImpl.countByCno(cno)).thenReturn(5);
+            when(replyDaoImpl.deleteByCno(cno)).thenReturn(5);
             assertDoesNotThrow(() -> sut.removeByCno(cno));
         }
 
@@ -248,8 +250,8 @@ class ReplyServiceImplTest {
         @DisplayName("DBMS에 정상적으로 적용되지 않는 경우 예외를 발생시킨다")
         void it_throws_exception_when_dbms_not_applied_correctly_cno() {
             Integer cno = 1;
-            when(replyDao.countByCno(cno)).thenReturn(5);
-            when(replyDao.deleteByCno(cno)).thenReturn(4);
+            when(replyDaoImpl.countByCno(cno)).thenReturn(5);
+            when(replyDaoImpl.deleteByCno(cno)).thenReturn(4);
             assertThrows(NotApplyOnDbmsException.class, () -> sut.removeByCno(cno));
         }
 
@@ -257,8 +259,8 @@ class ReplyServiceImplTest {
         @DisplayName("사용자가 bno로 특정 게시글에 달린 모든 대댓글을 삭제한다")
         void it_correctly_work_when_user_deletes_all_replies_bno() {
             Integer bno = 1;
-            when(replyDao.countByBno(bno)).thenReturn(5);
-            when(replyDao.deleteByBno(bno)).thenReturn(5);
+            when(replyDaoImpl.countByBno(bno)).thenReturn(5);
+            when(replyDaoImpl.deleteByBno(bno)).thenReturn(5);
             assertDoesNotThrow(() -> sut.removeByBno(bno));
         }
 
@@ -266,24 +268,24 @@ class ReplyServiceImplTest {
         @DisplayName("DBMS에 정상적으로 적용되지 않는 경우 예외를 발생시킨다")
         void it_throws_exception_when_dbms_not_applied_correctly_bno() {
             Integer bno = 1;
-            when(replyDao.deleteByBno(bno)).thenReturn(5);
-            when(replyDao.deleteByBno(bno)).thenReturn(4);
+            when(replyDaoImpl.deleteByBno(bno)).thenReturn(5);
+            when(replyDaoImpl.deleteByBno(bno)).thenReturn(4);
             assertThrows(NotApplyOnDbmsException.class, () -> sut.removeByBno(bno));
         }
 
         @Test
         @DisplayName("사용자가 모든 대댓글을 삭제한다")
         void it_correctly_work_when_user_deletes_all_replies() {
-            when(replyDao.count()).thenReturn(5);
-            when(replyDao.deleteAll()).thenReturn(5);
+            when(replyDaoImpl.count()).thenReturn(5);
+            when(replyDaoImpl.deleteAll()).thenReturn(5);
             assertDoesNotThrow(() -> sut.removeAll());
         }
 
         @Test
         @DisplayName("DBMS에 정상적으로 적용되지 않는 경우 예외를 발생시킨다")
         void it_throws_exception_when_dbms_not_applied_correctly_all() {
-            when(replyDao.count()).thenReturn(5);
-            when(replyDao.deleteAll()).thenReturn(4);
+            when(replyDaoImpl.count()).thenReturn(5);
+            when(replyDaoImpl.deleteAll()).thenReturn(4);
             assertThrows(NotApplyOnDbmsException.class, () -> sut.removeAll());
         }
 
@@ -305,7 +307,7 @@ class ReplyServiceImplTest {
                                    .writer("테스트용 유저")
                                    .user_seq(1)
                                    .build();
-            when(replyDao.select(rcno)).thenReturn(dto);
+            when(replyDaoImpl.select(rcno)).thenReturn(dto);
             ReplyResponse expected = ReplyResponse.builder()
                                                   .rcno(1)
                                                   .cno(1)
@@ -316,7 +318,7 @@ class ReplyServiceImplTest {
                                                   .build();
 
 
-            when(replyDao.select(rcno)).thenReturn(dto);
+            when(replyDaoImpl.select(rcno)).thenReturn(dto);
 
             ReplyResponse actual = sut.readByRcno(rcno);
 
@@ -334,7 +336,7 @@ class ReplyServiceImplTest {
         @DisplayName("사용자가 rcno로 특정 대댓글을 조회할 때 대댓글이 존재하지 않는 경우 예외를 발생시킨다.")
         void it_throws_exception_when_reply_doesnt_exists_rcno() {
             Integer rcno = 1;
-            when(replyDao.select(rcno)).thenReturn(null);
+            when(replyDaoImpl.select(rcno)).thenReturn(null);
             assertThrows(ReplyNotFoundException.class, () -> sut.readByRcno(rcno));
         }
 
@@ -351,7 +353,7 @@ class ReplyServiceImplTest {
                 expected.add(response);
             }
 
-            when(replyDao.selectByCno(cno)).thenReturn(dummy);
+            when(replyDaoImpl.selectByCno(cno)).thenReturn(dummy);
             List<ReplyResponse> actual = sut.readByCno(cno);
 
             assertNotNull(actual);
@@ -370,7 +372,7 @@ class ReplyServiceImplTest {
                 expected.add(response);
             }
 
-            when(replyDao.selectAll()).thenReturn(dummy);
+            when(replyDaoImpl.selectAll()).thenReturn(dummy);
             List<ReplyResponse> actual = sut.readAll();
 
             assertNotNull(actual);
