@@ -23,6 +23,7 @@ import com.example.demo.repository.report.ReportRepository;
 import com.example.demo.service.report.ReportCategoryService;
 import com.example.demo.service.report.ReportChangeHistoryService;
 import com.example.demo.service.report.ReportProcessDetailsService;
+import com.example.demo.service.report.ReportService;
 import com.example.demo.utils.CustomFormatter;
 import java.sql.SQLSyntaxErrorException;
 import lombok.RequiredArgsConstructor;
@@ -42,10 +43,19 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ReportServiceImpl {
+public class ReportServiceImpl implements ReportService {
 
-    private static final int MAX_RETRY = 10;
-    private static final int RETRY_DELAY = 5_000;
+    /**
+     * 추가 구현 목록
+     *
+     * - 1. removeAllForRemoveUser : 회원 탈퇴 시 해당 회원의 모든 리포트 삭제
+     * - 2. readMainReportOnAdmin : 관리자가 메인 페이지에서 보는 리포트 리스트
+     * - 3. readMainReportForUser : 회원이 메인 페이지에서 보는 리포트 리스트
+     *
+     */
+
+    private static final Integer MAX_RETRY = 10;
+    private static final Integer RETRY_DELAY = 5_000;
 
 
     //    private final UserService userService; - 추후에 추가해야 할 서비스 오브젝트
@@ -58,6 +68,7 @@ public class ReportServiceImpl {
     private final CustomFormatter formatter;
 
 
+    @Override
     @Retryable(
             value = { // exclude 외의 런타임 예외는 재시도 복구 처리
                     RuntimeException.class
@@ -81,6 +92,7 @@ public class ReportServiceImpl {
         return dto.toResponse();
     }
 
+    @Override
     @Recover
     public ReportResponse recover(final RuntimeException e) {
         log.error("[REPORT] 리포트 예외 복구를 위해 재시도를 했지만 실패했습니다. 최대 재시도 횟수 : {}, 재시도 간격 : {}ms", MAX_RETRY, RETRY_DELAY);
@@ -88,6 +100,7 @@ public class ReportServiceImpl {
         throw new RetryFailedException();
     }
 
+    @Override
     @Transactional(readOnly = true)
     public ReportDetailResponse readReportDetailsBySeq(final Integer rno) {
         var foundReport = reportRepository.selectByRno(rno);
@@ -101,6 +114,7 @@ public class ReportServiceImpl {
         return ReportDetailResponse.of(foundReport, foundReportCategory, foundCurrentReportProcessDetails);
     }
 
+    @Override
     @Transactional(
             rollbackFor = Exception.class,
             propagation = Propagation.REQUIRED
@@ -119,11 +133,12 @@ public class ReportServiceImpl {
 
 
 
+    @Override
     @Transactional(
             rollbackFor = Exception.class,
             propagation = Propagation.REQUIRED
     )
-    public void removeBySeq(final Integer rno) {
+    public void removeByRno(final Integer rno) {
         var found = reportRepository.selectByRno(rno);
         // 신고자의 시퀀스와 현재 회원의 시퀀스 비교 -> true/false; 추후에 개발할 예정
 
@@ -133,16 +148,18 @@ public class ReportServiceImpl {
         }
 
 
-        reportChangeHistoryService.removeBySeq(rno);
+        reportChangeHistoryService.removeByRno(rno);
         reportProcessDetailsService.removeByRno(rno);
         checkApplied(1, reportRepository.delete(rno));
     }
 
     // 추후에 개발할 내용 [ ]
+    @Override
     public void removeAllForUserLeave(final Integer userSeq) {
 
     }
 
+    @Override
     @Transactional(
             rollbackFor = Exception.class,
             propagation = Propagation.REQUIRED

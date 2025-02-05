@@ -404,7 +404,7 @@ class ReportServiceImplTest {
 
 
             // then
-            assertThrows(ReportAlreadyProcessedException.class, () -> sut.removeBySeq(rno));
+            assertThrows(ReportAlreadyProcessedException.class, () -> sut.removeByRno(rno));
         }
 
         @Test
@@ -418,10 +418,10 @@ class ReportServiceImplTest {
             when(reportDaoImpl.selectByRno(rno)).thenReturn(dto);
             // 신고자의 시퀀스와 현재 회원의 시퀀스를 비교함 -> 이 과정에서 true 반환
             when(reportProcessDetailsServiceImpl.canChangeReport(rno)).thenReturn(true);
-            doThrow(RuntimeException.class).when(reportChangeHistoryServiceImpl).removeBySeq(rno);
+            doThrow(RuntimeException.class).when(reportChangeHistoryServiceImpl).removeByRno(rno);
 
             // then
-            assertThrows(RuntimeException.class, () -> sut.removeBySeq(rno));
+            assertThrows(RuntimeException.class, () -> sut.removeByRno(rno));
         }
 
         @Test
@@ -435,11 +435,11 @@ class ReportServiceImplTest {
             when(reportDaoImpl.selectByRno(rno)).thenReturn(dto);
             // 신고자의 시퀀스와 현재 회원의 시퀀스를 비교함 -> 이 과정에서 true 반환
             when(reportProcessDetailsServiceImpl.canChangeReport(rno)).thenReturn(true);
-            doNothing().when(reportChangeHistoryServiceImpl).removeBySeq(rno);
+            doNothing().when(reportChangeHistoryServiceImpl).removeByRno(rno);
             doThrow(RuntimeException.class).when(reportProcessDetailsServiceImpl).removeByRno(rno);
 
             // then
-            assertThrows(RuntimeException.class, () -> sut.removeBySeq(rno));
+            assertThrows(RuntimeException.class, () -> sut.removeByRno(rno));
         }
 
         @Test
@@ -453,12 +453,12 @@ class ReportServiceImplTest {
             when(reportDaoImpl.selectByRno(rno)).thenReturn(dto);
             // 신고자의 시퀀스와 현재 회원의 시퀀스를 비교함 -> 이 과정에서 true 반환
             when(reportProcessDetailsServiceImpl.canChangeReport(rno)).thenReturn(true);
-            doNothing().when(reportChangeHistoryServiceImpl).removeBySeq(rno);
+            doNothing().when(reportChangeHistoryServiceImpl).removeByRno(rno);
             doNothing().when(reportProcessDetailsServiceImpl).removeByRno(rno);
             when(reportDaoImpl.delete(rno)).thenReturn(0);
 
             // then
-            assertThrows(NotApplyOnDbmsException.class, () -> sut.removeBySeq(rno));
+            assertThrows(NotApplyOnDbmsException.class, () -> sut.removeByRno(rno));
         }
 
         @Test
@@ -472,12 +472,12 @@ class ReportServiceImplTest {
             when(reportDaoImpl.selectByRno(rno)).thenReturn(dto);
             // 신고자의 시퀀스와 현재 회원의 시퀀스를 비교함 -> 이 과정에서 true 반환
             when(reportProcessDetailsServiceImpl.canChangeReport(rno)).thenReturn(true);
-            doNothing().when(reportChangeHistoryServiceImpl).removeBySeq(rno);
+            doNothing().when(reportChangeHistoryServiceImpl).removeByRno(rno);
             doNothing().when(reportProcessDetailsServiceImpl).removeByRno(rno);
             when(reportDaoImpl.delete(rno)).thenReturn(1);
 
             // then
-            assertDoesNotThrow(() -> sut.removeBySeq(rno));
+            assertDoesNotThrow(() -> sut.removeByRno(rno));
         }
 
 
