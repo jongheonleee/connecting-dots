@@ -25,7 +25,7 @@ public class ReportProcessDetailsRequest {
     private Integer rno;
 
     @NotBlank(message = "pros_code는 필수값입니다.")
-    @Pattern(regexp = "^[A-Z]{2}\\d{6}$", message = "pros_code 대문자 2글자와 숫자 6자리로 구성되어야 합니다.")
+    @Pattern(regexp = "^\\d{4}$", message = "pros_code는 4자리 숫자로 구성되어야 합니다.")
     private String pros_code;
 
     private String chk_use;
