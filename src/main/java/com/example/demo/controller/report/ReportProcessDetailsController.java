@@ -20,8 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ReportProcessDetailsController {
 
     private final ReportProcessDetailsService reportProcessDetailsService;
-
-
+    
     @PostMapping("/renew")
     public ResponseEntity<ReportProcessDetailsResponse> renew(@Valid @RequestBody final ReportProcessDetailsRequest request) {
         ReportProcessDetailsResponse response = reportProcessDetailsService.renew(request);

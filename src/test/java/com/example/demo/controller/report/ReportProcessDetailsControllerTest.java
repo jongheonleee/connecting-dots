@@ -12,10 +12,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.example.demo.dto.report.ReportProcessDetailsRequest;
 import com.example.demo.dto.report.ReportProcessDetailsResponse;
 import com.example.demo.global.error.exception.business.code.CodeNotFoundException;
-import com.example.demo.global.error.exception.business.report.ReportCategoryNotFoundException;
 import com.example.demo.global.error.exception.business.report.ReportNotFoundException;
 import com.example.demo.service.report.impl.ReportProcessDetailsServiceImpl;
-import com.example.demo.service.report.impl.ReportServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
