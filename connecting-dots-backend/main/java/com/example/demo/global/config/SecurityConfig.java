@@ -33,8 +33,9 @@ public class SecurityConfig {
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
         httpSecurity.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
-        // 모든 요청에 대해 인증 요구
-        httpSecurity.authorizeHttpRequests(auth -> auth.anyRequest().authenticated());
+        // 인가처리 설정
+        httpSecurity.authorizeHttpRequests(auth -> auth.requestMatchers("/api/user/register").permitAll() // 회원가입 요청 허용
+                                                       .anyRequest().authenticated()); // 나머지는 인증 요구
 
         // oauth2 설정 - 이 부분 추후에 적용
 //        httpSecurity.oauth2Login(oauth2 -> oauth2.failureUrl("/login?error=true"));
