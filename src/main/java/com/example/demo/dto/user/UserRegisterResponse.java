@@ -1,5 +1,5 @@
 package com.example.demo.dto.user;
 
-public class UserResponse {
+public class UserRegisterResponse {
 
 }
