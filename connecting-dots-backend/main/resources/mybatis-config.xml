@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+  <typeAliases>
+    <!-- 공통 -->
+    <typeAlias alias="SearchCondition" type="com.example.demo.dto.SearchCondition"/>
+    <typeAlias alias="List" type="java.util.List"/>
+
+    <!-- code -->
+    <typeAlias alias="CodeDto" type="com.example.demo.dto.code.CodeDto"/>
+
+    <!-- service -->
+    <typeAlias alias="ServiceRuleUseDto" type="com.example.demo.dto.service.ServiceRuleUseDto"/>
+    <typeAlias alias="ServiceTermsDto" type="com.example.demo.dto.service.ServiceTermsDto"/>
+    <typeAlias alias="ServiceTermsConditionDto" type="com.example.demo.dto.service.ServiceTermsConditionDto"/>
+    <typeAlias alias="ServiceUserConditionDto" type="com.example.demo.dto.service.ServiceUserConditionDto"/>
+    <typeAlias alias="ServiceUserConditionsDto" type="com.example.demo.dto.service.ServiceUserConditionsDto"/>
+    <typeAlias alias="ServiceUserConditionsDetailDto" type="com.example.demo.dto.service.ServiceUserConditionsDetailDto"/>
+    <typeAlias alias="ServiceSanctionHistoryDto" type="com.example.demo.dto.service.ServiceSanctionHistoryDto"/>
+    <typeAlias alias="ServiceUserGradeDto" type="com.example.demo.dto.service.ServiceUserGradeDto"/>
+
+    <!-- board -->
+    <typeAlias alias="BoardCategoryDto" type="com.example.demo.dto.board.BoardCategoryDto"/>
+    <typeAlias alias="BoardDto" type="com.example.demo.dto.board.BoardDto"/>
+    <typeAlias alias="BoardImgDto" type="com.example.demo.dto.board.BoardImgDto"/>
+    <typeAlias alias="BoardStatusDto" type="com.example.demo.dto.board.BoardStatusDto"/>
+    <typeAlias alias="BoardChangeHistoryDto" type="com.example.demo.dto.board.BoardChangeHistoryDto"/>
+    <typeAlias alias="BoardMainDto" type="com.example.demo.dto.board.BoardMainDto"/>
+
+    <!-- comment -->
+    <typeAlias alias="CommentDto" type="com.example.demo.dto.comment.CommentDto"/>
+    <typeAlias alias="CommentChangeHistoryDto" type="com.example.demo.dto.comment.CommentChangeHistoryDto"/>
+
+    <!-- reply -->
+    <typeAlias alias="ReplyDto" type="com.example.demo.dto.reply.ReplyDto"/>
+    <typeAlias alias="ReplyChangeHistoryDto" type="com.example.demo.dto.reply.ReplyChangeHistoryDto"/>
+
+    <!-- report -->
+    <typeAlias alias="ReportDto" type="com.example.demo.dto.report.ReportDto"/>
+    <typeAlias alias="ReportCategoryDto" type="com.example.demo.dto.report.ReportCategoryDto"/>
+    <typeAlias alias="ReportChangeHistoryDto" type="com.example.demo.dto.report.ReportChangeHistoryDto"/>
+    <typeAlias alias="ReportProcessDetailsDto" type="com.example.demo.dto.report.ReportProcessDetailsDto"/>
+
+
+    <!-- user -->
+    <typeAlias alias="UserDto" type="com.example.demo.dto.user.UserDto"/>
+
+  </typeAliases>
+</configuration>
