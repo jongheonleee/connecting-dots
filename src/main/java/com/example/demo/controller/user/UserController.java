@@ -14,8 +14,6 @@ public class UserController {
 
     @PostMapping("/api/user/register")
     public ResponseEntity<UserRegisterResponse> create(@RequestBody UserRegisterRequest request) {
-        System.out.println("u call this");
-        System.out.println("request = " + request);
         return null;
     }
 }

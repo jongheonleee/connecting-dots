@@ -2,11 +2,12 @@ import './App.css';
 import { BrowserRouter as Router, Link, Route, Routes } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute';
 import KakaoAuthRedirect from './pages/KakaoAuthRedirect';
-import Main from './pages/Main';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import { useEffect, useState } from 'react';
 import Dashboard from './pages/Dashboard';
+import Details from "./pages/Details";
+import Main from "./pages/Main";
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -78,6 +79,7 @@ const App = () => {
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/login/oauth2/code/kakao" element={<KakaoAuthRedirect />} />
+              <Route path="/details" element={<Details />} />
               <Route
                   path="/dashboard"
                   element={

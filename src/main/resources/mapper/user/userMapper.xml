@@ -4,6 +4,109 @@
 <mapper namespace="com.example.demo.mapper.user.UserMapper">
   <select id="count" resultType="int">
     SELECT COUNT(*)
-    FROM user
+    FROM users
   </select>
+
+  <select id="existsByUserId" parameterType="string" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM users
+    WHERE id = #{id}
+  </select>
+
+  <select id="existsByUserIdForUpdate" parameterType="string" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM users
+    WHERE id = #{id}
+    FOR UPDATE
+  </select>
+
+  <select id="existsByEmail" parameterType="string" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM users
+    WHERE email = #{email}
+  </select>
+
+  <select id="existsByUserSeq" parameterType="int" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM users
+    WHERE user_seq = #{userSeq}
+  </select>
+
+  <select id="existsByUserSeqForUpdate" parameterType="int" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM users
+    WHERE user_seq = #{userSeq}
+    FOR UPDATE
+  </select>
+
+  <select id="selectByUserId" parameterType="string" resultType="UserDto">
+    SELECT
+        user_seq, id, name,
+        pwd, email, birth,
+        sns, reg_date, reg_user_seq,
+        up_date, up_user_seq
+    FROM users
+    WHERE id = #{id}
+  </select>
+
+  <select id="selectByUserSeq" parameterType="int" resultType="UserDto">
+    SELECT
+      user_seq, id, name,
+      pwd, email, birth,
+      sns, reg_date, reg_user_seq,
+      up_date, up_user_seq
+    FROM users
+    WHERE user_seq = #{userSeq}
+  </select>
+
+  <insert id="insert" parameterType="UserDto">
+    <selectKey keyProperty="user_seq" resultType="int" order="AFTER">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+
+    INSERT INTO users (
+      id, name, pwd,
+      email, birth, sns,
+      reg_date, reg_user_seq,
+      up_date, up_user_seq
+    )
+    VALUES (
+      #{id}, #{name}, #{pwd},
+      #{email}, #{birth}, #{sns},
+      #{reg_date}, #{reg_user_seq},
+      #{up_date}, #{up_user_seq}
+    );
+  </insert>
+
+  <update id="update" parameterType="UserDto">
+    UPDATE users
+    SET
+      id = #{id},
+      name = #{name},
+      pwd = #{pwd},
+      email = #{email},
+      birth = #{birth},
+      sns = #{sns},
+      up_date = #{up_date},
+      up_user_seq = #{up_user_seq}
+    WHERE user_seq = #{user_seq}
+  </update>
+
+  <delete id="deleteByUserId" parameterType="string">
+    DELETE
+    FROM users
+    WHERE id = #{id}
+  </delete>
+
+  <delete id="deleteByUserSeq" parameterType="int">
+    DELETE
+    FROM users
+    WHERE user_seq = #{userSeq}
+  </delete>
+
+  <delete id="deleteAll">
+    DELETE
+    FROM users
+  </delete>
+
 </mapper>
