@@ -189,17 +189,102 @@ class UserDaoImplTest {
 
             assertEquals(cnt, sut.count());
         }
+
     }
 
     @Nested
     @DisplayName("사용자 수정 관련 테스트")
     class sut_update_test {
 
+
+        @DisplayName("여러명의 사용자를 등록하고 각각 수정한다.")
+        @ParameterizedTest
+        @ValueSource(ints = {1, 5, 10, 15, 20})
+        void it_correctly_work_when_update(int cnt) {
+            List<UserDto> dummy = new ArrayList<>();
+            for (int i=0; i<cnt; i++) {
+                var user = createUserDto(i);
+                assertEquals(1, sut.insert(user));
+                dummy.add(user);
+            }
+
+            for (UserDto dto : dummy) {
+                dto.setName(dto.getName() + "-updated");
+                dto.setPwd(dto.getPwd() + "-updated");
+                dto.setEmail(dto.getEmail() + "-updated");
+                dto.setBirth(dto.getBirth() + "-updated");
+                dto.setSns(dto.getSns() + "-updated");
+
+                assertEquals(1, sut.update(dto));
+
+                var actual = sut.selectByUserSeq(dto.getUser_seq());
+                assertNotNull(actual);
+
+                assertEquals(dto.getId(), actual.getId());
+                assertEquals(dto.getName(), actual.getName());
+                assertEquals(dto.getPwd(), actual.getPwd());
+                assertEquals(dto.getEmail(), actual.getEmail());
+                assertEquals(dto.getBirth(), actual.getBirth());
+                assertEquals(dto.getSns(), actual.getSns());
+            }
+        }
     }
 
     @Nested
     @DisplayName("사용자 삭제 관련 테스트")
     class sut_delete_test {
+
+
+        @DisplayName("여러명의 사용자를 등록하고 각 사용자의 아이디로 삭제한다.")
+        @ParameterizedTest
+        @ValueSource(ints = {1, 5, 10, 15, 20})
+        void it_correctly_work_when_deleteByUserId(int cnt) {
+            List<UserDto> dummy = new ArrayList<>();
+            for (int i=0; i<cnt; i++) {
+                var user = createUserDto(i);
+                assertEquals(1, sut.insert(user));
+                dummy.add(user);
+            }
+
+            for (UserDto dto : dummy) {
+                assertEquals(1, sut.deleteByUserId(dto.getId()));
+            }
+
+            assertEquals(0, sut.count());
+        }
+
+        @DisplayName("여러명의 사용자를 등록하고 각 사용자의 시퀀스로 삭제한다.")
+        @ParameterizedTest
+        @ValueSource(ints = {1, 5, 10, 15, 20})
+        void it_correctly_work_when_deleteByUserSeq(int cnt) {
+            List<UserDto> dummy = new ArrayList<>();
+            for (int i=0; i<cnt; i++) {
+                var user = createUserDto(i);
+                assertEquals(1, sut.insert(user));
+                dummy.add(user);
+            }
+
+            for (UserDto dto : dummy) {
+                assertEquals(1, sut.deleteByUserSeq(dto.getUser_seq()));
+            }
+
+            assertEquals(0, sut.count());
+        }
+
+        @DisplayName("여러명의 사용자를 등록하고 모두 삭제한다.")
+        @ParameterizedTest
+        @ValueSource(ints = {1, 5, 10, 15, 20})
+        void it_correctly_work_when_deleteAll(int cnt) {
+            for (int i=0; i<cnt; i++) {
+                var user = createUserDto(i);
+                assertEquals(1, sut.insert(user));
+            }
+
+            assertEquals(cnt, sut.count());
+            assertEquals(cnt, sut.deleteAll());
+            assertEquals(0, sut.count());
+        }
+
 
     }
 

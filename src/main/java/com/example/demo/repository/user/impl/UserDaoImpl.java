@@ -66,7 +66,7 @@ public class UserDaoImpl implements UserRepository {
 
     @Override
     public int deleteByUserId(String id) {
-        return session.delete(namespace + "deleteById", id);
+        return session.delete(namespace + "deleteByUserId", id);
     }
 
     @Override
