@@ -1,6 +1,5 @@
-package com.example.demo.global.config;
+package com.example.demo.global.security;
 
-import com.example.demo.global.security.ConnectingDotsUserDetailsService;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -33,11 +32,13 @@ public class SecurityConfig {
         httpSecurity.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
         // 인가처리 설정
-        httpSecurity.authorizeHttpRequests(auth -> auth.requestMatchers("/api/user/register").permitAll() // 회원가입 요청 허용
-                                                       .anyRequest().authenticated()); // 나머지는 인증 요구
+        httpSecurity.authorizeHttpRequests(auth ->
+                auth.requestMatchers("/api/user/register").permitAll() // 회원가입 요청 허용
+                    .anyRequest().authenticated() // 나머지는 인증 요구
+        );
 
         // oauth2 설정 - 이 부분 추후에 적용
-//        httpSecurity.oauth2Login(oauth2 -> oauth2.failureUrl("/login?error=true"));
+        // httpSecurity.oauth2Login(oauth2 -> oauth2.failureUrl("/login?error=true"));
 
         // 사용자 정보 조회 서비스 설정
         httpSecurity.userDetailsService(connectingDotsUserDetailsService);
